@@ -45,6 +45,7 @@ Future main() async {
 
 
   Main.toUpdate = false; // just for test purposes, remove it later
+  ;
 
   //WidgetsFlutterBinding.ensureInitialized();
   runApp(MaterialApp(
