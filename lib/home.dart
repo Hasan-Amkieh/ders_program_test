@@ -30,13 +30,20 @@ class HomeState extends State<Home> {
   int pageIndex = 0;
 
   TextStyle headerTxtStyle = TextStyle(color: Colors.white, fontWeight: FontWeight.bold);
-  double width = (window.physicalSize / window.devicePixelRatio).width, height = (window.physicalSize / window.devicePixelRatio).height;
+  late double width;
+  late double height;
 
   @override
   Widget build(BuildContext context) {
 
+    var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+
+    width = (window.physicalSize / window.devicePixelRatio).width;
+    height = (window.physicalSize / window.devicePixelRatio).height;
+
     double colWidth = (width) / 7; // 6 days and a col for the clock
     double rowHeight = (height * 1) / 11; // 10 for the lock and one for the empty box // 91 percent because of the horizontal borders
+
     Color headerColor = Colors.blue.shade700;
     Color emptyCellColor = Colors.white;
     Color horizontalBorderColor = Colors.blueGrey.shade200;
@@ -177,15 +184,28 @@ class HomeState extends State<Home> {
       ),
     ];
 
+    // NOTE: This is how I add courses:
+    coursesList.add(Positioned(child: TextButton(onPressed: () {}, child: Text("MATH152"), style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.red.shade800))), width: colWidth, height: rowHeight * 2, left: colWidth, top: rowHeight + 2 * (1 - 1)));
+    coursesList.add(Positioned(child: TextButton(onPressed: () {}, child: Text("PHYS102"), style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.orange.shade800))), width: colWidth, height: rowHeight,left: colWidth * 2, top: rowHeight * 3 + 2 * (3 - 1)));
+    coursesList.add(Positioned(child: TextButton(onPressed: () {}, child: Text("CMPE134"), style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.pink.shade800))), width: colWidth, height: rowHeight,left: colWidth * 3, top: rowHeight * 6 + 2 * (6 - 1)));
+
     Widget schedulePage = Stack(
         children: [
           SingleChildScrollView(
             child: Stack(
-              children: coursesList,
+              children: [
+                Stack(
+                  children: coursesList,
+                )
+              ],
+
+
             ),
           ),
-          Positioned(child: TextButton(onPressed: () {print("I am pressded");}, child: Text("Hallo!"),))
         ]);
+
+    // NOTE: This is how you add courses to the schedule:
+    ;
 
     Widget servicesPage = ListView(
       children: [
@@ -249,18 +269,29 @@ class HomeState extends State<Home> {
       ],
     );
 
+    Widget linksPage = ListView(
+      children: [
+        ListTile(
+          title: Text('Atacs'),
+          onTap: () async {
+            const url = 'https://atacs.atilim.edu.tr/Anasayfa/Student';
+            if (await canLaunch(url)) {
+              await launch(url);
+            } else {
+              throw 'Could not launch $url';
+            }
+          },
+        )
+      ],
+    );
+
     List<Widget> pages = [
       schedulePage,
       servicesPage,
       settingsPage,
+      linksPage,
       aboutPage,
     ];
-
-    // TEST:
-
-
-
-    // TEST;
 
     return Scaffold(
       body: SafeArea(
@@ -273,7 +304,7 @@ class HomeState extends State<Home> {
         child: NavigationBar(
           backgroundColor: Colors.teal,
           animationDuration: const Duration(seconds: 1),
-          height: height * 0.08,
+          height: isPortrait ? height * 0.08 : width * 0.08,
           labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
           selectedIndex: pageIndex,
           onDestinationSelected: (int newIndex) {
@@ -282,9 +313,10 @@ class HomeState extends State<Home> {
             });
           },
           destinations: [
-            NavigationDestination(icon: Icon(Icons.date_range_outlined), selectedIcon: Icon(Icons.date_range), label: 'My Schedule'),
+            NavigationDestination(icon: Icon(Icons.date_range_outlined), selectedIcon: Icon(Icons.date_range), label: 'Schedule'),
             NavigationDestination(icon: Icon(Icons.add_box_outlined), selectedIcon: Icon(Icons.add_box), label: 'Tools'),
             NavigationDestination(icon: Icon(Icons.settings_outlined), selectedIcon: Icon(Icons.settings), label: 'Settings'),
+            NavigationDestination(icon: Icon(Icons.dataset_linked_outlined), selectedIcon: Icon(Icons.link), label: 'Links'),
             NavigationDestination(icon: Icon(Icons.info_outlined), selectedIcon: Icon(Icons.info), label: 'About'),
           ],
         ),

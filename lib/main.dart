@@ -44,7 +44,7 @@ Future main() async {
   }*/
 
 
-  Main.toUpdate = false; // just for test purposes, remove it later
+  Main.toUpdate = false;// just for test purposes, remove it later
   ;
 
   //WidgetsFlutterBinding.ensureInitialized();

@@ -24,7 +24,7 @@ class WebpageState extends State<Webpage> {
   @override
   void initState() {
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Navigator.pushNamed(context, "/loadingupdate");
       ;
     });
@@ -309,7 +309,7 @@ class WebpageState extends State<Webpage> {
     } // end for each subject
 
     Main.semesters.elementAt(0).subjects = subjects;
-    //Main.semesters.elementAt(0).subjects.forEach((element) {print("${element.classCode} : $element");});
+    Main.semesters.elementAt(0).subjects.forEach((element) {print("${element.classCode} : $element");});
 
     state = 4;
 
