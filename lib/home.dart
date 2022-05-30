@@ -1,7 +1,11 @@
+import 'package:ders_program_test/subject.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'dart:ui';
 
 import 'package:url_launcher/url_launcher.dart';
+
+import 'main.dart';
 
 List<Color> coursesColorsLight = [ // light mode
   const Color.fromRGBO(128, 105, 103, 1.0),
@@ -184,10 +188,52 @@ class HomeState extends State<Home> {
       ),
     ];
 
+    // TODO:
+    // NOTE: This is the AlertDialog that is used for the showing the course info: 
+    var showCourseInfo = (Subject subject) => showDialog(context: context,
+        builder: (context) => AlertDialog(
+          title: Text("MATH151(1)"),
+          content: Builder(
+            builder: (context) {
+              return Container(
+                height: height * 0.4,
+                child: Scrollbar( // Just to make the scrollbar viewable
+                  thumbVisibility: true,
+                  child: ListView(
+                    children: [
+                      ListTile(
+                        title: Row(children: [Expanded(child: Text("Name: MATH151(1) - Calculus 1"))]),
+                        onTap: null,
+                      ),
+                      ListTile(
+                        title: Row(children: [Expanded(child: Text("Classroom: B1029"))]),
+                        onTap: null,
+                      ),
+                      ListTile(
+                        title: Row(children: [Expanded(child: Text("Teachers: Shihan Bin Zahrawi"))]),
+                        onTap: null,
+                      ),
+                      ListTile(
+                        title: Row(children: [Expanded(child: Text("Departments: CMPE 1 Reg."))]),
+                        onTap: null,
+                      ),
+                    ],
+                  ),
+                ));
+            }
+          ),
+        actions: [
+          TextButton(onPressed: () => print("To do this part in future"), child: Text("EDIT"))
+        ],
+      ),
+    );
+
+    Subject emptySubject = Subject(classCode: "classCode", departments: ["departments"], teacherCodes: [["teacherCodes"]], hours: [1, 2, 3], bgnPeriods: [1,2, 3], days: [1,2 ,3], classrooms: [[]]);
+
     // NOTE: This is how I add courses:
-    coursesList.add(Positioned(child: TextButton(onPressed: () {}, child: Text("MATH152"), style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.red.shade800))), width: colWidth, height: rowHeight * 2, left: colWidth, top: rowHeight + 2 * (1 - 1)));
-    coursesList.add(Positioned(child: TextButton(onPressed: () {}, child: Text("PHYS102"), style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.orange.shade800))), width: colWidth, height: rowHeight,left: colWidth * 2, top: rowHeight * 3 + 2 * (3 - 1)));
-    coursesList.add(Positioned(child: TextButton(onPressed: () {}, child: Text("CMPE134"), style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.pink.shade800))), width: colWidth, height: rowHeight,left: colWidth * 3, top: rowHeight * 6 + 2 * (6 - 1)));
+    coursesList.add(Positioned(child: TextButton(onPressed: () => showCourseInfo(emptySubject), child: Text("MATH152"), style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.red.shade800))), width: colWidth, height: rowHeight * 2, left: colWidth, top: rowHeight + 2 * (1 - 1)));
+    coursesList.add(Positioned(child: TextButton(onPressed: () => showCourseInfo(emptySubject), child: Text("PHYS102"), style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.orange.shade800))), width: colWidth, height: rowHeight,left: colWidth * 2, top: rowHeight * 3 + 2 * (3 - 1)));
+    coursesList.add(Positioned(child: TextButton(onPressed: () => showCourseInfo(emptySubject), child: Text("CMPE134"), style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.pink.shade800))), width: colWidth, height: rowHeight,left: colWidth * 3, top: rowHeight * 6 + 2 * (6 - 1)));
 
     Widget schedulePage = Stack(
         children: [
@@ -211,7 +257,6 @@ class HomeState extends State<Home> {
       children: [
         ListTile(
           onTap: () {
-            // TODO:
             ;
           },
           title: Text('Add/Delete Courses'),
@@ -244,12 +289,61 @@ class HomeState extends State<Home> {
           subtitle: Text('Search for courses using its name, classroom number, teacher or department'),
           leading: Icon(Icons.search),
         ),
+        ListTile(
+          onTap: () {
+            ;
+          },
+          title: Text('Saved Schedules'),
+          subtitle: Text('You can save schedules and set them back again'),
+          leading: Icon(Icons.edit_calendar),
+        ),
       ],
     );
 
-    Widget settingsPage = ListView(
-      children: [
+    /*
+    * ropdownButton<String>(
+      value: dropdownValue,
+      icon: const Icon(Icons.arrow_downward),
+      elevation: 16,
+      style: const TextStyle(color: Colors.deepPurple),
+      underline: Container(
+        height: 2,
+        color: Colors.deepPurpleAccent,
+      ),
+      onChanged: (String? newValue) {
+        setState(() {
+          dropdownValue = newValue!;
+        });
+      },
+      items: <String>['One', 'Two', 'Free', 'Four']
+          .map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+    );*/
 
+    Widget settingsPage = ListView(
+      padding: EdgeInsets.all(width * 0.1),
+      children: [
+          Row(
+            children: [
+              Text("Department"),
+              SizedBox(width: width * 0.1,),
+              DropdownButton<String>(
+                value: Main.department,
+                items: Main.departments.keys.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem(value: value, child: Text(value),);
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    Main.department = newValue!;
+                  });
+                },
+              )
+            ],
+          )
       ],
     );
 
@@ -275,6 +369,17 @@ class HomeState extends State<Home> {
           title: Text('Atacs'),
           onTap: () async {
             const url = 'https://atacs.atilim.edu.tr/Anasayfa/Student';
+            if (await canLaunch(url)) {
+              await launch(url);
+            } else {
+              throw 'Could not launch $url';
+            }
+          },
+        ),
+        ListTile(
+          title: Text("School's Schedules"),
+          onTap: () async {
+            const url = 'https://www.atilim.edu.tr/en/dersprogrami';
             if (await canLaunch(url)) {
               await launch(url);
             } else {
