@@ -1,11 +1,14 @@
+import 'package:ders_program_test/language/dictionary.dart';
 import 'package:ders_program_test/subject.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:ui';
+import 'package:ders_program_test/others/departments.dart';
+import 'package:get_storage/get_storage.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
-import 'main.dart';
+import '../main.dart';
 
 List<Color> coursesColorsLight = [ // light mode
   const Color.fromRGBO(128, 105, 103, 1.0),
@@ -325,25 +328,69 @@ class HomeState extends State<Home> {
     );*/
 
     Widget settingsPage = ListView(
-      padding: EdgeInsets.all(width * 0.1),
+      padding: EdgeInsets.all(width * 0.02),
       children: [
-          Row(
-            children: [
-              Text("Department"),
-              SizedBox(width: width * 0.1,),
-              DropdownButton<String>(
-                value: Main.department,
-                items: Main.departments.keys.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem(value: value, child: Text(value),);
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    Main.department = newValue!;
-                  });
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text("Language"),
+            SizedBox(width: width * 0.1,),
+            DropdownButton<String>(
+              value: Main.language,
+              items: langs.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem(value: value, child:
+                  TextButton.icon(onPressed: null, icon: Image.asset("lib/icons/" + value + ".png"), label: Text(value))
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  Main.language = newValue!;
+                  // TODO: Restart the whole app! It is mandatory, restart without asking
+                  ;
+                });
+              },
+            )
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text("Faculty"),
+            SizedBox(width: width * 0.1,),
+            DropdownButton<String>(
+              value: Main.faculty,
+              items: faculties.keys.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem(value: value, child: Text(value),);
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  Main.faculty = newValue!;
+                  Main.department = faculties[Main.faculty]?.keys.elementAt(0) as String;
+                });
                 },
-              )
-            ],
-          )
+            )
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text("Department"),
+            SizedBox(width: width * 0.1,),
+            DropdownButton<String>(
+              value: Main.department,
+              items: faculties[Main.faculty]?.keys.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem(value: value, child: Row(children: [
+                  Text(value + "  "), Text(faculties[Main.faculty]![value] as String, style: TextStyle(fontSize: 10))
+                ],),);
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  Main.department = newValue!;
+                });
+              },
+            )
+          ],
+        )
       ],
     );
 

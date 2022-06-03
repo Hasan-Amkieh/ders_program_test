@@ -4,25 +4,20 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:ders_program_test/webpage.dart';
-import 'package:ders_program_test/home.dart';
-import 'package:ders_program_test/loadingupdate.dart';
+import 'package:ders_program_test/pages/home.dart';
+import 'package:ders_program_test/pages/loadingupdate.dart';
 import 'package:ders_program_test/subject.dart';
 
 class Main {
-
-  static const Map<String, String> departments = { // TODO: Complete the following list:
-    "CMPE" : "Computer Engineering",
-    "ME" : "Mechanical Engineering",
-    "EE": "Energy Engineering",
-
-  };
 
   static final settingsUnit = GetStorage("settings");
   static DateTime lastUpdate = DateTime.now();
   static bool toUpdate = false;
   static bool isDark = false;
   static final hourUpdate = 12; // if the time has passed for these hours since the last update, then make an update
+  static String faculty = "Engineering";
   static String department = "CMPE";
+  static String language = "English"; // currently, there is only
 
   static List<Semester> semesters = []; // each semester contains the subjects with their details
 
