@@ -5,14 +5,14 @@ const Map<String, Map<String, String>> faculties = {
   "Engineering" : engineeringDeps,
   "Civil Aviation" : civilAviationDeps,
   "Health Sciences" : healthSciencesDeps,
-  "Arts and Science" : artsnScienceDeps,
+  "Arts and Sciences" : artsnScienceDeps,
   "Fine Arts" : fineArtsDeps,
   "Law" : lawDeps,
   "Business" : businessDeps,
 };
 
 const Map<String, String> engineeringDeps = {
-  "AE" : "Automative Engineering",
+  "AE" : "Automotive Engineering",
   "ASE" : "Aerospace Engineering",
   "CE": "Civil Engineering",
   "CEAC": "Chemical Engineering",
@@ -53,7 +53,7 @@ const Map<String, String> fineArtsDeps = {
   "GRT" : "Graphics Design", // Grafik Tasarim
   "ICM" : "Interior Architecture & Env. Design", // and Environmental Design , I cut Env. word bcs no space
   "MMR" : "Architecture", // Mimar
-  "MMT" : "Textile and Fasion Design",
+  "MMT" : "Textile and Fashion Design",
 };
 
 const Map<String, String> lawDeps = {

@@ -92,7 +92,7 @@ class WebpageState extends State<Webpage> {
     // TODO: Wait for two semesters to show up to understand how the validity date works
     //String dateStr = timetableStr.substring(validStart, timetableStr.indexOf("-", validStart));
     int semIndex = Main.semesters.length;
-    Main.semesters.add(Semester(validDate: DateTime.now(), lastUpdate: DateTime.now()));
+    Main.semesters.add(Semester(name: "-", validDate: DateTime.now(), lastUpdate: DateTime.now()));
 
     // Finding all the classcodes with their names
     var classCodes_names = Main.classcodes;
@@ -309,12 +309,13 @@ class WebpageState extends State<Webpage> {
     } // end for each subject
 
     Main.semesters.elementAt(0).subjects = subjects;
-    Main.semesters.elementAt(0).subjects.forEach((element) {print("${element.classCode} : $element");});
+    // TO SEE THE RESULTS ONLY /
+    //Main.semesters.elementAt(0).subjects.forEach((element) {print("${element.classCode} : $element");});
 
     state = 4;
 
     // TODO: Store all the data inside all the appropriate files
-        ;
+    ;
 
     currWidget = this;
     state = 5; // Finish off, pop the loadingPage

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:ui';
 import 'package:ders_program_test/others/departments.dart';
+import 'package:restart_app/restart_app.dart';
 import 'package:get_storage/get_storage.dart';
 
 import 'package:url_launcher/url_launcher.dart';
@@ -42,6 +43,8 @@ class HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+
+    isLangEng = Main.language == "English";
 
     var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
 
@@ -83,7 +86,7 @@ class HomeState extends State<Home> {
             color: headerColor,
             child: Column( // Headers
               children: [
-                Container(child: Center(child: Text('Mon', style: headerTxtStyle)), height: rowHeight, width: colWidth,),
+                Container(child: Center(child: Text(translateEng('Mon'), style: headerTxtStyle)), height: rowHeight, width: colWidth,),
                 emptyCell,
                 emptyCell,
                 emptyCell,
@@ -101,7 +104,7 @@ class HomeState extends State<Home> {
             color: headerColor,
             child: Column( // Headers
               children: [
-                Container(child: Center(child: Text('Tue', style: headerTxtStyle,)), height: rowHeight, width: colWidth),
+                Container(child: Center(child: Text(translateEng('Tue'), style: headerTxtStyle,)), height: rowHeight, width: colWidth),
                 emptyCell,
                 emptyCell,
                 emptyCell,
@@ -119,7 +122,7 @@ class HomeState extends State<Home> {
             color: headerColor,
             child: Column( // Headers
               children: [
-                Container(child: Center(child: Text('Wed', style: headerTxtStyle,)), height: rowHeight, width: colWidth),
+                Container(child: Center(child: Text(translateEng('Wed'), style: headerTxtStyle,)), height: rowHeight, width: colWidth),
                 emptyCell,
                 emptyCell,
                 emptyCell,
@@ -137,7 +140,7 @@ class HomeState extends State<Home> {
             color: headerColor,
             child: Column( // Headers
               children: [
-                Container(child: Center(child: Text('Thur', style: headerTxtStyle,)), height: rowHeight, width: colWidth),
+                Container(child: Center(child: Text(translateEng('Thur'), style : headerTxtStyle)), height: rowHeight, width: colWidth),
                 emptyCell,
                 emptyCell,
                 emptyCell,
@@ -155,7 +158,7 @@ class HomeState extends State<Home> {
             color: headerColor,
             child: Column( // Headers
               children: [
-                Container(child: Center(child: Text('Fri', style: headerTxtStyle,)), height: rowHeight, width: colWidth),
+                Container(child: Center(child: Text(translateEng('Fri'), style: headerTxtStyle)), height: rowHeight, width: colWidth),
                 emptyCell,
                 emptyCell,
                 emptyCell,
@@ -173,7 +176,7 @@ class HomeState extends State<Home> {
             color: headerColor,
             child: Column( // Headers
               children: [
-                Container(child: Center(child: Text('Sat', style: headerTxtStyle,)), height: rowHeight, width: colWidth),
+                Container(child: Center(child: Text(translateEng('Sat'), style: headerTxtStyle)), height: rowHeight, width: colWidth),
                 emptyCell,
                 emptyCell,
                 emptyCell,
@@ -205,19 +208,19 @@ class HomeState extends State<Home> {
                   child: ListView(
                     children: [
                       ListTile(
-                        title: Row(children: [Expanded(child: Text("Name: MATH151(1) - Calculus 1"))]),
+                        title: Row(children: [Expanded(child: Text(translateEng("Name: ") + "MATH151(1) - Calculus 1"))]),
                         onTap: null,
                       ),
                       ListTile(
-                        title: Row(children: [Expanded(child: Text("Classroom: B1029"))]),
+                        title: Row(children: [Expanded(child: Text(translateEng("Classrooms: ") + "B1029"))]),
                         onTap: null,
                       ),
                       ListTile(
-                        title: Row(children: [Expanded(child: Text("Teachers: Shihan Bin Zahrawi"))]),
+                        title: Row(children: [Expanded(child: Text(translateEng("Teachers: ") + "Shihan Bin Zahrawi"))]),
                         onTap: null,
                       ),
                       ListTile(
-                        title: Row(children: [Expanded(child: Text("Departments: CMPE 1 Reg."))]),
+                        title: Row(children: [Expanded(child: Text(translateEng("Departments: ") + "CMPE 1 Reg."))]),
                         onTap: null,
                       ),
                     ],
@@ -226,7 +229,7 @@ class HomeState extends State<Home> {
             }
           ),
         actions: [
-          TextButton(onPressed: () => print("To do this part in future"), child: Text("EDIT"))
+          TextButton(onPressed: () => print("To do this part in future"), child: Text(translateEng("EDIT")))
         ],
       ),
     );
@@ -262,17 +265,25 @@ class HomeState extends State<Home> {
           onTap: () {
             ;
           },
-          title: Text('Add/Delete Courses'),
-          subtitle: Text('Edit the courses on the current schedule'),
+          title: Text(translateEng('Add/Delete Courses')),
+          subtitle: Text(translateEng('Edit the courses on the current schedule')),
           leading: Icon(Icons.edit),
+        ),
+        ListTile(
+          onTap: () {
+            ;
+          },
+          title: Text(translateEng('Create a Custom Course')),
+          subtitle: Text(translateEng('Create a course with custom information')),
+          leading: Icon(Icons.add),
         ),
         ListTile(
           onTap: () {
             // TODO:
             ;
           },
-          title: Text('Scheduler'),
-          subtitle: Text('Choose the courses with the sections with specific options, then choose your appropriate schedule'),
+          title: Text(translateEng('Scheduler')),
+          subtitle: Text(translateEng('Choose the courses with the sections with specific options, then choose your appropriate schedule')),
           leading: Icon(Icons.calendar_today),
         ),
         ListTile(
@@ -280,52 +291,28 @@ class HomeState extends State<Home> {
             // TODO:
             ;
           },
-          title: Text('Choose Made-up Plans'),
-          subtitle: Text('These plans are provided by the university'),
+          title: Text(translateEng('Choose Made-up Plans')),
+          subtitle: Text(translateEng('These plans are provided by the university')),
           leading: Icon(Icons.next_plan_outlined),
         ),
         ListTile(
           onTap: () {
             ;
           },
-          title: Text('Search for Courses'),
-          subtitle: Text('Search for courses using its name, classroom number, teacher or department'),
+          title: Text(translateEng('Search for Courses')),
+          subtitle: Text(translateEng('Search for courses using its name, classroom number, teacher or department')),
           leading: Icon(Icons.search),
         ),
         ListTile(
           onTap: () {
             ;
           },
-          title: Text('Saved Schedules'),
-          subtitle: Text('You can save schedules and set them back again'),
+          title: Text(translateEng('Saved Schedules')),
+          subtitle: Text(translateEng('You can save schedules and set them back again')),
           leading: Icon(Icons.edit_calendar),
         ),
       ],
     );
-
-    /*
-    * ropdownButton<String>(
-      value: dropdownValue,
-      icon: const Icon(Icons.arrow_downward),
-      elevation: 16,
-      style: const TextStyle(color: Colors.deepPurple),
-      underline: Container(
-        height: 2,
-        color: Colors.deepPurpleAccent,
-      ),
-      onChanged: (String? newValue) {
-        setState(() {
-          dropdownValue = newValue!;
-        });
-      },
-      items: <String>['One', 'Two', 'Free', 'Four']
-          .map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-    );*/
 
     Widget settingsPage = ListView(
       padding: EdgeInsets.all(width * 0.02),
@@ -333,19 +320,18 @@ class HomeState extends State<Home> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text("Language"),
-            SizedBox(width: width * 0.1,),
+            Text(translateEng("Language")),
+            //SizedBox(width: width * 0.1,),
             DropdownButton<String>(
               value: Main.language,
               items: langs.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem(value: value, child:
-                  TextButton.icon(onPressed: null, icon: Image.asset("lib/icons/" + value + ".png"), label: Text(value))
+                  TextButton.icon(onPressed: null, icon: Image.asset("lib/icons/" + value + ".png"), label: Text(translateEng(value)))
                 );
               }).toList(),
               onChanged: (String? newValue) {
                 setState(() {
                   Main.language = newValue!;
-                  // TODO: Restart the whole app! It is mandatory, restart without asking
                   ;
                 });
               },
@@ -355,12 +341,11 @@ class HomeState extends State<Home> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text("Faculty"),
-            SizedBox(width: width * 0.1,),
+            Text(translateEng("Faculty")),
             DropdownButton<String>(
               value: Main.faculty,
               items: faculties.keys.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem(value: value, child: Text(value),);
+                return DropdownMenuItem(value: value, child: Text(translateEng(value)));
               }).toList(),
               onChanged: (String? newValue) {
                 setState(() {
@@ -374,13 +359,12 @@ class HomeState extends State<Home> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text("Department"),
-            SizedBox(width: width * 0.1,),
+            Text(translateEng("Department")),
             DropdownButton<String>(
               value: Main.department,
               items: faculties[Main.faculty]?.keys.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem(value: value, child: Row(children: [
-                  Text(value + "  "), Text(faculties[Main.faculty]![value] as String, style: TextStyle(fontSize: 10))
+                  Text(translateEng(value) + "  "), Text(translateEng(faculties[Main.faculty]![value] as String), style: TextStyle(fontSize: 10))
                 ],),);
               }).toList(),
               onChanged: (String? newValue) {
@@ -390,14 +374,105 @@ class HomeState extends State<Home> {
               },
             )
           ],
-        )
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(translateEng("Semester")),
+            DropdownButton<String>(
+              value: Main.semesters[0].name,
+              items: Main.semesters.map<DropdownMenuItem<String>>((Semester value) {
+                return DropdownMenuItem(value: value.name, child: Row(children: [
+                  Text(translateEng(value.name))
+                ],),);
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  Main.department = newValue!;
+                });
+              },
+            )
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              translateEng("Last Updated") + "    ${Main.semesters[0].lastUpdate.hour}:${"${Main.semesters[0].lastUpdate.minute} " + Main.semesters[0].lastUpdate.day.toString() + "/" + Main.semesters[0].lastUpdate.month.toString()}",
+              style: TextStyle(color: Colors.red.shade500),
+            ),
+            TextButton(onPressed: () {
+              setState(() {
+                // TODO: Save the settings and put the property / force_update : true /
+                Restart.restartApp(); // Because Flutter does not support restarting the whole app
+              });
+            }, child: Text(translateEng("Update now"))),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(translateEng("Update Timeout (hours)")),
+            Row(
+              children: [
+                SizedBox(
+                  width: 0.08 * width,
+                  height: 0.08 * height,
+                  child: FloatingActionButton(child: const Icon(Icons.remove),onPressed: () {
+                    setState(() {
+                      if (Main.hourUpdate == 12) return;
+                      Main.hourUpdate--;
+                    });
+                  }),
+                ),
+                SizedBox(
+                  width: width * 0.03,
+                  height: height * 0.03,
+                ),
+                Text("${Main.hourUpdate}"),
+                SizedBox(
+                  width: width * 0.03,
+                  height: height * 0.03,
+                ),
+                SizedBox(
+                  width: 0.08 * width,
+                  height: 0.08 * height,
+                  child: FloatingActionButton(child: const Icon(Icons.add), onPressed: () {
+                    setState(() {
+                      if (Main.hourUpdate == 24) return;
+                      Main.hourUpdate++;
+                    });
+                  }),
+                )
+              ],
+            )
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(translateEng("Theme")),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(translateEng("Light  ")),
+                Checkbox(value: Main.theme == ThemeMode.light, onChanged: (bool? newVal) {
+                  setState(() {Main.theme = ThemeMode.light;});
+                }),
+                Text(translateEng("Dark  ")),
+                Checkbox(value: Main.theme == ThemeMode.dark, onChanged: (bool? newVal) {
+                  setState(() {Main.theme = ThemeMode.dark;});
+                })
+            ],)
+          ],
+        ),
       ],
     );
 
     Widget aboutPage = ListView(
       children: [
         ListTile(
-          title: Text('Donate me'),
+          title: Text(translateEng('Donate me')),
           onTap: () async {
             const url = 'https://www.buymeacoffee.com/hasanamkieh?new=1';
             if (await canLaunch(url)) {
@@ -424,7 +499,7 @@ class HomeState extends State<Home> {
           },
         ),
         ListTile(
-          title: Text("School's Schedules"),
+          title: Text(translateEng("School's Schedules")),
           onTap: () async {
             const url = 'https://www.atilim.edu.tr/en/dersprogrami';
             if (await canLaunch(url)) {
@@ -465,11 +540,11 @@ class HomeState extends State<Home> {
             });
           },
           destinations: [
-            NavigationDestination(icon: Icon(Icons.date_range_outlined), selectedIcon: Icon(Icons.date_range), label: 'Schedule'),
-            NavigationDestination(icon: Icon(Icons.add_box_outlined), selectedIcon: Icon(Icons.add_box), label: 'Tools'),
-            NavigationDestination(icon: Icon(Icons.settings_outlined), selectedIcon: Icon(Icons.settings), label: 'Settings'),
-            NavigationDestination(icon: Icon(Icons.dataset_linked_outlined), selectedIcon: Icon(Icons.link), label: 'Links'),
-            NavigationDestination(icon: Icon(Icons.info_outlined), selectedIcon: Icon(Icons.info), label: 'About'),
+            NavigationDestination(icon: Icon(Icons.date_range_outlined), selectedIcon: Icon(Icons.date_range), label: translateEng('Schedule')),
+            NavigationDestination(icon: Icon(Icons.add_box_outlined), selectedIcon: Icon(Icons.add_box), label: translateEng('Tools')),
+            NavigationDestination(icon: Icon(Icons.settings_outlined), selectedIcon: Icon(Icons.settings), label: translateEng('Settings')),
+            NavigationDestination(icon: Icon(Icons.dataset_linked_outlined), selectedIcon: Icon(Icons.link), label: translateEng('Links')),
+            NavigationDestination(icon: Icon(Icons.info_outlined), selectedIcon: Icon(Icons.info), label: translateEng('About')),
           ],
         ),
       ),

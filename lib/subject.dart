@@ -4,8 +4,9 @@ class Semester {
   List<Subject> subjects = []; // all subject codes taken inside this semester (with the section number)
   DateTime validDate;
   DateTime lastUpdate;
+  String name; // Fall / Spring / Summer
 
-  Semester({required this.validDate, required this.lastUpdate});
+  Semester({required this.name, required this.validDate, required this.lastUpdate});
 
 }
 

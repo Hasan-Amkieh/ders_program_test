@@ -8,17 +8,23 @@ import 'package:ders_program_test/pages/home.dart';
 import 'package:ders_program_test/pages/loadingupdate.dart';
 import 'package:ders_program_test/subject.dart';
 
+import 'others/AppThemes.dart';
+
 class Main {
 
   static final settingsUnit = GetStorage("settings");
   static DateTime lastUpdate = DateTime.now();
   static bool toUpdate = false;
   static bool isDark = false;
-  static final hourUpdate = 12; // if the time has passed for these hours since the last update, then make an update
+  static int hourUpdate = 12; // if the time has passed for these hours since the last update, then make an update
   static String faculty = "Engineering";
   static String department = "CMPE";
   static String language = "English"; // currently, there is only
+  // TODO: First check in the settings file, then set this:
+  static ThemeMode theme = ThemeMode.light;
 
+
+  // TODO: Extract and store the semesters here:
   static List<Semester> semesters = []; // each semester contains the subjects with their details
 
   // update section
@@ -47,11 +53,14 @@ Future main() async {
   }*/
 
 
-  Main.toUpdate = false;// just for test purposes, remove it later
+  Main.toUpdate = true;// just for test purposes, remove it later
   ;
 
   //WidgetsFlutterBinding.ensureInitialized();
   runApp(MaterialApp(
+    themeMode: Main.theme,
+    theme: AppThemes.lightTheme,
+    darkTheme: AppThemes.darkTheme,
     initialRoute: Main.toUpdate ? "/webpage" : "/home",
     routes: {
       "/home" : (context) => Home(),

@@ -1,28 +1,118 @@
 import 'dart:core';
 
+import 'package:flutter/widgets.dart';
+import 'package:ders_program_test/main.dart';
+
 List<String> langs = ["English", "Turkish"];
+bool isLangEng = Main.language == "English";
 
 Map<String, String> engToTurk = {
-  "Schedule" : "Ders Programı",
+  "Schedule" : "Takvim",
   "Settings" : "Ayarlar",
   "Links" : "Bağlantılar",
   "Tools" : "Aletler",
-  /*"" : "",
+  "Turkish" : "Türkçe",
+  "English" : "İngilizce",
+  "Language" : "Dil",
+  "Faculty" : "Fakülte",
+  "Department" : "Bölüm",
+  "Engineering" : "Mühendislik",
+  "Civil Aviation" : "Sivil Havacılık",
+  "Health Sciences" : "Sağlık Bilimleri",
+  "Arts and Sciences" : "Sanatlar ve Bilimler",
+  "Fine Arts" : "Güzel Sanatlar",
+  "Law" : "Hukuk",
+  "Business" : "İşletme",
+  "Automotive Engineering" : "Otomotiv Mühendisliği",
+  "Aerospace Engineering" : "Uzay ve Havacılık Mühendisliği",
+  "Civil Engineering" : "İnşaat Mühendisliği",
+  "Chemical Engineering" : "Kimya Mühendisliği",
+  "Computer Engineering" : "Bilgisayar Mühendisliği",
+  "Electrical Engineering" : "Elektrik Mühendisliği",
+  "Energy Engineering" : "Enerji Mühendisliği",
+  "Industrial Engineering" : "Endüstri Mühendisliği",
+  "Information Systems Engineering" : "Bilgi Sistemleri Mühendisliği",
+  "Material Engineering" : "Malzeme Mühendisliği",
+  "Mechanical Engineering" : "Makine Mühendisliği",
+  "Mechatronics Engineering" : "Mekatronik Mühendisliği",
+  "Manufacturing Engineering" : "İmalat Mühendisliği",
+  "Software Engineering" : "Yazılım Mühendisliği",
+  "Avionics" : "Aviyonik",
+  "Airframe & Powerplant Maintenance" : "Gövde & Santral Bakımı",
+  "Aviation Management" : "Havacılık Yönetimi",
+  "Pilot Training" : "Pilotaj Eğitimi",
+  "Nursery" : "Hemşirelik",
+  "Nutrition and Dietetics" : "Beslenme ve Diyetetik",
+  "Physiotherapy and Rehabilitation" : "Fizyoterapi ve Rehabilitasyon",
+  "English Language and Literature" : "İngiliz Dili ve Edebiyatı",
+  "English Translation and Interpretation" : "İngilizce Mütercim Tercümanlık",
+  "Mathematics" : "Matematik",
+  "Psychology" : "Psikoloji",
+  "Industrial Product Design" : "Endüstriyel Ürün Tasarımı",
+  "Graphics Design" : "Grafik Tasarım",
+  "Interior Architecture & Env. Design" : "İç Mimarlık & Çevre Tasarımı",
+  "Architecture" : "Mimari",
+  "Textile and Fashion Design" : "Tekstil ve Moda Tasarımı",
+  "LAW" : "HUKUK",
+  "Justice" : "Adalet",
+  "Economics" : "Ekonomi",
+  "Economics (English)" : "Ekonomi (İngilizce)",
+  "Economics (Turkish)" : "Ekonomi (Türkçe)",
+  "International Relations" : "Uluslararası İlişkiler",
+  "Political Science & Business Admin." : "Siyaset Bilimi & İşletme Yönetimi",
+  "International Trade and Logistics" : "Uluslararası Ticaret ve Lojistik",
+  "Business Administration (English)" : "İş İdaresi (İngilizce)",
+  "Business Administration (Turkish)" : "İş İdaresi (Türkçe)",
+  "Public Finance" : "Kamu Maliyesi",
+  "Public Relations and Advertising" : "Halkla İlişkiler ve Reklamcılık",
+  "Tourism Management" : "Turizm Yönetimi",
+  "About" : "Hakkında",
+  "Name: " : "İsim: ",
+  "Classrooms: " : "Sınıflar: ",
+  "Teachers: " : "Öğretmenler: ",
+  "Departments: " : "Bölümler: ",
+  "EDIT" : "DÜZENLE",
+  "Mon" : "Pzt",
+  "Tue" : "Sal",
+  "Wed" : "Çar",
+  "Thur" : "Per",
+  "Fri" : "Cum",
+  "Sat" : "Cmt",
+  "Add/Delete Courses" : "Ders Ekle/Sil",
+  "Scheduler" : "Zamanlayıcı",
+  "Choose Made-up Plans" : "Hazır Planları Seçin",
+  "Search for Courses" : "Kurs Ara",
+  "Saved Schedules" : "Kayıtlı Programlar",
+  "Create a Custom Course" : "Özel bir Kurs Oluşturun",
+  "Edit the courses on the current schedule" : "Mevcut programdaki kursları düzenleyin",
+  "Choose the courses with the sections with specific options, then choose your appropriate schedule" : "Belirli seçeneklere sahip bölümleri olan kursları seçin, ardından uygun programınızı seçin",
+  "These plans are provided by the university" : "Bu planlar üniversite tarafından sağlanmaktadır.",
+  "Search for courses using its name, classroom number, teacher or department" : "Adını, sınıf numarasını, öğretmenini veya bölümünü kullanarak kursları arayın",
+  "You can save schedules and set them back again" : "Programları kaydedebilir ve tekrar ayarlayabilirsiniz",
+  "School's Schedules" : "Okulun Programları",
+  "Create a course with custom information" : "Özel bilgilerle bir kurs oluşturun",
+  "Update Timeout (hours)" : "Güncelleme Zaman Aşımı (saat)",
+  "Theme" : "Tema",
+  "Donate me" : "Bana bağış yap",
+  "Light  " : "Hafif  ",
+  "Dark  " : "Karanlık  ",
+  "Fall" : "Sonbahar",
+  "Spring" : "Bahar",
+  "Summer" : "Yaz",
+  "Semester" : "Dönem",
+  "Update now" : "Şimdi Güncelle",
+  "Last Updated" : "Son Güncelleme",
   "" : "",
-  "" : "",
-  "" : "",
-  "" : "",
-  "" : "",
-  "" : "",*/
 };
 
-String? translateEng(String eng) {
+String translateEng(String eng) {
+
+  if (isLangEng) return eng;
 
   if (engToTurk.containsKey(eng)) {
-    return engToTurk[eng];
-  } else {
-    return eng;
+    return engToTurk[eng] ?? eng;
   }
+  return eng;
 
 }
 
