@@ -1,4 +1,3 @@
-
 import 'dart:core';
 
 const Map<String, Map<String, String>> faculties = {

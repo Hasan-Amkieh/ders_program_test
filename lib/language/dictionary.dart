@@ -38,7 +38,7 @@ Map<String, String> engToTurk = {
   "Manufacturing Engineering" : "İmalat Mühendisliği",
   "Software Engineering" : "Yazılım Mühendisliği",
   "Avionics" : "Aviyonik",
-  "Airframe & Powerplant Maintenance" : "Gövde & Santral Bakımı",
+  "Airframe & Powerplant Maintenance" : "Gövde & Motor Bakımı",
   "Aviation Management" : "Havacılık Yönetimi",
   "Pilot Training" : "Pilotaj Eğitimi",
   "Nursery" : "Hemşirelik",
@@ -102,7 +102,14 @@ Map<String, String> engToTurk = {
   "Semester" : "Dönem",
   "Update now" : "Şimdi Güncelle",
   "Last Updated" : "Son Güncelleme",
+  "Only search in this department" : "Sadece bu bölümde ara",
+  "OK" : "TAMAM",
   "" : "",
+  "" : "",
+  "" : "",
+  "" : "",
+  "" : "",
+
 };
 
 String translateEng(String eng) {

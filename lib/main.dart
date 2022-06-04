@@ -1,6 +1,7 @@
 // NOTE: minimum version of android is 4.4 for the application to run,
 
 import 'dart:async';
+import 'package:ders_program_test/pages/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:ders_program_test/webpage.dart';
@@ -26,6 +27,7 @@ class Main {
 
   // TODO: Extract and store the semesters here:
   static List<Semester> semesters = []; // each semester contains the subjects with their details
+
 
   // update section
   static Map<String,String> classcodes = {}; // classcodes without the secion -> the full name of the class
@@ -66,6 +68,7 @@ Future main() async {
       "/home" : (context) => Home(),
       "/loadingupdate": (context) => LoadingUpdate(),
       "/webpage": (context) => Webpage(),
+      "/home/searchpage": (contetx) => SearchPage(),
     },
   ));
 

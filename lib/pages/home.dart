@@ -279,6 +279,14 @@ class HomeState extends State<Home> {
         ),
         ListTile(
           onTap: () {
+            Navigator.pushNamed(context, "/home/searchpage");
+          },
+          title: Text(translateEng('Search for Courses')),
+          subtitle: Text(translateEng('Search for courses using its name, classroom number, teacher or department')),
+          leading: Icon(Icons.search),
+        ),
+        ListTile(
+          onTap: () {
             // TODO:
             ;
           },
@@ -294,14 +302,6 @@ class HomeState extends State<Home> {
           title: Text(translateEng('Choose Made-up Plans')),
           subtitle: Text(translateEng('These plans are provided by the university')),
           leading: Icon(Icons.next_plan_outlined),
-        ),
-        ListTile(
-          onTap: () {
-            ;
-          },
-          title: Text(translateEng('Search for Courses')),
-          subtitle: Text(translateEng('Search for courses using its name, classroom number, teacher or department')),
-          leading: Icon(Icons.search),
         ),
         ListTile(
           onTap: () {
@@ -374,7 +374,7 @@ class HomeState extends State<Home> {
               },
             )
           ],
-        ),
+        ),  
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
