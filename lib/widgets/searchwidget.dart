@@ -28,7 +28,7 @@ class SearchWidgetState extends State<SearchWidget> {
   Widget build(BuildContext context) {
 
     final styleActive = TextStyle(color: Colors.black);
-    final styleHint = TextStyle(color: Colors.black54);
+    final styleHint = TextStyle(color: Colors.black54, fontSize: 12.0);
     final style = widget.text.isEmpty ? styleHint : styleActive;
 
     return Container(
@@ -53,6 +53,9 @@ class SearchWidgetState extends State<SearchWidget> {
               FocusScope.of(context).requestFocus(FocusNode());
             },
           ) : null,
+          hintText: widget.hintText,
+          hintStyle: style,
+          border: InputBorder.none,
         ),
         style: style,
         onChanged: widget.onChanged,

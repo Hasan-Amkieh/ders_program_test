@@ -73,7 +73,7 @@ const Map<String, String> businessDeps = {
   "TOUR" : "Tourism Management"
 };
 
-String getDepartmentLink(String depName) {
+String getFacultyLink(String depName) {
 
   if (engineeringDeps.keys.contains(depName)) {
     return "https://atilimengr.edupage.org/timetable/?&lang=tr";

@@ -1,13 +1,14 @@
 // NOTE: minimum version of android is 4.4 for the application to run,
 
 import 'dart:async';
+import 'package:ders_program_test/others/subject.dart';
+import 'package:ders_program_test/pages/favcourses.dart';
 import 'package:ders_program_test/pages/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:ders_program_test/webpage.dart';
 import 'package:ders_program_test/pages/home.dart';
 import 'package:ders_program_test/pages/loadingupdate.dart';
-import 'package:ders_program_test/subject.dart';
 
 import 'others/AppThemes.dart';
 
@@ -18,15 +19,16 @@ class Main {
   static bool toUpdate = false;
   static bool isDark = false;
   static int hourUpdate = 12; // if the time has passed for these hours since the last update, then make an update
-  static String faculty = "Engineering";
-  static String department = "CMPE";
+  static String faculty = "Civil Aviation";
+  static String department = "AVM";
   static String language = "English"; // currently, there is only
   // TODO: First check in the settings file, then set this:
   static ThemeMode theme = ThemeMode.light;
 
+  static List<Subject> favCourses = [];
 
   // TODO: Extract and store the semesters here:
-  static List<Semester> semesters = []; // each semester contains the subjects with their details
+  static List<FacultySemester> semesters = []; // each semester contains the subjects with their details
 
 
   // update section
@@ -68,7 +70,8 @@ Future main() async {
       "/home" : (context) => Home(),
       "/loadingupdate": (context) => LoadingUpdate(),
       "/webpage": (context) => Webpage(),
-      "/home/searchpage": (contetx) => SearchPage(),
+      "/home/searchpage": (contetx) => const SearchPage(),
+      "/home/favcourses": (context) => FavCourses(),
     },
   ));
 

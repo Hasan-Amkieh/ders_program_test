@@ -1,5 +1,5 @@
 import 'package:ders_program_test/language/dictionary.dart';
-import 'package:ders_program_test/subject.dart';
+import 'package:ders_program_test/others/subject.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:ui';
@@ -287,11 +287,18 @@ class HomeState extends State<Home> {
         ),
         ListTile(
           onTap: () {
+            Navigator.pushNamed(context, "/home/favcourses");
+          },
+          title: Text(translateEng('Favourite Courses')),
+          leading: Icon(Icons.star_border),
+        ),
+        ListTile(
+          onTap: () {
             // TODO:
             ;
           },
           title: Text(translateEng('Scheduler')),
-          subtitle: Text(translateEng('Choose the courses with the sections with specific options, then choose your appropriate schedule')),
+          subtitle: Text(translateEng('Choose the courses with the sections with specific options, then choose your appropriate schedule') + '\n'),
           leading: Icon(Icons.calendar_today),
         ),
         ListTile(
@@ -365,25 +372,6 @@ class HomeState extends State<Home> {
               items: faculties[Main.faculty]?.keys.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem(value: value, child: Row(children: [
                   Text(translateEng(value) + "  "), Text(translateEng(faculties[Main.faculty]![value] as String), style: TextStyle(fontSize: 10))
-                ],),);
-              }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  Main.department = newValue!;
-                });
-              },
-            )
-          ],
-        ),  
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(translateEng("Semester")),
-            DropdownButton<String>(
-              value: Main.semesters[0].name,
-              items: Main.semesters.map<DropdownMenuItem<String>>((Semester value) {
-                return DropdownMenuItem(value: value.name, child: Row(children: [
-                  Text(translateEng(value.name))
                 ],),);
               }).toList(),
               onChanged: (String? newValue) {

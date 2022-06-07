@@ -1,12 +1,12 @@
 
-class Semester {
+class FacultySemester {
 
   List<Subject> subjects = []; // all subject codes taken inside this semester (with the section number)
   DateTime validDate;
   DateTime lastUpdate;
-  String name; // Fall / Spring / Summer
+  String facName; // Faculty name
 
-  Semester({required this.name, required this.validDate, required this.lastUpdate});
+  FacultySemester({required this.facName, required this.validDate, required this.lastUpdate});
 
 }
 
@@ -19,6 +19,11 @@ class Subject { // represents a class
   final List<int> hours;
   final List<int> bgnPeriods;
   final List<int> days;
+
+  // NOTE: This is not stored inside the files, this is to be done when the subject object is created!
+  late final List<String> forDeps; // It has a list of the departments that can take this course
+  // e.g. [CMPE, CEAC, CE, EE, General Electives]
+  // NOTE: There is another department called General Electives
 
   Subject({required this.classCode, required this.departments,
     required this.teacherCodes, required this.hours, required this.bgnPeriods,

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:ders_program_test/main.dart';
-import 'package:ders_program_test/subject.dart';
+import 'package:ders_program_test/others/subject.dart';
+
+import 'others/departments.dart';
 
 final engCoursesUnit = GetStorage("engineering courses");
 final GetStorage classCodes = GetStorage("class codes-Names");
@@ -57,7 +59,7 @@ class WebpageState extends State<Webpage> {
                   },
                   initialUrlRequest: URLRequest(
                       url: Uri.parse(
-                          "https://atilimengr.edupage.org/timetable/?&lang=tr")),
+                          getFacultyLink(Main.department))),
                   initialOptions: InAppWebViewGroupOptions(
                     crossPlatform: InAppWebViewOptions(
                         useShouldInterceptAjaxRequest: true),
@@ -91,8 +93,7 @@ class WebpageState extends State<Webpage> {
     //print("Found validStart at $validStart");
     // TODO: Wait for two semesters to show up to understand how the validity date works
     //String dateStr = timetableStr.substring(validStart, timetableStr.indexOf("-", validStart));
-    int semIndex = Main.semesters.length;
-    Main.semesters.add(Semester(name: "-", validDate: DateTime.now(), lastUpdate: DateTime.now()));
+    Main.semesters.add(FacultySemester(facName: Main.faculty, validDate: DateTime.now(), lastUpdate: DateTime.now()));
 
     // Finding all the classcodes with their names
     var classCodes_names = Main.classcodes;
@@ -143,7 +144,7 @@ class WebpageState extends State<Webpage> {
       List<List<String>> classroomsIds, classrooms;
       List<int> hrs, beginningHr, day;
       lastFound = classCodesBegin;
-      int index = 0, periodIndex, i;
+      int periodIndex, i;
       int continueAfter; // it is the index number that was used to find the subjectId
 
       subjectIds.forEach((subjectId) {
@@ -304,13 +305,12 @@ class WebpageState extends State<Webpage> {
         subjects.add(Subject(hours: hrs, bgnPeriods: beginningHr, classCode: subjectId.key,
             classrooms: classrooms, days: day, departments: classes, teacherCodes: teacherCodes));
 
-        index++;
       });
     } // end for each subject
 
     Main.semesters.elementAt(0).subjects = subjects;
     // TO SEE THE RESULTS ONLY /
-    //Main.semesters.elementAt(0).subjects.forEach((element) {print("${element.classCode} : $element");});
+    Main.semesters.elementAt(0).subjects.forEach((element) {print("${element.classCode} : $element");});
 
     state = 4;
 

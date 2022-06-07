@@ -2,13 +2,16 @@ import 'dart:ui';
 
 import 'package:ders_program_test/language/dictionary.dart';
 import 'package:ders_program_test/others/departments.dart';
-import 'package:ders_program_test/subject.dart';
+import 'package:ders_program_test/others/subject.dart';
 import 'package:flutter/material.dart';
 import '../main.dart';
 import '../widgets/searchwidget.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 
 class SearchPage extends StatefulWidget {
+
+  const SearchPage({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -24,6 +27,7 @@ class SearchPageState extends State<SearchPage> {
   bool onlyInCurrDep = true;
   List<String> deps = [];
   String depToSearch = "-";
+  bool searchByCourseName = true, searchByTeacher = false, searchByClassroom = false;
 
   @protected
   @mustCallSuper
@@ -48,7 +52,7 @@ class SearchPageState extends State<SearchPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(translateEng("Only search in this department")),
+                  Text(translateEng("Only search courses for this department")),
                   DropdownButton<String>(
                     value: depToSearch,
                     items: deps.map<DropdownMenuItem<String>>((String value) {
@@ -64,9 +68,60 @@ class SearchPageState extends State<SearchPage> {
                   )
                 ],
               ),
+              Container(
+                margin: const EdgeInsets.fromLTRB(0, 16, 0, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(translateEng("Search for  "), style: const TextStyle(fontSize: 12)),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(translateEng("course name"), style: const TextStyle(fontSize: 10)),
+                        Checkbox(value: searchByCourseName, onChanged: (newVal) {
+                          setState(() {
+                            if (!searchByClassroom && !searchByTeacher) {
+                              return;
+                            }
+                            searchByCourseName = newVal!;
+                          });
+                        }),
+                      ],
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(translateEng("Teacher"), style: const TextStyle(fontSize: 10)),
+                        Checkbox(value: searchByTeacher, onChanged: (newVal) {
+                          setState(() {
+                            if (!searchByClassroom && !searchByCourseName) {
+                              return;
+                            }
+                            searchByTeacher = newVal!;
+                          });
+                        }),
+                      ],
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(translateEng("course name"), style: const TextStyle(fontSize: 10)),
+                        Checkbox(value: searchByClassroom, onChanged: (newVal) {
+                          setState(() {
+                            if (!searchByCourseName && !searchByTeacher) {
+                              return;
+                            }
+                            searchByClassroom = newVal!;
+                          });
+                        })
+                      ],
+                    ),
+                  ],
+                ),
+              ),
               SearchWidget(
                 text: query,
-                hintText: "Course code, teacher name or classroom",
+                hintText: translateEng("Course code, teacher name or classroom"),
                 onChanged: search,
               ),
               Expanded(
@@ -93,9 +148,22 @@ class SearchPageState extends State<SearchPage> {
 
     return ListTile(
       title: Text(sub.classCode),
+      subtitle: Text(
+        "\n"
+      ),
       onTap: () {
-        String? name = Main.classcodes[sub.classCode];
-        print("subject name is: $name");
+        String? name;
+        if (sub.classCode.contains("(")) {
+          name = Main.classcodes[sub.classCode.substring(0, sub.classCode.indexOf("("))];
+        } else {
+          name = Main.classcodes[sub.classCode];
+        }
+        String? classrooms, teachers, departments;
+        classrooms = sub.classrooms.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+        teachers = sub.teacherCodes.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+        departments = sub.departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+
+        // TODO: Add a small table at the bottom to express the time and date of the course
         showDialog(context: context,
             builder: (context) => AlertDialog(
               title: Text(sub.classCode),
@@ -112,15 +180,15 @@ class SearchPageState extends State<SearchPage> {
                               onTap: null,
                             ),
                             ListTile(
-                              title: Row(children: [Expanded(child: Text(translateEng("Classrooms: ") + sub.classrooms.toString()))]),
+                              title: Row(children: [Expanded(child: Text(translateEng("Classrooms: ") + classrooms!))]),
                               onTap: null,
                             ),
                             ListTile(
-                              title: Row(children: [Expanded(child: Text(translateEng("Teachers: ") + sub.teacherCodes.toString()))]),
+                              title: Row(children: [Expanded(child: Text(translateEng("Teachers: ") + teachers!))]),
                               onTap: null,
                             ),
                             ListTile(
-                              title: Row(children: [Expanded(child: Text(translateEng("Departments: ") + sub.departments.toString()))]),
+                              title: Row(children: [Expanded(child: Text(translateEng("Departments: ") + departments!))]),
                               onTap: null,
                            ),
                           ],
@@ -132,7 +200,30 @@ class SearchPageState extends State<SearchPage> {
               actions: [
                 TextButton(onPressed: () {
                   Navigator.pop(context);
-                }, child: Text(translateEng("OK")))
+                }, child: Text(translateEng("OK"))),
+                TextButton(onPressed: () {
+                  bool doesExist = false;
+                  for (Subject sub_ in Main.favCourses) {
+                    if (sub_.classCode == sub.classCode) {
+                      doesExist = true;
+                    }
+                  }
+
+                  if (!doesExist) {
+                    Main.favCourses.add(sub);
+                  }
+
+                  Fluttertoast.showToast(
+                      msg: translateEng(doesExist ? "The course is already a favourite" : "Added to favourite courses"),
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.blue,
+                      textColor: Colors.white,
+                      fontSize: 12.0
+                  );
+
+                }, child: Text(translateEng("ADD TO FAVOURITES")))
             ],
           ),
           );
@@ -143,11 +234,20 @@ class SearchPageState extends State<SearchPage> {
 
   void search(String query) {
 
-    final subjects = Main.semesters[0].subjects.where((element) {
+    final subjects = Main.semesters[0].subjects.where((subject) {
 
-      ;
+      String? name;
+      if (subject.classCode.contains("(")) {
+        name = Main.classcodes[subject.classCode.substring(0, subject.classCode.indexOf("("))];
+      } else {
+        name = Main.classcodes[subject.classCode];
+      }
 
-      return true;
+      query = query.toLowerCase();
+      name = name!.toLowerCase();
+
+      return name.contains(query);
+
     }).toList();
 
     setState(() {
