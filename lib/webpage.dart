@@ -102,8 +102,9 @@ class WebpageState extends State<Webpage> {
     List<Subject> subjects = [];
 
     int classCodesEnd, classCodesBegin;
-    classCodesEnd = timetableStr.indexOf("ENG10", 0);
-    classCodesBegin = timetableStr.lastIndexOf("data_rows", classCodesEnd) + 9;
+    classCodesEnd = timetableStr.indexOf(
+        '{"id":"picture_url","name":"Fotoğraf"},{"id":"timeoff","type":"object","name":"Zaman Tablosu"},{"id":"contract_weight","type":"float","name":"Öğretmen Sözleşmesi İçin Uzunluk Değeri"}]', 0);
+    classCodesBegin = timetableStr.indexOf("data_rows", classCodesEnd) + 9;
     classCodesEnd = timetableStr.indexOf("data_columns", classCodesBegin);
 
     int lastFound = classCodesBegin;

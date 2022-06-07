@@ -91,7 +91,7 @@ class SearchPageState extends State<SearchPage> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(translateEng("Teacher"), style: const TextStyle(fontSize: 10)),
+                        Text(translateEng("teacher"), style: const TextStyle(fontSize: 10)),
                         Checkbox(value: searchByTeacher, onChanged: (newVal) {
                           setState(() {
                             if (!searchByClassroom && !searchByCourseName) {
@@ -105,7 +105,7 @@ class SearchPageState extends State<SearchPage> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(translateEng("course name"), style: const TextStyle(fontSize: 10)),
+                        Text(translateEng("classroom"), style: const TextStyle(fontSize: 10)),
                         Checkbox(value: searchByClassroom, onChanged: (newVal) {
                           setState(() {
                             if (!searchByCourseName && !searchByTeacher) {
@@ -201,6 +201,30 @@ class SearchPageState extends State<SearchPage> {
                 TextButton(onPressed: () {
                   Navigator.pop(context);
                 }, child: Text(translateEng("OK"))),
+                TextButton(onPressed: () {
+                  bool doesExist = false;
+                  for (Subject sub_ in Main.scheduleCourses) {
+                    if (sub_.classCode == sub.classCode) {
+                      doesExist = true;
+                    }
+                  }
+
+                  if (!doesExist) {
+                    Main.scheduleCourses.add(sub);
+                  }
+
+                  Fluttertoast.showToast(
+                      msg: translateEng(doesExist ? "The course is already in the schedule" : "Added to the current schedule"),
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.blue,
+                      textColor: Colors.white,
+                      fontSize: 12.0
+                  );
+
+                }, child: Text(translateEng("ADD TO SCHEDULE"))),
+
                 TextButton(onPressed: () {
                   bool doesExist = false;
                   for (Subject sub_ in Main.favCourses) {

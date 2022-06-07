@@ -9,7 +9,7 @@ bool isLangEng = Main.language == "English";
 Map<String, String> engToTurk = {
   "Schedule" : "Takvim",
   "Settings" : "Ayarlar",
-  "Links" : "Bağlantılar",
+  "Links" : "Bağlantılar & Duyurular",
   "Tools" : "Aletler",
   "Turkish" : "Türkçe",
   "English" : "İngilizce",
@@ -83,14 +83,12 @@ Map<String, String> engToTurk = {
   "Choose Made-up Plans" : "Hazır Planları Seçin",
   "Search for Courses" : "Kurs Ara",
   "Saved Schedules" : "Kayıtlı Programlar",
-  "Create a Custom Course" : "Özel bir Kurs Oluşturun",
   "Edit the courses on the current schedule" : "Mevcut programdaki kursları düzenleyin",
   "Choose the courses with the sections with specific options, then choose your appropriate schedule" : "Belirli seçeneklere sahip bölümleri olan kursları seçin, ardından uygun programınızı seçin",
   "These plans are provided by the university" : "Bu planlar üniversite tarafından sağlanmaktadır.",
   "Search for courses using its name, classroom number, teacher or department" : "Adını, sınıf numarasını, öğretmenini veya bölümünü kullanarak kursları arayın",
   "You can save schedules and set them back again" : "Programları kaydedebilir ve tekrar ayarlayabilirsiniz",
   "School's Schedules" : "Okulun Programları",
-  "Create a course with custom information" : "Özel bilgilerle bir kurs oluşturun",
   "Update Timeout (hours)" : "Güncelleme Zaman Aşımı (saat)",
   "Theme" : "Tema",
   "Donate me" : "Bana bağış yap",
@@ -110,6 +108,13 @@ Map<String, String> engToTurk = {
   "The course is already a favourite" : "Kurs zaten favori",
   "You have no favourite courses, please add them from Search for Courses page" : "Favori dersiniz yok, lütfen Kurs Ara sayfasından ekleyin",
   "REMOVE" : "KALDIR",
+  "course name" : "kurs adı",
+  "teacher" : "Öğretmen",
+  "classroom" : "Sınıf",
+  "ADD TO SCHEDULE" : "TAKVİME EKLE",
+  "Added to the current schedule" : "Mevcut takvime eklendi",
+  "The course is already in the schedule" : "Kurs zaten takvimde",
+  "" : "",
 };
 
 String translateEng(String eng) {

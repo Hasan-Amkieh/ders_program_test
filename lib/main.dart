@@ -1,6 +1,7 @@
 // NOTE: minimum version of android is 4.4 for the application to run,
 
 import 'dart:async';
+import 'package:ders_program_test/others/departments.dart';
 import 'package:ders_program_test/others/subject.dart';
 import 'package:ders_program_test/pages/favcourses.dart';
 import 'package:ders_program_test/pages/search_page.dart';
@@ -19,13 +20,14 @@ class Main {
   static bool toUpdate = false;
   static bool isDark = false;
   static int hourUpdate = 12; // if the time has passed for these hours since the last update, then make an update
-  static String faculty = "Civil Aviation";
-  static String department = "AVM";
+  static String faculty = "Fine Arts";
+  static String department = "GRT";
   static String language = "English"; // currently, there is only
   // TODO: First check in the settings file, then set this:
   static ThemeMode theme = ThemeMode.light;
 
   static List<Subject> favCourses = [];
+  static List<Subject> scheduleCourses = []; // current schedule courses
 
   // TODO: Extract and store the semesters here:
   static List<FacultySemester> semesters = []; // each semester contains the subjects with their details

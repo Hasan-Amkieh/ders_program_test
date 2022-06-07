@@ -237,9 +237,11 @@ class HomeState extends State<Home> {
     Subject emptySubject = Subject(classCode: "classCode", departments: ["departments"], teacherCodes: [["teacherCodes"]], hours: [1, 2, 3], bgnPeriods: [1,2, 3], days: [1,2 ,3], classrooms: [[]]);
 
     // NOTE: This is how I add courses:
+    /*
     coursesList.add(Positioned(child: TextButton(onPressed: () => showCourseInfo(emptySubject), child: Text("MATH152"), style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.red.shade800))), width: colWidth, height: rowHeight * 2, left: colWidth, top: rowHeight + 2 * (1 - 1)));
     coursesList.add(Positioned(child: TextButton(onPressed: () => showCourseInfo(emptySubject), child: Text("PHYS102"), style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.orange.shade800))), width: colWidth, height: rowHeight,left: colWidth * 2, top: rowHeight * 3 + 2 * (3 - 1)));
     coursesList.add(Positioned(child: TextButton(onPressed: () => showCourseInfo(emptySubject), child: Text("CMPE134"), style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.pink.shade800))), width: colWidth, height: rowHeight,left: colWidth * 3, top: rowHeight * 6 + 2 * (6 - 1)));
+    */
 
     Widget schedulePage = Stack(
         children: [
@@ -268,14 +270,6 @@ class HomeState extends State<Home> {
           title: Text(translateEng('Add/Delete Courses')),
           subtitle: Text(translateEng('Edit the courses on the current schedule')),
           leading: Icon(Icons.edit),
-        ),
-        ListTile(
-          onTap: () {
-            ;
-          },
-          title: Text(translateEng('Create a Custom Course')),
-          subtitle: Text(translateEng('Create a course with custom information')),
-          leading: Icon(Icons.add),
         ),
         ListTile(
           onTap: () {
@@ -528,10 +522,11 @@ class HomeState extends State<Home> {
             });
           },
           destinations: [
+            // TODO: Check, how do I know the size of the icon? is there a way to know? amd apply it to the width of the tools image:
             NavigationDestination(icon: Icon(Icons.date_range_outlined), selectedIcon: Icon(Icons.date_range), label: translateEng('Schedule')),
-            NavigationDestination(icon: Icon(Icons.add_box_outlined), selectedIcon: Icon(Icons.add_box), label: translateEng('Tools')),
+            NavigationDestination(icon: Image.asset("lib/icons/tools_outlines.png", width: 32), selectedIcon: Image.asset("lib/icons/tools_filled.png", width: 32,), label: translateEng('Tools')),
             NavigationDestination(icon: Icon(Icons.settings_outlined), selectedIcon: Icon(Icons.settings), label: translateEng('Settings')),
-            NavigationDestination(icon: Icon(Icons.dataset_linked_outlined), selectedIcon: Icon(Icons.link), label: translateEng('Links')),
+            NavigationDestination(icon: Icon(Icons.dataset_linked_outlined), selectedIcon: Icon(Icons.link), label: translateEng('Links & Announcements')),
             NavigationDestination(icon: Icon(Icons.info_outlined), selectedIcon: Icon(Icons.info), label: translateEng('About')),
           ],
         ),
