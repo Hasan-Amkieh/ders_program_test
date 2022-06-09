@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:ders_program_test/webpage.dart';
 
+import '../main.dart';
+
 List<String> msgs = ["CONNECTING TO THE INTERNET", // state 0
   "CONNECTING TO THE SERVER", // 1
   "RETRIEVING DATA", // 2
@@ -26,6 +28,7 @@ class LoadingUpdateState extends State<LoadingUpdate> {
 
   @override
   void initState() {
+    Main.forceUpdate = false; // Since it is now updating
     checkState();
     super.initState();
   }

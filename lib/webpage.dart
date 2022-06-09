@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:ders_program_test/main.dart';
 import 'package:ders_program_test/others/subject.dart';
 
 import 'others/departments.dart';
-
-final engCoursesUnit = GetStorage("engineering courses");
-final GetStorage classCodes = GetStorage("class codes-Names");
 
 class Webpage extends StatefulWidget {
 

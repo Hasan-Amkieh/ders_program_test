@@ -1,11 +1,9 @@
 import 'package:ders_program_test/language/dictionary.dart';
 import 'package:ders_program_test/others/subject.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'dart:ui';
 import 'package:ders_program_test/others/departments.dart';
 import 'package:restart_app/restart_app.dart';
-import 'package:get_storage/get_storage.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -322,7 +320,6 @@ class HomeState extends State<Home> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(translateEng("Language")),
-            //SizedBox(width: width * 0.1,),
             DropdownButton<String>(
               value: Main.language,
               items: langs.map<DropdownMenuItem<String>>((String value) {
@@ -349,9 +346,31 @@ class HomeState extends State<Home> {
                 return DropdownMenuItem(value: value, child: Text(translateEng(value)));
               }).toList(),
               onChanged: (String? newValue) {
+                if (newValue == Main.faculty) {
+                  return;
+                }
                 setState(() {
-                  Main.faculty = newValue!;
-                  Main.department = faculties[Main.faculty]?.keys.elementAt(0) as String;
+                  showDialog(context: context, builder: (context) {
+                    return AlertDialog(
+                      title: const Text("Restarting the application"),
+                      actions: [
+                        TextButton(onPressed: () {
+                          Main.forceUpdate = true;
+                          Main.faculty = newValue!;
+                          Main.department = faculties[Main.faculty]?.keys.elementAt(0) as String;
+                          Main.save();
+                          Main.restart();
+                        },
+                          child: Text("RESTART"),
+                        ),
+                        TextButton(onPressed: () {
+                          Navigator.pop(context);
+                        },
+                          child: Text("NOT NOW"),
+                        )
+                      ],
+                    );
+                  });
                 });
                 },
             )
@@ -385,8 +404,9 @@ class HomeState extends State<Home> {
             ),
             TextButton(onPressed: () {
               setState(() {
-                // TODO: Save the settings and put the property / force_update : true /
-                Restart.restartApp(); // Because Flutter does not support restarting the whole app
+                Main.forceUpdate = true;
+                Main.save();
+                Main.restart();
               });
             }, child: Text(translateEng("Update now"))),
           ],
@@ -524,9 +544,9 @@ class HomeState extends State<Home> {
           destinations: [
             // TODO: Check, how do I know the size of the icon? is there a way to know? amd apply it to the width of the tools image:
             NavigationDestination(icon: Icon(Icons.date_range_outlined), selectedIcon: Icon(Icons.date_range), label: translateEng('Schedule')),
-            NavigationDestination(icon: Image.asset("lib/icons/tools_outlines.png", width: 32), selectedIcon: Image.asset("lib/icons/tools_filled.png", width: 32,), label: translateEng('Tools')),
+            NavigationDestination(icon: Image.asset("lib/icons/tools_outlines.png", width: 24), selectedIcon: Image.asset("lib/icons/tools_filled.png", width: 24), label: translateEng('Tools')),
             NavigationDestination(icon: Icon(Icons.settings_outlined), selectedIcon: Icon(Icons.settings), label: translateEng('Settings')),
-            NavigationDestination(icon: Icon(Icons.dataset_linked_outlined), selectedIcon: Icon(Icons.link), label: translateEng('Links & Announcements')),
+            NavigationDestination(icon: Icon(Icons.dataset_linked_outlined), selectedIcon: Icon(Icons.link), label: translateEng('Links')),
             NavigationDestination(icon: Icon(Icons.info_outlined), selectedIcon: Icon(Icons.info), label: translateEng('About')),
           ],
         ),

@@ -9,7 +9,7 @@ bool isLangEng = Main.language == "English";
 Map<String, String> engToTurk = {
   "Schedule" : "Takvim",
   "Settings" : "Ayarlar",
-  "Links" : "Bağlantılar & Duyurular",
+  "Links" : "Bağlantılar",
   "Tools" : "Aletler",
   "Turkish" : "Türkçe",
   "English" : "İngilizce",
@@ -114,6 +114,11 @@ Map<String, String> engToTurk = {
   "ADD TO SCHEDULE" : "TAKVİME EKLE",
   "Added to the current schedule" : "Mevcut takvime eklendi",
   "The course is already in the schedule" : "Kurs zaten takvimde",
+  "NOT NOW" : "ŞİMDİ DEĞİL",
+  "RESTART" : "TEKRAR BAŞLAT",
+  "" : "",
+  "" : "",
+  "" : "",
   "" : "",
 };
 

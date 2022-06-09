@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:ders_program_test/language/dictionary.dart';
 import 'package:ders_program_test/others/departments.dart';
 import 'package:ders_program_test/others/subject.dart';
+import 'package:ders_program_test/language/teacherdictionary.dart';
 import 'package:flutter/material.dart';
 import '../main.dart';
 import '../widgets/searchwidget.dart';
@@ -23,10 +24,11 @@ class SearchPage extends StatefulWidget {
 class SearchPageState extends State<SearchPage> {
 
   String query = "";
-  List <Subject> subjects = Main.semesters[0].subjects;
-  bool onlyInCurrDep = true;
+  List<Subject> subjects = Main.semesters[0].subjects;
+  List<Subject> subjectsOfDep = Main.semesters[0].subjects;
   List<String> deps = [];
   String depToSearch = "-";
+  String lastDep = "-";
   bool searchByCourseName = true, searchByTeacher = false, searchByClassroom = false;
 
   @protected
@@ -41,6 +43,22 @@ class SearchPageState extends State<SearchPage> {
 
     double width = (window.physicalSize / window.devicePixelRatio).width, height = (window.physicalSize / window.devicePixelRatio).height;
     print("Putting ${subjects.length} subjects into the page");
+
+    if (depToSearch != "-" && lastDep != depToSearch) {
+      lastDep = depToSearch;
+      subjectsOfDep = Main.semesters[0].subjects.where((element) {
+
+        return element.departments.toString().contains(depToSearch);
+
+      }).toList();
+      search(query); // Because the subjects list are now reset
+    }
+    else if (depToSearch == "-" && lastDep != depToSearch) {
+      lastDep = depToSearch;
+      subjectsOfDep = Main.semesters[0].subjects;
+      search(query); // Because the subjects list are now reset
+    }
+    print("The query: $query");
 
     return Scaffold(
       appBar: AppBar(),
@@ -62,7 +80,6 @@ class SearchPageState extends State<SearchPage> {
                     onChanged: (String? newValue) {
                       setState(() {
                         depToSearch = newValue!;
-                        ;
                       });
                     },
                   )
@@ -146,22 +163,22 @@ class SearchPageState extends State<SearchPage> {
 
     double width = (window.physicalSize / window.devicePixelRatio).width, height = (window.physicalSize / window.devicePixelRatio).height;
 
+    String? name;
+    if (sub.classCode.contains("(")) {
+      name = Main.classcodes[sub.classCode.substring(0, sub.classCode.indexOf("("))];
+    } else {
+      name = Main.classcodes[sub.classCode];
+    }
+    String classrooms = "", teachers = "", departments = "";
+    classrooms = sub.classrooms.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+    departments = sub.departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+
     return ListTile(
       title: Text(sub.classCode),
-      subtitle: Text(
-        "\n"
-      ),
+      subtitle:
+      Text((searchByCourseName ? (name ?? "" + "\n") : "" ) + (searchByTeacher ? (sub.teachersTranslated + "\n") : "" ) + (searchByClassroom ? (classrooms + "\n") : "" ) + "\n"),
       onTap: () {
-        String? name;
-        if (sub.classCode.contains("(")) {
-          name = Main.classcodes[sub.classCode.substring(0, sub.classCode.indexOf("("))];
-        } else {
-          name = Main.classcodes[sub.classCode];
-        }
-        String? classrooms, teachers, departments;
-        classrooms = sub.classrooms.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
-        teachers = sub.teacherCodes.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
-        departments = sub.departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+        teachers = sub.teachersTranslated;
 
         // TODO: Add a small table at the bottom to express the time and date of the course
         showDialog(context: context,
@@ -180,15 +197,15 @@ class SearchPageState extends State<SearchPage> {
                               onTap: null,
                             ),
                             ListTile(
-                              title: Row(children: [Expanded(child: Text(translateEng("Classrooms: ") + classrooms!))]),
+                              title: Row(children: [Expanded(child: Text(translateEng("Classrooms: ") + classrooms))]),
                               onTap: null,
                             ),
                             ListTile(
-                              title: Row(children: [Expanded(child: Text(translateEng("Teachers: ") + teachers!))]),
+                              title: Row(children: [Expanded(child: Text(translateEng("Teachers: ") + teachers))]),
                               onTap: null,
                             ),
                             ListTile(
-                              title: Row(children: [Expanded(child: Text(translateEng("Departments: ") + departments!))]),
+                              title: Row(children: [Expanded(child: Text(translateEng("Departments: ") + departments))]),
                               onTap: null,
                            ),
                           ],
@@ -258,7 +275,7 @@ class SearchPageState extends State<SearchPage> {
 
   void search(String query) {
 
-    final subjects = Main.semesters[0].subjects.where((subject) {
+    final subjects = subjectsOfDep.where((subject) {
 
       String? name;
       if (subject.classCode.contains("(")) {

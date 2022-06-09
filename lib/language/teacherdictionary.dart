@@ -1,6 +1,30 @@
 import 'dart:core';
 
+import '../main.dart';
+
 // NOTE: No list for Arts and sciences because they have full names of teachers
+// NOTE: Law fac. does not even offer any teacher names
+// NOTE: Health Sciences have full names
+// NOTE: Business does not even offer names
+
+String translateTeacher(String teacherCode) {
+
+  switch(Main.faculty) {
+    case "Engineering":
+      return teacherDictEngFac[teacherCode] ?? "";
+    case "Civil Aviation":
+      return teacherDictCivAvFac[teacherCode] ?? "";
+    case "Fine Arts":
+      return teacherDictFineArtsFac[teacherCode] ?? "";
+    case "Arts and Sciences":
+    case "Business":
+    case "Health Sciences":
+    case "Law":
+    default:
+      return "";
+  }
+
+}
 
 Map<String, String>	teacherDictEngFac = {
   "HO" : "Hüseyin OYMAK",
@@ -122,7 +146,6 @@ Map<String, String>	teacherDictEngFac = {
   "DC" : "Davut ÇULHA",
   "GU" : "GÖKÇE ULUS",
 };
-
 
 
 Map<String, String>	teacherDictCivAvFac = {

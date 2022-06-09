@@ -1,4 +1,6 @@
 
+import 'package:ders_program_test/language/teacherdictionary.dart';
+
 class FacultySemester {
 
   List<Subject> subjects = []; // all subject codes taken inside this semester (with the section number)
@@ -20,6 +22,8 @@ class Subject { // represents a class
   final List<int> bgnPeriods;
   final List<int> days;
 
+  late String teachersTranslated = "";
+
   // NOTE: This is not stored inside the files, this is to be done when the subject object is created!
   late final List<String> forDeps; // It has a list of the departments that can take this course
   // e.g. [CMPE, CEAC, CE, EE, General Electives]
@@ -30,13 +34,20 @@ class Subject { // represents a class
     required this.days, required this.classrooms}) {
     // In each separate class, we can have multiple teachers with multiple classrooms
 
-    ;
+    teacherCodes.forEach((list) {
+      list.forEach((element) {
+        teachersTranslated = teachersTranslated + ", ${translateTeacher(element)}";
+      });
+    });
+    if (teachersTranslated.length >= 2) {
+      teachersTranslated = teachersTranslated.substring(2);
+    }
 
   }
 
   @override
   // This function is used to store all the info of the subject into a single string
-  // example: CMPE 1 Reg.,MECE 1 Reg.|[B1007,B2032][1020]|[Sedar Water,Whatever Justdoit][Earth Fire]|2,3|1,5|1,6
+  // example: CMPE 1 Reg.,MECE 1 Reg.|[B1007,B2032][1020]|[Sedar Water,Whatever Justdoit][Earth Fofo]|2,3|1,5|1,6
   // departments|classrooms|teacherCodes|hours|bgnPeriods|days
   String toString() {
 
