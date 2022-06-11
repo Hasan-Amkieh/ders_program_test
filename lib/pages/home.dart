@@ -3,6 +3,7 @@ import 'package:ders_program_test/others/subject.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:ders_program_test/others/departments.dart';
+import 'package:flutter/services.dart';
 import 'package:restart_app/restart_app.dart';
 
 import 'package:url_launcher/url_launcher.dart';
@@ -38,21 +39,31 @@ class HomeState extends State<Home> {
   TextStyle headerTxtStyle = TextStyle(color: Colors.white, fontWeight: FontWeight.bold);
   late double width;
   late double height;
+  Icon icon = Icon(Icons.date_range_outlined);
+
+  @override
+  void initState() {
+
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.blue,
+    ));
+
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    width = (window.physicalSize / window.devicePixelRatio).width;
+    height = (window.physicalSize / window.devicePixelRatio).height;
 
     isLangEng = Main.language == "English";
 
     var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
 
-    width = (window.physicalSize / window.devicePixelRatio).width;
-    height = (window.physicalSize / window.devicePixelRatio).height;
-
     double colWidth = (width) / 7; // 6 days and a col for the clock
     double rowHeight = (height * 1) / 11; // 10 for the lock and one for the empty box // 91 percent because of the horizontal borders
 
-    Color headerColor = Colors.blue.shade700;
+    Color headerColor = Colors.blue;
     Color emptyCellColor = Colors.white;
     Color horizontalBorderColor = Colors.blueGrey.shade200;
     Container emptyCell = Container(decoration: BoxDecoration(color: emptyCellColor, border: Border.symmetric(horizontal: BorderSide(color: horizontalBorderColor, width: 1))), child: SizedBox(width: colWidth, height: rowHeight,));
@@ -256,17 +267,16 @@ class HomeState extends State<Home> {
           ),
         ]);
 
-    // NOTE: This is how you add courses to the schedule:
-    ;
-
-    Widget servicesPage = ListView(
+    Widget servicesPage = Container(
+      padding: EdgeInsets.fromLTRB(0.02 * width, 0.05 * width, 0.02 * width, 0.05 * width),
+      child: ListView(
       children: [
         ListTile(
           onTap: () {
-            ;
+            Navigator.pushNamed(context, "/home/editcourses");
           },
-          title: Text(translateEng('Add/Delete Courses')),
-          subtitle: Text(translateEng('Edit the courses on the current schedule')),
+          title: Text(translateEng('Edit Courses')),
+          subtitle: Text(translateEng('Add and edit the courses on the current schedule')),
           leading: Icon(Icons.edit),
         ),
         ListTile(
@@ -311,7 +321,7 @@ class HomeState extends State<Home> {
           leading: Icon(Icons.edit_calendar),
         ),
       ],
-    );
+    ));
 
     Widget settingsPage = ListView(
       padding: EdgeInsets.all(width * 0.02),
@@ -330,7 +340,7 @@ class HomeState extends State<Home> {
               onChanged: (String? newValue) {
                 setState(() {
                   Main.language = newValue!;
-                  ;
+                  Main.saveSettings();
                 });
               },
             )
@@ -352,7 +362,7 @@ class HomeState extends State<Home> {
                 setState(() {
                   showDialog(context: context, builder: (context) {
                     return AlertDialog(
-                      title: const Text("Restarting the application"),
+                      title: Text(translateEng("Restarting the application")),
                       actions: [
                         TextButton(onPressed: () {
                           Main.forceUpdate = true;
@@ -361,12 +371,12 @@ class HomeState extends State<Home> {
                           Main.save();
                           Main.restart();
                         },
-                          child: Text("RESTART"),
+                          child: Text(translateEng("RESTART")),
                         ),
                         TextButton(onPressed: () {
                           Navigator.pop(context);
                         },
-                          child: Text("NOT NOW"),
+                          child: Text(translateEng("NOT NOW")),
                         )
                       ],
                     );
@@ -390,6 +400,7 @@ class HomeState extends State<Home> {
               onChanged: (String? newValue) {
                 setState(() {
                   Main.department = newValue!;
+                  Main.saveSettings();
                 });
               },
             )
@@ -424,6 +435,7 @@ class HomeState extends State<Home> {
                     setState(() {
                       if (Main.hourUpdate == 12) return;
                       Main.hourUpdate--;
+                      Main.saveSettings();
                     });
                   }),
                 ),
@@ -443,6 +455,7 @@ class HomeState extends State<Home> {
                     setState(() {
                       if (Main.hourUpdate == 24) return;
                       Main.hourUpdate++;
+                      Main.saveSettings();
                     });
                   }),
                 )
@@ -459,11 +472,11 @@ class HomeState extends State<Home> {
               children: [
                 Text(translateEng("Light  ")),
                 Checkbox(value: Main.theme == ThemeMode.light, onChanged: (bool? newVal) {
-                  setState(() {Main.theme = ThemeMode.light;});
+                  setState(() {Main.theme = ThemeMode.light;Main.saveSettings();});
                 }),
                 Text(translateEng("Dark  ")),
                 Checkbox(value: Main.theme == ThemeMode.dark, onChanged: (bool? newVal) {
-                  setState(() {Main.theme = ThemeMode.dark;});
+                  setState(() {Main.theme = ThemeMode.dark;Main.saveSettings();});
                 })
             ],)
           ],
@@ -543,8 +556,8 @@ class HomeState extends State<Home> {
           },
           destinations: [
             // TODO: Check, how do I know the size of the icon? is there a way to know? amd apply it to the width of the tools image:
-            NavigationDestination(icon: Icon(Icons.date_range_outlined), selectedIcon: Icon(Icons.date_range), label: translateEng('Schedule')),
-            NavigationDestination(icon: Image.asset("lib/icons/tools_outlines.png", width: 24), selectedIcon: Image.asset("lib/icons/tools_filled.png", width: 24), label: translateEng('Tools')),
+            NavigationDestination(icon: icon, selectedIcon: Icon(Icons.date_range), label: translateEng('Schedule')),
+            NavigationDestination(icon: Image.asset("lib/icons/tools_outlines.png", width: IconTheme.of(context).size!), selectedIcon: Image.asset("lib/icons/tools_filled.png", width: IconTheme.of(context).size!), label: translateEng('Tools')),
             NavigationDestination(icon: Icon(Icons.settings_outlined), selectedIcon: Icon(Icons.settings), label: translateEng('Settings')),
             NavigationDestination(icon: Icon(Icons.dataset_linked_outlined), selectedIcon: Icon(Icons.link), label: translateEng('Links')),
             NavigationDestination(icon: Icon(Icons.info_outlined), selectedIcon: Icon(Icons.info), label: translateEng('About')),

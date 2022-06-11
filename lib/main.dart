@@ -2,6 +2,8 @@
 
 import 'dart:async';
 import 'package:ders_program_test/others/subject.dart';
+import 'package:ders_program_test/pages/add_courses_page.dart';
+import 'package:ders_program_test/pages/edit_courses_page.dart';
 import 'package:ders_program_test/pages/favcourses.dart';
 import 'package:ders_program_test/pages/search_page.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +15,9 @@ import 'package:storage_repository/implementations/storage_repository.dart';
 import 'package:storage_repository/interfaces/i_storage_repository.dart';
 
 import 'others/AppThemes.dart';
+
+// TODO: These following comments state the things to do in the long term inside the application:
+// Look into the file inside the website "ttviewer.js?...=getTTviewData"
 
 class Main {
 
@@ -41,21 +46,18 @@ class Main {
 
     saveSettings();
 
-    //sleep(Duration(seconds:2));
-
   }
 
   static void saveSettings() async {
 
     await storageUnit!.set("force_update", forceUpdate);
-    await storageUnit!.set("is_dark", isDark);
+    await storageUnit!.set("is_dark", ThemeMode.dark == theme ? ThemeMode.dark : ThemeMode.light);
     await storageUnit!.set("faculty", faculty);
     await storageUnit!.set("department", department);
     await storageUnit!.set("language", language);
     await storageUnit!.set("hour_update", hourUpdate);
-    // await will assure that every info will be written before finishing the function
 
-    print("Settings have been saved successfully $faculty");
+    print("Settings were saved!");
 
   }
 
@@ -64,18 +66,18 @@ class Main {
      // TODO: Reverse it back to false
     forceUpdate = await storageUnit!.get("force_update") ?? false;
     isDark = await storageUnit!.get("is_dark") ?? false;
-    theme = await isDark ? ThemeMode.dark : ThemeMode.light;
+    theme = isDark ? ThemeMode.dark : ThemeMode.light;
     faculty = await storageUnit!.get("faculty") ?? "Fine Arts";
     department = await storageUnit!.get("department") ?? "GRT";
     language = await storageUnit!.get("language") ?? "English";
-    hourUpdate = await storageUnit!.get("hour_update") ?? 12; //
+    hourUpdate = await storageUnit!.get("hour_update") ?? 12;
 
 
   }
 
   static void restart() async {
 
-    print("Result of the restart: ${await Restart.restartApp()}");
+    await Restart.restartApp();
 
   }
 
@@ -85,12 +87,7 @@ Future main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await StorageRepository.initFlutter();
-
-  //Instantiate a basic storage repository
   Main.storageUnit = StorageRepository();
-  //or use a secure version of storage repository
-  //final storageRepository = SecureStorageRepository();
-  //init must be called, preferably right after the instantiation
   await Main.storageUnit!.init();
 
   // TODO: Store this into a function which takes two DateTime objects and returns a bool
@@ -110,24 +107,24 @@ Future main() async {
     }
   }*/
 
-  // TODO: Before, check if we have
   Main.readSettings();
 
-  // just for test purposes, remove it later
+  // TODO: just for test purposes, remove it later
   Main.forceUpdate = true;
 
-  //WidgetsFlutterBinding.ensureInitialized();
   runApp(MaterialApp(
     themeMode: Main.theme,
-    theme: AppThemes.lightTheme,
-    darkTheme: AppThemes.darkTheme,
+    //theme: AppThemes.lightTheme,
+    //darkTheme: AppThemes.darkTheme,
     initialRoute: Main.forceUpdate ? "/webpage" : "/home",
     routes: {
       "/home" : (context) => Home(),
       "/loadingupdate": (context) => LoadingUpdate(),
       "/webpage": (context) => Webpage(),
-      "/home/searchpage": (contetx) => const SearchPage(),
+      "/home/searchcourses": (contetx) => const SearchPage(),
       "/home/favcourses": (context) => FavCourses(),
+      "/home/editcourses": (context) => EditCoursePage(),
+      "/home/editcourses/addcourses": (context) => AddCoursesPage(),
     },
   ));
 

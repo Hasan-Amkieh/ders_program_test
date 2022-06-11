@@ -143,3 +143,11 @@ class Subject { // represents a class
 
 }
 
+class Course extends Subject { // This class is used inside the favourite and schedule courses
+
+  final String note;
+
+  Course(this.note, {required String classCode, required List<String> departments, required List<List<String>> teacherCodes, required List<int> hours, required List<int> bgnPeriods, required List<int> days, required List<List<String>> classrooms}) : super(classCode: classCode, departments: departments, teacherCodes: teacherCodes, hours: hours, bgnPeriods: bgnPeriods, days: days, classrooms: classrooms);
+
+}
+

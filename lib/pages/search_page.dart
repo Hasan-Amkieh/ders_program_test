@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:ders_program_test/language/dictionary.dart';
 import 'package:ders_program_test/others/departments.dart';
 import 'package:ders_program_test/others/subject.dart';
-import 'package:ders_program_test/language/teacherdictionary.dart';
 import 'package:flutter/material.dart';
 import '../main.dart';
 import '../widgets/searchwidget.dart';
@@ -27,15 +26,15 @@ class SearchPageState extends State<SearchPage> {
   List<Subject> subjects = Main.semesters[0].subjects;
   List<Subject> subjectsOfDep = Main.semesters[0].subjects;
   List<String> deps = [];
-  String depToSearch = "-";
-  String lastDep = "-";
+  String depToSearch = translateEng("All");
+  String lastDep = translateEng("All");
   bool searchByCourseName = true, searchByTeacher = false, searchByClassroom = false;
 
   @protected
   @mustCallSuper
   void initState() {
     deps.addAll(faculties[Main.faculty]!.keys);
-    deps.add("-");
+    deps.add(depToSearch);
   }
 
   @override
@@ -44,7 +43,7 @@ class SearchPageState extends State<SearchPage> {
     double width = (window.physicalSize / window.devicePixelRatio).width, height = (window.physicalSize / window.devicePixelRatio).height;
     print("Putting ${subjects.length} subjects into the page");
 
-    if (depToSearch != "-" && lastDep != depToSearch) {
+    if (depToSearch != translateEng("All") && lastDep != depToSearch) {
       lastDep = depToSearch;
       subjectsOfDep = Main.semesters[0].subjects.where((element) {
 
@@ -53,7 +52,7 @@ class SearchPageState extends State<SearchPage> {
       }).toList();
       search(query); // Because the subjects list are now reset
     }
-    else if (depToSearch == "-" && lastDep != depToSearch) {
+    else if (depToSearch == translateEng("All") && lastDep != depToSearch) {
       lastDep = depToSearch;
       subjectsOfDep = Main.semesters[0].subjects;
       search(query); // Because the subjects list are now reset
@@ -176,7 +175,9 @@ class SearchPageState extends State<SearchPage> {
     return ListTile(
       title: Text(sub.classCode),
       subtitle:
-      Text((searchByCourseName ? (name ?? "" + "\n") : "" ) + (searchByTeacher ? (sub.teachersTranslated + "\n") : "" ) + (searchByClassroom ? (classrooms + "\n") : "" ) + "\n"),
+      Text((searchByCourseName ? (name ?? "") : "") +
+          (searchByTeacher ? (sub.teachersTranslated.isEmpty ? "" : sub.teachersTranslated + "\n") : "" ) +
+          (searchByClassroom ? (classrooms.isEmpty ? "" : classrooms + "\n") : "" )),
       onTap: () {
         teachers = sub.teachersTranslated;
 
