@@ -18,25 +18,30 @@ import 'others/AppThemes.dart';
 
 // TODO: These following comments state the things to do in the long term inside the application:
 // Look into the file inside the website "ttviewer.js?...=getTTviewData"
+// Add the medical department using the following page https://www.atilim.edu.tr/en/tip/page/4804/course-schedule
+// Inisde some faculties, there are some special departments, like "Her gun" or "General Electives",
 
 class Main {
 
   static IStorageRepository? storageUnit;
 
+  // NOTE: Default values are inside the function readSettings:
   static bool forceUpdate = false;
   static bool isDark = false;
-  static int hourUpdate = 12; // if the time has passed for these hours since the last update, then make an update
-  static String faculty = "Fine Arts";
-  static String department = "GRT";
-  static String language = "English"; // currently, there is only
-  static ThemeMode theme = ThemeMode.light;
+  static int hourUpdate = -1; // if the time has passed for these hours since the last update, then make an update
+  static String faculty = "";
+  static String department = "";
+  static String language = ""; // currently, there is only
+  static ThemeMode theme = ThemeMode.system;
 
   static List<Subject> favCourses = [];
   static List<Subject> scheduleCourses = []; // current schedule courses
 
+  // NOTE: Used inside add_courses page:
+  static List<Subject> coursesToAdd = [];
+
   // TODO: Extract and store the semesters here:
   static List<FacultySemester> semesters = []; // each semester contains the subjects with their details
-
 
   // TODO: Save them to the settings
   static Map<String,String> classcodes = {}; // classcodes without the secion -> the full name of the class
@@ -67,8 +72,8 @@ class Main {
     forceUpdate = await storageUnit!.get("force_update") ?? false;
     isDark = await storageUnit!.get("is_dark") ?? false;
     theme = isDark ? ThemeMode.dark : ThemeMode.light;
-    faculty = await storageUnit!.get("faculty") ?? "Fine Arts";
-    department = await storageUnit!.get("department") ?? "GRT";
+    faculty = await storageUnit!.get("faculty") ?? "Health Sciences";
+    department = await storageUnit!.get("department") ?? "NURS";
     language = await storageUnit!.get("language") ?? "English";
     hourUpdate = await storageUnit!.get("hour_update") ?? 12;
 

@@ -32,8 +32,6 @@ class AddCoursesPageState extends State<AddCoursesPage> {
   List<Subject> subjects = Main.semesters[0].subjects;
   List<Subject> subjectsOfDep = Main.semesters[0].subjects;
 
-  List<Subject> coursesToAdd = [];
-
   @override
   void initState() {
 
@@ -63,14 +61,6 @@ class AddCoursesPageState extends State<AddCoursesPage> {
     }
 
     return Scaffold(
-      floatingActionButton: Stack(
-        children: [
-          SpeedDial(
-            animatedIcon: AnimatedIcons.menu_arrow,
-            children: buildChildren(),
-          )
-        ],
-      ),
       appBar: AppBar(),
       body: SafeArea(
         child: Container(
@@ -124,14 +114,48 @@ class AddCoursesPageState extends State<AddCoursesPage> {
     } else {
       name = Main.classcodes[subject.classCode];
     }
+    name = name ?? "";
+    bool isInside = false;
+
+    for (Subject sub in Main.scheduleCourses) {
+      if (sub.classCode == subject.classCode) {
+        isInside = true;
+        break;
+      }
+    }
+    if (!isInside) {
+      for (Subject sub in Main.coursesToAdd) {
+        if (sub.classCode == subject.classCode) {
+          isInside = true;
+          break;
+        }
+      }
+    }
+
+    // if (isInside) {
+    //   name  = name + "\n\n" + translateEng("Added to schedule");
+    // }
 
     return ListTile(
       title: Text(subject.classCode),
-      subtitle: Text(name ?? ""),
+      subtitle: RichText(
+        text: TextSpan(
+          style: Theme.of(context).textTheme.caption,
+          children: [
+            TextSpan(
+              text: name
+            ),
+            TextSpan(
+              text: isInside ? "\n\n" + translateEng("Added to schedule") : "",
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.red),
+            ),
+          ]
+        ),
+      ),
       onTap: () {
-        setState(() {coursesToAdd.add(subject);});
+        setState(() {Main.coursesToAdd.add(subject);});
         Fluttertoast.showToast(
-            msg: translateEng("${subject.classCode} to the list, don't forget to confirm"),
+            msg: translateEng(isInside ? "${subject.classCode} " + translateEng("is already in the schedule") : "${subject.classCode} " + translateEng("was added to the schedule")),
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
@@ -141,33 +165,6 @@ class AddCoursesPageState extends State<AddCoursesPage> {
         );
       },
     );
-
-  }
-
-  List<SpeedDialChild> buildChildren() {
-
-    if (coursesToAdd.isEmpty) {
-      return [];
-    }
-
-    List<SpeedDialChild> children = [];
-
-    children.add(SpeedDialChild(
-      child: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () {},
-      ),
-      label: "Confirm",
-    ));
-
-    for (Subject subject in coursesToAdd) {
-      children.add(SpeedDialChild(
-        child: FloatingActionButton(child: Icon(Icons.info_rounded), onPressed: () {}),
-        label: subject.classCode,
-      ));
-    }
-
-    return children;
 
   }
 

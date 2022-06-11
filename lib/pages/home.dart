@@ -281,7 +281,7 @@ class HomeState extends State<Home> {
         ),
         ListTile(
           onTap: () {
-            Navigator.pushNamed(context, "/home/searchpage");
+            Navigator.pushNamed(context, "/home/searchcourses");
           },
           title: Text(translateEng('Search for Courses')),
           subtitle: Text(translateEng('Search for courses using its name, classroom number, teacher or department')),

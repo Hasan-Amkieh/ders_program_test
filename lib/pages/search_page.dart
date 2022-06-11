@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:ders_program_test/language/dictionary.dart';
+import 'package:ders_program_test/language/teacherdictionary.dart';
 import 'package:ders_program_test/others/departments.dart';
 import 'package:ders_program_test/others/subject.dart';
 import 'package:flutter/material.dart';
@@ -176,8 +177,8 @@ class SearchPageState extends State<SearchPage> {
       title: Text(sub.classCode),
       subtitle:
       Text((searchByCourseName ? (name ?? "") : "") +
-          (searchByTeacher ? (sub.teachersTranslated.isEmpty ? "" : sub.teachersTranslated + "\n") : "" ) +
-          (searchByClassroom ? (classrooms.isEmpty ? "" : classrooms + "\n") : "" )),
+          (searchByTeacher ? (sub.teachersTranslated.isEmpty ? "" : ("\n" + sub.teachersTranslated)) : "" ) +
+          (searchByClassroom ? (classrooms.isEmpty ? "" : ("\n" + classrooms)) : "" )),
       onTap: () {
         teachers = sub.teachersTranslated;
 
@@ -278,17 +279,60 @@ class SearchPageState extends State<SearchPage> {
 
     final subjects = subjectsOfDep.where((subject) {
 
-      String? name;
-      if (subject.classCode.contains("(")) {
-        name = Main.classcodes[subject.classCode.substring(0, subject.classCode.indexOf("("))];
-      } else {
-        name = Main.classcodes[subject.classCode];
+      query = query.toLowerCase();
+
+      if (searchByCourseName) {
+        String? name;
+        if (subject.classCode.contains("(")) {
+          name = Main.classcodes[subject.classCode.substring(0, subject.classCode.indexOf("("))];
+        } else {
+          name = Main.classcodes[subject.classCode];
+        }
+
+        name = name!.toLowerCase();
+
+        if (name.contains(query)) {
+          return true;
+        }
       }
 
-      query = query.toLowerCase();
-      name = name!.toLowerCase();
+      bool isFound = false;
+      if (searchByTeacher) {
+        print("Searching for teachers");
+        subject.teacherCodes.forEach((list) {
+          list.forEach((teacherCode) {
+            if (isFound) {
+              return ;
+            }
+            if (translateTeacher(teacherCode).toLowerCase().contains(query)) {
+              isFound = true;
+              return ;
+            }
+          });
+        });
+        if (isFound) {
+          return true;
+        }
+      }
 
-      return name.contains(query);
+      if (searchByClassroom) {
+        subject.classrooms.forEach((list) {
+          list.forEach((classroom) {
+            if (isFound) {
+              return ;
+            }
+            if (classroom.toLowerCase().contains(query)) {
+              isFound = true;
+              return ;
+            }
+          });
+        });
+        if (isFound) {
+          return true;
+        }
+      }
+
+      return false;
 
     }).toList();
 

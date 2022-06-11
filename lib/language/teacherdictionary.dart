@@ -11,17 +11,17 @@ String translateTeacher(String teacherCode) {
 
   switch(Main.faculty) {
     case "Engineering":
-      return teacherDictEngFac[teacherCode] ?? "";
+      return teacherDictEngFac[teacherCode] ?? teacherCode;
     case "Civil Aviation":
-      return teacherDictCivAvFac[teacherCode] ?? "";
+      return teacherDictCivAvFac[teacherCode] ?? teacherCode;
     case "Fine Arts":
-      return teacherDictFineArtsFac[teacherCode] ?? "";
+      return teacherDictFineArtsFac[teacherCode] ?? teacherCode;
     case "Arts and Sciences":
     case "Business":
     case "Health Sciences":
     case "Law":
     default:
-      return "";
+      return teacherCode;
   }
 
 }
