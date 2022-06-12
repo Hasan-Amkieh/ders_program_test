@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../main.dart';
+import '../widgets/timetable_canvas.dart';
 
 class EditCoursePage extends StatefulWidget {
 
@@ -254,6 +255,12 @@ class EditCoursePageState extends State<EditCoursePage> {
                                           title: Row(children: [Expanded(child: Text(translateEng("Departments: ") + departments))]),
                                           onTap: null,
                                         ),
+                                        (subject.days.isNotEmpty && subject.bgnPeriods.isNotEmpty && subject.hours.isNotEmpty) ? ListTile(
+                                          onTap: null,
+                                          title: Container(width: width * 0.5, height: width * 0.5, child: CustomPaint(painter:
+                                          TimetableCanvas(beginningPeriods: subject.bgnPeriods, days: subject.days, hours: subject.hours))),
+
+                                        ) : Container(),
                                       ],
                                     ),
                                   )

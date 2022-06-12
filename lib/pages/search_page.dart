@@ -277,9 +277,10 @@ class SearchPageState extends State<SearchPage> {
 
   void search(String query) {
 
-    final subjects = subjectsOfDep.where((subject) {
+    query = query.toLowerCase();
+    query = convertTurkishToEnglish(query);
 
-      query = query.toLowerCase();
+    final subjects = subjectsOfDep.where((subject) {
 
       if (searchByCourseName) {
         String? name;
@@ -290,7 +291,7 @@ class SearchPageState extends State<SearchPage> {
         }
 
         name = name!.toLowerCase();
-
+        name = convertTurkishToEnglish(name);
         if (name.contains(query)) {
           return true;
         }
@@ -298,13 +299,12 @@ class SearchPageState extends State<SearchPage> {
 
       bool isFound = false;
       if (searchByTeacher) {
-        print("Searching for teachers");
         subject.teacherCodes.forEach((list) {
           list.forEach((teacherCode) {
             if (isFound) {
               return ;
             }
-            if (translateTeacher(teacherCode).toLowerCase().contains(query)) {
+            if (convertTurkishToEnglish(translateTeacher(teacherCode).toLowerCase()).contains(query)) {
               isFound = true;
               return ;
             }
@@ -321,7 +321,7 @@ class SearchPageState extends State<SearchPage> {
             if (isFound) {
               return ;
             }
-            if (classroom.toLowerCase().contains(query)) {
+            if (convertTurkishToEnglish(classroom.toLowerCase()).contains(query)) {
               isFound = true;
               return ;
             }

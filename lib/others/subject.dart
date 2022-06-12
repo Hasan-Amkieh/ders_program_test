@@ -18,9 +18,9 @@ class Subject { // represents a class
   final List<String> departments; // CMPE 1 Reg.
   final List<List<String>> classrooms;
   final List<List<String>> teacherCodes;
-  final List<int> hours;
-  final List<int> bgnPeriods;
-  final List<int> days;
+  late final List<int> hours;
+  late final List<List<int>> bgnPeriods;
+  late final List<List<int>> days;
 
   late String teachersTranslated = "";
 
@@ -30,8 +30,8 @@ class Subject { // represents a class
   // NOTE: There is another department called General Electives
 
   Subject({required this.classCode, required this.departments,
-    required this.teacherCodes, required this.hours, required this.bgnPeriods,
-    required this.days, required this.classrooms}) {
+    required this.teacherCodes, required hours, required List<List<int>> bgnPeriods,
+    required List<List<int>> days, required this.classrooms}) {
     // In each separate class, we can have multiple teachers with multiple classrooms
 
     teacherCodes.forEach((list) {
@@ -42,6 +42,44 @@ class Subject { // represents a class
     if (teachersTranslated.length >= 2) {
       teachersTranslated = teachersTranslated.substring(2);
     }
+
+    for (int i = 0 ; i < days.length ; i++) {
+      if (days[i].isEmpty) {
+        days.removeAt(i);
+      }
+      if (bgnPeriods[i].isEmpty) {
+        bgnPeriods.removeAt(i);
+      }
+    }
+
+    // NOTE: Zeroes should not be accepted and they cause errors inside the app, they have no meaning thus they should be removed
+
+
+    for (int i = 0 ; i < days.length ; i++) {
+      for (int j = 0 ; j < days[i].length ; j++) {
+        if (days[i][j] == 0) {
+          days[i].removeAt(j);
+        }
+      }
+    }
+
+    for (int i = 0 ; i < bgnPeriods.length ; i++) {
+      for (int j = 0 ; j < bgnPeriods[i].length ; j++) {
+        if (bgnPeriods[i][j] == 0) {
+          bgnPeriods[i].removeAt(j);
+        }
+      }
+    }
+
+    this.days = days;
+    this.bgnPeriods = bgnPeriods;
+
+    this.hours = hours.where((element) {
+      if (element == 0) {
+        return false;
+      }
+      return true;
+    }).toList();
 
   }
 
@@ -147,7 +185,7 @@ class Course extends Subject { // This class is used inside the favourite and sc
 
   final String note;
 
-  Course(this.note, {required String classCode, required List<String> departments, required List<List<String>> teacherCodes, required List<int> hours, required List<int> bgnPeriods, required List<int> days, required List<List<String>> classrooms}) : super(classCode: classCode, departments: departments, teacherCodes: teacherCodes, hours: hours, bgnPeriods: bgnPeriods, days: days, classrooms: classrooms);
+  Course(this.note, {required String classCode, required List<String> departments, required List<List<String>> teacherCodes, required List<int> hours, required List<List<int>> bgnPeriods, required List<List<int>> days, required List<List<String>> classrooms}) : super(classCode: classCode, departments: departments, teacherCodes: teacherCodes, hours: hours, bgnPeriods: bgnPeriods, days: days, classrooms: classrooms);
 
 }
 

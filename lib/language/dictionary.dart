@@ -133,3 +133,16 @@ String translateEng(String eng) {
 
 }
 
+String convertTurkishToEnglish(String toConvert) {
+
+  toConvert = toConvert.replaceAll(RegExp(r'ü'), 'u');
+  toConvert = toConvert.replaceAll(RegExp(r'ö'), 'o');
+  toConvert = toConvert.replaceAll(RegExp(r'ı'), 'i');
+  toConvert = toConvert.replaceAll(RegExp(r'ş'), 's');
+  toConvert = toConvert.replaceAll(RegExp(r'ç'), 'c');
+  toConvert = toConvert.replaceAll(RegExp(r'ğ'), 'g');
+
+  return toConvert;
+
+}
+

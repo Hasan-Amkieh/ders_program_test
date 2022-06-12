@@ -139,7 +139,8 @@ class WebpageState extends State<Webpage> {
       List<String> classIds, classes;
       List<List<String>> teacherCodesIds, teacherCodes;
       List<List<String>> classroomsIds, classrooms;
-      List<int> hrs, beginningHr, day;
+      List<int> hrs;
+      List<List<int>> beginningHr, day;
       lastFound = classCodesBegin;
       int periodIndex, i;
       int continueAfter; // it is the index number that was used to find the subjectId
@@ -231,22 +232,30 @@ class WebpageState extends State<Webpage> {
 
         // lessons:
         int searchStart = timetableStr.indexOf("lessonid"), searchStart_;
+        int listIndex = 0;
+        if (subjectId.key.contains("NURS102")) {
+          print("Triggered!");
+        }
         lessonIds.forEach((lessonId) {
 
           searchStart_ = searchStart;
+          day.add([]);
+          beginningHr.add([]);
           while (true) { // because we might have the same lessonid with different days and begging hours
             lastFound = timetableStr!.indexOf('lessonid":"$lessonId"', searchStart_) + 'lessonid":"$lessonId"'.length;
             searchStart_ = lastFound;
             str = timetableStr.substring(timetableStr.indexOf('period":"', lastFound) + 9, timetableStr.indexOf('","days"', lastFound));
             if (str.isNotEmpty) {
-              beginningHr.add(int.parse(str));
+              beginningHr[listIndex].add(int.parse(str));
             }
             lastFound = timetableStr.indexOf('days":"', lastFound) + 7;
-            day.add(timetableStr.substring(lastFound, timetableStr.indexOf('"', lastFound)).indexOf('1') + 1);
+            day[listIndex].add(timetableStr.substring(lastFound, timetableStr.indexOf('"', lastFound)).indexOf('1') + 1);
             if (!timetableStr.contains('lessonid":"$lessonId"', searchStart_)) {
               break;
             }
+
           }
+          listIndex++;
 
         });
 

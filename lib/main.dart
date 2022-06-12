@@ -15,23 +15,29 @@ import 'package:storage_repository/implementations/storage_repository.dart';
 import 'package:storage_repository/interfaces/i_storage_repository.dart';
 
 import 'others/AppThemes.dart';
+import 'others/departments.dart';
 
 // TODO: These following comments state the things to do in the long term inside the application:
-// Look into the file inside the website "ttviewer.js?...=getTTviewData"
-// Add the medical department using the following page https://www.atilim.edu.tr/en/tip/page/4804/course-schedule
-// Inisde some faculties, there are some special departments, like "Her gun" or "General Electives",
+
+// - Look into the file inside the website "ttviewer.js?...=getTTviewData"
+
+// - Add the medical department using the following page https://www.atilim.edu.tr/en/tip/page/4804/course-schedule
+
+// - Inisde some faculties, there are some special departments, like "Her gun" or "General Electives",
+
+// -
 
 class Main {
 
   static IStorageRepository? storageUnit;
 
   // NOTE: Default values are inside the function readSettings:
-  static bool forceUpdate = false;
+  static bool forceUpdate = true;
   static bool isDark = false;
-  static int hourUpdate = -1; // if the time has passed for these hours since the last update, then make an update
-  static String faculty = "";
-  static String department = "";
-  static String language = ""; // currently, there is only
+  static int hourUpdate = 12; // if the time has passed for these hours since the last update, then make an update
+  static String faculty = "Health Sciences";
+  static String department = "NURS";
+  static String language = "English"; // currently, there is only
   static ThemeMode theme = ThemeMode.system;
 
   static List<Subject> favCourses = [];
@@ -77,6 +83,11 @@ class Main {
     language = await storageUnit!.get("language") ?? "English";
     hourUpdate = await storageUnit!.get("hour_update") ?? 12;
 
+    // Sometimes the faculty is saved but the department is not:
+    if (!(faculties[Main.faculty]?.keys as Iterable<String>).contains(department)) {
+      department = faculties[Main.faculty]?.keys.elementAt(0) as String;
+    }
+
 
   }
 
@@ -112,7 +123,13 @@ Future main() async {
     }
   }*/
 
-  Main.readSettings();
+  //Main.readSettings();
+
+  //TODO: For test purposes:
+  Main.faculty = "Health Sciences";
+  Main.department = faculties[Main.faculty]?.keys.elementAt(0) as String;
+
+  print("FAC: ${Main.faculty} dep: ${Main.department}");
 
   // TODO: just for test purposes, remove it later
   Main.forceUpdate = true;

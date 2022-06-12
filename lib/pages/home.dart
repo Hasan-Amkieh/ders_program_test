@@ -243,7 +243,7 @@ class HomeState extends State<Home> {
       ),
     );
 
-    Subject emptySubject = Subject(classCode: "classCode", departments: ["departments"], teacherCodes: [["teacherCodes"]], hours: [1, 2, 3], bgnPeriods: [1,2, 3], days: [1,2 ,3], classrooms: [[]]);
+    //Subject emptySubject = Subject(classCode: "classCode", departments: ["departments"], teacherCodes: [["teacherCodes"]], hours: [1, 2, 3], bgnPeriods: [1,2, 3], days: [1,2 ,3], classrooms: [[]]);
 
     // NOTE: This is how I add courses:
     /*
