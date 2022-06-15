@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'package:ders_program_test/others/subject.dart';
 import 'package:ders_program_test/pages/add_courses_page.dart';
+import 'package:ders_program_test/pages/create_custom_course_page.dart';
 import 'package:ders_program_test/pages/edit_courses_page.dart';
 import 'package:ders_program_test/pages/favcourses.dart';
 import 'package:ders_program_test/pages/search_page.dart';
@@ -14,18 +15,40 @@ import 'package:restart_app/restart_app.dart';
 import 'package:storage_repository/implementations/storage_repository.dart';
 import 'package:storage_repository/interfaces/i_storage_repository.dart';
 
-import 'others/AppThemes.dart';
+import 'others/appthemes.dart';
 import 'others/departments.dart';
 
-// TODO: These following comments state the things to do in the long term inside the application:
+/*
 
-// - Look into the file inside the website "ttviewer.js?...=getTTviewData"
+TODO: These following comments state the things to do in the long term inside the application:
 
-// - Add the medical department using the following page https://www.atilim.edu.tr/en/tip/page/4804/course-schedule
+- Look into the file inside the website "ttviewer.js?...=getTTviewData"
 
-// - Inisde some faculties, there are some special departments, like "Her gun" or "General Electives",
+- Add the medical department using the following page https://www.atilim.edu.tr/en/tip/page/4804/course-schedule
 
-// -
+- Inisde some faculties, there are some special departments, like "Her gun" or "General Electives",
+make them scanned and addaed into the DropList to be chosen, excluse all the deps of "CMPE 1 Reg." and etc...
+
+- Inside the Add Custom Course page, add two choises of CheckBoxes, both basically say "Link Teachers/Classrooms", if it is checked,
+then the teacher/classroom text fields are moved from the periods into the bottom of the Course Code field.
+
+- Fix the following error that occurs when we exit the create custom course page:
+/////
+The following assertion was thrown during a scheduler callback:
+There are multiple heroes that share the same tag within a subtree.
+
+Within each subtree for which heroes are to be animated (i.e. a PageRoute subtree), each Hero must have a unique non-null tag.
+In this case, multiple heroes had the following tag: <default FloatingActionButton tag>
+Here is the subtree for one of the offending heroes: Hero
+  tag: <default FloatingActionButton tag>
+  state: _HeroState#1e714
+/////
+
+- I am getting "Settings were saved everytime I press the FAB inside the "Create custom course" page, why? solve it...
+
+*/
+
+
 
 class Main {
 
@@ -41,7 +64,9 @@ class Main {
   static ThemeMode theme = ThemeMode.system;
 
   static List<Subject> favCourses = [];
-  static List<Subject> scheduleCourses = []; // current schedule courses
+  static Schedule currentSchedule = Schedule(changes: [], scheduleCourses: []);
+  static int currentScheduleIndex = 0;
+  static List<Schedule> schedules = [];
 
   // NOTE: Used inside add_courses page:
   static List<Subject> coursesToAdd = [];
@@ -106,6 +131,8 @@ Future main() async {
   Main.storageUnit = StorageRepository();
   await Main.storageUnit!.init();
 
+  Main.schedules.add(Main.currentSchedule);
+
   // TODO: Store this into a function which takes two DateTime objects and returns a bool
   /*Map<String, int> rawTime = engCoursesUnit.read("Time") ?? {};
   if (rawTime.isEmpty) {
@@ -129,8 +156,6 @@ Future main() async {
   Main.faculty = "Health Sciences";
   Main.department = faculties[Main.faculty]?.keys.elementAt(0) as String;
 
-  print("FAC: ${Main.faculty} dep: ${Main.department}");
-
   // TODO: just for test purposes, remove it later
   Main.forceUpdate = true;
 
@@ -147,6 +172,7 @@ Future main() async {
       "/home/favcourses": (context) => FavCourses(),
       "/home/editcourses": (context) => EditCoursePage(),
       "/home/editcourses/addcourses": (context) => AddCoursesPage(),
+      "/home/editcourses/createcustomcourse": (context) => CustomCoursePage(),
     },
   ));
 

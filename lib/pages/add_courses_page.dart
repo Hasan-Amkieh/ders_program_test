@@ -117,8 +117,8 @@ class AddCoursesPageState extends State<AddCoursesPage> {
     name = name ?? "";
     bool isInside = false;
 
-    for (Subject sub in Main.scheduleCourses) {
-      if (sub.classCode == subject.classCode) {
+    for (Course crs in Main.currentSchedule.scheduleCourses) {
+      if (crs.subject.classCode == subject.classCode) {
         isInside = true;
         break;
       }

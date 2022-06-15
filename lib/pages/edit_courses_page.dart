@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:ders_program_test/language/dictionary.dart';
@@ -62,7 +63,11 @@ class EditCoursePageState extends State<EditCoursePage> {
         Navigator.pushNamed(context, "/home/editcourses/addcourses").then((value) {
           if (Main.coursesToAdd.isNotEmpty) {
             setState(() {
-              Main.scheduleCourses.addAll(Main.coursesToAdd);
+              List<Course> crses = [];
+              Main.coursesToAdd.forEach((sub) {
+                crses.add(Course(subject: sub, note: ""));
+              });
+              Main.currentSchedule.scheduleCourses.addAll(crses);
               Main.coursesToAdd.clear();
             });
           }
@@ -74,6 +79,22 @@ class EditCoursePageState extends State<EditCoursePage> {
             padding: EdgeInsets.all(width * 0.05),
             child: Column(
               children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.zero,
+                      margin: EdgeInsets.fromLTRB(0, height * 0.02, 0, 0),
+                      decoration: const BoxDecoration(
+                        border: Border(bottom: BorderSide(color: Colors.blue, width: 2.0)),
+                      ),
+                      child: TextButton.icon(icon: Icon(Icons.create_outlined), label: Text(translateEng("custom course")), onPressed: () {
+                        Navigator.pushNamed(context, "/home/editcourses/createcustomcourse").then((value) { setState(() {}); });
+                      }),
+                    )
+                  ],
+                ),
+                SizedBox(height: height * 0.03),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -191,11 +212,11 @@ class EditCoursePageState extends State<EditCoursePage> {
         break;
     }
 
-    if (Main.scheduleCourses.isEmpty) {
+    if (Main.currentSchedule.scheduleCourses.isEmpty) {
       return Text(translateEng("You have no courses in the current schedule"));
     } else {
-      return ListView.builder(itemCount: Main.scheduleCourses.length, itemBuilder: (context, index) {
-        Subject subject = Main.scheduleCourses.elementAt(index);
+      return ListView.builder(itemCount: Main.currentSchedule.scheduleCourses.length, itemBuilder: (context, index) {
+        Subject subject = Main.currentSchedule.scheduleCourses.elementAt(index).subject;
         return AnimatedContainer(
           margin: EdgeInsets.symmetric(vertical: 0.01 * width),
           duration: duration,
@@ -213,15 +234,53 @@ class EditCoursePageState extends State<EditCoursePage> {
                 if (mode == 0) { // view
 
                   String? name;
-                  if (subject.classCode.contains("(")) {
-                    name = Main.classcodes[subject.classCode.substring(0, subject.classCode.indexOf("("))];
+                  if (subject.customName.isEmpty) {
+                    if (subject.classCode.contains("(")) {
+                      name = Main.classcodes[subject.classCode.substring(0, subject.classCode.indexOf("("))];
+                    } else {
+                      name = Main.classcodes[subject.classCode];
+                    }
                   } else {
-                    name = Main.classcodes[subject.classCode];
+                    name = subject.customName;
                   }
+                  name = name ?? "";
                   String classrooms = "", teachers = "", departments = "";
-                  classrooms = subject.classrooms.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+
+                  List<List<String>> classroomsList = subject.classrooms;//, teachersList = ;
+
+                  /*List<Point<int>> toRemove = [];
+                  for(int i = 0 ; i < classroomsList.length ; i++) {
+                    for (int j = 0 ; j < classroomsList[i].length ; j++) {
+                      // Search for classroomsList[i][j] /
+                      for (int k = 0 ; k < classroomsList.length ; k++) {
+                        for (int l = 0 ; l < classroomsList[k].length ; l++) {
+                          if (classroomsList[i][j] == classroomsList[k][l]) {
+                            toRemove.add(Point(i, j));
+                          }
+                        }
+                      }
+
+                    }
+                  }
+
+                  ;*/
+
+                  classrooms = classroomsList.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
                   departments = subject.departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
-                  teachers = subject.teachersTranslated;
+                  if (subject.teachersTranslated.isEmpty) {
+                    teachers = subject.teacherCodes.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+                  } else {
+                    teachers = subject.teachersTranslated;
+                  }
+
+                  List<String> list = classrooms.split(",").toList();
+                  list = deleteRepitions(list);
+                  classrooms = list.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+
+                  list = teachers.split(",").toList();
+                  list = deleteRepitions(list);
+                  teachers = list.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+
 
                   showDialog(context: context, builder: (context) {
 
@@ -276,8 +335,8 @@ class EditCoursePageState extends State<EditCoursePage> {
 
                 } else { // remove
                   setState(() {
-                    String str = Main.scheduleCourses.elementAt(index).classCode;
-                    Main.scheduleCourses.removeAt(index);
+                    String str = Main.currentSchedule.scheduleCourses.elementAt(index).subject.classCode;
+                    Main.currentSchedule.scheduleCourses.removeAt(index);
                     Fluttertoast.showToast(
                         msg: "$str " + translateEng("was removed"),
                         toastLength: Toast.LENGTH_SHORT,

@@ -9,6 +9,8 @@ import '../main.dart';
 import '../widgets/searchwidget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../widgets/timetable_canvas.dart';
+
 
 class SearchPage extends StatefulWidget {
 
@@ -182,6 +184,14 @@ class SearchPageState extends State<SearchPage> {
       onTap: () {
         teachers = sub.teachersTranslated;
 
+        List<String> list = classrooms.split(",").toList();
+        list = deleteRepitions(list);
+        classrooms = list.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+
+        list = teachers.split(",").toList();
+        list = deleteRepitions(list);
+        teachers = list.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+
         // TODO: Add a small table at the bottom to express the time and date of the course
         showDialog(context: context,
             builder: (context) => AlertDialog(
@@ -209,7 +219,12 @@ class SearchPageState extends State<SearchPage> {
                             ListTile(
                               title: Row(children: [Expanded(child: Text(translateEng("Departments: ") + departments))]),
                               onTap: null,
-                           ),
+                           ), (sub.days.isNotEmpty && sub.bgnPeriods.isNotEmpty && sub.hours.isNotEmpty) ? ListTile(
+                              onTap: null,
+                              title: Container(width: width * 0.5, height: width * 0.5, child: CustomPaint(painter:
+                              TimetableCanvas(beginningPeriods: sub.bgnPeriods, days: sub.days, hours: sub.hours))),
+
+                            ) : Container(),
                           ],
                         ),
                       )
@@ -222,14 +237,14 @@ class SearchPageState extends State<SearchPage> {
                 }, child: Text(translateEng("OK"))),
                 TextButton(onPressed: () {
                   bool doesExist = false;
-                  for (Subject sub_ in Main.scheduleCourses) {
-                    if (sub_.classCode == sub.classCode) {
+                  for (Course sub_ in Main.currentSchedule.scheduleCourses) {
+                    if (sub_.subject.classCode == sub.classCode) {
                       doesExist = true;
                     }
                   }
 
                   if (!doesExist) {
-                    Main.scheduleCourses.add(sub);
+                    Main.currentSchedule.scheduleCourses.add(Course(note: "", subject: sub));
                   }
 
                   Fluttertoast.showToast(

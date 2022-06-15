@@ -203,8 +203,7 @@ class HomeState extends State<Home> {
       ),
     ];
 
-    // TODO:
-    // NOTE: This is the AlertDialog that is used for the showing the course info: 
+    // TODO: Complete this with the PeriodData class:
     var showCourseInfo = (Subject subject) => showDialog(context: context,
         builder: (context) => AlertDialog(
           title: Text("MATH151(1)"),
@@ -243,14 +242,29 @@ class HomeState extends State<Home> {
       ),
     );
 
-    //Subject emptySubject = Subject(classCode: "classCode", departments: ["departments"], teacherCodes: [["teacherCodes"]], hours: [1, 2, 3], bgnPeriods: [1,2, 3], days: [1,2 ,3], classrooms: [[]]);
+    Main.currentSchedule.scheduleCourses.forEach((course) { // TODO: Careful for Collisions:
 
-    // NOTE: This is how I add courses:
-    /*
-    coursesList.add(Positioned(child: TextButton(onPressed: () => showCourseInfo(emptySubject), child: Text("MATH152"), style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.red.shade800))), width: colWidth, height: rowHeight * 2, left: colWidth, top: rowHeight + 2 * (1 - 1)));
-    coursesList.add(Positioned(child: TextButton(onPressed: () => showCourseInfo(emptySubject), child: Text("PHYS102"), style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.orange.shade800))), width: colWidth, height: rowHeight,left: colWidth * 2, top: rowHeight * 3 + 2 * (3 - 1)));
-    coursesList.add(Positioned(child: TextButton(onPressed: () => showCourseInfo(emptySubject), child: Text("CMPE134"), style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.pink.shade800))), width: colWidth, height: rowHeight,left: colWidth * 3, top: rowHeight * 6 + 2 * (6 - 1)));
-    */
+      for (int i = 0 ; i < course.subject.hours.length ; i++) {
+
+        for (int j = 0 ; j < course.subject.days[i].length ; j++) {
+
+          coursesList.add(
+            Positioned(child: TextButton(
+                onPressed: () => showCourseInfo(course.subject), // TODO: Make it pass a class called "PeriodData" / which holds only the info of the current period!
+                child: Text(course.subject.classCode),
+                style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.red.shade800))),
+              width: colWidth,
+              height: rowHeight * course.subject.hours[i],
+              left: colWidth * course.subject.days[i][j],
+              top: rowHeight * course.subject.bgnPeriods[i][j] + 2 * (course.subject.bgnPeriods[i][j] - 1),
+            ),
+          );
+
+        }
+
+      }
+
+    });
 
     Widget schedulePage = Stack(
         children: [
@@ -431,13 +445,15 @@ class HomeState extends State<Home> {
                 SizedBox(
                   width: 0.08 * width,
                   height: 0.08 * height,
-                  child: FloatingActionButton(child: const Icon(Icons.remove),onPressed: () {
-                    setState(() {
-                      if (Main.hourUpdate == 12) return;
-                      Main.hourUpdate--;
-                      Main.saveSettings();
-                    });
-                  }),
+                  child: Container(
+                    child: FloatingActionButton(child: const Icon(Icons.remove),onPressed: () {
+                      setState(() {
+                        if (Main.hourUpdate == 12) return;
+                        Main.hourUpdate--;
+                        Main.saveSettings();
+                      });
+                    }),
+                  ),
                 ),
                 SizedBox(
                   width: width * 0.03,
@@ -460,7 +476,7 @@ class HomeState extends State<Home> {
                   }),
                 )
               ],
-            )
+            ),
           ],
         ),
         Row(

@@ -8,6 +8,7 @@ import 'package:ders_program_test/main.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../others/subject.dart';
+import '../widgets/timetable_canvas.dart';
 
 class FavCourses extends StatefulWidget {
 
@@ -45,6 +46,15 @@ class FavCoursesState extends State<FavCourses> {
                   classrooms = Main.favCourses[count].classrooms.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
                   teachers = Main.favCourses[count].teachersTranslated;
                   departments = Main.favCourses[count].departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+
+                  List<String> list = classrooms.split(",").toList();
+                  list = deleteRepitions(list);
+                  classrooms = list.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+
+                  list = teachers.split(",").toList();
+                  list = deleteRepitions(list);
+                  teachers = list.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+
                   showDialog(context: context, builder: (context) => AlertDialog(
                     title: Text(Main.favCourses[count].classCode),
                     content: Builder(
@@ -71,6 +81,12 @@ class FavCoursesState extends State<FavCourses> {
                                     title: Row(children: [Expanded(child: Text(translateEng("Departments: ") + departments!))]),
                                     onTap: null,
                                   ),
+                                  (Main.favCourses[count].days.isNotEmpty && Main.favCourses[count].bgnPeriods.isNotEmpty && Main.favCourses[count].hours.isNotEmpty) ? ListTile(
+                                    onTap: null,
+                                    title: Container(width: width * 0.5, height: width * 0.5, child: CustomPaint(painter:
+                                    TimetableCanvas(beginningPeriods: Main.favCourses[count].bgnPeriods, days: Main.favCourses[count].days, hours: Main.favCourses[count].hours))),
+
+                                  ) : Container(),
                                 ],
                               ),
                             ),
@@ -86,14 +102,14 @@ class FavCoursesState extends State<FavCourses> {
                       TextButton(onPressed: () {
                         Subject sub = Main.favCourses.elementAt(count);
                         bool doesExist = false;
-                        for (Subject sub_ in Main.scheduleCourses) {
-                          if (sub_.classCode == sub.classCode) {
+                        for (Course sub_ in Main.currentSchedule.scheduleCourses) {
+                          if (sub_.subject.classCode == sub.classCode) {
                             doesExist = true;
                           }
                         }
 
                         if (!doesExist) {
-                          Main.scheduleCourses.add(sub);
+                          Main.currentSchedule.scheduleCourses.add(Course(subject: sub, note: ""));
                         }
 
                         Fluttertoast.showToast(

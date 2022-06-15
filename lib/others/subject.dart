@@ -14,13 +14,13 @@ class FacultySemester {
 
 class Subject { // represents a class
 
-  final String classCode; // PHYS102(1) // Use this Main.classcodes to get the full name
-  final List<String> departments; // CMPE 1 Reg.
-  final List<List<String>> classrooms;
-  final List<List<String>> teacherCodes;
-  late final List<int> hours;
-  late final List<List<int>> bgnPeriods;
-  late final List<List<int>> days;
+  String classCode; // PHYS102(1) // Use this Main.classcodes to get the full name
+  List<String> departments; // CMPE 1 Reg.
+  List<List<String>> classrooms;
+  List<List<String>> teacherCodes;
+  List<int> hours = [];
+  List<List<int>> bgnPeriods = [];
+  List<List<int>> days = [];
 
   late String teachersTranslated = "";
 
@@ -29,9 +29,12 @@ class Subject { // represents a class
   // e.g. [CMPE, CEAC, CE, EE, General Electives]
   // NOTE: There is another department called General Electives
 
+  // Only used for custom courses
+  String customName; // if it is empty, then it is not a custom class, and vice versa
+
   Subject({required this.classCode, required this.departments,
     required this.teacherCodes, required hours, required List<List<int>> bgnPeriods,
-    required List<List<int>> days, required this.classrooms}) {
+    required List<List<int>> days, required this.classrooms, this.customName = ""}) {
     // In each separate class, we can have multiple teachers with multiple classrooms
 
     teacherCodes.forEach((list) {
@@ -79,7 +82,7 @@ class Subject { // represents a class
         return false;
       }
       return true;
-    }).toList();
+    }).toList() as List<int>;
 
   }
 
@@ -181,11 +184,36 @@ class Subject { // represents a class
 
 }
 
-class Course extends Subject { // This class is used inside the favourite and schedule courses
+// TODO: Use this class
 
-  final String note;
+class Course { // This class is used inside the favourite and schedule courses, it indirectly inherits the class Subject
 
-  Course(this.note, {required String classCode, required List<String> departments, required List<List<String>> teacherCodes, required List<int> hours, required List<List<int>> bgnPeriods, required List<List<int>> days, required List<List<String>> classrooms}) : super(classCode: classCode, departments: departments, teacherCodes: teacherCodes, hours: hours, bgnPeriods: bgnPeriods, days: days, classrooms: classrooms);
+  Subject subject;
+  String note;
+
+  Course({required this.note, required this.subject});
 
 }
+
+class Notification {
+
+  Subject subjectChanged;
+  String typeOfChange; // classroom / teacher / time&date
+  String oldDate;
+  String newData;
+
+  Notification({required this.subjectChanged, required this.typeOfChange, required this.oldDate, required this.newData, });
+
+}
+
+class Schedule {
+
+  List<Notification> changes;
+  List<Course> scheduleCourses;
+
+  Schedule({required this.changes, required this.scheduleCourses});
+
+}
+
+
 

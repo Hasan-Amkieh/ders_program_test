@@ -4,6 +4,8 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
+import '../language/dictionary.dart';
+
 class TimetableCanvas extends CustomPainter {
 
   List<List<int>> beginningPeriods;
@@ -62,30 +64,30 @@ class TimetableCanvas extends CustomPainter {
     // days:
     final style = TextStyle(fontSize: 10, color: Colors.blueGrey);
     TextPainter textPainter = TextPainter(
-        text: TextSpan(text: "Mo", style: style),
+        text: TextSpan(text: translateEng("Mo"), style: style),
         textAlign: TextAlign.justify,
         textDirection: TextDirection.ltr
     )
       ..layout(maxWidth: size.width - 12.0 - 12.0);
     textPainter.paint(canvas, Offset(colWidth * 1.25, rowHeight * 0.25));
 
-    textPainter.text = TextSpan(text: "Tu", style: style);
+    textPainter.text = TextSpan(text: translateEng("Tu"), style: style);
     textPainter.layout(maxWidth: size.width - 12.0 - 12.0);
     textPainter.paint(canvas, Offset(colWidth * 2.25, rowHeight * 0.25));
 
-    textPainter.text = TextSpan(text: "We", style: style);
+    textPainter.text = TextSpan(text: translateEng("We"), style: style);
     textPainter.layout(maxWidth: size.width - 12.0 - 12.0);
     textPainter.paint(canvas, Offset(colWidth * 3.25, rowHeight * 0.25));
 
-    textPainter.text = TextSpan(text: "Th", style: style);
+    textPainter.text = TextSpan(text: translateEng("Th"), style: style);
     textPainter.layout(maxWidth: size.width - 12.0 - 12.0);
     textPainter.paint(canvas, Offset(colWidth * 4.25, rowHeight * 0.25));
 
-    textPainter.text = TextSpan(text: "Fr", style: style);
+    textPainter.text = TextSpan(text: translateEng("Fr"), style: style);
     textPainter.layout(maxWidth: size.width - 12.0 - 12.0);
     textPainter.paint(canvas, Offset(colWidth * 5.25 + 3, rowHeight * 0.25));
 
-    textPainter.text = TextSpan(text: "Sa", style: style);
+    textPainter.text = TextSpan(text: translateEng("Sa"), style: style);
     textPainter.layout(maxWidth: size.width - 12.0 - 12.0);
     textPainter.paint(canvas, Offset(colWidth * 6.25 + 4, rowHeight * 0.25));
 

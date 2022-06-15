@@ -118,8 +118,13 @@ Map<String, String> engToTurk = {
   "RESTART" : "TEKRAR BAŞLAT",
   "Restarting the application" : "Programı yeniden başlatma",
   "was removed" : "kardırıldı",
-  "" : "",
-  "" : "",
+  "Mo" : "Pz",
+  "Tu" : "Sa",
+  "We" : "Ça",
+  "Th" : "Pe",
+  "Fr" : "Cu",
+  "Sa" : "Cm",
+  "custom course" : "özel kurs ",
 };
 
 String translateEng(String eng) {
@@ -143,6 +148,29 @@ String convertTurkishToEnglish(String toConvert) {
   toConvert = toConvert.replaceAll(RegExp(r'ğ'), 'g');
 
   return toConvert;
+
+}
+
+List<String> deleteRepitions(List<String> list) {
+
+
+  for (int i = 0 ; i < list.length ; i++) {
+    if (i >= list.length) {
+      break;
+    }
+    for (int j = i + 1 ; j < list.length ; j++) {
+      if (j >= list.length) {
+        break;
+      }
+      if (list[j].trim() == list[i].trim()) {
+        list.removeAt(j);
+        j--; // decrease j bcs we just removed an element from the list
+      }
+    }
+
+  }
+
+  return list;
 
 }
 
