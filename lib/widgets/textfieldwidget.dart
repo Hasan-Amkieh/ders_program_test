@@ -25,6 +25,13 @@ class TextFieldWidgetState extends State<TextFieldWidget> {
   final controller = TextEditingController();
 
   @override
+  void initState() {
+    controller.text = widget.text;
+    print("Setting the controller text to ${widget.text}");
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
 
     final styleActive = TextStyle(color: Colors.black);

@@ -2,9 +2,11 @@
 import 'dart:ui';
 
 import 'package:ders_program_test/language/dictionary.dart';
+import 'package:ders_program_test/others/appthemes.dart';
 import 'package:ders_program_test/others/subject.dart';
 import 'package:ders_program_test/widgets/textfieldwidget.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../main.dart';
 import '../widgets/timetable_canvas.dart';
@@ -13,7 +15,8 @@ class CustomCoursePage extends StatefulWidget {
 
   Subject subject = Subject(classCode: "", departments: <String>[], teacherCodes: <List<String>>[[]], hours: <int>[], bgnPeriods: <List<int>>[], days: <List<int>>[], classrooms: <List<String>>[[]]);
   List<bool> areTilesOpen = [true];
-  List<bool> showTeacherField = [false], showClassroomField = [false];
+  List<bool> showTeacherField = [false], showClassroomField = [false]; // by Periods
+  List<bool> editingTeacher = [], editingClassroom = []; // by teachers inside that period
   List<List<String>> periodData = [["", ""]]; // Each list inside will have 2 strings, teacher names and classrooms accordingly
   List<String> days = ["Monday"], bgnHour = ["9:30"];
   List<int> hours = [1];
@@ -46,8 +49,6 @@ class CustomCoursePage extends StatefulWidget {
 }
 
 class CustomCoursePageState extends State<CustomCoursePage> {
-
-  static const headerStyle = TextStyle(fontWeight: FontWeight.bold, fontSize: 14);
 
   @override
   Widget build(BuildContext context) {
@@ -160,11 +161,31 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                                 widget.subject.bgnPeriods = listBgnHrs;
                                 widget.subject.hours.addAll(widget.hours);
                                 widget.subject.departments.add(widget.dep);
+                                // Check if the course code is already used or not:
+                                bool isUsed = false;
+                                String str = widget.subject.classCode.toLowerCase();
+                                Main.currentSchedule.scheduleCourses.forEach((sub) {
+                                  if (str == sub.subject.classCode.toLowerCase()) {
+                                    isUsed = true;
+                                    return ;
+                                  }
+                                });
+                                if (isUsed) {
+                                  Fluttertoast.showToast(
+                                      msg: translateEng("The course code ") + "${widget.subject.classCode} " + translateEng("is already used"),
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.blue,
+                                      textColor: Colors.white,
+                                      fontSize: 12.0
+                                  );
+                                  return;
+                                }
 
                                 // For test:
                                 //print("days: ${widget.subject.days} / bgnHours: ${widget.subject.bgnPeriods} / hours: ${widget.subject.hours}");
 
-                                ;
                                 Main.currentSchedule.scheduleCourses.add(Course(note: "", subject: widget.subject));
                                 Navigator.pop(context);
                               }
@@ -273,71 +294,30 @@ class CustomCoursePageState extends State<CustomCoursePage> {
         children: [
           Row(
             children: [
-              Text(translateEng("Teachers"), style: headerStyle),
+              Text(translateEng("Teachers"), style: AppThemes.headerStyle),
             ],
           ),
           Wrap(
               alignment: WrapAlignment.center,
               crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                Text(widget.subject.teacherCodes[i].toString().replaceAll(RegExp("[\\[.*?\\]]"), "")),
-                Visibility(
-                  visible: widget.showTeacherField[i],
-                  child: SizedBox(
-                    width: width * 0.4,
-                    child: TextFieldWidget(text: widget.periodData[i][0], onChanged: (str) { widget.periodData[i][0] = str; }, hintText: ""),
-                  ),
-                ),
-                TextButton.icon(icon: Icon(widget.showTeacherField[i] ? Icons.check : Icons.add), label: const Text(""), onPressed: () {
-                  setState(() {
-                    if (widget.showTeacherField[i]) { // confirm
-                      widget.subject.teacherCodes[i].add(widget.periodData[i][0]); // 0 for teachers
-                      widget.periodData[i][0] = "";
-                    } else { // Add
-                      ;
-                    }
-                    widget.showTeacherField[i] = !widget.showTeacherField[i];
-                  });
-                }),
-              ]
+              children: buildList(widget.subject.teacherCodes[i].toString().replaceAll(RegExp("[\\[.*?\\]]"), ""), i, width, true),
           ),
 
           // Classtooms:
           Row(
             children: [
-              Text(translateEng("Classrooms"), style: headerStyle),
+              Text(translateEng("Classrooms"), style: AppThemes.headerStyle),
             ],
           ),
           Wrap(
               alignment: WrapAlignment.center,
               crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                Text(widget.subject.classrooms[i].toString().replaceAll(RegExp("[\\[.*?\\]]"), "")),
-                Visibility(
-                  visible: widget.showClassroomField[i],
-                  child: SizedBox(
-                    width: width * 0.4,
-                    child: TextFieldWidget(text: widget.periodData[i][1], onChanged: (str) { widget.periodData[i][1] = str; }, hintText: ""),
-                  ),
-                ),
-                TextButton.icon(icon: Icon(widget.showClassroomField[i] ? Icons.check : Icons.add), label: const Text(""), onPressed: () {
-                  setState(() {
-                    if (widget.showClassroomField[i]) { // confirm
-                      print("Adding the teacher name to the subject");
-                      widget.subject.classrooms[i].add(widget.periodData[i][1]); // 1 for classrooms
-                      widget.periodData[i][1] = "";
-                    } else { // Add
-                      ;
-                    }
-                    widget.showClassroomField[i] = !widget.showClassroomField[i];
-                  });
-                }),
-              ]
+              children: buildList(widget.subject.classrooms[i].toString().replaceAll(RegExp("[\\[.*?\\]]"), ""), i, width, false),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(translateEng("Day"), style: headerStyle),
+              Text(translateEng("Day"), style: AppThemes.headerStyle),
               DropdownButton<String>(
                 value: widget.days[i],
                 onChanged: (newValue) {
@@ -358,7 +338,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(translateEng("Beginning Hour"), style: headerStyle),
+              Text(translateEng("Beginning Hour"), style: AppThemes.headerStyle),
               DropdownButton<String>(
                   value: widget.bgnHour[i],
                   onChanged: (newValue) {
@@ -386,7 +366,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(translateEng("Class Length (hours)"), style: headerStyle),
+              Text(translateEng("Class Length (hours)"), style: AppThemes.headerStyle),
               Row(
                 children: [
                   SizedBox(
@@ -472,6 +452,129 @@ class CustomCoursePageState extends State<CustomCoursePage> {
         children: tiles,
       ),
     );
+
+  }
+
+  List<Widget> buildList(String teachers, int periodIndex, double width, bool isForTeacher) {
+
+    List<Widget> bts = [];
+    List<String> teachersList = teachers.split(',');
+    teachersList = teachersList.where((element)  {
+      return element.isNotEmpty;
+    }).toList();
+
+    String teacher;
+    for (int teacherIndex = 0 ; teacherIndex < teachersList.length ; teacherIndex++) {
+      teacher = teachersList[teacherIndex];
+
+      //print("Index is $teacherIndex");
+      bts.add(Visibility(
+        visible: isForTeacher ? !widget.editingTeacher[teacherIndex] : !widget.editingClassroom[teacherIndex],
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 0.01 * width),
+          child: TextButton(
+              style: ButtonStyle(
+                padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 0.01 * width, horizontal: 0.02 * width)),
+                backgroundColor: MaterialStateProperty.all(Colors.blue.shade400),
+                overlayColor: MaterialStateProperty.all(const Color.fromRGBO(255, 255, 255, 0.2)),
+              ),
+              child: Text(teacher, style: const TextStyle(color: Colors.black)),
+              onPressed: () {
+                if (isForTeacher ? widget.showTeacherField[periodIndex] : widget.showClassroomField[periodIndex]) {
+                  return;
+                }
+                setState(() {
+                  if (isForTeacher) {
+                    widget.editingTeacher[teacherIndex] = true;
+                    widget.showTeacherField[periodIndex] = true;
+                  } else {
+                    widget.editingClassroom[teacherIndex] = true;
+                    widget.showClassroomField[periodIndex] = true;
+                  }
+                  widget.periodData[periodIndex][isForTeacher ? 0 : 1] = teacher;
+                });
+              }),
+        ),
+      ));
+    }
+
+    // Determine if it is adding or editing:
+    int teacherInd;
+    bool isEditing = false;
+    teacherInd = 0;
+    for (teacherInd = 0 ; teacherInd < (isForTeacher ? widget.editingTeacher.length : widget.editingClassroom.length) ; teacherInd++) {
+      if (isForTeacher ? widget.editingTeacher[teacherInd] : widget.editingClassroom[teacherInd]) {
+        isEditing = true;
+        break;
+      }
+    }
+    //print("Editing mode $isEditing with index $teacherInd");
+
+    bts.addAll([
+      Visibility(
+        visible: isForTeacher ? widget.showTeacherField[periodIndex] : widget.showClassroomField[periodIndex],
+        child: SizedBox(
+          width: width * 0.4,
+          child: TextFieldWidget(
+              text: isEditing ? (isForTeacher ? widget.subject.teacherCodes[periodIndex][teacherInd] : widget.subject.classrooms[periodIndex][teacherInd])
+                  : widget.periodData[periodIndex][isForTeacher ? 0 : 1],
+              onChanged: (str) { widget.periodData[periodIndex][isForTeacher ? 0 : 1] = str; }
+              , hintText: ""),
+        ),
+      ),
+      TextButton.icon(icon: Icon((isForTeacher ? widget.showTeacherField[periodIndex] : widget.showClassroomField[periodIndex]) ?
+        Icons.check : Icons.add), label: const Text(""), onPressed: () {
+        setState(() {
+          if (isEditing) { // Editing:
+
+            if (isForTeacher) {
+              widget.editingTeacher[teacherInd] = false;
+              widget.showTeacherField[periodIndex] = false;
+            } else {
+              widget.editingClassroom[teacherInd] = false;
+              widget.showClassroomField[periodIndex] = false;
+            }
+
+            if (widget.periodData[periodIndex][isForTeacher ? 0 : 1].isNotEmpty) { // 0 for teachers and 1 for classrooms
+              if (isForTeacher) {
+                widget.subject.teacherCodes[periodIndex][teacherInd] = widget.periodData[periodIndex][isForTeacher ? 0 : 1];
+              } else {
+                widget.subject.classrooms[periodIndex][teacherInd] = widget.periodData[periodIndex][isForTeacher ? 0 : 1];
+              }
+              widget.periodData[periodIndex][isForTeacher ? 0 : 1] = "";
+            } else {
+              if (isForTeacher) {
+                widget.subject.teacherCodes[periodIndex].removeAt(teacherInd);
+                widget.editingTeacher.removeAt(teacherInd);
+              } else {
+                widget.subject.classrooms[periodIndex].removeAt(teacherInd);
+                widget.editingClassroom.removeAt(teacherInd);
+              }
+            }
+
+          } else { // Adding:
+
+            if (isForTeacher ? widget.showTeacherField[periodIndex] : widget.showClassroomField[periodIndex]) { // confirm
+              if (widget.periodData[periodIndex][isForTeacher ? 0 : 1].isNotEmpty) {
+                isForTeacher ?
+                  (widget.subject.teacherCodes[periodIndex].add(widget.periodData[periodIndex][isForTeacher ? 0 : 1]))
+                    :
+                  (widget.subject.classrooms[periodIndex].add(widget.periodData[periodIndex][isForTeacher ? 0 : 1])); // 0 for teachers
+                widget.periodData[periodIndex][isForTeacher ? 0 : 1] = "";
+                isForTeacher ?
+                  widget.editingTeacher.add(false)
+                    :
+                  widget.editingClassroom.add(false);
+              }
+            }
+            isForTeacher ?  widget.showTeacherField[periodIndex] = !widget.showTeacherField[periodIndex]
+                : widget.showClassroomField[periodIndex] = !widget.showClassroomField[periodIndex];
+          }
+        });
+      }),
+    ]);
+
+    return bts;
 
   }
 

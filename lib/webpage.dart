@@ -233,9 +233,6 @@ class WebpageState extends State<Webpage> {
         // lessons:
         int searchStart = timetableStr.indexOf("lessonid"), searchStart_;
         int listIndex = 0;
-        if (subjectId.key.contains("NURS102")) {
-          print("Triggered!");
-        }
         lessonIds.forEach((lessonId) {
 
           searchStart_ = searchStart;

@@ -44,8 +44,6 @@ Here is the subtree for one of the offending heroes: Hero
   state: _HeroState#1e714
 /////
 
-- I am getting "Settings were saved everytime I press the FAB inside the "Create custom course" page, why? solve it...
-
 */
 
 

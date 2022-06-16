@@ -86,6 +86,12 @@ class Subject { // represents a class
 
   }
 
+  bool isEqual(Subject subjectToComp) {
+
+    return classCode == subjectToComp.classCode;
+
+  }
+
   @override
   // This function is used to store all the info of the subject into a single string
   // example: CMPE 1 Reg.,MECE 1 Reg.|[B1007,B2032][1020]|[Sedar Water,Whatever Justdoit][Earth Fofo]|2,3|1,5|1,6
@@ -215,5 +221,18 @@ class Schedule {
 
 }
 
+class CollisionData {
 
+  List<Subject> subjects; // We did this, bcs we could have multiple collisions
+  List<int> i;
+  List<int> j;
+  List<bool> isDrawn = [];
+
+  CollisionData({required this.subjects, required this.i, required this.j}) {
+    for (int i = 0 ; i < subjects.length ; i++) {
+      isDrawn.add(false);
+    }
+  }
+
+}
 

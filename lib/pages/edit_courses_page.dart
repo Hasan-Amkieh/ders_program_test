@@ -246,24 +246,7 @@ class EditCoursePageState extends State<EditCoursePage> {
                   name = name ?? "";
                   String classrooms = "", teachers = "", departments = "";
 
-                  List<List<String>> classroomsList = subject.classrooms;//, teachersList = ;
-
-                  /*List<Point<int>> toRemove = [];
-                  for(int i = 0 ; i < classroomsList.length ; i++) {
-                    for (int j = 0 ; j < classroomsList[i].length ; j++) {
-                      // Search for classroomsList[i][j] /
-                      for (int k = 0 ; k < classroomsList.length ; k++) {
-                        for (int l = 0 ; l < classroomsList[k].length ; l++) {
-                          if (classroomsList[i][j] == classroomsList[k][l]) {
-                            toRemove.add(Point(i, j));
-                          }
-                        }
-                      }
-
-                    }
-                  }
-
-                  ;*/
+                  List<List<String>> classroomsList = subject.classrooms;
 
                   classrooms = classroomsList.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
                   departments = subject.departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
