@@ -44,7 +44,7 @@ class FavCoursesState extends State<FavCourses> {
                   }
                   String? classrooms, teachers, departments;
                   classrooms = Main.favCourses[count].classrooms.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
-                  teachers = Main.favCourses[count].teachersTranslated;
+                  teachers = Main.favCourses[count].getTranslatedTeachers();
                   departments = Main.favCourses[count].departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
 
                   List<String> list = classrooms.split(",").toList();

@@ -138,6 +138,56 @@ String translateEng(String eng) {
 
 }
 
+String dayToString(int day) {
+
+  switch(day) {
+    case 1:
+      return "Monday";
+    case 2:
+      return "Tuesday";
+    case 3:
+      return "Wednesday";
+    case 4:
+      return "Thursday";
+    case 5:
+      return "Friday";
+    case 6:
+      return "Saturday";
+  }
+
+  return "";
+
+}
+
+String bgnPeriodToString(int bgnPeriod) {
+
+  switch(bgnPeriod) {
+    case 1:
+      return "9:30";
+    case 2:
+      return "10:30";
+    case 3:
+      return "11:30";
+    case 4:
+      return "12:30";
+    case 5:
+      return "13:30";
+    case 6:
+      return "14:30";
+    case 7:
+      return "15:30";
+    case 8:
+      return "16:30";
+    case 9:
+      return "17:30";
+    case 10:
+      return "18:30";
+  }
+
+  return "";
+
+}
+
 String convertTurkishToEnglish(String toConvert) {
 
   toConvert = toConvert.replaceAll(RegExp(r'ü'), 'u');

@@ -217,6 +217,7 @@ class EditCoursePageState extends State<EditCoursePage> {
     } else {
       return ListView.builder(itemCount: Main.currentSchedule.scheduleCourses.length, itemBuilder: (context, index) {
         Subject subject = Main.currentSchedule.scheduleCourses.elementAt(index).subject;
+        print("Building the subject of teachers ${subject.teacherCodes}");
         return AnimatedContainer(
           margin: EdgeInsets.symmetric(vertical: 0.01 * width),
           duration: duration,
@@ -250,10 +251,10 @@ class EditCoursePageState extends State<EditCoursePage> {
 
                   classrooms = classroomsList.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
                   departments = subject.departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
-                  if (subject.teachersTranslated.isEmpty) {
+                  if (subject.getTranslatedTeachers().isEmpty) {
                     teachers = subject.teacherCodes.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
                   } else {
-                    teachers = subject.teachersTranslated;
+                    teachers = subject.getTranslatedTeachers();
                   }
 
                   List<String> list = classrooms.split(",").toList();
@@ -315,6 +316,18 @@ class EditCoursePageState extends State<EditCoursePage> {
                   });
 
                 } else if (mode == 1) { // edit
+
+                  Main.courseToEdit = subject;
+                  Main.isEditingCourse = true;
+                  Navigator.pushNamed(context, "/home/editcourses/editcourseinfo").then((value) {
+
+                    setState(() {
+                      Main.isEditingCourse = false;
+                      Main.currentSchedule.scheduleCourses[index].subject = Main.courseToEdit!;
+                      print("Finished editing, saving the course with teachers: ${Main.currentSchedule.scheduleCourses[index].subject.teacherCodes}");
+                    });
+
+                  });
 
                 } else { // remove
                   setState(() {

@@ -179,10 +179,10 @@ class SearchPageState extends State<SearchPage> {
       title: Text(sub.classCode),
       subtitle:
       Text((searchByCourseName ? (name ?? "") : "") +
-          (searchByTeacher ? (sub.teachersTranslated.isEmpty ? "" : ("\n" + sub.teachersTranslated)) : "" ) +
+          (searchByTeacher ? (sub.getTranslatedTeachers().isEmpty ? "" : ("\n" + sub.getTranslatedTeachers())) : "" ) +
           (searchByClassroom ? (classrooms.isEmpty ? "" : ("\n" + classrooms)) : "" )),
       onTap: () {
-        teachers = sub.teachersTranslated;
+        teachers = sub.getTranslatedTeachers();
 
         List<String> list = classrooms.split(",").toList();
         list = deleteRepitions(list);

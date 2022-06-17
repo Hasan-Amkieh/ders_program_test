@@ -69,6 +69,16 @@ class Main {
   // NOTE: Used inside add_courses page:
   static List<Subject> coursesToAdd = [];
 
+  static bool isEditingCourse = false; // usde to edit the course info
+  static Subject? courseToEdit; // It is used to edit the course info
+  static Subject emptySubject = Subject(classCode: "",
+      departments: <String>[],
+      teacherCodes: <List<String>>[[]],
+      hours: <int>[],
+      bgnPeriods: <List<int>>[],
+      days: <List<int>>[],
+      classrooms: <List<String>>[[]]);
+
   // TODO: Extract and store the semesters here:
   static List<FacultySemester> semesters = []; // each semester contains the subjects with their details
 
@@ -171,6 +181,7 @@ Future main() async {
       "/home/editcourses": (context) => EditCoursePage(),
       "/home/editcourses/addcourses": (context) => AddCoursesPage(),
       "/home/editcourses/createcustomcourse": (context) => CustomCoursePage(),
+      "/home/editcourses/editcourseinfo": (context) { CustomCoursePage page = CustomCoursePage(); page.subject = Main.courseToEdit ?? Main.emptySubject; return page; },
     },
   ));
 

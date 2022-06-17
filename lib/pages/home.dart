@@ -24,10 +24,11 @@ class HomeState extends State<Home> {
 
   int pageIndex = 0;
 
-  TextStyle headerTxtStyle = TextStyle(color: Colors.white, fontWeight: FontWeight.bold);
+  TextStyle headerTxtStyle = const TextStyle(color: Colors.white, fontWeight: FontWeight.bold);
   late double width;
   late double height;
-  Icon icon = Icon(Icons.date_range_outlined);
+  Icon icon = const Icon(Icons.date_range_outlined);
+  static const navigationBarColor = Color.fromRGBO(80, 114, 150, 1.0);
 
   List<CollisionData> collisions = [];
 
@@ -36,6 +37,7 @@ class HomeState extends State<Home> {
 
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.blue,
+      systemNavigationBarColor: navigationBarColor,
     ));
 
   }
@@ -245,7 +247,7 @@ class HomeState extends State<Home> {
 
       Main.currentSchedule.scheduleCourses.forEach((course) {
       colorIndex++;
-      for (int i = 0; i < course.subject.hours.length; i++) {
+      for (int i = 0; i < course.subject.days.length; i++) {
         for (int j = 0; j < course.subject.days[i].length; j++) {
           bool isCol = false;
           int atIndex = 0,
@@ -521,15 +523,27 @@ class HomeState extends State<Home> {
                   SizedBox(
                     width: 0.08 * width,
                     height: 0.08 * width,
-                    child: CounterButton(
-                      isIncrement: false,
-                      onPressed: () {
-                        setState(() {
-                          if (Main.hourUpdate == 12) return;
-                          Main.hourUpdate--;
-                          Main.saveSettings();
-                        });
-                      },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            offset: const Offset(0, 4),
+                            color: Colors.pink.withOpacity(0.3),
+                            blurRadius: 8.0,
+                            spreadRadius: 0.0,
+                          ),
+                        ],
+                      ),
+                      child: CounterButton(
+                        isIncrement: false,
+                        onPressed: () {
+                          setState(() {
+                            if (Main.hourUpdate == 12) return;
+                            Main.hourUpdate--;
+                            Main.saveSettings();
+                          });
+                        },
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -544,15 +558,27 @@ class HomeState extends State<Home> {
                   SizedBox(
                     width: 0.08 * width,
                     height: 0.08 * width,
-                    child: CounterButton(
-                      isIncrement: true,
-                      onPressed: () {
-                        setState(() {
-                          if (Main.hourUpdate == 24) return;
-                          Main.hourUpdate++;
-                          Main.saveSettings();
-                        });
-                      },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            offset: const Offset(0, 4),
+                            color: Colors.pink.withOpacity(0.3),
+                            blurRadius: 8.0,
+                            spreadRadius: 0.0,
+                          ),
+                        ],
+                      ),
+                      child: CounterButton(
+                        isIncrement: true,
+                        onPressed: () {
+                          setState(() {
+                            if (Main.hourUpdate == 24) return;
+                            Main.hourUpdate++;
+                            Main.saveSettings();
+                          });
+                        },
+                      ),
                     ),
                   )
                 ],
@@ -650,10 +676,10 @@ class HomeState extends State<Home> {
       ),
       bottomNavigationBar: NavigationBarTheme(
         data: const NavigationBarThemeData(
-            indicatorColor: Colors.teal
+            indicatorColor: Color.fromRGBO(80, 154, 167, 0.8),
         ),
         child: NavigationBar(
-          backgroundColor: Colors.teal,
+          backgroundColor: navigationBarColor,
           animationDuration: const Duration(seconds: 1),
           height: isPortrait ? height * 0.08 : width * 0.08,
           labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
@@ -695,10 +721,10 @@ class HomeState extends State<Home> {
 
     classrooms = classroomsList.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
     departments = subject.departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
-    if (subject.teachersTranslated.isEmpty) {
+    if (subject.getTranslatedTeachers().isEmpty) {
       teachers = subject.teacherCodes.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
     } else {
-      teachers = subject.teachersTranslated;
+      teachers = subject.getTranslatedTeachers();
     }
 
     List<String> list = classrooms.split(",").toList();
@@ -795,9 +821,10 @@ class HomeState extends State<Home> {
 
           Main.currentSchedule.scheduleCourses.forEach((courseToComp) {
 
-            for (int i_ = 0 ; i_ < course.subject.days.length ; i_++) {
-              for (int j_ = 0 ; j_ < course.subject.days[i_].length ; j_++) {
-                if (courseToComp.subject.days[i_][j_] == day) {
+            for (int i_ = 0 ; i_ < courseToComp.subject.days.length ; i_++) {
+              for (int j_ = 0 ; j_ < courseToComp.subject.days[i_].length ; j_++) {
+                print("Doing indices: $i_ and $j_");
+                if (courseToComp.subject.days[i_][j_] == day) { /////// TODO:
                   print("Same day with ${courseToComp.subject.bgnPeriods[i_][j_]}");
                   if (!courseToComp.subject.isEqual(course.subject) && courseToComp.subject.bgnPeriods[i_][j_] >= bgnHour && courseToComp.subject.bgnPeriods[i_][j_] < (bgnHour + hours)) {
                     // Check if it was not already added before:

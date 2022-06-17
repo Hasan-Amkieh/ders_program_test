@@ -22,7 +22,7 @@ class Subject { // represents a class
   List<List<int>> bgnPeriods = [];
   List<List<int>> days = [];
 
-  late String teachersTranslated = "";
+  late String _teachersTranslated = ""; // Access it using the getter
 
   // NOTE: This is not stored inside the files, this is to be done when the subject object is created!
   late final List<String> forDeps; // It has a list of the departments that can take this course
@@ -37,14 +37,7 @@ class Subject { // represents a class
     required List<List<int>> days, required this.classrooms, this.customName = ""}) {
     // In each separate class, we can have multiple teachers with multiple classrooms
 
-    teacherCodes.forEach((list) {
-      list.forEach((element) {
-        teachersTranslated = teachersTranslated + ", ${translateTeacher(element)}";
-      });
-    });
-    if (teachersTranslated.length >= 2) {
-      teachersTranslated = teachersTranslated.substring(2);
-    }
+    translateTeachers();
 
     for (int i = 0 ; i < days.length ; i++) {
       if (days[i].isEmpty) {
@@ -85,6 +78,21 @@ class Subject { // represents a class
     }).toList() as List<int>;
 
   }
+
+  void translateTeachers() {
+
+    teacherCodes.forEach((list) {
+      list.forEach((element) {
+        _teachersTranslated = _teachersTranslated + ", ${translateTeacher(element)}";
+      });
+    });
+    if (_teachersTranslated.length >= 2) {
+      _teachersTranslated = _teachersTranslated.substring(2);
+    }
+
+  }
+
+  String getTranslatedTeachers() => _teachersTranslated;
 
   bool isEqual(Subject subjectToComp) {
 
