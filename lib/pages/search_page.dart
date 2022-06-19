@@ -4,6 +4,7 @@ import 'package:ders_program_test/language/dictionary.dart';
 import 'package:ders_program_test/language/teacherdictionary.dart';
 import 'package:ders_program_test/others/departments.dart';
 import 'package:ders_program_test/others/subject.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../main.dart';
 import '../widgets/searchwidget.dart';
@@ -192,32 +193,48 @@ class SearchPageState extends State<SearchPage> {
         list = deleteRepitions(list);
         teachers = list.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
 
+        teachers.trim();
+        classrooms.trim();
+        departments.trim();
+
         // TODO: Add a small table at the bottom to express the time and date of the course
         showDialog(context: context,
             builder: (context) => AlertDialog(
               title: Text(sub.classCode),
               content: Builder(
                 builder: (context) {
-                  return Container(
+                  return SizedBox(
                       height: height * 0.4,
                       child: Scrollbar( // Just to make the scrollbar viewable
                         thumbVisibility: true,
                         child: ListView(
                           children: [
                             ListTile(
-                              title: Row(children: [Expanded(child: Text(translateEng("Name: ") + name!))]),
+                              title: Row(children: [Expanded(child: Text(name!))]),
                               onTap: null,
                             ),
                             ListTile(
-                              title: Row(children: [Expanded(child: Text(translateEng("Classrooms: ") + classrooms))]),
+                              title: Row(
+                                  children: [
+                                    classrooms.isNotEmpty ? const Icon(CupertinoIcons.placemark_fill) : Container(height: 0),
+                                    Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(classrooms))),
+                                  ]),
                               onTap: null,
                             ),
                             ListTile(
-                              title: Row(children: [Expanded(child: Text(translateEng("Teachers: ") + teachers))]),
+                              title: Row(
+                                  children: [
+                                    teachers.isNotEmpty ? const Icon(CupertinoIcons.group_solid) : Container(height: 0),
+                                    Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(teachers))),
+                                  ]),
                               onTap: null,
                             ),
                             ListTile(
-                              title: Row(children: [Expanded(child: Text(translateEng("Departments: ") + departments))]),
+                              title: Row(
+                                  children: [
+                                    departments.isNotEmpty ? const Icon(CupertinoIcons.building_2_fill) : Container(height: 0),
+                                    Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(departments))),
+                                  ]),
                               onTap: null,
                            ), (sub.days.isNotEmpty && sub.bgnPeriods.isNotEmpty && sub.hours.isNotEmpty) ? ListTile(
                               onTap: null,

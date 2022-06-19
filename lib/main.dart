@@ -32,18 +32,6 @@ make them scanned and addaed into the DropList to be chosen, excluse all the dep
 - Inside the Add Custom Course page, add two choises of CheckBoxes, both basically say "Link Teachers/Classrooms", if it is checked,
 then the teacher/classroom text fields are moved from the periods into the bottom of the Course Code field.
 
-- Fix the following error that occurs when we exit the create custom course page:
-/////
-The following assertion was thrown during a scheduler callback:
-There are multiple heroes that share the same tag within a subtree.
-
-Within each subtree for which heroes are to be animated (i.e. a PageRoute subtree), each Hero must have a unique non-null tag.
-In this case, multiple heroes had the following tag: <default FloatingActionButton tag>
-Here is the subtree for one of the offending heroes: Hero
-  tag: <default FloatingActionButton tag>
-  state: _HeroState#1e714
-/////
-
 */
 
 
@@ -141,24 +129,7 @@ Future main() async {
 
   Main.schedules.add(Main.currentSchedule);
 
-  // TODO: Store this into a function which takes two DateTime objects and returns a bool
-  /*Map<String, int> rawTime = engCoursesUnit.read("Time") ?? {};
-  if (rawTime.isEmpty) {
-    toUpdate = true;
-  } else {
-    int y = rawTime['y'] ?? currentTime.year,
-        m = rawTime['m'] ?? currentTime.month,
-        d = rawTime['d'] ?? currentTime.day,
-        h = rawTime['h'] ?? currentTime.hour;
-    if (currentTime.compareTo(DateTime(y, m, d, h)) ==
-        1) { // the time is in the past
-      if (currentTime.month > m || currentTime.day > d ||
-          currentTime.hour - hourUpdate > h)
-        toUpdate = true;
-    }
-  }*/
-
-  //Main.readSettings();
+  Main.readSettings();
 
   //TODO: For test purposes:
   Main.faculty = "Health Sciences";

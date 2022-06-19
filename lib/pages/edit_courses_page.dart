@@ -1,8 +1,8 @@
-import 'dart:math';
 import 'dart:ui';
 
 import 'package:ders_program_test/language/dictionary.dart';
 import 'package:ders_program_test/others/subject.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -217,7 +217,7 @@ class EditCoursePageState extends State<EditCoursePage> {
     } else {
       return ListView.builder(itemCount: Main.currentSchedule.scheduleCourses.length, itemBuilder: (context, index) {
         Subject subject = Main.currentSchedule.scheduleCourses.elementAt(index).subject;
-        print("Building the subject of teachers ${subject.teacherCodes}");
+        //print("Building the subject of teachers ${subject.teacherCodes}");
         return AnimatedContainer(
           margin: EdgeInsets.symmetric(vertical: 0.01 * width),
           duration: duration,
@@ -265,6 +265,10 @@ class EditCoursePageState extends State<EditCoursePage> {
                   list = deleteRepitions(list);
                   teachers = list.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
 
+                  classrooms.trim();
+                  teachers.trim();
+                  departments.trim();
+
 
                   showDialog(context: context, builder: (context) {
 
@@ -273,43 +277,53 @@ class EditCoursePageState extends State<EditCoursePage> {
                       actions: [
                         TextButton(child: Text(translateEng("OK")), onPressed: () {Navigator.pop(context);},)
                       ],
-                      content: Container(
-                        child: Builder(
-                            builder: (context) {
-                              return Container(
-                                  height: height * 0.4,
-                                  child: Scrollbar( // Just to make the scrollbar viewable
-                                    thumbVisibility: true,
-                                    child: ListView(
-                                      children: [
-                                        ListTile(
-                                          title: Row(children: [Expanded(child: Text(translateEng("Name: ") + name!))]),
-                                          onTap: null,
-                                        ),
-                                        ListTile(
-                                          title: Row(children: [Expanded(child: Text(translateEng("Classrooms: ") + classrooms))]),
-                                          onTap: null,
-                                        ),
-                                        ListTile(
-                                          title: Row(children: [Expanded(child: Text(translateEng("Teachers: ") + teachers))]),
-                                          onTap: null,
-                                        ),
-                                        ListTile(
-                                          title: Row(children: [Expanded(child: Text(translateEng("Departments: ") + departments))]),
-                                          onTap: null,
-                                        ),
-                                        (subject.days.isNotEmpty && subject.bgnPeriods.isNotEmpty && subject.hours.isNotEmpty) ? ListTile(
-                                          onTap: null,
-                                          title: Container(width: width * 0.5, height: width * 0.5, child: CustomPaint(painter:
-                                          TimetableCanvas(beginningPeriods: subject.bgnPeriods, days: subject.days, hours: subject.hours))),
+                      content: Builder(
+                          builder: (context) {
+                            return SizedBox(
+                                height: height * 0.4,
+                                child: Scrollbar( // Just to make the scrollbar viewable
+                                  thumbVisibility: true,
+                                  child: ListView(
+                                    children: [
+                                      ListTile(
+                                        title: Row(children: [Expanded(child: Text(name!))]),
+                                        onTap: null,
+                                      ),
+                                      ListTile(
+                                        title: Row(
+                                            children: [
+                                              classrooms.isNotEmpty ? const Icon(CupertinoIcons.placemark_fill) : Container(),
+                                              Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(classrooms))),
+                                            ]),
+                                        onTap: null,
+                                      ),
+                                      ListTile(
+                                        title: Row(
+                                            children: [
+                                              teachers.isNotEmpty ? const Icon(CupertinoIcons.group_solid) : Container(),
+                                              Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(teachers))),
+                                            ]),
+                                        onTap: null,
+                                      ),
+                                      ListTile(
+                                        title: Row(
+                                            children: [
+                                              departments.isNotEmpty ? const Icon(CupertinoIcons.building_2_fill) : Container(),
+                                              Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(departments))),
+                                            ]),
+                                        onTap: null,
+                                      ),
+                                      (subject.days.isNotEmpty && subject.bgnPeriods.isNotEmpty && subject.hours.isNotEmpty) ? ListTile(
+                                        onTap: null,
+                                        title: Container(width: width * 0.5, height: width * 0.5, child: CustomPaint(painter:
+                                        TimetableCanvas(beginningPeriods: subject.bgnPeriods, days: subject.days, hours: subject.hours))),
 
-                                        ) : Container(),
-                                      ],
-                                    ),
-                                  )
-                              );
-                            }
-                        ),
+                                      ) : Container(),
+                                    ],
+                                  ),
+                                )
+                            );
+                          }
                       ),
                     );
 

@@ -235,6 +235,7 @@ class CollisionData {
   List<int> i;
   List<int> j;
   List<bool> isDrawn = [];
+  bool is3Col = false; // To determine if it is a collision of 3
 
   CollisionData({required this.subjects, required this.i, required this.j}) {
     for (int i = 0 ; i < subjects.length ; i++) {

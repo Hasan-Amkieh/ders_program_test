@@ -144,11 +144,11 @@ class TimetableCanvas extends CustomPainter {
     for (int i = 0 ; i < days.length ; i++) {
       for (int j = 0 ; j < days[i].length ; j++) {
         // dx, dy:
-        dx = (days[i][j]) * colWidth;
-        dy = (beginningPeriods[i][j]) * rowHeight;
+        dx = (days[i][j]) * colWidth + (days[i][j] == 1 ? 1 : 0);
+        dy = (beginningPeriods[i][j]) * rowHeight + (beginningPeriods[i][j] == 1 ? 1 : 0);
 
         hourVal = hours[i];
-        rect = Offset(dx, dy) & ui.Size(colWidth, rowHeight * hourVal);
+        rect = Offset(dx, dy) & ui.Size(colWidth * (days[i][j] == 6 ? 1.09 : 1.00), rowHeight * hourVal);
         canvas.drawRect(rect, periodPaint);
       }
     }

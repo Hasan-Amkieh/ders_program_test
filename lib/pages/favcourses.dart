@@ -3,6 +3,7 @@
 import 'dart:ui';
 
 import 'package:ders_program_test/language/dictionary.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ders_program_test/main.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -42,7 +43,7 @@ class FavCoursesState extends State<FavCourses> {
                   } else {
                     name = Main.classcodes[Main.favCourses[count].classCode];
                   }
-                  String? classrooms, teachers, departments;
+                  String classrooms, teachers, departments;
                   classrooms = Main.favCourses[count].classrooms.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
                   teachers = Main.favCourses[count].getTranslatedTeachers();
                   departments = Main.favCourses[count].departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
@@ -55,35 +56,50 @@ class FavCoursesState extends State<FavCourses> {
                   list = deleteRepitions(list);
                   teachers = list.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
 
+                  teachers.trim();
+                  classrooms.trim();
+                  departments.trim();
+
                   showDialog(context: context, builder: (context) => AlertDialog(
                     title: Text(Main.favCourses[count].classCode),
                     content: Builder(
                         builder: (context) {
-                          return Container(
+                          return SizedBox(
                             height: 0.4 * height,
                             child: Scrollbar(
                               thumbVisibility: true,
                               child: ListView(
                                 children: [
                                   ListTile(
-                                    title: Row(children: [Expanded(child: Text(translateEng("Name: ") + name!))]),
+                                    title: Row(children: [Expanded(child: Text(name!))]),
                                     onTap: null,
                                   ),
                                   ListTile(
-                                    title: Row(children: [Expanded(child: Text(translateEng("Classrooms: ") + classrooms!))]),
+                                    title: Row(
+                                        children: [
+                                          classrooms.isNotEmpty ? const Icon(CupertinoIcons.placemark_fill) : Container(),
+                                          Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(classrooms))),
+                                        ]),
                                     onTap: null,
                                   ),
                                   ListTile(
-                                    title: Row(children: [Expanded(child: Text(translateEng("Teachers: ") + teachers!))]),
+                                    title: Row(
+                                        children: [
+                                          teachers.isNotEmpty ? const Icon(CupertinoIcons.group_solid) : Container(),
+                                          Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(teachers))),
+                                        ]),
                                     onTap: null,
                                   ),
                                   ListTile(
-                                    title: Row(children: [Expanded(child: Text(translateEng("Departments: ") + departments!))]),
+                                    title: Row(children: [
+                                      departments.isNotEmpty ? const Icon(CupertinoIcons.building_2_fill) : Container(),
+                                      Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(departments))),
+                                    ]),
                                     onTap: null,
                                   ),
                                   (Main.favCourses[count].days.isNotEmpty && Main.favCourses[count].bgnPeriods.isNotEmpty && Main.favCourses[count].hours.isNotEmpty) ? ListTile(
                                     onTap: null,
-                                    title: Container(width: width * 0.5, height: width * 0.5, child: CustomPaint(painter:
+                                    title: SizedBox(width: width * 0.5, height: width * 0.5, child: CustomPaint(painter:
                                     TimetableCanvas(beginningPeriods: Main.favCourses[count].bgnPeriods, days: Main.favCourses[count].days, hours: Main.favCourses[count].hours))),
 
                                   ) : Container(),

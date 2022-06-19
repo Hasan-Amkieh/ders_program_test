@@ -5,6 +5,7 @@ import 'package:ders_program_test/language/dictionary.dart';
 import 'package:ders_program_test/others/appthemes.dart';
 import 'package:ders_program_test/others/subject.dart';
 import 'package:ders_program_test/widgets/textfieldwidget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -137,10 +138,14 @@ class CustomCoursePageState extends State<CustomCoursePage> {
 
     String? name = "";
     if (Main.isEditingCourse) {
-      if (widget.subject.classCode.contains("(")) {
-        name = Main.classcodes[widget.subject.classCode.substring(0, widget.subject.classCode.indexOf("("))];
+      if (widget.subject.customName.isNotEmpty) {
+        name = widget.subject.customName;
       } else {
-        name = Main.classcodes[widget.subject.classCode];
+        if (widget.subject.classCode.contains("(")) {
+          name = Main.classcodes[widget.subject.classCode.substring(0, widget.subject.classCode.indexOf("("))];
+        } else {
+          name = Main.classcodes[widget.subject.classCode];
+        }
       }
     }
 
@@ -165,7 +170,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                     ),
                   ],
                 ),
-                //SizedBox(height: height * 0.03),
+                SizedBox(height: Main.isEditingCourse ? height * 0.02 : 0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -177,10 +182,11 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                   ),
                   ],
                 ),
+                SizedBox(height: Main.isEditingCourse ? height * 0.02 : 0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(translateEng("Department/Tag")),
+                    const Icon(CupertinoIcons.building_2_fill),
                     SizedBox(
                         width: width * 0.6,
                         child: TextFieldWidget(text: "", onChanged: (str) { setState(() {widget.dep = str;}); }, hintText: translateEng("e.g.   CMPE"))
@@ -397,166 +403,177 @@ class CustomCoursePageState extends State<CustomCoursePage> {
         initiallyExpanded: true, // It is not making any difference
         title: Text(translateEng("Period") + " ${i + 1}"),
         children: [
-          Row(
-            children: [
-              Text(translateEng("Teachers"), style: AppThemes.headerStyle),
-            ],
-          ),
-          Wrap(
-              alignment: WrapAlignment.center,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: buildList(widget.subject.teacherCodes[i].toString().replaceAll(RegExp("[\\[.*?\\]]"), ""), i, width, true),
-          ),
+          Container(
+            padding: EdgeInsets.all(width * 0.05),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(40)),
+              color: Colors.grey.shade200,
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: const [
+                    Icon(CupertinoIcons.group_solid),
+                  ],
+                ),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: buildList(widget.subject.teacherCodes[i].toString().replaceAll(RegExp("[\\[.*?\\]]"), ""), i, width, true),
+                ),
 
-          // Classtooms:
-          Row(
-            children: [
-              Text(translateEng("Classrooms"), style: AppThemes.headerStyle),
-            ],
-          ),
-          Wrap(
-              alignment: WrapAlignment.center,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: buildList(widget.subject.classrooms[i].toString().replaceAll(RegExp("[\\[.*?\\]]"), ""), i, width, false),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(translateEng("Day"), style: AppThemes.headerStyle),
-              DropdownButton<String>(
-                value: widget.days[i],
-                onChanged: (newValue) {
-                  setState(() {
-                    widget.days[i] = newValue!;
-                  });
-                },
-                items: [
-                    DropdownMenuItem<String>(value: "Monday", child: Text(translateEng("Monday"))),
-                    DropdownMenuItem<String>(value: "Tuesday", child: Text(translateEng("Tuesday"))),
-                    DropdownMenuItem<String>(value: "Wednesday", child: Text(translateEng("Wednesday"))),
-                    DropdownMenuItem<String>(value: "Thursday", child: Text(translateEng("Thursday"))),
-                    DropdownMenuItem<String>(value: "Friday", child: Text(translateEng("Friday"))),
-                    DropdownMenuItem<String>(value: "Saturday", child: Text(translateEng("Saturday"))),
-                  ]),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(translateEng("Beginning Hour"), style: AppThemes.headerStyle),
-              DropdownButton<String>(
-                  value: widget.bgnHour[i],
-                  onChanged: (newValue) {
-                    setState(() {
-                      if (widget.getMaxHr(newValue!) < widget.hours[i]) {
-                        widget.hours[i] = widget.getMaxHr(newValue);
-                      }
-                      widget.bgnHour[i] = newValue;
-                    });
-                  },
-                  items: const [
-                    DropdownMenuItem<String>(value: "9:30", child: Text("9:30")),
-                    DropdownMenuItem<String>(value: "10:30", child: Text("10:30")),
-                    DropdownMenuItem<String>(value: "11:30", child: Text("11:30")),
-                    DropdownMenuItem<String>(value: "12:30", child: Text("12:30")),
-                    DropdownMenuItem<String>(value: "13:30", child: Text("13:30")),
-                    DropdownMenuItem<String>(value: "14:30", child: Text("14:30")),
-                    DropdownMenuItem<String>(value: "15:30", child: Text("15:30")),
-                    DropdownMenuItem<String>(value: "16:30", child: Text("16:30")),
-                    DropdownMenuItem<String>(value: "17:30", child: Text("17:30")),
-                    DropdownMenuItem<String>(value: "18:30", child: Text("18:30")),
-                  ]),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(translateEng("Class Length (hours)"), style: AppThemes.headerStyle),
-              Row(
-                children: [
-                  SizedBox(
-                    width: 0.08 * width,
-                    height: 0.08 * width,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            offset: const Offset(0, 4),
-                            color: Colors.pink.withOpacity(0.2),
-                            blurRadius: 10.0,
-                            spreadRadius: 0.0,
-                          ),
-                        ],
-                      ),
-                      child: CounterButton(
-                        isIncrement: false,
-                        onPressed: () {
+                // Classrooms:
+                Row(
+                  children: const [
+                    Icon(CupertinoIcons.location_solid),
+                  ],
+                ),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: buildList(widget.subject.classrooms[i].toString().replaceAll(RegExp("[\\[.*?\\]]"), ""), i, width, false),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(translateEng("Day"), style: AppThemes.headerStyle),
+                    DropdownButton<String>(
+                        value: widget.days[i],
+                        onChanged: (newValue) {
                           setState(() {
-                            if (widget.hours[i] == 1) return;
-                            widget.hours[i] = widget.hours[i] - 1;
+                            widget.days[i] = newValue!;
                           });
                         },
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: width * 0.03,
-                    height: width * 0.03,
-                  ),
-                  Text("${widget.hours[i]}"),
-                  SizedBox(
-                    width: width * 0.03,
-                    height: width * 0.03,
-                  ),
-                  SizedBox(
-                    width: 0.08 * width,
-                    height: 0.08 * width,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            offset: const Offset(0, 4),
-                            color: Colors.pink.withOpacity(0.2),
-                            blurRadius: 10.0,
-                            spreadRadius: 0.0,
-                          ),
-                        ],
-                      ),
-                      child: CounterButton(
-                        isIncrement: true,
-                        onPressed: () {
+                        items: [
+                          DropdownMenuItem<String>(value: "Monday", child: Text(translateEng("Monday"))),
+                          DropdownMenuItem<String>(value: "Tuesday", child: Text(translateEng("Tuesday"))),
+                          DropdownMenuItem<String>(value: "Wednesday", child: Text(translateEng("Wednesday"))),
+                          DropdownMenuItem<String>(value: "Thursday", child: Text(translateEng("Thursday"))),
+                          DropdownMenuItem<String>(value: "Friday", child: Text(translateEng("Friday"))),
+                          DropdownMenuItem<String>(value: "Saturday", child: Text(translateEng("Saturday"))),
+                        ]),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(translateEng("Beginning Hour"), style: AppThemes.headerStyle),
+                    DropdownButton<String>(
+                        value: widget.bgnHour[i],
+                        onChanged: (newValue) {
                           setState(() {
-                            if (widget.hours[i] == (widget.getMaxHr(widget.bgnHour[i]))) return;
-                            widget.hours[i] = widget.hours[i] + 1;
+                            if (widget.getMaxHr(newValue!) < widget.hours[i]) {
+                              widget.hours[i] = widget.getMaxHr(newValue);
+                            }
+                            widget.bgnHour[i] = newValue;
                           });
                         },
-                      ),
+                        items: const [
+                          DropdownMenuItem<String>(value: "9:30", child: Text("9:30")),
+                          DropdownMenuItem<String>(value: "10:30", child: Text("10:30")),
+                          DropdownMenuItem<String>(value: "11:30", child: Text("11:30")),
+                          DropdownMenuItem<String>(value: "12:30", child: Text("12:30")),
+                          DropdownMenuItem<String>(value: "13:30", child: Text("13:30")),
+                          DropdownMenuItem<String>(value: "14:30", child: Text("14:30")),
+                          DropdownMenuItem<String>(value: "15:30", child: Text("15:30")),
+                          DropdownMenuItem<String>(value: "16:30", child: Text("16:30")),
+                          DropdownMenuItem<String>(value: "17:30", child: Text("17:30")),
+                          DropdownMenuItem<String>(value: "18:30", child: Text("18:30")),
+                        ]),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(translateEng("Class Length (hours)"), style: AppThemes.headerStyle),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 0.08 * width,
+                          height: 0.08 * width,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  offset: const Offset(0, 4),
+                                  color: Colors.pink.withOpacity(0.2),
+                                  blurRadius: 10.0,
+                                  spreadRadius: 0.0,
+                                ),
+                              ],
+                            ),
+                            child: CounterButton(
+                              isIncrement: false,
+                              onPressed: () {
+                                setState(() {
+                                  if (widget.hours[i] == 1) return;
+                                  widget.hours[i] = widget.hours[i] - 1;
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: width * 0.03,
+                          height: width * 0.03,
+                        ),
+                        Text("${widget.hours[i]}"),
+                        SizedBox(
+                          width: width * 0.03,
+                          height: width * 0.03,
+                        ),
+                        SizedBox(
+                          width: 0.08 * width,
+                          height: 0.08 * width,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  offset: const Offset(0, 4),
+                                  color: Colors.pink.withOpacity(0.2),
+                                  blurRadius: 10.0,
+                                  spreadRadius: 0.0,
+                                ),
+                              ],
+                            ),
+                            child: CounterButton(
+                              isIncrement: true,
+                              onPressed: () {
+                                setState(() {
+                                  if (widget.hours[i] == (widget.getMaxHr(widget.bgnHour[i]))) return;
+                                  widget.hours[i] = widget.hours[i] + 1;
+                                });
+                              },
+                            ),
+                          ),
+                        )
+                      ],
                     ),
-                  )
-                ],
-              ),
-            ],
-          ),
-          Visibility(
-            visible: widget.subject.teacherCodes.length > 1,
-            child: TextButton.icon(
-                style: ButtonStyle(overlayColor: MaterialStateProperty.all(Color.fromRGBO(Colors.red.red, Colors.red.green, Colors.red.green, 0.2))),
-                icon: const Icon(Icons.highlight_remove,color: Colors.red),
-                label: Text(translateEng("Remove Period"),
-                    style: const TextStyle(color: Colors.red)),
-                onPressed: () {
-                  setState(() {
-                    widget.periodData.removeAt(i);
-                    widget.subject.teacherCodes.removeAt(i);
-                    widget.subject.classrooms.removeAt(i);
-                    widget.hours.removeAt(i);
-                    widget.days.removeAt(i);
-                    widget.bgnHour.removeAt(i);
-                    widget.editingTeacher.removeAt(i);
-                    widget.editingClassroom.removeAt(i);
-                  });
-                }),
-          ),
+                  ],
+                ),
+                Visibility(
+                  visible: widget.subject.teacherCodes.length > 1,
+                  child: TextButton.icon(
+                      style: ButtonStyle(overlayColor: MaterialStateProperty.all(Color.fromRGBO(Colors.red.red, Colors.red.green, Colors.red.green, 0.2))),
+                      icon: const Icon(Icons.highlight_remove,color: Colors.red),
+                      label: Text(translateEng("Remove Period"),
+                          style: const TextStyle(color: Colors.red)),
+                      onPressed: () {
+                        setState(() {
+                          widget.periodData.removeAt(i);
+                          widget.subject.teacherCodes.removeAt(i);
+                          widget.subject.classrooms.removeAt(i);
+                          widget.hours.removeAt(i);
+                          widget.days.removeAt(i);
+                          widget.bgnHour.removeAt(i);
+                          widget.editingTeacher.removeAt(i);
+                          widget.editingClassroom.removeAt(i);
+                        });
+                      }),
+                ),
+              ],
+            ),
+          )
         ],
         ),
       );
@@ -652,7 +669,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
               text: isEditing ? (isForTeacher ? widget.subject.teacherCodes[periodIndex][teacherInd] : widget.subject.classrooms[periodIndex][teacherInd])
                   : widget.periodData[periodIndex][isForTeacher ? 0 : 1],
               onChanged: (str) { widget.periodData[periodIndex][isForTeacher ? 0 : 1] = str; }
-              , hintText: ""),
+              , hintText: isForTeacher ? "teacher name" : "classroom"),
         ),
       ),
       TextButton.icon(icon: Icon((isForTeacher ? widget.showTeacherField[periodIndex] : widget.showClassroomField[periodIndex]) ?
