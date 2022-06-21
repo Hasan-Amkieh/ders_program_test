@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:ders_program_test/pages/loading_update_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:ders_program_test/main.dart';
@@ -22,10 +25,10 @@ class WebpageState extends State<Webpage> {
   @override
   void initState() {
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    /*WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Navigator.pushNamed(context, "/loadingupdate");
       ;
-    });
+    });*/
     super.initState();
   }
 
@@ -33,44 +36,54 @@ class WebpageState extends State<Webpage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      body: Container(
-          child: Visibility(
-              visible: false,
-              maintainSize: true,
-              maintainAnimation: true,
-              maintainState: true,
-              // These properties will make the webpage load but nothing is shown on the display
-              child: InAppWebView(
-                  onAjaxReadyStateChange: (controller, request) async {
-                    if (request.url
-                        .toString()
-                        .contains("__func=regularttGetData") &&
-                        request.readyState == AjaxRequestReadyState.DONE) {
-                      state = 3;
-                      print("Timetable Retrieved!\nLength of the response: ${request.responseText?.length}");
-                      dataClassification(request.responseText);
-                    }
+      body: Stack(
+          children: [
+            Visibility(
+                visible: true,
+                maintainSize: true,
+                maintainAnimation: true,
+                maintainState: true,
+                // These properties will make the webpage load but nothing is shown on the display
+                child: InAppWebView(
+                    onAjaxReadyStateChange: (controller, request) async {
+                      print("Received this file: ${request.url.toString()}");
+                      if (request.url
+                          .toString()
+                          .contains("__func=regularttGetData") &&
+                          request.readyState == AjaxRequestReadyState.DONE) {
+                        state = 3;
+                        print("Timetable Retrieved!\nLength of the response: ${request.responseText?.length}");
+                        dataClassification(request.responseText);
+                      }
 
-                    return AjaxRequestAction.PROCEED;
-                  },
-                  initialUrlRequest: URLRequest(
-                      url: Uri.parse(
-                          getFacultyLink(Main.department))),
-                  initialOptions: InAppWebViewGroupOptions(
-                    crossPlatform: InAppWebViewOptions(
-                        useShouldInterceptAjaxRequest: true),
-                  ),
-                  onWebViewCreated: (InAppWebViewController controller) {
-                    webView = controller;
-                  },
-                  onLoadStart: (controller, url) async {
-                    print("Loading of te page started!");
-                    state = 1;
-                  },
-                  onLoadStop: (controller, url) async {
-                    print("Loading of the page finished!");
-                    state = 2;
-                  }))),
+                      return AjaxRequestAction.PROCEED;
+                    },
+                    initialUrlRequest: URLRequest(
+                        url: Uri.parse(
+                            getFacultyLink(Main.department))),
+                    initialOptions: InAppWebViewGroupOptions(
+                      crossPlatform: InAppWebViewOptions(
+                          useShouldInterceptAjaxRequest: true),
+                    ),
+                    onWebViewCreated: (InAppWebViewController controller) {
+                      webView = controller;
+                    },
+                    onLoadStart: (controller, url) async {
+                      print("Loading of te page started!");
+                      state = 1;
+                    },
+                    onLoadStop: (controller, url) async {
+                      print("Loading of the page finished!");
+                      state = 2;
+                    })
+            ),
+            Container(
+              child: LoadingUpdate(),
+              width: (window.physicalSize / window.devicePixelRatio).width,
+              height: (window.physicalSize / window.devicePixelRatio).height,
+            ),
+          ],
+      ),
     );
   }
 
@@ -330,7 +343,7 @@ class WebpageState extends State<Webpage> {
   void finish() {
 
     print("Finishing the webpage off!");
-    Navigator.popAndPushNamed(context, "/home");
+    Navigator.pushNamed(context, "/home");
 
   }
 

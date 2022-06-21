@@ -5,17 +5,17 @@ import 'package:ders_program_test/others/subject.dart';
 import 'package:ders_program_test/pages/add_courses_page.dart';
 import 'package:ders_program_test/pages/create_custom_course_page.dart';
 import 'package:ders_program_test/pages/edit_courses_page.dart';
-import 'package:ders_program_test/pages/favcourses.dart';
+import 'package:ders_program_test/pages/fav_courses_page.dart';
+import 'package:ders_program_test/pages/saved_schedules_page.dart';
 import 'package:ders_program_test/pages/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ders_program_test/webpage.dart';
-import 'package:ders_program_test/pages/home.dart';
-import 'package:ders_program_test/pages/loadingupdate.dart';
+import 'package:ders_program_test/pages/home_page.dart';
+import 'package:ders_program_test/pages/loading_update_page.dart';
 import 'package:restart_app/restart_app.dart';
 import 'package:storage_repository/implementations/storage_repository.dart';
 import 'package:storage_repository/interfaces/i_storage_repository.dart';
 
-import 'others/appthemes.dart';
 import 'others/departments.dart';
 
 /*
@@ -50,9 +50,9 @@ class Main {
   static ThemeMode theme = ThemeMode.system;
 
   static List<Subject> favCourses = [];
-  static Schedule currentSchedule = Schedule(changes: [], scheduleCourses: []);
+
   static int currentScheduleIndex = 0;
-  static List<Schedule> schedules = [];
+  static List<Schedule> schedules = [Schedule(scheduleName: "Schedule 1", changes: [], scheduleCourses: [])];
 
   // NOTE: Used inside add_courses page:
   static List<Subject> coursesToAdd = [];
@@ -127,8 +127,6 @@ Future main() async {
   Main.storageUnit = StorageRepository();
   await Main.storageUnit!.init();
 
-  Main.schedules.add(Main.currentSchedule);
-
   Main.readSettings();
 
   //TODO: For test purposes:
@@ -145,7 +143,6 @@ Future main() async {
     initialRoute: Main.forceUpdate ? "/webpage" : "/home",
     routes: {
       "/home" : (context) => Home(),
-      "/loadingupdate": (context) => LoadingUpdate(),
       "/webpage": (context) => Webpage(),
       "/home/searchcourses": (contetx) => const SearchPage(),
       "/home/favcourses": (context) => FavCourses(),
@@ -153,6 +150,7 @@ Future main() async {
       "/home/editcourses/addcourses": (context) => AddCoursesPage(),
       "/home/editcourses/createcustomcourse": (context) => CustomCoursePage(),
       "/home/editcourses/editcourseinfo": (context) { CustomCoursePage page = CustomCoursePage(); page.subject = Main.courseToEdit ?? Main.emptySubject; return page; },
+      "/home/savedschedules" : (context) => SavedSchedulePage(),
     },
   ));
 

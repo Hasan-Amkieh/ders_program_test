@@ -48,9 +48,9 @@ class EditCoursePageState extends State<EditCoursePage> {
       Fluttertoast.showToast(
           msg: translateEng("$modeName mode"),
           toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
+          gravity: ToastGravity.TOP,
           timeInSecForIosWeb: 1,
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.blue.shade400,
           textColor: Colors.white,
           fontSize: 12.0
       );
@@ -58,42 +58,11 @@ class EditCoursePageState extends State<EditCoursePage> {
 
     return Scaffold(
       appBar: AppBar(),
-      floatingActionButton: FloatingActionButton(child: const Icon(Icons.add), tooltip: translateEng("Add a course") ,onPressed: () {
-
-        Navigator.pushNamed(context, "/home/editcourses/addcourses").then((value) {
-          if (Main.coursesToAdd.isNotEmpty) {
-            setState(() {
-              List<Course> crses = [];
-              Main.coursesToAdd.forEach((sub) {
-                crses.add(Course(subject: sub, note: ""));
-              });
-              Main.currentSchedule.scheduleCourses.addAll(crses);
-              Main.coursesToAdd.clear();
-            });
-          }
-        });
-
-      }),
       body: SafeArea(
           child: Container(
-            padding: EdgeInsets.all(width * 0.05),
+            padding: EdgeInsets.all(width * 0.03),
             child: Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.zero,
-                      margin: EdgeInsets.fromLTRB(0, height * 0.02, 0, 0),
-                      decoration: const BoxDecoration(
-                        border: Border(bottom: BorderSide(color: Colors.blue, width: 2.0)),
-                      ),
-                      child: TextButton.icon(icon: Icon(Icons.create_outlined), label: Text(translateEng("custom course")), onPressed: () {
-                        Navigator.pushNamed(context, "/home/editcourses/createcustomcourse").then((value) { setState(() {}); });
-                      }),
-                    )
-                  ],
-                ),
                 SizedBox(height: height * 0.03),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -190,6 +159,48 @@ class EditCoursePageState extends State<EditCoursePage> {
                       )
                   ),
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton.icon(
+                        style: ButtonStyle(
+                          shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(0.02 * width))),
+                          backgroundColor: MaterialStateProperty.all(Colors.blue),
+                        ),
+                        icon: const Icon(Icons.add, color: Colors.white),
+                        label: Text(translateEng("add courses"), style: const TextStyle(color: Colors.white, fontSize: 12)),
+                        onPressed: () {
+                          Navigator.pushNamed(context, "/home/editcourses/addcourses").then((value) {
+                            if (Main.coursesToAdd.isNotEmpty) {
+                              setState(() {
+                                List<Course> crses = [];
+                                Main.coursesToAdd.forEach((sub) {
+                                  crses.add(Course(subject: sub, note: ""));
+                                });
+                                Main.schedules[Main.currentScheduleIndex].scheduleCourses.addAll(crses);
+                                Main.coursesToAdd.clear();
+                              });
+                            }
+                          });
+                        }
+                    ),
+                    SizedBox(width: width * 0.03),
+                    TextButton.icon(
+                        style: ButtonStyle(
+                          overlayColor: MaterialStateProperty.all(Colors.white.withOpacity(0.2)),
+                          shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(0.02 * width))),
+                          backgroundColor: MaterialStateProperty.all(Colors.blue),
+                        ),
+                        icon: const Icon(CupertinoIcons.pencil, color: Colors.white),
+                        label: Text(translateEng("custom course"), style: const TextStyle(color: Colors.white, fontSize: 12)),
+                        onPressed: () {
+                          Navigator.pushNamed(context, "/home/editcourses/createcustomcourse").then((value) { setState(() {}); });
+                        }
+                    ),
+                  ]
+                ),
               ],
             ),
           ),
@@ -212,11 +223,11 @@ class EditCoursePageState extends State<EditCoursePage> {
         break;
     }
 
-    if (Main.currentSchedule.scheduleCourses.isEmpty) {
+    if (Main.schedules[Main.currentScheduleIndex].scheduleCourses.isEmpty) {
       return Text(translateEng("You have no courses in the current schedule"));
     } else {
-      return ListView.builder(itemCount: Main.currentSchedule.scheduleCourses.length, itemBuilder: (context, index) {
-        Subject subject = Main.currentSchedule.scheduleCourses.elementAt(index).subject;
+      return ListView.builder(itemCount: Main.schedules[Main.currentScheduleIndex].scheduleCourses.length, itemBuilder: (context, index) {
+        Subject subject = Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).subject;
         //print("Building the subject of teachers ${subject.teacherCodes}");
         return AnimatedContainer(
           margin: EdgeInsets.symmetric(vertical: 0.01 * width),
@@ -316,7 +327,7 @@ class EditCoursePageState extends State<EditCoursePage> {
                                       (subject.days.isNotEmpty && subject.bgnPeriods.isNotEmpty && subject.hours.isNotEmpty) ? ListTile(
                                         onTap: null,
                                         title: Container(width: width * 0.5, height: width * 0.5, child: CustomPaint(painter:
-                                        TimetableCanvas(beginningPeriods: subject.bgnPeriods, days: subject.days, hours: subject.hours))),
+                                        TimetableCanvas(beginningPeriods: subject.bgnPeriods, days: subject.days, hours: subject.hours, isForSchedule: false))),
 
                                       ) : Container(),
                                     ],
@@ -337,22 +348,22 @@ class EditCoursePageState extends State<EditCoursePage> {
 
                     setState(() {
                       Main.isEditingCourse = false;
-                      Main.currentSchedule.scheduleCourses[index].subject = Main.courseToEdit!;
-                      print("Finished editing, saving the course with teachers: ${Main.currentSchedule.scheduleCourses[index].subject.teacherCodes}");
+                      Main.schedules[Main.currentScheduleIndex].scheduleCourses[index].subject = Main.courseToEdit!;
+                      print("Finished editing, saving the course with teachers: ${Main.schedules[Main.currentScheduleIndex].scheduleCourses[index].subject.teacherCodes}");
                     });
 
                   });
 
                 } else { // remove
                   setState(() {
-                    String str = Main.currentSchedule.scheduleCourses.elementAt(index).subject.classCode;
-                    Main.currentSchedule.scheduleCourses.removeAt(index);
+                    String str = Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).subject.classCode;
+                    Main.schedules[Main.currentScheduleIndex].scheduleCourses.removeAt(index);
                     Fluttertoast.showToast(
                         msg: "$str " + translateEng("was removed"),
                         toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
+                        gravity: ToastGravity.TOP,
                         timeInSecForIosWeb: 1,
-                        backgroundColor: Colors.blue,
+                        backgroundColor: Colors.blue.shade400,
                         textColor: Colors.white,
                         fontSize: 12.0
                     );

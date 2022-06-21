@@ -245,7 +245,7 @@ class HomeState extends State<Home> {
 
       int colorIndex = 0;
 
-      Main.currentSchedule.scheduleCourses.forEach((course) {
+      Main.schedules[Main.currentScheduleIndex].scheduleCourses.forEach((course) {
       colorIndex++;
       for (int i = 0; i < course.subject.days.length; i++) {
         for (int j = 0; j < course.subject.days[i].length; j++) {
@@ -401,7 +401,7 @@ class HomeState extends State<Home> {
               SizedBox(height: height * 0.01),
               ListTile(
                 onTap: () {
-                  ;
+                  Navigator.pushNamed(context, "/home/savedschedules");
                 },
                 title: Text(translateEng('Saved Schedules')),
                 subtitle: Text(translateEng('You can save schedules and set them back again')),
@@ -483,7 +483,7 @@ class HomeState extends State<Home> {
                           TextButton(onPressed: () {
                             Navigator.pop(context);
                           },
-                            child: Text(translateEng("NOT NOW")),
+                            child: Text(translateEng("CANCEL")),
                           )
                         ],
                       );
@@ -855,14 +855,14 @@ class HomeState extends State<Home> {
 
     List<CollisionData> collisions = [];
 
-    Main.currentSchedule.scheduleCourses.forEach((course) {
+    Main.schedules[Main.currentScheduleIndex].scheduleCourses.forEach((course) {
 
       for (int i = 0 ; i < course.subject.days.length ; i++) {
         for (int j = 0 ; j < course.subject.days[i].length ; j++) {
           int day = course.subject.days[i][j], bgnHour = course.subject.bgnPeriods[i][j], hours = course.subject.hours[i];
           print("Searching for bgnPeriods b/w $bgnHour and ${bgnHour + hours} for the course ${course.subject.classCode}");
 
-          Main.currentSchedule.scheduleCourses.forEach((courseToComp) {
+          Main.schedules[Main.currentScheduleIndex].scheduleCourses.forEach((courseToComp) {
 
             for (int i_ = 0 ; i_ < courseToComp.subject.days.length ; i_++) {
               for (int j_ = 0 ; j_ < courseToComp.subject.days[i_].length ; j_++) {

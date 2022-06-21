@@ -239,7 +239,7 @@ class SearchPageState extends State<SearchPage> {
                            ), (sub.days.isNotEmpty && sub.bgnPeriods.isNotEmpty && sub.hours.isNotEmpty) ? ListTile(
                               onTap: null,
                               title: Container(width: width * 0.5, height: width * 0.5, child: CustomPaint(painter:
-                              TimetableCanvas(beginningPeriods: sub.bgnPeriods, days: sub.days, hours: sub.hours))),
+                              TimetableCanvas(beginningPeriods: sub.bgnPeriods, days: sub.days, hours: sub.hours, isForSchedule: false))),
 
                             ) : Container(),
                           ],
@@ -254,14 +254,14 @@ class SearchPageState extends State<SearchPage> {
                 }, child: Text(translateEng("OK"))),
                 TextButton(onPressed: () {
                   bool doesExist = false;
-                  for (Course sub_ in Main.currentSchedule.scheduleCourses) {
+                  for (Course sub_ in Main.schedules[Main.currentScheduleIndex].scheduleCourses) {
                     if (sub_.subject.classCode == sub.classCode) {
                       doesExist = true;
                     }
                   }
 
                   if (!doesExist) {
-                    Main.currentSchedule.scheduleCourses.add(Course(note: "", subject: sub));
+                    Main.schedules[Main.currentScheduleIndex].scheduleCourses.add(Course(note: "", subject: sub));
                   }
 
                   Fluttertoast.showToast(

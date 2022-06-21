@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -117,7 +118,7 @@ class AddCoursesPageState extends State<AddCoursesPage> {
     name = name ?? "";
     bool isInside = false;
 
-    for (Course crs in Main.currentSchedule.scheduleCourses) {
+    for (Course crs in Main.schedules[Main.currentScheduleIndex].scheduleCourses) {
       if (crs.subject.classCode == subject.classCode) {
         isInside = true;
         break;
@@ -132,25 +133,16 @@ class AddCoursesPageState extends State<AddCoursesPage> {
       }
     }
 
-    // if (isInside) {
-    //   name  = name + "\n\n" + translateEng("Added to schedule");
-    // }
-
     return ListTile(
       title: Text(subject.classCode),
-      subtitle: RichText(
-        text: TextSpan(
-          style: Theme.of(context).textTheme.caption,
-          children: [
-            TextSpan(
-              text: name
-            ),
-            TextSpan(
-              text: isInside ? "\n\n" + translateEng("Added to schedule") : "",
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.red),
-            ),
-          ]
-        ),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+              name,
+          ),
+          isInside ? const Icon(CupertinoIcons.add_circled_solid, color: Colors.red) : Container(),
+        ],
       ),
       onTap: () {
         setState(() {Main.coursesToAdd.add(subject);});

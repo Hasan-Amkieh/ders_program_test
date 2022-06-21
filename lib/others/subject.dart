@@ -222,10 +222,11 @@ class Notification {
 
 class Schedule {
 
+  String scheduleName;
   List<Notification> changes;
   List<Course> scheduleCourses;
 
-  Schedule({required this.changes, required this.scheduleCourses});
+  Schedule({required this.scheduleName, required this.changes, required this.scheduleCourses});
 
 }
 

@@ -11,8 +11,9 @@ class TimetableCanvas extends CustomPainter {
   List<List<int>> beginningPeriods;
   List<List<int>> days;
   List<int> hours;
+  bool isForSchedule;
 
-  TimetableCanvas({required this.beginningPeriods, required this.days, required this.hours});
+  TimetableCanvas({required this.beginningPeriods, required this.days, required this.hours, required this.isForSchedule});
 
   @override
   void paint(Canvas canvas, size) {
@@ -22,6 +23,9 @@ class TimetableCanvas extends CustomPainter {
     double actualWidth = (size.width - 4);
     double actualHeight = (size.height - 4);
     double colWidth = (actualWidth / 7).floorToDouble(), rowHeight = (actualHeight ~/ 11).floorToDouble();
+
+    double periodOffset = isForSchedule ? 0.2 : 0.05;
+    double dayOffset = isForSchedule ? 0.35 : 0.25;
 
     Paint outerBarrierLinesPaint = Paint()
     ..color = Colors.blueAccent.shade200
@@ -69,68 +73,68 @@ class TimetableCanvas extends CustomPainter {
         textDirection: TextDirection.ltr
     )
       ..layout(maxWidth: size.width - 12.0 - 12.0);
-    textPainter.paint(canvas, Offset(colWidth * 1.25, rowHeight * 0.25));
+    textPainter.paint(canvas, Offset(colWidth * (1 + dayOffset), rowHeight * 0.25));
 
     textPainter.text = TextSpan(text: translateEng("Tu"), style: style);
     textPainter.layout(maxWidth: size.width - 12.0 - 12.0);
-    textPainter.paint(canvas, Offset(colWidth * 2.25, rowHeight * 0.25));
+    textPainter.paint(canvas, Offset(colWidth * (2 + dayOffset), rowHeight * 0.25));
 
     textPainter.text = TextSpan(text: translateEng("We"), style: style);
     textPainter.layout(maxWidth: size.width - 12.0 - 12.0);
-    textPainter.paint(canvas, Offset(colWidth * 3.25, rowHeight * 0.25));
+    textPainter.paint(canvas, Offset(colWidth * (3 + dayOffset), rowHeight * 0.25));
 
     textPainter.text = TextSpan(text: translateEng("Th"), style: style);
     textPainter.layout(maxWidth: size.width - 12.0 - 12.0);
-    textPainter.paint(canvas, Offset(colWidth * 4.25, rowHeight * 0.25));
+    textPainter.paint(canvas, Offset(colWidth * (4 + dayOffset), rowHeight * 0.25));
 
     textPainter.text = TextSpan(text: translateEng("Fr"), style: style);
     textPainter.layout(maxWidth: size.width - 12.0 - 12.0);
-    textPainter.paint(canvas, Offset(colWidth * 5.25 + 3, rowHeight * 0.25));
+    textPainter.paint(canvas, Offset(colWidth * (5 + dayOffset) + 3, rowHeight * 0.25));
 
     textPainter.text = TextSpan(text: translateEng("Sa"), style: style);
     textPainter.layout(maxWidth: size.width - 12.0 - 12.0);
-    textPainter.paint(canvas, Offset(colWidth * 6.25 + 4, rowHeight * 0.25));
+    textPainter.paint(canvas, Offset(colWidth * (6 + dayOffset) + 4, rowHeight * 0.25));
 
     // clock:
     textPainter.text = TextSpan(text: "9:30", style: style);
     textPainter.layout(maxWidth: size.width - 12.0 - 12.0);
-    textPainter.paint(canvas, Offset(colWidth * 0.05, rowHeight * 1.25));
+    textPainter.paint(canvas, Offset(colWidth * periodOffset, rowHeight * 1.25));
 
     textPainter.text = TextSpan(text: "10:30", style: style);
     textPainter.layout(maxWidth: size.width - 12.0 - 12.0);
-    textPainter.paint(canvas, Offset(colWidth * 0.05, rowHeight * 2.25));
+    textPainter.paint(canvas, Offset(colWidth * periodOffset, rowHeight * 2.25));
 
     textPainter.text = TextSpan(text: "11:30", style: style);
     textPainter.layout(maxWidth: size.width - 12.0 - 12.0);
-    textPainter.paint(canvas, Offset(colWidth * 0.05, rowHeight * 3.25));
+    textPainter.paint(canvas, Offset(colWidth * periodOffset, rowHeight * 3.25));
 
     textPainter.text = TextSpan(text: "12:30", style: style);
     textPainter.layout(maxWidth: size.width - 12.0 - 12.0);
-    textPainter.paint(canvas, Offset(colWidth * 0.05, rowHeight * 4.25));
+    textPainter.paint(canvas, Offset(colWidth * periodOffset, rowHeight * 4.25));
 
     textPainter.text = TextSpan(text: "13:30", style: style);
     textPainter.layout(maxWidth: size.width - 12.0 - 12.0);
-    textPainter.paint(canvas, Offset(colWidth * 0.05, rowHeight * 5.25));
+    textPainter.paint(canvas, Offset(colWidth * periodOffset, rowHeight * 5.25));
 
     textPainter.text = TextSpan(text: "14:30", style: style);
     textPainter.layout(maxWidth: size.width - 12.0 - 12.0);
-    textPainter.paint(canvas, Offset(colWidth * 0.05, rowHeight * 6.25));
+    textPainter.paint(canvas, Offset(colWidth * periodOffset, rowHeight * 6.25));
 
     textPainter.text = TextSpan(text: "15:30", style: style);
     textPainter.layout(maxWidth: size.width - 12.0 - 12.0);
-    textPainter.paint(canvas, Offset(colWidth * 0.05, rowHeight * 7.25));
+    textPainter.paint(canvas, Offset(colWidth * periodOffset, rowHeight * 7.25));
 
     textPainter.text = TextSpan(text: "16:30", style: style);
     textPainter.layout(maxWidth: size.width - 12.0 - 12.0);
-    textPainter.paint(canvas, Offset(colWidth * 0.05, rowHeight * 8.25));
+    textPainter.paint(canvas, Offset(colWidth * periodOffset, rowHeight * 8.25));
 
     textPainter.text = TextSpan(text: "17:30", style: style);
     textPainter.layout(maxWidth: size.width - 12.0 - 12.0);
-    textPainter.paint(canvas, Offset(colWidth * 0.05, rowHeight * 9.25));
+    textPainter.paint(canvas, Offset(colWidth * periodOffset, rowHeight * 9.25));
 
     textPainter.text = TextSpan(text: "18:30", style: style);
     textPainter.layout(maxWidth: size.width - 12.0 - 12.0);
-    textPainter.paint(canvas, Offset(colWidth * 0.05, rowHeight * 10.25));
+    textPainter.paint(canvas, Offset(colWidth * periodOffset, rowHeight * 10.25));
 
     Paint periodPaint = Paint()
     ..color = Colors.blue
@@ -143,7 +147,7 @@ class TimetableCanvas extends CustomPainter {
     // Expressing the time and date of the course by drawing boxes:
     for (int i = 0 ; i < days.length ; i++) {
       for (int j = 0 ; j < days[i].length ; j++) {
-        // dx, dy:
+
         dx = (days[i][j]) * colWidth + (days[i][j] == 1 ? 1 : 0);
         dy = (beginningPeriods[i][j]) * rowHeight + (beginningPeriods[i][j] == 1 ? 1 : 0);
 

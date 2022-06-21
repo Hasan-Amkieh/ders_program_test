@@ -100,7 +100,7 @@ class FavCoursesState extends State<FavCourses> {
                                   (Main.favCourses[count].days.isNotEmpty && Main.favCourses[count].bgnPeriods.isNotEmpty && Main.favCourses[count].hours.isNotEmpty) ? ListTile(
                                     onTap: null,
                                     title: SizedBox(width: width * 0.5, height: width * 0.5, child: CustomPaint(painter:
-                                    TimetableCanvas(beginningPeriods: Main.favCourses[count].bgnPeriods, days: Main.favCourses[count].days, hours: Main.favCourses[count].hours))),
+                                    TimetableCanvas(beginningPeriods: Main.favCourses[count].bgnPeriods, days: Main.favCourses[count].days, hours: Main.favCourses[count].hours, isForSchedule: false))),
 
                                   ) : Container(),
                                 ],
@@ -118,14 +118,14 @@ class FavCoursesState extends State<FavCourses> {
                       TextButton(onPressed: () {
                         Subject sub = Main.favCourses.elementAt(count);
                         bool doesExist = false;
-                        for (Course sub_ in Main.currentSchedule.scheduleCourses) {
+                        for (Course sub_ in Main.schedules[Main.currentScheduleIndex].scheduleCourses) {
                           if (sub_.subject.classCode == sub.classCode) {
                             doesExist = true;
                           }
                         }
 
                         if (!doesExist) {
-                          Main.currentSchedule.scheduleCourses.add(Course(subject: sub, note: ""));
+                          Main.schedules[Main.currentScheduleIndex].scheduleCourses.add(Course(subject: sub, note: ""));
                         }
 
                         Fluttertoast.showToast(

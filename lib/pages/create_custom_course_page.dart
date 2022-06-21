@@ -260,7 +260,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                                   print("Checking the course code!");
                                   bool isUsed = false;
                                   String str = widget.subject.classCode.toLowerCase();
-                                  Main.currentSchedule.scheduleCourses.forEach((sub) {
+                                  Main.schedules[Main.currentScheduleIndex].scheduleCourses.forEach((sub) {
                                     if (str == sub.subject.classCode.toLowerCase()) {
                                       isUsed = true;
                                       return ;
@@ -289,7 +289,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                                   widget.subject.hours.addAll(widget.hours);
                                   Main.courseToEdit = widget.subject;
                                 } else {
-                                  Main.currentSchedule.scheduleCourses.add(
+                                  Main.schedules[Main.currentScheduleIndex].scheduleCourses.add(
                                       Course(
                                           note: "", subject: widget.subject));
                                 }
@@ -591,7 +591,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
         ListTile(
           onTap: null,
           title: Container(width: width * 0.5, height: width * 0.5, child: CustomPaint(painter:
-          TimetableCanvas(beginningPeriods: bgnPeriods, days: days, hours: widget.hours))),
+          TimetableCanvas(beginningPeriods: bgnPeriods, days: days, hours: widget.hours, isForSchedule: false))),
 
         )
     );
