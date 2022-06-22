@@ -118,6 +118,7 @@ class AddCoursesPageState extends State<AddCoursesPage> {
     name = name ?? "";
     bool isInside = false;
 
+    //print("current schedule is: ${Main.schedules[Main.currentScheduleIndex].scheduleCourses}");
     for (Course crs in Main.schedules[Main.currentScheduleIndex].scheduleCourses) {
       if (crs.subject.classCode == subject.classCode) {
         isInside = true;

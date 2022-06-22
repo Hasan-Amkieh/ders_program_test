@@ -30,11 +30,15 @@ class HomeState extends State<Home> {
   late double height;
   static const navigationBarColor = Color.fromRGBO(80, 114, 150, 1.0);
 
+  static HomeState? currentState;
+
   List<CollisionData> collisions = [];
 
   @override
   void initState() {
 
+    super.initState();
+    currentState = this;
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.blue,
       systemNavigationBarColor: navigationBarColor,
@@ -55,296 +59,7 @@ class HomeState extends State<Home> {
 
     Widget? schedulePage;
     if (pageIndex == 0) {
-      double colWidth = (width) / 7; // 6 days and a col for the clock
-      double rowHeight = (height * 1) / 11; // 10 for the lock and one for the empty box // 91 percent because of the horizontal borders
-
-      Color headerColor = Colors.blue;
-      Color emptyCellColor = Colors.white;
-      Color horizontalBorderColor = Colors.blueGrey.shade200;
-      Container emptyCell = Container(decoration: BoxDecoration(
-          color: emptyCellColor,
-          border: Border.symmetric(
-              horizontal: BorderSide(color: horizontalBorderColor, width: 1)
-          )),
-          child: SizedBox(width: colWidth, height: rowHeight,));
-
-      List<Widget> coursesList = [
-        Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            color: headerColor,
-            child: Column( // Headers
-              children: [
-                SizedBox(width: colWidth, height: rowHeight),
-                Container(
-                    child: Center(child: Text('9:30', style: headerTxtStyle,)),
-                    height: rowHeight),
-                Container(
-                    child: Center(child: Text('10:30', style: headerTxtStyle,)),
-                    height: rowHeight),
-                Container(
-                    child: Center(child: Text('11:30', style: headerTxtStyle,)),
-                    height: rowHeight),
-                Container(
-                    child: Center(child: Text('12:30', style: headerTxtStyle,)),
-                    height: rowHeight),
-                Container(
-                    child: Center(child: Text('13:30', style: headerTxtStyle,)),
-                    height: rowHeight),
-                Container(
-                    child: Center(child: Text('14:30', style: headerTxtStyle,)),
-                    height: rowHeight),
-                Container(
-                    child: Center(child: Text('15:30', style: headerTxtStyle,)),
-                    height: rowHeight),
-                Container(
-                    child: Center(child: Text('16:30', style: headerTxtStyle,)),
-                    height: rowHeight),
-                Container(
-                    child: Center(child: Text('17:30', style: headerTxtStyle,)),
-                    height: rowHeight),
-                Container(
-                    child: Center(child: Text('18:30', style: headerTxtStyle,)),
-                    height: rowHeight + height * 0.04),
-              ],
-            ),
-          ),
-          Container(
-            color: headerColor,
-            child: Column( // Headers
-              children: [
-                Container(child: Center(
-                    child: Text(translateEng('Mon'), style: headerTxtStyle)),
-                  height: rowHeight,
-                  width: colWidth,),
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-              ],
-            ),
-          ),
-          Container(
-            color: headerColor,
-            child: Column( // Headers
-              children: [
-                Container(child: Center(
-                    child: Text(translateEng('Tue'), style: headerTxtStyle,)),
-                    height: rowHeight,
-                    width: colWidth),
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-              ],
-            ),
-          ),
-          Container(
-            color: headerColor,
-            child: Column( // Headers
-              children: [
-                Container(child: Center(
-                    child: Text(translateEng('Wed'), style: headerTxtStyle,)),
-                    height: rowHeight,
-                    width: colWidth),
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-              ],
-            ),
-          ),
-          Container(
-            color: headerColor,
-            child: Column( // Headers
-              children: [
-                Container(child: Center(
-                    child: Text(translateEng('Thur'), style: headerTxtStyle)),
-                    height: rowHeight,
-                    width: colWidth),
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-              ],
-            ),
-          ),
-          Container(
-            color: headerColor,
-            child: Column( // Headers
-              children: [
-                Container(child: Center(
-                    child: Text(translateEng('Fri'), style: headerTxtStyle)),
-                    height: rowHeight,
-                    width: colWidth),
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-              ],
-            ),
-          ),
-          Container(
-            color: headerColor,
-            child: Column( // Headers
-              children: [
-                Container(child: Center(
-                    child: Text(translateEng('Sat'), style: headerTxtStyle)),
-                    height: rowHeight,
-                    width: colWidth),
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-              ],
-            ),
-          ),
-        ],
-      ),
-      ];
-
-      // First find all the collisions:
-      collisions = findCourseCollisions();
-
-      int colorIndex = 0;
-
-      Main.schedules[Main.currentScheduleIndex].scheduleCourses.forEach((course) {
-      colorIndex++;
-      for (int i = 0; i < course.subject.days.length; i++) {
-        for (int j = 0; j < course.subject.days[i].length; j++) {
-          bool isCol = false, isColOf3 = false;
-          int atIndex = 0,
-              drawingIndex = 0,
-              colSize = 1; // colSize determines how many subjects are actually in this collision
-          int colIndex = 0;
-          collisions.forEach((col) {
-            atIndex = 0;
-            col.subjects.forEach((sub) {
-              if (sub.isEqual(course.subject) && i == col.i[atIndex] &&
-                  j == col.j[atIndex] && !col.isDrawn[atIndex]) {
-                collisions[colIndex].isDrawn[atIndex] = true;
-                isCol = true;
-                isColOf3 = collisions[colIndex].is3Col;
-                drawingIndex = atIndex;
-                colSize = col.subjects.length;
-                return;
-              }
-              if (isCol) {
-                return;
-              }
-              atIndex++;
-            });
-            colIndex++;
-            if (isCol) {
-              return;
-            }
-          });
-          print("index $drawingIndex");
-
-          coursesList.add(
-            Positioned(child: TextButton(
-              //clipBehavior: Clip.none,
-                onPressed: () => showCourseInfo(course.subject),
-                // TODO: Make it pass a class called "PeriodData" / which holds only the info of the current period!
-                child: RotatedBox(
-                  quarterTurns: isCol ? 1 : 0,
-                  child: RichText(
-                    text: TextSpan(
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .bodyText2,
-                        children: [
-                          TextSpan(
-                            text: course.subject.classCode,
-                            style: TextStyle(
-                                color: whiteThemeScheduleColors[colorIndex][1],
-                                fontSize: 12.0),
-                          ),
-                          TextSpan(
-                            text: (isCol ? "  " : "\n") + course.subject
-                                .classrooms[i].toString().replaceAll(
-                                RegExp("[\\[.*?\\]]"), ""),
-                            style: TextStyle(
-                                color: whiteThemeScheduleColors[colorIndex][1],
-                                fontSize: 10.0),
-                          ),
-                        ]
-                    ),
-                  ),
-                ),
-                style: ButtonStyle(
-                  padding: MaterialStateProperty.all(
-                      isColOf3 ? EdgeInsets.symmetric(vertical: 0.01 * width, horizontal: 0.005 * width) : EdgeInsets.all(0.01 * width)),
-                  backgroundColor: MaterialStateProperty.all(
-                      whiteThemeScheduleColors[colorIndex][0]),
-                  shape: MaterialStateProperty.all(const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero)),
-                  overlayColor: MaterialStateProperty.all(
-                      const Color.fromRGBO(255, 255, 255, 0.2)),
-                )),
-              width: isCol ? colWidth / colSize : colWidth,
-              height: rowHeight * course.subject.hours[i],
-              left: colWidth * course.subject.days[i][j] +
-                  (isCol ? (drawingIndex * colWidth) / colSize : 0),
-              top: rowHeight * course.subject.bgnPeriods[i][j] +
-                  2 * (course.subject.bgnPeriods[i][j] - 1),
-            ),
-          );
-        }
-      }
-    });
-
-      schedulePage = Stack(
-          children: [
-            SingleChildScrollView(
-              child: Stack(
-                children: [
-                  Stack(
-                    children: coursesList,
-                  )
-                ],
-              ),
-            ),
-          ]
-      );
+      schedulePage = buildSchedulePage();
     }
 
     Widget? servicesPage;
@@ -851,6 +566,301 @@ class HomeState extends State<Home> {
 
   }
 
+  Widget buildSchedulePage() {
+
+    double colWidth = (width) / 7; // 6 days and a col for the clock
+    double rowHeight = (height * 1) / 11; // 10 for the lock and one for the empty box // 91 percent because of the horizontal borders
+
+    Color headerColor = Colors.blue;
+    Color emptyCellColor = Colors.white;
+    Color horizontalBorderColor = Colors.blueGrey.shade200;
+    Container emptyCell = Container(decoration: BoxDecoration(
+        color: emptyCellColor,
+        border: Border.symmetric(
+            horizontal: BorderSide(color: horizontalBorderColor, width: 1)
+        )),
+        child: SizedBox(width: colWidth, height: rowHeight,));
+
+    List<Widget> coursesList = [
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            color: headerColor,
+            child: Column( // Headers
+              children: [
+                SizedBox(width: colWidth, height: rowHeight),
+                Container(
+                    child: Center(child: Text('9:30', style: headerTxtStyle,)),
+                    height: rowHeight),
+                Container(
+                    child: Center(child: Text('10:30', style: headerTxtStyle,)),
+                    height: rowHeight),
+                Container(
+                    child: Center(child: Text('11:30', style: headerTxtStyle,)),
+                    height: rowHeight),
+                Container(
+                    child: Center(child: Text('12:30', style: headerTxtStyle,)),
+                    height: rowHeight),
+                Container(
+                    child: Center(child: Text('13:30', style: headerTxtStyle,)),
+                    height: rowHeight),
+                Container(
+                    child: Center(child: Text('14:30', style: headerTxtStyle,)),
+                    height: rowHeight),
+                Container(
+                    child: Center(child: Text('15:30', style: headerTxtStyle,)),
+                    height: rowHeight),
+                Container(
+                    child: Center(child: Text('16:30', style: headerTxtStyle,)),
+                    height: rowHeight),
+                Container(
+                    child: Center(child: Text('17:30', style: headerTxtStyle,)),
+                    height: rowHeight),
+                Container(
+                    child: Center(child: Text('18:30', style: headerTxtStyle,)),
+                    height: rowHeight + height * 0.04),
+              ],
+            ),
+          ),
+          Container(
+            color: headerColor,
+            child: Column( // Headers
+              children: [
+                Container(child: Center(
+                    child: Text(translateEng('Mon'), style: headerTxtStyle)),
+                  height: rowHeight,
+                  width: colWidth,),
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+              ],
+            ),
+          ),
+          Container(
+            color: headerColor,
+            child: Column( // Headers
+              children: [
+                Container(child: Center(
+                    child: Text(translateEng('Tue'), style: headerTxtStyle,)),
+                    height: rowHeight,
+                    width: colWidth),
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+              ],
+            ),
+          ),
+          Container(
+            color: headerColor,
+            child: Column( // Headers
+              children: [
+                Container(child: Center(
+                    child: Text(translateEng('Wed'), style: headerTxtStyle,)),
+                    height: rowHeight,
+                    width: colWidth),
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+              ],
+            ),
+          ),
+          Container(
+            color: headerColor,
+            child: Column( // Headers
+              children: [
+                Container(child: Center(
+                    child: Text(translateEng('Thur'), style: headerTxtStyle)),
+                    height: rowHeight,
+                    width: colWidth),
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+              ],
+            ),
+          ),
+          Container(
+            color: headerColor,
+            child: Column( // Headers
+              children: [
+                Container(child: Center(
+                    child: Text(translateEng('Fri'), style: headerTxtStyle)),
+                    height: rowHeight,
+                    width: colWidth),
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+              ],
+            ),
+          ),
+          Container(
+            color: headerColor,
+            child: Column( // Headers
+              children: [
+                Container(child: Center(
+                    child: Text(translateEng('Sat'), style: headerTxtStyle)),
+                    height: rowHeight,
+                    width: colWidth),
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+                emptyCell,
+              ],
+            ),
+          ),
+        ],
+      ),
+    ];
+
+    // First find all the collisions:
+    collisions = findCourseCollisions();
+
+    int colorIndex = 0;
+
+    Main.schedules[Main.currentScheduleIndex].scheduleCourses.forEach((course) {
+      colorIndex++;
+      for (int i = 0; i < course.subject.days.length; i++) {
+        for (int j = 0; j < course.subject.days[i].length; j++) {
+          bool isCol = false, isColOf3 = false;
+          int atIndex = 0,
+              drawingIndex = 0,
+              colSize = 1; // colSize determines how many subjects are actually in this collision
+          int colIndex = 0;
+          collisions.forEach((col) {
+            atIndex = 0;
+            col.subjects.forEach((sub) {
+              if (sub.isEqual(course.subject) && i == col.i[atIndex] &&
+                  j == col.j[atIndex] && !col.isDrawn[atIndex]) {
+                collisions[colIndex].isDrawn[atIndex] = true;
+                isCol = true;
+                isColOf3 = collisions[colIndex].is3Col;
+                drawingIndex = atIndex;
+                colSize = col.subjects.length;
+                return;
+              }
+              if (isCol) {
+                return;
+              }
+              atIndex++;
+            });
+            colIndex++;
+            if (isCol) {
+              return;
+            }
+          });
+          print("index $drawingIndex");
+
+          coursesList.add(
+            Positioned(child: TextButton(
+              //clipBehavior: Clip.none,
+                onPressed: () => showCourseInfo(course.subject),
+                // TODO: Make it pass a class called "PeriodData" / which holds only the info of the current period!
+                child: RotatedBox(
+                  quarterTurns: isCol ? 1 : 0,
+                  child: RichText(
+                    text: TextSpan(
+                        style: Theme
+                            .of(context)
+                            .textTheme
+                            .bodyText2,
+                        children: [
+                          TextSpan(
+                            text: course.subject.classCode,
+                            style: TextStyle(
+                                color: whiteThemeScheduleColors[colorIndex][1],
+                                fontSize: 12.0),
+                          ),
+                          TextSpan(
+                            text: (isCol ? "  " : "\n") + course.subject
+                                .classrooms[i].toString().replaceAll(
+                                RegExp("[\\[.*?\\]]"), ""),
+                            style: TextStyle(
+                                color: whiteThemeScheduleColors[colorIndex][1],
+                                fontSize: 10.0),
+                          ),
+                        ]
+                    ),
+                  ),
+                ),
+                style: ButtonStyle(
+                  padding: MaterialStateProperty.all(
+                      isColOf3 ? EdgeInsets.symmetric(vertical: 0.01 * width, horizontal: 0.005 * width) : EdgeInsets.all(0.01 * width)),
+                  backgroundColor: MaterialStateProperty.all(
+                      whiteThemeScheduleColors[colorIndex][0]),
+                  shape: MaterialStateProperty.all(const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero)),
+                  overlayColor: MaterialStateProperty.all(
+                      const Color.fromRGBO(255, 255, 255, 0.2)),
+                )),
+              width: isCol ? colWidth / colSize : colWidth,
+              height: rowHeight * course.subject.hours[i],
+              left: colWidth * course.subject.days[i][j] +
+                  (isCol ? (drawingIndex * colWidth) / colSize : 0),
+              top: rowHeight * course.subject.bgnPeriods[i][j] +
+                  2 * (course.subject.bgnPeriods[i][j] - 1),
+            ),
+          );
+        }
+      }
+    });
+
+    return Stack(
+        children: [
+          SingleChildScrollView(
+            child: Stack(
+              children: [
+                Stack(
+                  children: coursesList,
+                )
+              ],
+            ),
+          ),
+        ]
+    );
+
+  }
+
   List<CollisionData> findCourseCollisions() {
 
     List<CollisionData> collisions = [];
@@ -860,26 +870,23 @@ class HomeState extends State<Home> {
       for (int i = 0 ; i < course.subject.days.length ; i++) {
         for (int j = 0 ; j < course.subject.days[i].length ; j++) {
           int day = course.subject.days[i][j], bgnHour = course.subject.bgnPeriods[i][j], hours = course.subject.hours[i];
-          print("Searching for bgnPeriods b/w $bgnHour and ${bgnHour + hours} for the course ${course.subject.classCode}");
+          //print("Searching for bgnPeriods b/w $bgnHour and ${bgnHour + hours} for the course ${course.subject.classCode}");
 
           Main.schedules[Main.currentScheduleIndex].scheduleCourses.forEach((courseToComp) {
 
             for (int i_ = 0 ; i_ < courseToComp.subject.days.length ; i_++) {
               for (int j_ = 0 ; j_ < courseToComp.subject.days[i_].length ; j_++) {
-                print("Doing indices: $i_ and $j_");
+                //print("Doing indices: $i_ and $j_");
                 if (courseToComp.subject.days[i_][j_] == day) {
                   if (!courseToComp.subject.isEqual(course.subject) &&
                       (courseToComp.subject.bgnPeriods[i_][j_] >= bgnHour && courseToComp.subject.bgnPeriods[i_][j_] < (bgnHour + hours))
-                  || ((courseToComp.subject.bgnPeriods[i_][j_] + courseToComp.subject.hours[i_]) >= bgnHour && (courseToComp.subject.bgnPeriods[i_][j_] + courseToComp.subject.hours[i_]) < (bgnHour + hours))) {
+                  || ((courseToComp.subject.bgnPeriods[i_][j_] + courseToComp.subject.hours[i_]) > bgnHour && (courseToComp.subject.bgnPeriods[i_][j_] + courseToComp.subject.hours[i_]) < (bgnHour + hours))) {
+                    print("Collision b/w ${course.subject.classCode} and ${courseToComp.subject.classCode}, but need to check");
                     // Check if it was not already added before:
                     bool isFound = false;
                     collisions.forEach((col) {
-                      if ((col.subjects[0].isEqual(course.subject) || col.subjects[0].isEqual(courseToComp.subject))
-                          && (col.subjects[1].isEqual(course.subject) || col.subjects[1].isEqual(courseToComp.subject))
-                          && (col.subjects[col.subjects.length-1].isEqual(course.subject) || col.subjects[col.subjects.length-1].isEqual(courseToComp.subject))) {
-                        if (col.i.contains(i) && col.i.contains(i_) && col.j.contains(j) && col.j.contains(j_)) { // if both subjects with their i's and j's were found, then don't add them..
-                          isFound = true;
-                        }
+                      if (doBothCoursesExist(course.subject, i, j, courseToComp.subject, i_, j_, col)) {
+                        isFound = true;
                       } else { // collisions of 3, if one subject with its i's and j's, then add the other subject
                         // ((col.subjects[0].isEqual(course.subject) || col.subjects[1].isEqual(course.subject) || col.subjects[col.subjects.length-1].isEqual(course.subject)) && col.i.contains(i) && col.j.contains(j))
                         //   || ((col.subjects[0].isEqual(courseToComp.subject) || col.subjects[1].isEqual(courseToComp.subject) || col.subjects[col.subjects.length-1].isEqual(courseToComp.subject)) && col.i.contains(i_) && col.j.contains(j_))
@@ -949,12 +956,53 @@ class HomeState extends State<Home> {
 
       }
 
+      // Check if a duplicates were found:
+      for (int j = 0 ; j < collisions[i].subjects.length ; j++) {
+        for (int k = j + 1 ; k < collisions[i].subjects.length ; k++) {
+          if (collisions[i].subjects[j].isEqual(collisions[i].subjects[k])) {
+            collisions[i].subjects.removeAt(k);
+            k--;
+          }
+        }
+      }
+
     }
 
     // TODO: Now, take all the cols of 3 and make sure that they all collide together, if not, then delete the one that does not collide with both and reset isColOf3 to false:
     ;
 
     return collisions;
+
+  }
+
+  bool doBothCoursesExist(Subject sub1, int i, int j, Subject sub2, int i_, int j_, CollisionData col) {
+
+    bool isFound1 = false, isFound2 = false;
+    int subIndex;
+
+    // for sub1:
+    for (subIndex = 0 ; subIndex < col.subjects.length ; subIndex++) {
+      if (col.subjects[subIndex].isEqual(sub1)) {
+        if (sub1.days[i][j] == col.subjects[subIndex].days[col.i[subIndex]][col.j[subIndex]]) {
+          if (sub1.bgnPeriods[i][j] == col.subjects[subIndex].bgnPeriods[col.i[subIndex]][col.j[subIndex]]) {
+            isFound1 = true;
+          }
+        }
+      }
+    }
+
+    // for sub2:
+    for (subIndex = 0 ; subIndex < col.subjects.length ; subIndex++) {
+      if (col.subjects[subIndex].isEqual(sub2)) {
+        if (sub2.days[i_][j_] == col.subjects[subIndex].days[col.i[subIndex]][col.j[subIndex]]) {
+          if (sub2.bgnPeriods[i_][j_] == col.subjects[subIndex].bgnPeriods[col.i[subIndex]][col.j[subIndex]]) {
+            isFound2 = true;
+          }
+        }
+      }
+    }
+
+    return isFound1 && isFound2;
 
   }
 
@@ -970,7 +1018,7 @@ class HomeState extends State<Home> {
         j = col.j[k];
         if (!((col.subjects[k].days[i][j] == day) &&
             ((bgnHour >= col.subjects[k].bgnPeriods[i][j] && bgnHour < (col.subjects[k].bgnPeriods[i][j] + col.subjects[k].hours[i]))
-            || ((bgnHour + hours) >= col.subjects[k].bgnPeriods[i][j] && (bgnHour + hours) < (col.subjects[k].bgnPeriods[i][j] + col.subjects[k].hours[i]))))) {
+            || ((bgnHour + hours) > col.subjects[k].bgnPeriods[i][j] && (bgnHour + hours) < (col.subjects[k].bgnPeriods[i][j] + col.subjects[k].hours[i]))))) {
           // if they dont collide, then do this:
           return false;
         }

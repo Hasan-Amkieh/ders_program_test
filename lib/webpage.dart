@@ -46,7 +46,7 @@ class WebpageState extends State<Webpage> {
                 // These properties will make the webpage load but nothing is shown on the display
                 child: InAppWebView(
                     onAjaxReadyStateChange: (controller, request) async {
-                      print("Received this file: ${request.url.toString()}");
+                      //print("Received this file: ${request.url.toString()}");
                       if (request.url
                           .toString()
                           .contains("__func=regularttGetData") &&
