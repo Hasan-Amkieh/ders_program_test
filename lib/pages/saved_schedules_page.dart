@@ -324,9 +324,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
           SizedBox(width: width * 0.03),
           Text(translateEng("Rename Schedule"), style: const TextStyle(color: Colors.blue))]),
         onPressed: () {
-
           showDialog(context: context, builder: (context) {
-
             TextEditingController nameController = TextEditingController(); // Main.schedules[scheduleIndex].scheduleName
 
             return AlertDialog(
@@ -342,9 +340,14 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(translateEng("Name")),
-                              SizedBox(width: width * 0.4,
-                                  child: TextFormField(controller: nameController, decoration: InputDecoration(hintText: translateEng("e.g. Summer Semester"))),
+                              SizedBox(
+                                width: width * 0.6,
+                                child: TextFormField(controller: nameController,
+                                    decoration: InputDecoration(
+                                        hintText: translateEng("e.g. Summer Semester"),
+                                        labelText: "Schedule Name"
+                                    ),
+                                ),
                               ),
                             ],
                           ),
@@ -402,13 +405,13 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                     children: [
                       const Icon(Icons.screenshot),
                       SizedBox(width: width * 0.03),
-                      Text(translateEng("Screenshot the Schedule")),
+                      Text(translateEng("By Screenshot of the Schedule")),
                     ],
                   ),
                   SizedBox(height: width * 0.03),
                   TextButton.icon(
                     icon: const Icon(Icons.save_alt_outlined),
-                    label: Text(translateEng("Save to Gallery")),
+                    label: Text(translateEng("Save Screenshot to Gallery")),
                     onPressed: () async {
                       final image = await controller.captureFromWidget(HomeState.currentState!.buildSchedulePage());
                       saveScreenshot(image).then((value) { // TODO: Confirm this by testing the app on Android and IOS:
@@ -451,7 +454,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                   const Divider(height: 2.0, thickness: 2.0),
                   TextButton.icon(
                     icon: const Icon(CupertinoIcons.link),
-                    label: Text(translateEng("Share by Link")),
+                    label: Text(translateEng("Share Schedule by Link")),
                     onPressed: () async {
                       HomeState.currentState!.initDeepLinkData();
                       BranchResponse? response = await HomeState.currentState!.generateLink();

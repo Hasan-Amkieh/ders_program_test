@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:ders_program_test/language/dictionary.dart';
 import 'package:ders_program_test/others/subject.dart';
 import 'package:flutter/cupertino.dart';
@@ -36,21 +37,21 @@ class EditCoursePageState extends State<EditCoursePage> {
       String modeName = "";
       switch (mode) {
         case 0:
-          modeName = "view";
+          modeName = "View";
           break;
         case 1:
-          modeName = "edit";
+          modeName = "Edit";
           break;
         case 2:
-          modeName = "delete";
+          modeName = "Delete";
           break;
       }
       Fluttertoast.showToast(
-          msg: translateEng("$modeName mode"),
-          toastLength: Toast.LENGTH_SHORT,
+          msg: translateEng("$modeName Mode"),
+          toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.TOP,
           timeInSecForIosWeb: 1,
-          backgroundColor: Colors.blue.shade400,
+          backgroundColor: const Color.fromRGBO(80, 154, 167, 1.0),
           textColor: Colors.white,
           fontSize: 12.0
       );
@@ -81,7 +82,7 @@ class EditCoursePageState extends State<EditCoursePage> {
                       ),
                       child: Container(
                         child: IconButton(
-                          tooltip: translateEng("view mode"),
+                          tooltip: translateEng("View Mode"),
                           splashColor: Colors.transparent,
                           icon: Icon(Icons.remove_red_eye_outlined, color: mode == 0 ? Colors.grey.shade700 : Colors.blue),
                           onPressed: () {
@@ -105,7 +106,7 @@ class EditCoursePageState extends State<EditCoursePage> {
                       ),
                       child: Container(
                         child: IconButton(
-                          tooltip: translateEng("edit mode"),
+                          tooltip: translateEng("Edit Mode"),
                           splashColor: Colors.transparent,
                           icon: Icon(Icons.edit_note, color: mode == 1 ? Colors.green.shade700 : Colors.blue),
                           onPressed: () {
@@ -129,7 +130,7 @@ class EditCoursePageState extends State<EditCoursePage> {
                       ),
                       child: Container(
                         child: IconButton(
-                          tooltip: translateEng("delete mode"),
+                          tooltip: translateEng("Delete Mode"),
                           splashColor: Colors.transparent,
                           icon: Icon(Icons.delete, color: mode == 2 ? Colors.red.shade700 : Colors.blue),
                           onPressed: () {
@@ -166,7 +167,7 @@ class EditCoursePageState extends State<EditCoursePage> {
                         style: ButtonStyle(
                           shape: MaterialStateProperty.all(RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(0.02 * width))),
-                          backgroundColor: MaterialStateProperty.all(Colors.blue),
+                          backgroundColor: MaterialStateProperty.all(const Color.fromRGBO(80, 154, 167, 1.0)),
                         ),
                         icon: const Icon(Icons.add, color: Colors.white),
                         label: Text(translateEng("add courses"), style: const TextStyle(color: Colors.white, fontSize: 12)),
@@ -191,7 +192,7 @@ class EditCoursePageState extends State<EditCoursePage> {
                           overlayColor: MaterialStateProperty.all(Colors.white.withOpacity(0.2)),
                           shape: MaterialStateProperty.all(RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(0.02 * width))),
-                          backgroundColor: MaterialStateProperty.all(Colors.blue),
+                          backgroundColor: MaterialStateProperty.all(const Color.fromRGBO(80, 154, 167, 1.0)),
                         ),
                         icon: const Icon(CupertinoIcons.pencil, color: Colors.white),
                         label: Text(translateEng("custom course"), style: const TextStyle(color: Colors.white, fontSize: 12)),
@@ -227,6 +228,7 @@ class EditCoursePageState extends State<EditCoursePage> {
       return Text(translateEng("You have no courses in the current schedule"));
     } else {
       return ListView.builder(itemCount: Main.schedules[Main.currentScheduleIndex].scheduleCourses.length, itemBuilder: (context, index) {
+        TextEditingController notesController = TextEditingController(text: Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).note);
         Subject subject = Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).subject;
         //print("Building the subject of teachers ${subject.teacherCodes}");
         return AnimatedContainer(
@@ -241,6 +243,54 @@ class EditCoursePageState extends State<EditCoursePage> {
               style: ListTileStyle.drawer,
               contentPadding: EdgeInsets.fromLTRB(width * 0.02, 0, 0, 0),
               title: Text(subject.classCode),
+              trailing: IconButton(
+                  tooltip: translateEng("Notes"),
+                  icon: const Icon(CupertinoIcons.chat_bubble_text_fill, color: Colors.blue), onPressed: () {
+                    showAdaptiveActionSheet(
+                      context: context,
+                      title: Column(
+                        children: [
+                          SizedBox(
+                            width: width * 0.7,
+                            height: height * 0.3,
+                            child: TextFormField(
+                              controller: notesController,
+                              minLines: null,
+                              maxLines: null,
+                              expands: true,
+                              scrollController: ScrollController(),
+                              decoration: const InputDecoration(
+                                labelText: "Notes",
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 0.3 * height,
+                          ),
+                        ],
+                      ),
+                      actions: [
+                        BottomSheetAction(title: Text(translateEng("Save"),
+                            style: const TextStyle(color: Colors.blue)), onPressed: () {
+                              Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).note = notesController.text;
+                              Navigator.pop(context);
+                              Fluttertoast.showToast(
+                                  msg: translateEng("Notes were saved"),
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.TOP,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: const Color.fromRGBO(80, 154, 167, 1.0),
+                                  textColor: Colors.white,
+                                  fontSize: 12.0
+                              );
+                        }),
+                      ],
+                      cancelAction: CancelAction(title: const Text('Cancel'), onPressed: () {
+                        notesController.text = Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).note;
+                        Navigator.pop(context);
+                      }),
+                    );
+                  }),
               onTap: () {
 
                 if (mode == 0) { // view
