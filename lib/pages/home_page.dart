@@ -435,7 +435,21 @@ class HomeState extends State<Home> {
                 }
               },
             ),
+          ),Container(
+            padding: EdgeInsets.fromLTRB(0.1 * width, 0, 0, 0),
+            child: ListTile(
+              title: Text(translateEng("GPA Calculator")),
+              onTap: () async {
+                const url = 'https://metugpa.com';
+                if (await canLaunch(url)) {
+                  await launch(url);
+                } else {
+                  throw 'Could not launch $url';
+                }
+              },
+            ),
           ),
+
           Container(
             padding: EdgeInsets.fromLTRB(0.05 * width, 0.03 * width, 0, 0),
             child: const Text(

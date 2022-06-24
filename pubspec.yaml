@@ -50,6 +50,7 @@ dependencies:
   share_plus: 4.0.9
   path_provider: 2.0.11
   flutter_branch_sdk: 5.1.1
+  adaptive_action_sheet: ^2.0.1
 
 dev_dependencies:
   flutter_test:

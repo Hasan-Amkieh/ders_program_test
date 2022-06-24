@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:ders_program_test/language/dictionary.dart';
 import 'package:ders_program_test/others/subject.dart';
 import 'package:ders_program_test/pages/home_page.dart';
@@ -107,168 +108,17 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                TextButton(
-                  style: ButtonStyle(
-                    padding: MaterialStateProperty.all(EdgeInsets.zero),
-                  ),
-                  child: const Icon(CupertinoIcons.pencil_ellipsis_rectangle),
+                IconButton(
+                  icon: const Icon(CupertinoIcons.ellipsis_vertical, color: Colors.blue),
                   onPressed: () {
-                    setState(() {
-                      showDialog(context: context, builder: (context) {
-
-                        String scheduleName = "";
-
-                        return AlertDialog(
-                          title: Text(translateEng("Change Schedule Name")),
-                          content: Builder(
-                              builder: (context) {
-                                return Container(
-                                  width: width * 1,
-                                  height: height * 0.25,
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(translateEng("Name")),
-                                          SizedBox(width: width * 0.4,
-                                              child: TextFieldWidget(
-                                                  text: Main.schedules[scheduleIndex].scheduleName,
-                                                  onChanged: (str) {scheduleName = str;},
-                                                  hintText: "e.g. 2019 Summer")
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }
-                          ),
-                          actions: [
-                            TextButton(
-                              child: Text(translateEng("CHANGE")),
-                              onPressed: () {
-                                setState(() {
-                                  Main.schedules[scheduleIndex].scheduleName = scheduleName;
-                                });
-                                Navigator.pop(context);
-                              },
-                            ),
-                            TextButton(
-                              child: Text(translateEng("CANCEL")),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ],
-                        );
-
-                      });
-                    });
+                    showAdaptiveActionSheet(
+                      context: context,
+                      title: Text(Main.schedules[scheduleIndex].scheduleName),
+                      androidBorderRadius: 30,
+                      actions: buildBottomSheetActions(scheduleIndex),
+                      cancelAction: CancelAction(title: const Text('Close')),// onPressed parameter is optional by default will dismiss the ActionSheet
+                    );
                   },
-                ),
-                Visibility(
-                  visible: Main.schedules[scheduleIndex].scheduleCourses.isNotEmpty,
-                  child: TextButton(
-                    child: const Icon(Icons.share),
-                    onPressed: () {
-                      setState(() {
-                        showDialog(context: context, builder: (context) {
-
-                          return AlertDialog(
-                            title: Text(translateEng("Share Schedule")),
-                            content: Builder(
-                                builder: (context) {
-                                  return Container(
-                                    width: width * 1,
-                                    height: height * 0.35,
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            const Icon(Icons.screenshot),
-                                            SizedBox(width: width * 0.03),
-                                            Text(translateEng("Screenshot the Schedule")),
-                                          ],
-                                        ),
-                                        SizedBox(height: width * 0.03),
-                                        TextButton.icon(
-                                            icon: const Icon(Icons.save_alt_outlined),
-                                            label: Text(translateEng("Save to Gallery")),
-                                            onPressed: () async {
-                                              final image = await controller.captureFromWidget(HomeState.currentState!.buildSchedulePage());
-                                              saveScreenshot(image).then((value) { // TODO: Confirm this by testing the app on Android and IOS:
-                                                if (value.toString().contains("isSuccess: true")) {
-                                                  Fluttertoast.showToast(
-                                                      msg: translateEng("Image was saved to gallery"),
-                                                      toastLength: Toast.LENGTH_SHORT,
-                                                      gravity: ToastGravity.BOTTOM,
-                                                      timeInSecForIosWeb: 1,
-                                                      backgroundColor: Colors.blue,
-                                                      textColor: Colors.white,
-                                                      fontSize: 12.0
-                                                  );
-                                                } else {
-                                                  Fluttertoast.showToast(
-                                                      msg: translateEng("Image was NOT saved!"),
-                                                      toastLength: Toast.LENGTH_SHORT,
-                                                      gravity: ToastGravity.BOTTOM,
-                                                      timeInSecForIosWeb: 1,
-                                                      backgroundColor: Colors.red,
-                                                      textColor: Colors.white,
-                                                      fontSize: 12.0
-                                                  );
-                                                }
-                                              });
-                                              Navigator.pop(context);
-                                            },
-                                        ),
-                                        TextButton.icon(
-                                          icon: const Icon(Icons.link),
-                                          label: Text(translateEng("Share Screenshot")),
-                                          onPressed: () async {
-                                            final image = await controller.captureFromWidget(HomeState.currentState!.buildSchedulePage());
-                                            shareScreenshot(image);
-
-                                            Navigator.pop(context);
-                                          },
-                                        ),
-                                        SizedBox(height: width * 0.03),
-                                        const Divider(height: 2.0, thickness: 2.0,),
-                                        TextButton.icon(
-                                          icon: const Icon(CupertinoIcons.link),
-                                          label: Text(translateEng("Share by Link")),
-                                          onPressed: () async {
-                                            HomeState.currentState!.initDeepLinkData();
-                                            BranchResponse? response = await HomeState.currentState!.generateLink();
-
-                                            var time = DateTime.now().add(const Duration(days: 30));
-                                            await Share.share("${response?.result}\nThis shared link expires on ${time.year}-${time.month}-${time.day}");
-
-                                            Navigator.pop(context);
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }
-                            ),
-                            actions: [
-                              TextButton(
-                                child: Text(translateEng("CANCEL")),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            ],
-                          );
-
-                        });
-                      });
-                    },
-                  ),
                 ),
               ],
             ),
@@ -363,50 +213,6 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                     ),
                   ),
                 ),
-                SizedBox(height: width * 0.03),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Visibility(
-                      visible: Main.currentScheduleIndex != scheduleIndex,
-                        child: TextButton.icon(
-                          icon: const Icon(CupertinoIcons.checkmark_seal, color: Colors.white),
-                          label: Text(translateEng("Set active"), style: const TextStyle(color: Colors.white, fontSize: 14)),
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(Colors.blue),
-                            overlayColor: MaterialStateProperty.all(Colors.white.withOpacity(0.2)),
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              //print("Setting current index as $scheduleIndex");
-                              Main.currentScheduleIndex = scheduleIndex;
-                            });
-                          },
-                        ),
-                    ),
-                    SizedBox(width: width * 0.03),
-                    Visibility(
-                      visible: Main.schedules.length > 1,
-                      child: TextButton.icon(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(Colors.red),
-                          overlayColor: MaterialStateProperty.all(Colors.white.withOpacity(0.2)),
-                          //padding: MaterialStateProperty.all(EdgeInsets.zero),
-                        ),
-                        icon: const Icon(Icons.highlight_remove, color: Colors.white),
-                        label: Text(translateEng("Remove schedule"), style: const TextStyle(color: Colors.white, fontSize: 14)),
-                        onPressed: () {
-                          setState(() {
-                            Main.schedules.removeAt(scheduleIndex);
-                            if (scheduleIndex == Main.currentScheduleIndex) {
-                              Main.currentScheduleIndex = Main.schedules.length - 1;
-                            }
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
               ],
             ),
           ),
@@ -431,7 +237,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
           setState(() {
             showDialog(context: context, builder: (context) {
 
-              String scheduleName = "";
+              TextEditingController nameController = TextEditingController();
 
               return AlertDialog(
                 title: Text(translateEng("Creating Schedule")),
@@ -444,10 +250,11 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(translateEng("Name")),
                               SizedBox(width: width * 0.4,
-                                  child: TextFieldWidget(text: "", onChanged: (str) {scheduleName = str;}, hintText: "e.g. 2019 Summer")),
+                                  child: TextFormField(controller: nameController, decoration: InputDecoration(hintText: translateEng("e.g. Summer Semester"))))
                             ],
                           ),
                         ],
@@ -460,7 +267,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                     child: Text(translateEng("SAVE")),
                     onPressed: () {
                       setState(() {
-                        Main.schedules.add(Schedule(scheduleName: scheduleName, scheduleCourses: []));
+                        Main.schedules.add(Schedule(scheduleName: nameController.text, scheduleCourses: []));
                       });
                       Navigator.pop(context);
                     },
@@ -502,6 +309,211 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
     image.writeAsBytesSync(bytes);
 
     await Share.shareFiles([image.path]);
+
+  }
+
+  List<BottomSheetAction> buildBottomSheetActions(int scheduleIndex) {
+
+    List<BottomSheetAction> actions = [];
+    double width = (window.physicalSize / window.devicePixelRatio).width;
+    double height = (window.physicalSize / window.devicePixelRatio).height;
+
+    actions.add(BottomSheetAction(
+        title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          const Icon(CupertinoIcons.pencil_ellipsis_rectangle, color: Colors.blue),
+          SizedBox(width: width * 0.03),
+          Text(translateEng("Rename Schedule"), style: const TextStyle(color: Colors.blue))]),
+        onPressed: () {
+
+          showDialog(context: context, builder: (context) {
+
+            TextEditingController nameController = TextEditingController(); // Main.schedules[scheduleIndex].scheduleName
+
+            return AlertDialog(
+              title: Text(translateEng("Change Schedule Name")),
+              content: Builder(
+                  builder: (context) {
+                    return Container(
+                      width: width * 1,
+                      height: height * 0.25,
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(translateEng("Name")),
+                              SizedBox(width: width * 0.4,
+                                  child: TextFormField(controller: nameController, decoration: InputDecoration(hintText: translateEng("e.g. Summer Semester"))),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+              ),
+              actions: [
+                TextButton(
+                  child: Text(translateEng("CHANGE")),
+                  onPressed: () {
+                    setState(() {
+                      Main.schedules[scheduleIndex].scheduleName = nameController.text;
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+                TextButton(
+                  child: Text(translateEng("CANCEL")),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            );
+          }).then((value) {
+            Navigator.pop(context);
+            Fluttertoast.showToast(
+                msg: translateEng("Name was changed to ") + Main.schedules[scheduleIndex].scheduleName,
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.blue,
+                textColor: Colors.white,
+                fontSize: 12.0
+            );
+          });
+        }));
+
+    if (Main.schedules[scheduleIndex].scheduleCourses.isNotEmpty) {
+      actions.add(BottomSheetAction(
+          title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            const Icon(Icons.share, color: Colors.blue),
+            SizedBox(width: width * 0.03),
+            Text(translateEng("Share"), style: const TextStyle(color: Colors.blue))]),
+          onPressed: () { // TODO:
+            showAdaptiveActionSheet(
+              context: context,
+              title: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.screenshot),
+                      SizedBox(width: width * 0.03),
+                      Text(translateEng("Screenshot the Schedule")),
+                    ],
+                  ),
+                  SizedBox(height: width * 0.03),
+                  TextButton.icon(
+                    icon: const Icon(Icons.save_alt_outlined),
+                    label: Text(translateEng("Save to Gallery")),
+                    onPressed: () async {
+                      final image = await controller.captureFromWidget(HomeState.currentState!.buildSchedulePage());
+                      saveScreenshot(image).then((value) { // TODO: Confirm this by testing the app on Android and IOS:
+                        if (value.toString().contains("isSuccess: true")) {
+                          Fluttertoast.showToast(
+                              msg: translateEng("Image was saved to gallery"),
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.blue,
+                              textColor: Colors.white,
+                              fontSize: 12.0
+                          );
+                        } else {
+                          Fluttertoast.showToast(
+                              msg: translateEng("Image was NOT saved!"),
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 12.0
+                          );
+                        }
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  TextButton.icon(
+                    icon: const Icon(Icons.link),
+                    label: Text(translateEng("Share Screenshot")),
+                    onPressed: () async {
+                      final image = await controller.captureFromWidget(HomeState.currentState!.buildSchedulePage());
+                      shareScreenshot(image);
+
+                      Navigator.pop(context);
+                    },
+                  ),
+                  SizedBox(height: width * 0.03),
+                  const Divider(height: 2.0, thickness: 2.0),
+                  TextButton.icon(
+                    icon: const Icon(CupertinoIcons.link),
+                    label: Text(translateEng("Share by Link")),
+                    onPressed: () async {
+                      HomeState.currentState!.initDeepLinkData();
+                      BranchResponse? response = await HomeState.currentState!.generateLink();
+
+                      var time = DateTime.now().add(const Duration(days: 30));
+                      await Share.share("${response?.result}\nThis shared link expires on ${time.year}-${time.month}-${time.day}");
+
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+              actions: [],
+              cancelAction: CancelAction(title: const Text('Close')),
+            );
+          })
+      );
+    }
+
+    if (Main.schedules.length > 1) {
+      if (scheduleIndex != Main.currentScheduleIndex) {
+        actions.add(BottomSheetAction(
+            title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              const Icon(CupertinoIcons.checkmark_seal, color: Colors.blue),
+              SizedBox(width: width * 0.03),
+              Text(translateEng("Set Active"), style: const TextStyle(color: Colors.blue))]),
+            onPressed: () { // TODO:
+              setState(() {
+                Main.currentScheduleIndex = scheduleIndex;
+                Navigator.pop(context);
+                Fluttertoast.showToast(
+                    msg: translateEng("${Main.schedules[scheduleIndex].scheduleName} " + translateEng("is active")),
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.blue,
+                    textColor: Colors.white,
+                    fontSize: 12.0
+                );
+              });
+            })
+        );
+      }
+      actions.add(BottomSheetAction(
+          title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            const Icon(CupertinoIcons.xmark_circle, color: Colors.red),
+            SizedBox(width: width * 0.03),
+            Text(translateEng("Delete"), style: const TextStyle(color: Colors.red))]),
+          onPressed: () {
+            setState(() {
+              Main.schedules.removeAt(scheduleIndex);
+              if (scheduleIndex == Main.currentScheduleIndex) {
+                Main.currentScheduleIndex = Main.schedules.length - 1;
+              }
+              Navigator.pop(context);
+            });
+          })
+      );
+
+    }
+
+    return actions;
 
   }
 

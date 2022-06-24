@@ -1,7 +1,6 @@
 // NOTE: minimum version of android is 4.4 for the application to run,
 
 import 'dart:async';
-import 'dart:io';
 import 'package:ders_program_test/others/subject.dart';
 import 'package:ders_program_test/pages/add_courses_page.dart';
 import 'package:ders_program_test/pages/create_custom_course_page.dart';
@@ -16,7 +15,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:restart_app/restart_app.dart';
 import 'package:storage_repository/implementations/storage_repository.dart';
 import 'package:storage_repository/interfaces/i_storage_repository.dart';
-import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 
 import 'others/departments.dart';
 
@@ -32,6 +30,10 @@ dersbottest.app.link / dersbottest-alternate.app.link
 branch key: key_live_ih9S9zfR2H62HMatSvr3NhnctugTyf3W
 branch secret: secret_live_IT69dUSWoQndwGZn8qHilb5ZSrJDIlf4
 app name: ders_bot_test / App ID: 1068179538950771279
+
+* Free Subscription WARNING:
+* Branch IO only provides 10k MAUS (10 thousands of Monthly Active Users),
+, means if the active users go higher than 10k users, then I have to pay 5 USD for 1K for each month
 
 *
 */
