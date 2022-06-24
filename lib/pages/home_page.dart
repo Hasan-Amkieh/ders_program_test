@@ -1095,6 +1095,7 @@ class HomeState extends State<Home> {
 
         String str;
         str = data['schedule_name'] + "\n" + data['faculty'];
+        //
         for (int i = 0 ; i < int.parse(data['number_of_courses']) ; i++) {
           str = str + "\n" + data['course_${i+1}'];
         }
