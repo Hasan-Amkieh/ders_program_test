@@ -94,6 +94,8 @@ class WebpageState extends State<Webpage> {
     timetableStr ??= "";
     if (timetableStr.isEmpty) {
       print("ERROR: Data classification could not be done because it is empty or null!");
+      // TODO : Restart the whole update process:
+      return ;
     }
 
     print("Starting classification:\n");
@@ -104,8 +106,7 @@ class WebpageState extends State<Webpage> {
     //String dateStr = timetableStr.substring(validStart, timetableStr.indexOf("-", validStart));
     Main.semesters.add(FacultySemester(facName: Main.faculty, validDate: DateTime.now(), lastUpdate: DateTime.now()));
 
-    // Finding all the classcodes with their names
-    var classCodes_names = Main.classcodes;
+    List<String> names = [];
     var classesInSemester = [];
     List<MapEntry<String, String>> subjectIds = [];
     List<Subject> subjects = [];
@@ -117,7 +118,7 @@ class WebpageState extends State<Webpage> {
     classCodesEnd = timetableStr.indexOf("data_columns", classCodesBegin);
 
     int lastFound = classCodesBegin;
-    String name, classCodeWithSec, classCodeWithoutSec;
+    String name = "", classCodeWithSec, classCodeWithoutSec;
     while (lastFound < classCodesEnd) {
 
       lastFound = timetableStr.indexOf('name":"', lastFound) + 7;
@@ -131,9 +132,8 @@ class WebpageState extends State<Webpage> {
         classCodeWithoutSec = classCodeWithSec;
       }
 
-      if (!classCodes_names.containsKey(classCodeWithoutSec)) {
-        classCodes_names.addEntries([MapEntry(classCodeWithoutSec, name)]);
-      }
+      names.add(name);
+
       classesInSemester.add(classCodeWithSec);
 
       lastFound = timetableStr.lastIndexOf('"id":"', lastFound) + 6;
@@ -142,7 +142,6 @@ class WebpageState extends State<Webpage> {
 
     }
 
-    Main.classcodes = classCodes_names;
     // TODO: Instead of searching of all the file, cut the string part that you need and use it instead of using the whole file (better performance)
 
     print("Resolving all ids with subjectid!");
@@ -157,6 +156,7 @@ class WebpageState extends State<Webpage> {
       lastFound = classCodesBegin;
       int periodIndex, i;
       int continueAfter; // it is the index number that was used to find the subjectId
+      int subjectIndex = 0;
 
       subjectIds.forEach((subjectId) {
         lessonIds = [];
@@ -318,8 +318,10 @@ class WebpageState extends State<Webpage> {
         });
 
         // TODO: then fill it inside this class
-        subjects.add(Subject(hours: hrs, bgnPeriods: beginningHr, classCode: subjectId.key,
+        subjects.add(Subject(customName: names[subjectIndex], hours: hrs, bgnPeriods: beginningHr, classCode: subjectId.key,
             classrooms: classrooms, days: day, departments: classes, teacherCodes: teacherCodes));
+
+        subjectIndex++;
 
       });
     } // end for each subject

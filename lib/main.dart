@@ -1,6 +1,7 @@
 // NOTE: minimum version of android is 4.4 for the application to run,
 
 import 'dart:async';
+import 'dart:io';
 import 'package:ders_program_test/others/subject.dart';
 import 'package:ders_program_test/pages/add_courses_page.dart';
 import 'package:ders_program_test/pages/create_custom_course_page.dart';
@@ -11,12 +12,29 @@ import 'package:ders_program_test/pages/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ders_program_test/webpage.dart';
 import 'package:ders_program_test/pages/home_page.dart';
-import 'package:ders_program_test/pages/loading_update_page.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:restart_app/restart_app.dart';
 import 'package:storage_repository/implementations/storage_repository.dart';
 import 'package:storage_repository/interfaces/i_storage_repository.dart';
+import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 
 import 'others/departments.dart';
+
+/* NOTES about the project:
+
+* Use the following command to get the SHA256 for Androind Applinks:
+keytool -list -v -keystore "%USERPROFILE%\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android
+
+* Some info for the deep links:
+
+dersbottest.app.link / dersbottest-alternate.app.link
+
+branch key: key_live_ih9S9zfR2H62HMatSvr3NhnctugTyf3W
+branch secret: secret_live_IT69dUSWoQndwGZn8qHilb5ZSrJDIlf4
+app name: ders_bot_test / App ID: 1068179538950771279
+
+*
+*/
 
 /*
 
@@ -35,10 +53,11 @@ then the teacher/classroom text fields are moved from the periods into the botto
 */
 
 
-
 class Main {
 
   static IStorageRepository? storageUnit;
+
+  static String appDocDir = "";
 
   // NOTE: Default values are inside the function readSettings:
   static bool forceUpdate = true;
@@ -52,14 +71,15 @@ class Main {
   static List<Subject> favCourses = [];
 
   static int currentScheduleIndex = 0;
-  static List<Schedule> schedules = [Schedule(scheduleName: "Schedule 1", changes: [], scheduleCourses: [])];
+  static List<Schedule> schedules = [];
 
   // NOTE: Used inside add_courses page:
   static List<Subject> coursesToAdd = [];
 
   static bool isEditingCourse = false; // usde to edit the course info
   static Subject? courseToEdit; // It is used to edit the course info
-  static Subject emptySubject = Subject(classCode: "",
+  static Subject emptySubject = Subject(customName: "",
+      classCode: "",
       departments: <String>[],
       teacherCodes: <List<String>>[[]],
       hours: <int>[],
@@ -69,9 +89,6 @@ class Main {
 
   // TODO: Extract and store the semesters here:
   static List<FacultySemester> semesters = []; // each semester contains the subjects with their details
-
-  // TODO: Save them to the settings
-  static Map<String,String> classcodes = {}; // classcodes without the secion -> the full name of the class
 
   // TODO: Call the function save to save everything before closing the app:
   static void save() async {
@@ -122,6 +139,8 @@ class Main {
 
 Future main() async {
 
+  print("EXECUTING MAIN FUNCTION!!!");
+
   WidgetsFlutterBinding.ensureInitialized();
   await StorageRepository.initFlutter();
   Main.storageUnit = StorageRepository();
@@ -135,6 +154,16 @@ Future main() async {
 
   // TODO: just for test purposes, remove it later
   Main.forceUpdate = true;
+
+  // NOTE: These lines are only for checking the configs of Branch IO on this app!
+  // FlutterBranchSdk.initSession().listen((data) {
+  //   print("BRANCH: Received data: $data");
+  // });
+  // FlutterBranchSdk.validateSDKIntegration();
+
+  Main.schedules.add(Schedule(scheduleName: "Schedule 1", scheduleCourses: []));
+  Main.currentScheduleIndex = 0;
+  Main.appDocDir = (await getApplicationDocumentsDirectory()).path;
 
   runApp(MaterialApp(
     themeMode: Main.theme,

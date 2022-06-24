@@ -15,7 +15,8 @@ import '../widgets/timetable_canvas.dart';
 
 class CustomCoursePage extends StatefulWidget {
 
-  Subject subject = Subject(classCode: "",
+  Subject subject = Subject(customName: "",
+      classCode: "",
       departments: <String>[],
       teacherCodes: <List<String>>[[]],
       hours: <int>[],
@@ -136,18 +137,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
     double width = (window.physicalSize / window.devicePixelRatio).width;
     double height = (window.physicalSize / window.devicePixelRatio).height;
 
-    String? name = "";
-    if (Main.isEditingCourse) {
-      if (widget.subject.customName.isNotEmpty) {
-        name = widget.subject.customName;
-      } else {
-        if (widget.subject.classCode.contains("(")) {
-          name = Main.classcodes[widget.subject.classCode.substring(0, widget.subject.classCode.indexOf("("))];
-        } else {
-          name = Main.classcodes[widget.subject.classCode];
-        }
-      }
-    }
+    String name = widget.subject.customName;
 
     return Scaffold(
       appBar: AppBar(),
@@ -162,7 +152,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                     Text(translateEng("Course Name")),
                     SizedBox(
                         width: width * 0.6,
-                        child: Main.isEditingCourse ? Text(name ?? "") : TextFieldWidget(
+                        child: Main.isEditingCourse ? Text(name) : TextFieldWidget(
                             text: "",
                             onChanged: (str) { setState(() {widget.subject.customName = str;}); },
                             hintText: translateEng("e.g.   Basic English II")

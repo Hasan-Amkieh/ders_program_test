@@ -51,7 +51,7 @@ android {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.example.ders_program_test"
         minSdkVersion flutter.minSdkVersion
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 32
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()

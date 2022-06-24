@@ -29,12 +29,12 @@ class Subject { // represents a class
   // e.g. [CMPE, CEAC, CE, EE, General Electives]
   // NOTE: There is another department called General Electives
 
-  // Only used for custom courses
-  String customName; // if it is empty, then it is not a custom class, and vice versa
+  // Represents the name of the course
+  String customName;
 
   Subject({required this.classCode, required this.departments,
     required this.teacherCodes, required hours, required List<List<int>> bgnPeriods,
-    required List<List<int>> days, required this.classrooms, this.customName = ""}) {
+    required List<List<int>> days, required this.classrooms, required this.customName}) {
     // In each separate class, we can have multiple teachers with multiple classrooms
 
     translateTeachers();
@@ -102,7 +102,7 @@ class Subject { // represents a class
 
   @override
   // This function is used to store all the info of the subject into a single string
-  // example: CMPE 1 Reg.,MECE 1 Reg.|[B1007,B2032][1020]|[Sedar Water,Whatever Justdoit][Earth Fofo]|2,3|1,5|1,6
+  // example: Basics of C Programming II|CMPE 1 Reg.,MECE 1 Reg.|[B1007,B2032][1020]|[Sedar Water,Whatever Justdoit][Earth Fofo]|2,3|1,5|1,6
   // departments|classrooms|teacherCodes|hours|bgnPeriods|days
   String toString() {
 
@@ -174,17 +174,105 @@ class Subject { // represents a class
       daySec = days.toString().substring(1, days.toString().length - 1);
     }
 
-    String toReturn = depSec + '|' + classroomSec + '|' + teacherSec + '|' + hrSec + '|' + periodSec + '|' + daySec;
+    String toReturn = customName + "|" + depSec + '|' + classroomSec + '|' + teacherSec + '|' + hrSec + '|' + periodSec + '|' + daySec;
 
     return toReturn;
   }
 
-  // TODO: This function is used to convert a string into a Subject object
-  /*static Subject fromString(String str) {
-    Subject subject = Subject(classCode: , departments: , teacherCodes: ,
-        hours: , bgnPeriods: , days: , classrooms: );
-    return subject;
-  }*/
+  static Subject fromStringWithClassCode(String str) {
+
+    String classCode = "", name = "";
+    List<String> departments = [];
+    List<List<String>> teacherCodes = [], classrooms = [];
+    List<List<int>> bgnPeriods = [], days = [];
+    List<int> hours = [];
+
+    print("str is $str");
+    List<String> str_ = str.replaceAll(" ", "").split("|");
+    print("str_ is $str_");
+
+    classCode = str_[0];
+    name = str_[1];
+    departments = str_[2].split(',');
+
+    // classrooms:
+    List<String> classroomsList = str_[3].split('],[');
+    for (int i = 0 ; i < classroomsList.length ; i++) { // delete '[' and ']'
+      classroomsList[i] = classroomsList[i].replaceAll('[', '').replaceAll(']', '');
+      classrooms.add(classroomsList[i].split(','));
+    }
+
+    // teachers:
+    List<String> teachersList = str_[4].split('],[');
+    for (int i = 0 ; i < classroomsList.length ; i++) { // delete '[' and ']'
+      teachersList[i] = teachersList[i].replaceAll('[', '').replaceAll(']', '');
+      teacherCodes.add(teachersList[i].split(','));
+    }
+
+    // hours:
+    List<String> list;
+    if (str_[5].trim().isNotEmpty) {
+      list = str_[5].split(',');
+      for (int i = 0; i < list.length; i++) {
+        hours.add(int.parse(list[i]));
+      }
+    }
+
+    // bgnPeriods:
+    list = str_[6].split('],[');
+    list = list.where((element) => element.trim().isNotEmpty).toList();// ["[5, 1, 5]"]
+
+    List<int> tempList;
+    for (int i = 0 ; i < list.length ; i++) { // delete '[' and ']'
+      list[i] = list[i].replaceAll('[', '').replaceAll(']', '');
+      tempList = [];
+      list[i].split(',').forEach((element) { tempList.add(int.parse(element)); });
+      bgnPeriods.add(tempList);
+    }
+
+    // days:
+    list = str_[7].split('],[');
+    list = list.where((element) => element.trim().isNotEmpty).toList();
+    for (int i = 0 ; i < list.length ; i++) { // delete '[' and ']'
+      list[i] = list[i].replaceAll('[', '').replaceAll(']', '');
+      tempList = [];
+      list[i].split(',').forEach((element) { tempList.add(int.parse(element)); });
+      days.add(tempList);
+    }
+
+    return Subject(customName: name, classCode: classCode, departments: departments, teacherCodes: teacherCodes,
+        hours: hours, bgnPeriods: bgnPeriods, days: days, classrooms: classrooms);
+  }
+
+  // static Subject fromStringWithoutClassCode(String str) {
+  //   Subject subject = Subject(classCode: classCode, departments: , teacherCodes: ,
+  //       hours: , bgnPeriods: , days: , classrooms: );
+  //   return subject;
+  // }
+
+  static List<String> convertToListWithClassCodes(List<Course> courses) {
+
+    List<String> subjects = [];
+
+    for (int i = 0 ; i < courses.length ; i++) {
+      subjects.add(courses[i].subject.classCode + "|" + courses[i].subject.toString());
+    }
+
+    return subjects;
+
+  }
+
+  static List<String> convertToListWithoutClassCodes(List<Course> courses) {
+
+    List<String> subjects = [];
+
+    for (int i = 0 ; i < courses.length ; i++) {
+      subjects.add(courses[i].subject.toString());
+    }
+
+    return subjects;
+
+  }
 
   int getSection() { // Get the section number of the class
 
@@ -203,7 +291,7 @@ class Subject { // represents a class
 class Course { // This class is used inside the favourite and schedule courses, it indirectly inherits the class Subject
 
   Subject subject;
-  String note;
+  String note; // The note is something that is personal, it is not shared with the link share
 
   Course({required this.note, required this.subject});
 
@@ -223,10 +311,10 @@ class Notification {
 class Schedule {
 
   String scheduleName;
-  List<Notification> changes;
   List<Course> scheduleCourses;
+  List<Notification> changes = []; // The changes wont be passed along the Branch link share
 
-  Schedule({required this.scheduleName, required this.changes, required this.scheduleCourses});
+  Schedule({required this.scheduleName, required this.scheduleCourses});
 
 }
 

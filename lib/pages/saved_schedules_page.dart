@@ -1,4 +1,5 @@
 
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
@@ -10,6 +11,7 @@ import 'package:ders_program_test/widgets/textfieldwidget.dart';
 import 'package:ders_program_test/widgets/timetable_canvas.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
@@ -33,6 +35,13 @@ class SavedSchedulePage extends StatefulWidget {
 class SavedSchedulePageState extends State<SavedSchedulePage> {
 
   final controller = ScreenshotController();
+
+  @override
+  void initState() {
+
+    super.initState();
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +71,8 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
     Schedule schedule;
     for (int scheduleIndex = 0 ; scheduleIndex < Main.schedules.length ; scheduleIndex++) { // looping for each schedule
       schedule = Main.schedules[scheduleIndex];
+      print("Doing schedule ${schedule.scheduleName}");
+
       int totalHours = 0;
       List<List<int>> beginningPeriods = [], days = [];
       List<int> hours = [];
@@ -229,8 +240,12 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                                         TextButton.icon(
                                           icon: const Icon(CupertinoIcons.link),
                                           label: Text(translateEng("Share by Link")),
-                                          onPressed: () {
-                                            ;
+                                          onPressed: () async {
+                                            HomeState.currentState!.initDeepLinkData();
+                                            BranchResponse? response = await HomeState.currentState!.generateLink();
+
+                                            var time = DateTime.now().add(const Duration(days: 30));
+                                            await Share.share("${response?.result}\nThis shared link expires on ${time.year}-${time.month}-${time.day}");
 
                                             Navigator.pop(context);
                                           },
@@ -445,7 +460,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                     child: Text(translateEng("SAVE")),
                     onPressed: () {
                       setState(() {
-                        Main.schedules.add(Schedule(scheduleName: scheduleName, changes: [], scheduleCourses: []));
+                        Main.schedules.add(Schedule(scheduleName: scheduleName, scheduleCourses: []));
                       });
                       Navigator.pop(context);
                     },

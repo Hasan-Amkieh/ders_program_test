@@ -166,12 +166,7 @@ class SearchPageState extends State<SearchPage> {
 
     double width = (window.physicalSize / window.devicePixelRatio).width, height = (window.physicalSize / window.devicePixelRatio).height;
 
-    String? name;
-    if (sub.classCode.contains("(")) {
-      name = Main.classcodes[sub.classCode.substring(0, sub.classCode.indexOf("("))];
-    } else {
-      name = Main.classcodes[sub.classCode];
-    }
+    String name = sub.customName;
     String classrooms = "", teachers = "", departments = "";
     classrooms = sub.classrooms.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
     departments = sub.departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
@@ -179,7 +174,7 @@ class SearchPageState extends State<SearchPage> {
     return ListTile(
       title: Text(sub.classCode),
       subtitle:
-      Text((searchByCourseName ? (name ?? "") : "") +
+      Text((searchByCourseName ? name : "") +
           (searchByTeacher ? (sub.getTranslatedTeachers().isEmpty ? "" : ("\n" + sub.getTranslatedTeachers())) : "" ) +
           (searchByClassroom ? (classrooms.isEmpty ? "" : ("\n" + classrooms)) : "" )),
       onTap: () {
@@ -210,7 +205,7 @@ class SearchPageState extends State<SearchPage> {
                         child: ListView(
                           children: [
                             ListTile(
-                              title: Row(children: [Expanded(child: Text(name!))]),
+                              title: Row(children: [Expanded(child: Text(name))]),
                               onTap: null,
                             ),
                             ListTile(
@@ -315,14 +310,9 @@ class SearchPageState extends State<SearchPage> {
     final subjects = subjectsOfDep.where((subject) {
 
       if (searchByCourseName) {
-        String? name;
-        if (subject.classCode.contains("(")) {
-          name = Main.classcodes[subject.classCode.substring(0, subject.classCode.indexOf("("))];
-        } else {
-          name = Main.classcodes[subject.classCode];
-        }
+        String name = subject.customName;
 
-        name = name!.toLowerCase();
+        name = name.toLowerCase();
         name = convertTurkishToEnglish(name);
         if (name.contains(query)) {
           return true;

@@ -108,14 +108,7 @@ class AddCoursesPageState extends State<AddCoursesPage> {
   ListTile buildTile(context, index) {
 
     Subject subject = subjects[index];
-    String? name;
-    if (subject.classCode.contains("(")) {
-      name = Main.classcodes[subject.classCode.substring(
-          0, subject.classCode.indexOf("("))];
-    } else {
-      name = Main.classcodes[subject.classCode];
-    }
-    name = name ?? "";
+    String name = subject.customName;
     bool isInside = false;
 
     //print("current schedule is: ${Main.schedules[Main.currentScheduleIndex].scheduleCourses}");
@@ -165,15 +158,10 @@ class AddCoursesPageState extends State<AddCoursesPage> {
 
     final subjects = subjectsOfDep.where((subject) {
 
-      String? name;
-      if (subject.classCode.contains("(")) {
-        name = Main.classcodes[subject.classCode.substring(0, subject.classCode.indexOf("("))];
-      } else {
-        name = Main.classcodes[subject.classCode];
-      }
+      String name = subject.customName;
 
       query = query.toLowerCase();
-      name = name!.toLowerCase();
+      name = name.toLowerCase();
 
       return name.contains(query);
 

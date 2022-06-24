@@ -245,17 +245,7 @@ class EditCoursePageState extends State<EditCoursePage> {
 
                 if (mode == 0) { // view
 
-                  String? name;
-                  if (subject.customName.isEmpty) {
-                    if (subject.classCode.contains("(")) {
-                      name = Main.classcodes[subject.classCode.substring(0, subject.classCode.indexOf("("))];
-                    } else {
-                      name = Main.classcodes[subject.classCode];
-                    }
-                  } else {
-                    name = subject.customName;
-                  }
-                  name = name ?? "";
+                  String name = subject.customName;
                   String classrooms = "", teachers = "", departments = "";
 
                   List<List<String>> classroomsList = subject.classrooms;
@@ -297,7 +287,7 @@ class EditCoursePageState extends State<EditCoursePage> {
                                   child: ListView(
                                     children: [
                                       ListTile(
-                                        title: Row(children: [Expanded(child: Text(name!))]),
+                                        title: Row(children: [Expanded(child: Text(name))]),
                                         onTap: null,
                                       ),
                                       ListTile(

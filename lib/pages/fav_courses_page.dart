@@ -37,12 +37,8 @@ class FavCoursesState extends State<FavCourses> {
               return ListTile(
                 title: Text(Main.favCourses[count].classCode),
                 onTap: () {
-                  String? name;
-                  if (Main.favCourses[count].classCode.contains("(")) {
-                    name = Main.classcodes[Main.favCourses[count].classCode.substring(0, Main.favCourses[count].classCode.indexOf("("))];
-                  } else {
-                    name = Main.classcodes[Main.favCourses[count].classCode];
-                  }
+                  String name = Main.favCourses[count].customName;
+
                   String classrooms, teachers, departments;
                   classrooms = Main.favCourses[count].classrooms.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
                   teachers = Main.favCourses[count].getTranslatedTeachers();
@@ -71,7 +67,7 @@ class FavCoursesState extends State<FavCourses> {
                               child: ListView(
                                 children: [
                                   ListTile(
-                                    title: Row(children: [Expanded(child: Text(name!))]),
+                                    title: Row(children: [Expanded(child: Text(name))]),
                                     onTap: null,
                                   ),
                                   ListTile(
