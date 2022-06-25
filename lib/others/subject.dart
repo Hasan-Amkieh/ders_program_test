@@ -318,15 +318,24 @@ class Schedule {
 
 }
 
+class PeriodData {
+
+  final int day;
+  final int bgnPeriod;
+  final int hours;
+
+  PeriodData({required this.day, required this.bgnPeriod, required this.hours});
+
+}
+
 class CollisionData {
 
   List<Subject> subjects; // We did this, bcs we could have multiple collisions
-  List<int> i;
-  List<int> j;
+  List<PeriodData> subjectsData;
   List<bool> isDrawn = [];
   bool is3Col = false; // To determine if it is a collision of 3
 
-  CollisionData({required this.subjects, required this.i, required this.j}) {
+  CollisionData({required this.subjects, required this.subjectsData}) {
     for (int i = 0 ; i < subjects.length ; i++) {
       isDrawn.add(false);
     }

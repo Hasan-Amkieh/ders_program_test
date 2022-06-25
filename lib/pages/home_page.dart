@@ -808,8 +808,10 @@ class HomeState extends State<Home> {
 
     // First find all the collisions:
     collisions = findCourseCollisions();
+    print("All the collisions are: ");
+    collisions.forEach((col) { print("\nCOLLISION:"); col.subjects.forEach((element) {print(element.classCode);}); });
 
-    int colorIndex = 0;
+    int colorIndex = -1;
 
     Main.schedules[Main.currentScheduleIndex].scheduleCourses.forEach((course) {
       colorIndex++;
@@ -822,27 +824,32 @@ class HomeState extends State<Home> {
           int colIndex = 0;
           collisions.forEach((col) {
             atIndex = 0;
-            col.subjects.forEach((sub) {
-              if (sub.isEqual(course.subject) && i == col.i[atIndex] &&
-                  j == col.j[atIndex] && !col.isDrawn[atIndex]) {
+            Subject sub;
+            for( ; atIndex < col.subjects.length ; atIndex++ ) {
+              sub = col.subjects[atIndex];
+              print("${sub.classCode} N ${course.subject.classCode}");
+              if (sub.isEqual(course.subject) && course.subject.days[i][j] == col.subjectsData[atIndex].day &&
+                  course.subject.bgnPeriods[i][j] == col.subjectsData[atIndex].bgnPeriod && !col.isDrawn[atIndex]) {
+                print("Drawing the collisioned course: ${course.subject.classCode}");
                 collisions[colIndex].isDrawn[atIndex] = true;
                 isCol = true;
-                isColOf3 = collisions[colIndex].is3Col;
+                isColOf3 = collisions[colIndex].subjects.length >= 3;
                 drawingIndex = atIndex;
                 colSize = col.subjects.length;
-                return;
+                continue;
+              } else {
+                print("NOT Drawing the collisioned course bcs the period is different: ${course.subject.classCode}");
               }
               if (isCol) {
-                return;
+                continue;
               }
-              atIndex++;
-            });
+            }
             colIndex++;
             if (isCol) {
               return;
             }
           });
-          print("index $drawingIndex");
+          //print("index of ${course.subject.classCode} is $drawingIndex N $colSize");
 
           coursesList.add(
             Positioned(child: TextButton(
@@ -914,70 +921,62 @@ class HomeState extends State<Home> {
 
   }
 
+  List<CollisionData> collisionsTemp = []; // Temporary
+
   List<CollisionData> findCourseCollisions() {
 
-    List<CollisionData> collisions = [];
+    collisionsTemp = [];
 
-    Main.schedules[Main.currentScheduleIndex].scheduleCourses.forEach((course) {
+    Main.schedules[Main.currentScheduleIndex].scheduleCourses.forEach((course1) {
 
-      for (int i = 0 ; i < course.subject.days.length ; i++) {
-        for (int j = 0 ; j < course.subject.days[i].length ; j++) {
-          int day = course.subject.days[i][j], bgnHour = course.subject.bgnPeriods[i][j], hours = course.subject.hours[i];
-          //print("Searching for bgnPeriods b/w $bgnHour and ${bgnHour + hours} for the course ${course.subject.classCode}");
+      for (int i1 = 0 ; i1 < course1.subject.days.length ; i1++) {
+        for (int j1 = 0 ; j1 < course1.subject.days[i1].length ; j1++) {
 
-          Main.schedules[Main.currentScheduleIndex].scheduleCourses.forEach((courseToComp) {
+          int day1 = course1.subject.days[i1][j1], bgnHour1 = course1.subject.bgnPeriods[i1][j1], hours1 = course1.subject.hours[i1];
 
-            for (int i_ = 0 ; i_ < courseToComp.subject.days.length ; i_++) {
-              for (int j_ = 0 ; j_ < courseToComp.subject.days[i_].length ; j_++) {
-                //print("Doing indices: $i_ and $j_");
-                if (courseToComp.subject.days[i_][j_] == day) {
-                  if (!courseToComp.subject.isEqual(course.subject) &&
-                      (courseToComp.subject.bgnPeriods[i_][j_] >= bgnHour && courseToComp.subject.bgnPeriods[i_][j_] < (bgnHour + hours))
-                  || ((courseToComp.subject.bgnPeriods[i_][j_] + courseToComp.subject.hours[i_]) > bgnHour && (courseToComp.subject.bgnPeriods[i_][j_] + courseToComp.subject.hours[i_]) < (bgnHour + hours))) {
-                    print("Collision b/w ${course.subject.classCode} and ${courseToComp.subject.classCode}, but need to check");
-                    // Check if it was not already added before:
-                    bool isFound = false;
-                    collisions.forEach((col) {
-                      if (doBothCoursesExist(course.subject, i, j, courseToComp.subject, i_, j_, col)) {
-                        isFound = true;
-                      } else { // collisions of 3, if one subject with its i's and j's, then add the other subject
-                        // ((col.subjects[0].isEqual(course.subject) || col.subjects[1].isEqual(course.subject) || col.subjects[col.subjects.length-1].isEqual(course.subject)) && col.i.contains(i) && col.j.contains(j))
-                        //   || ((col.subjects[0].isEqual(courseToComp.subject) || col.subjects[1].isEqual(courseToComp.subject) || col.subjects[col.subjects.length-1].isEqual(courseToComp.subject)) && col.i.contains(i_) && col.j.contains(j_))
-                        if (true) {
-                          if ((isCollidingWith3(course.subject, i, j, col)) || (isCollidingWith3(courseToComp.subject, i_, j_, col))) {
-                          //print("A collision of 3 subjects was found between ${course.subject.classCode} and ${courseToComp.subject.classCode}!");
-                              if ((col.subjects[0].isEqual(course.subject) ||
-                                col.subjects[1].isEqual(course.subject)
-                                || col.subjects[col.subjects.length - 1].isEqual(
-                                    course
-                                      .subject))) { // check if course exists or not, if it does, then add courseToComp
-                              col.subjects.add(courseToComp.subject);
-                              col.i.add(i_);
-                              col.j.add(j_);
-                            } else { // otherwise add course:
-                              col.subjects.add(course.subject);
-                              col.i.add(i);
-                             col.j.add(j);
-                            }
-                              col.isDrawn.add(false);
-                              isFound = true;
-                          } else {
-                            print("Potential col of 2 b/w ${course.subject.classCode} and ${courseToComp.subject.classCode}!!!");
-                            ;
-                          }
+          Main.schedules[Main.currentScheduleIndex].scheduleCourses.forEach((course2) {
 
-                        }
-                      }
-                    });
+            // Check if they are not the same:
+            if (course1.subject.isEqual(course2.subject)) {
+              return;
+            }
 
-                    if (!isFound) {
-                      print("Collision found b/w ${course.subject.classCode} N ${courseToComp.subject.classCode}");
-                      collisions.add(CollisionData(subjects: [course.subject, courseToComp.subject], i: [i, i_], j: [j, j_]));
-                      return ;
+            for (int i2 = 0 ; i2 < course2.subject.days.length ; i2++) {
+              for (int j2 = 0 ; j2 < course2.subject.days[i2].length ; j2++) {
+
+                int day2 = course2.subject.days[i2][j2], bgnHour2 = course2.subject.bgnPeriods[i2][j2], hours2 = course2.subject.hours[i2];
+
+                // Check if both courses collide:
+                if (day1 == day2 &&
+                    ((bgnHour1 >= bgnHour2 && bgnHour1 < (bgnHour2 + hours2)) || ((bgnHour1 + hours1) > bgnHour2 && (bgnHour1 + hours1) < (bgnHour2 + hours2)))) {
+                  // yes, they collide
+                  // Then check if they BOTH already exist inside collisions List:
+                  if (!checkIfBothTogetherExistInCollisions(course1.subject, bgnHour1, course2.subject, bgnHour2, day1)) { // No they dont BOTH TOGETHER exist inside one collision:
+
+                    // Then, check if ONLY one of both exist inside a collision:
+                    List<int> data = checkIfOneExistInCollisions(course1.subject, bgnHour1, course2.subject, bgnHour2, day1);
+                    if (data[0] != -1) {
+                      // If yes, then check if one of course1, course2 or the rest of the courses actually collide with the rest of the courses in the collision:
+
+                      Subject commonSub = data[1] == 1 ? course1.subject : course2.subject;
+                      int bgnHour = data[1] == 1 ? bgnHour1 : bgnHour2;
+                      int hours = data[1] == 1 ? hours1 : hours2;
+                      //if (checkIfCommonCourseCollidesWithAll(commonSub, day1, bgnHour, data[0])) {
+                        // if yes, then add the course that is NOT in common:
+                      collisionsTemp[data[0]].subjects.add(data[1] == 2 ? course1.subject : course2.subject);
+                      collisionsTemp[data[0]].subjectsData.add(PeriodData(day: day1, bgnPeriod: data[1] == 2 ? bgnHour1 : bgnHour2, hours: data[1] == 2 ? hours1 : hours2));
+                      collisionsTemp[data[0]].isDrawn.add(false);
+                      //}
+
+                    } else { // Since they both collide, and none of one them already collides with any other course and they were not already added to cols
+                      // So add them as a collision of 2:
+                      PeriodData data1 = PeriodData(day: day1, bgnPeriod: bgnHour1, hours: hours1), data2 = PeriodData(day: day2, bgnPeriod: bgnHour2, hours: hours2);
+                      collisionsTemp.add(CollisionData(subjects: [course1.subject, course2.subject], subjectsData: [data1, data2]));
                     }
-
                   }
+                  // They already exist inside collisions, so dont add them
                 }
+                // if both courses dont collide, then do nothing!
               }
             }
 
@@ -989,69 +988,39 @@ class HomeState extends State<Home> {
 
     });
 
-    // TODO: Fix this bug, or maybe leave it it might be fine: If there is a collision of 3 courses, they are added multiple times:
-    // Find all the collisions of the subjects of size 3 or more, and refine them:
-    // When you find them, find the 3 unique values of each list of subjects, i and j lists, and store them solely in the same order:
-
-    print("Beginning ther refinement process of collisions: (only for 3 cols) /");
-    for (int i = 0 ; i < collisions.length ; i++) {
-
-      if (collisions[i].subjects.length >= 3) {
-
-        print("A 3 collision was found: ${collisions[i].subjects[0].classCode} N ${collisions[i].subjects[1].classCode} N ${collisions[i].subjects[2].classCode}");
-        collisions[i].is3Col = true;
-        for (int j = 3 ; j < collisions[i].subjects.length ; ) {
-          collisions[i].subjects.removeAt(j);
-          collisions[i].i.removeAt(j);
-          collisions[i].j.removeAt(j);
-          collisions[i].isDrawn.removeAt(j);
-        }
-
-      }
-
-      // Check if a duplicates were found:
-      for (int j = 0 ; j < collisions[i].subjects.length ; j++) {
-        for (int k = j + 1 ; k < collisions[i].subjects.length ; k++) {
-          if (collisions[i].subjects[j].isEqual(collisions[i].subjects[k])) {
-            collisions[i].subjects.removeAt(k);
-            k--;
-          }
-        }
-      }
-
-    }
-
-    // TODO: Now, take all the cols of 3 and make sure that they all collide together, if not, then delete the one that does not collide with both and reset isColOf3 to false:
     ;
 
-    return collisions;
+    return collisionsTemp;
 
   }
 
-  bool doBothCoursesExist(Subject sub1, int i, int j, Subject sub2, int i_, int j_, CollisionData col) {
+  bool checkIfBothTogetherExistInCollisions(Subject sub1, int bgnHour1, Subject sub2, int bgnHour2, int day) {
 
     bool isFound1 = false, isFound2 = false;
-    int subIndex;
+    for (int i = 0 ; i < collisionsTemp.length ; i++) {
 
-    // for sub1:
-    for (subIndex = 0 ; subIndex < col.subjects.length ; subIndex++) {
-      if (col.subjects[subIndex].isEqual(sub1)) {
-        if (sub1.days[i][j] == col.subjects[subIndex].days[col.i[subIndex]][col.j[subIndex]]) {
-          if (sub1.bgnPeriods[i][j] == col.subjects[subIndex].bgnPeriods[col.i[subIndex]][col.j[subIndex]]) {
-            isFound1 = true;
+      for (int j = 0 ; j < collisionsTemp[i].subjects.length ; j++) {
+
+        if (isFound1 && isFound2) {
+          break;
+        } else {
+          if (!isFound1 && collisionsTemp[i].subjects[j].isEqual(sub1)) { // if it was not found and both courses are the same: then check the period:
+            if (collisionsTemp[i].subjectsData[j].day == day && collisionsTemp[i].subjectsData[j].bgnPeriod == bgnHour1) {
+              isFound1 = true;
+            }
+          }
+          if (!isFound2 && collisionsTemp[i].subjects[j].isEqual(sub2)) { // if it was not found and both courses are the same: then check the period:
+            if (collisionsTemp[i].subjectsData[j].day == day && collisionsTemp[i].subjectsData[j].bgnPeriod == bgnHour2) {
+              isFound2 = true;
+            }
           }
         }
       }
-    }
-
-    // for sub2:
-    for (subIndex = 0 ; subIndex < col.subjects.length ; subIndex++) {
-      if (col.subjects[subIndex].isEqual(sub2)) {
-        if (sub2.days[i_][j_] == col.subjects[subIndex].days[col.i[subIndex]][col.j[subIndex]]) {
-          if (sub2.bgnPeriods[i_][j_] == col.subjects[subIndex].bgnPeriods[col.i[subIndex]][col.j[subIndex]]) {
-            isFound2 = true;
-          }
-        }
+      if (isFound1 && isFound2) {
+        break;
+      } else { // reset at the end of each collision
+        isFound1 = false;
+        isFound2 = false;
       }
     }
 
@@ -1059,28 +1028,34 @@ class HomeState extends State<Home> {
 
   }
 
-  bool isCollidingWith3(Subject subjectToCheck, int i, int j,  CollisionData col) {
+  // a list of two integers, the first is the collision index, the second is either 1 or 2, represents the subject number that is in common
+  // if the first number is -1, then there is nothing in common
+  List<int> checkIfOneExistInCollisions(Subject sub1, int bgnHour1, Subject sub2, int bgnHour2, int day) {
 
-    // STEP 1: Find all the values used to check up the possible collision:
-    int day = subjectToCheck.days[i][j], bgnHour = subjectToCheck.bgnPeriods[i][j], hours = subjectToCheck.hours[i];
+    for (int i = 0 ; i < collisionsTemp.length ; i++) {
 
-    // STEP 2: Finf out if the values above inside each values of the col.subjects, if not return false, if yes then continue checking:
-    for (int k = 0 ; k < col.subjects.length ; k++) {
-      if (!(subjectToCheck.isEqual(col.subjects[k]))) {
-        i = col.i[k];
-        j = col.j[k];
-        if (!((col.subjects[k].days[i][j] == day) &&
-            ((bgnHour >= col.subjects[k].bgnPeriods[i][j] && bgnHour < (col.subjects[k].bgnPeriods[i][j] + col.subjects[k].hours[i]))
-            || ((bgnHour + hours) > col.subjects[k].bgnPeriods[i][j] && (bgnHour + hours) < (col.subjects[k].bgnPeriods[i][j] + col.subjects[k].hours[i]))))) {
-          // if they dont collide, then do this:
-          return false;
+      for (int j = 0 ; j < collisionsTemp[i].subjects.length ; j++) {
+
+        if (collisionsTemp[i].subjects[j].isEqual(sub1) && collisionsTemp[i].subjectsData[j].day == day && collisionsTemp[i].subjectsData[j].bgnPeriod == bgnHour1) {
+          return [i, 1];
         }
+
+        if (collisionsTemp[i].subjects[j].isEqual(sub2) && collisionsTemp[i].subjectsData[j].day == day && collisionsTemp[i].subjectsData[j].bgnPeriod == bgnHour2) {
+          return [i, 2];
+        }
+
       }
     }
 
-    return true;
+    return [-1];
 
   }
+
+  // bool checkIfCommonCourseCollidesWithAll(Subject commonSub, int day, int bgnHour, int colIndex) {
+  //
+  //   ;
+  //
+  // }
 
   bool isMoreThan3Cols() { // Returns true if there are more than 3 collisions inside the scheduledCourses List:
     // this function should be called every time we edit on the schedule:
