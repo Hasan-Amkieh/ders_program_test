@@ -2,6 +2,7 @@
 
 import 'dart:ui';
 
+import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:ders_program_test/language/dictionary.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +57,7 @@ class FavCoursesState extends State<FavCourses> {
                   classrooms.trim();
                   departments.trim();
 
-                  showDialog(context: context, builder: (context) => AlertDialog(
+                  /*showDialog(context: context, builder: (context) => AlertDialog(
                     title: Text(Main.favCourses[count].classCode),
                     content: Builder(
                         builder: (context) {
@@ -144,7 +145,106 @@ class FavCoursesState extends State<FavCourses> {
                       }, child: Text(translateEng("REMOVE"))),
                     ],
                   )
+                  );*/
+
+                  showAdaptiveActionSheet(
+                    context: context,
+                    title: Column(
+                      children: [
+                        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                          Expanded(
+                            child: Center(child: Text(name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+                          ),
+                        ]
+                        ),
+                        SizedBox(
+                          height: height * 0.03,
+                        ),
+                        SizedBox(
+                          height: classrooms.isNotEmpty ? height * 0.03 : 0,
+                        ),
+                        Visibility(
+                          visible: classrooms.isNotEmpty,
+                          child: Row(children: [
+                            classrooms.isNotEmpty ? const Icon(CupertinoIcons.placemark_fill) : Container(width: 0),
+                            Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(classrooms))),
+                          ]
+                          ),
+                        ),
+                        SizedBox(
+                          height: teachers.isNotEmpty ? height * 0.03 : 0,
+                        ),
+                        Visibility(
+                          visible: teachers.isNotEmpty,
+                          child: Row(
+                              children: [
+                                teachers.isNotEmpty ? const Icon(CupertinoIcons.group_solid) : Container(),
+                                Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(teachers))),
+                              ]
+                          ),
+                        ),
+                        SizedBox(
+                          height: departments.isNotEmpty ? height * 0.03 : 0,
+                        ),
+                        Visibility(
+                          visible: departments.isNotEmpty,
+                          child: Row(
+                              children: [
+                                departments.isNotEmpty ? const Icon(CupertinoIcons.building_2_fill) : Container(),
+                                Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(departments))),
+                              ]
+                          ),
+                        ),
+                        SizedBox(height: height * 0.03),
+                        (Main.favCourses[count].days.isNotEmpty && Main.favCourses[count].bgnPeriods.isNotEmpty && Main.favCourses[count].hours.isNotEmpty) ?
+                        Container(width: width * 0.7, height: width * 0.7, child: CustomPaint(painter:
+                        TimetableCanvas(
+                            beginningPeriods: Main.favCourses[count].bgnPeriods, days: Main.favCourses[count].days, hours: Main.favCourses[count].hours, isForSchedule: false))
+                        ) : Container(),
+                      ],
+                    ),
+
+                    actions: [ // Text(translateEng("ADD TO SCHEDULE"))
+                      BottomSheetAction(title: Text(translateEng("Add to Schedule"),
+                          style: const TextStyle(color: Colors.blue)),
+                          onPressed: () {
+                            Navigator.pop(context);
+                            Subject sub = Main.favCourses.elementAt(count);
+                            bool doesExist = false;
+                            for (Course sub_ in Main.schedules[Main.currentScheduleIndex].scheduleCourses) {
+                              if (sub_.subject.classCode == sub.classCode) {
+                                doesExist = true;
+                              }
+                            }
+
+                            if (!doesExist) {
+                              Main.schedules[Main.currentScheduleIndex].scheduleCourses.add(Course(subject: sub, note: ""));
+                            }
+
+                            Fluttertoast.showToast(
+                                msg: translateEng(doesExist ? "The course is already in the schedule" : "Added to the current schedule"),
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.blue,
+                                textColor: Colors.white,
+                                fontSize: 12.0
+                            );
+                          }
+                      ),
+                      BottomSheetAction(title: Text(translateEng("Remove"),
+                          style: const TextStyle(color: Colors.red)),
+                          onPressed: () {
+                            Navigator.pop(context);
+                            setState(() {
+                              Main.favCourses.removeAt(count);
+                            });
+                          }
+                      ),
+                    ],
+                    cancelAction: CancelAction(title: Text(translateEng("Close"))),
                   );
+
                 },
               );
             },

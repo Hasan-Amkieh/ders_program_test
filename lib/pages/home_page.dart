@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:ders_program_test/language/dictionary.dart';
 import 'package:ders_program_test/others/subject.dart';
 import 'package:flutter/cupertino.dart';
@@ -563,59 +564,61 @@ class HomeState extends State<Home> {
     teachers.trim();
     departments.trim();
 
-    showDialog(context: context,
-      builder: (context) => AlertDialog(
-        title: Text(subject.classCode),
-        content: Builder(
-            builder: (context) {
-              return Container(
-                  height: height * 0.4,
-                  child: Scrollbar( // Just to make the scrollbar viewable
-                    thumbVisibility: true,
-                    child: ListView(
-                      children: [
-                        ListTile(
-                          title: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                            Expanded(
-                                child: Text(name),
-                            ),
-                          ]),
-                          onTap: null,
-                        ),
-                        ListTile(
-                          title: Row(children: [
-                            classrooms.isNotEmpty ? const Icon(CupertinoIcons.placemark_fill) : Container(width: 0),
-                            Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(classrooms))),
-                          ]),
-                          onTap: null,
-                        ),
-                        ListTile(
-                          title: Row(
-                              children: [
-                                teachers.isNotEmpty ? const Icon(CupertinoIcons.group_solid) : Container(),
-                                Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(teachers))),
-                          ]),
-                          onTap: null,
-                        ),
-                        ListTile(
-                          title: Row(
-                              children: [
-                                departments.isNotEmpty ? const Icon(CupertinoIcons.building_2_fill) : Container(),
-                                Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(departments))),
-                          ]),
-                          onTap: null,
-                        ),
-                      ],
-                    ),
-                  ));
-            }
-        ),
-        actions: [
-          TextButton(onPressed: () { Navigator.pop(context); }, child: Text(translateEng("OK"))),
+    showAdaptiveActionSheet(
+      context: context,
+      title: Column(
+        children: [
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Expanded(
+              child: Center(child: Text(name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+            ),
+            ]
+          ),
+          SizedBox(
+            height: height * 0.03,
+          ),
+          SizedBox(
+            height: classrooms.isNotEmpty ? height * 0.03 : 0,
+          ),
+          Visibility(
+            visible: classrooms.isNotEmpty,
+            child: Row(children: [
+              classrooms.isNotEmpty ? const Icon(CupertinoIcons.placemark_fill) : Container(width: 0),
+              Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(classrooms))),
+              ]
+            ),
+          ),
+          SizedBox(
+            height: teachers.isNotEmpty ? height * 0.03 : 0,
+          ),
+          Visibility(
+            visible: teachers.isNotEmpty,
+            child: Row(
+                children: [
+                  teachers.isNotEmpty ? const Icon(CupertinoIcons.group_solid) : Container(),
+                  Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(teachers))),
+                ]
+            ),
+          ),
+          SizedBox(
+            height: departments.isNotEmpty ? height * 0.03 : 0,
+          ),
+          Visibility(
+            visible: departments.isNotEmpty,
+            child: Row(
+                children: [
+                  departments.isNotEmpty ? const Icon(CupertinoIcons.building_2_fill) : Container(),
+                  Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(departments))),
+                ]
+            ),
+          ),
         ],
       ),
+      actions: [],
+      cancelAction: CancelAction(title: const Text('Close')),
     );
-        return null;
+
+    return null;
 
   }
 
@@ -1109,9 +1112,9 @@ class HomeState extends State<Home> {
     List<Course> courses_ = [];
     courses.forEach((course) { courses_.add(Course(subject: Subject.fromStringWithClassCode(course), note: "")); });
 
-    print("Adding the schedule: ");
-    print("Courses are: ");
-    courses_.forEach((element) {print(element.subject.classCode);});
+    // print("Adding the schedule: ");
+    // print("Courses are: ");
+    // courses_.forEach((element) {print(element.subject.classCode);});
     Main.schedules.add(Schedule(scheduleName: scheduleName, scheduleCourses: courses_));
 
   }

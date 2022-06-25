@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:ders_program_test/language/dictionary.dart';
 import 'package:ders_program_test/language/teacherdictionary.dart';
 import 'package:ders_program_test/others/departments.dart';
@@ -139,11 +140,14 @@ class SearchPageState extends State<SearchPage> {
                   ],
                 ),
               ),
-              SearchWidget(
-                text: query,
-                hintText: translateEng("Course code, teacher name or classroom"),
+              TextFormField(
+                decoration: InputDecoration(
+                  hintText: translateEng("Course code, teacher name or classroom"),
+                  labelText: translateEng("SEARCH"),
+                ),
                 onChanged: search,
               ),
+              SizedBox(height: height * 0.03),
               Expanded(
                 child: ListView.builder(
                   scrollDirection: Axis.vertical,
@@ -178,6 +182,8 @@ class SearchPageState extends State<SearchPage> {
           (searchByTeacher ? (sub.getTranslatedTeachers().isEmpty ? "" : ("\n" + sub.getTranslatedTeachers())) : "" ) +
           (searchByClassroom ? (classrooms.isEmpty ? "" : ("\n" + classrooms)) : "" )),
       onTap: () {
+        FocusScope.of(context).unfocus(); // NOTE: This hides the keyboard for once and for all when we choose a course!
+
         teachers = sub.getTranslatedTeachers();
 
         List<String> list = classrooms.split(",").toList();
@@ -192,111 +198,67 @@ class SearchPageState extends State<SearchPage> {
         classrooms.trim();
         departments.trim();
 
-        // TODO: Add a small table at the bottom to express the time and date of the course
-        showDialog(context: context,
-            builder: (context) => AlertDialog(
-              title: Text(sub.classCode),
-              content: Builder(
-                builder: (context) {
-                  return SizedBox(
-                      height: height * 0.4,
-                      child: Scrollbar( // Just to make the scrollbar viewable
-                        thumbVisibility: true,
-                        child: ListView(
-                          children: [
-                            ListTile(
-                              title: Row(children: [Expanded(child: Text(name))]),
-                              onTap: null,
-                            ),
-                            ListTile(
-                              title: Row(
-                                  children: [
-                                    classrooms.isNotEmpty ? const Icon(CupertinoIcons.placemark_fill) : Container(height: 0),
-                                    Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(classrooms))),
-                                  ]),
-                              onTap: null,
-                            ),
-                            ListTile(
-                              title: Row(
-                                  children: [
-                                    teachers.isNotEmpty ? const Icon(CupertinoIcons.group_solid) : Container(height: 0),
-                                    Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(teachers))),
-                                  ]),
-                              onTap: null,
-                            ),
-                            ListTile(
-                              title: Row(
-                                  children: [
-                                    departments.isNotEmpty ? const Icon(CupertinoIcons.building_2_fill) : Container(height: 0),
-                                    Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(departments))),
-                                  ]),
-                              onTap: null,
-                           ), (sub.days.isNotEmpty && sub.bgnPeriods.isNotEmpty && sub.hours.isNotEmpty) ? ListTile(
-                              onTap: null,
-                              title: Container(width: width * 0.5, height: width * 0.5, child: CustomPaint(painter:
-                              TimetableCanvas(beginningPeriods: sub.bgnPeriods, days: sub.days, hours: sub.hours, isForSchedule: false))),
-
-                            ) : Container(),
-                          ],
-                        ),
-                      )
-                  );
-                }
+        showAdaptiveActionSheet(
+          context: context,
+          title: Column(
+            children: [
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Expanded(
+                  child: Center(child: Text(name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+                ),
+              ]
               ),
-              actions: [
-                TextButton(onPressed: () {
-                  Navigator.pop(context);
-                }, child: Text(translateEng("OK"))),
-                TextButton(onPressed: () {
-                  bool doesExist = false;
-                  for (Course sub_ in Main.schedules[Main.currentScheduleIndex].scheduleCourses) {
-                    if (sub_.subject.classCode == sub.classCode) {
-                      doesExist = true;
-                    }
-                  }
-
-                  if (!doesExist) {
-                    Main.schedules[Main.currentScheduleIndex].scheduleCourses.add(Course(note: "", subject: sub));
-                  }
-
-                  Fluttertoast.showToast(
-                      msg: translateEng(doesExist ? "The course is already in the schedule" : "Added to the current schedule"),
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: Colors.blue,
-                      textColor: Colors.white,
-                      fontSize: 12.0
-                  );
-
-                }, child: Text(translateEng("ADD TO SCHEDULE"))),
-
-                TextButton(onPressed: () {
-                  bool doesExist = false;
-                  for (Subject sub_ in Main.favCourses) {
-                    if (sub_.classCode == sub.classCode) {
-                      doesExist = true;
-                    }
-                  }
-
-                  if (!doesExist) {
-                    Main.favCourses.add(sub);
-                  }
-
-                  Fluttertoast.showToast(
-                      msg: translateEng(doesExist ? "The course is already a favourite" : "Added to favourite courses"),
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: Colors.blue,
-                      textColor: Colors.white,
-                      fontSize: 12.0
-                  );
-
-                }, child: Text(translateEng("ADD TO FAVOURITES")))
+              SizedBox(
+                height: height * 0.03,
+              ),
+              SizedBox(
+                height: classrooms.isNotEmpty ? height * 0.03 : 0,
+              ),
+              Visibility(
+                visible: classrooms.isNotEmpty,
+                child: Row(children: [
+                  classrooms.isNotEmpty ? const Icon(CupertinoIcons.placemark_fill) : Container(width: 0),
+                  Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(classrooms))),
+                ]
+                ),
+              ),
+              SizedBox(
+                height: teachers.isNotEmpty ? height * 0.03 : 0,
+              ),
+              Visibility(
+                visible: teachers.isNotEmpty,
+                child: Row(
+                    children: [
+                      teachers.isNotEmpty ? const Icon(CupertinoIcons.group_solid) : Container(),
+                      Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(teachers))),
+                    ]
+                ),
+              ),
+              SizedBox(
+                height: departments.isNotEmpty ? height * 0.03 : 0,
+              ),
+              Visibility(
+                visible: departments.isNotEmpty,
+                child: Row(
+                    children: [
+                      departments.isNotEmpty ? const Icon(CupertinoIcons.building_2_fill) : Container(),
+                      Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(departments))),
+                    ]
+                ),
+              ),
+              SizedBox(
+                height: height * 0.03,
+              ),
+              (sub.days.isNotEmpty && sub.bgnPeriods.isNotEmpty && sub.hours.isNotEmpty) ?
+              Container(width: width * 0.7, height: width * 0.7, child: CustomPaint(painter:
+              TimetableCanvas(beginningPeriods: sub.bgnPeriods, days: sub.days, hours: sub.hours, isForSchedule: false))
+              ) : Container(),
             ],
           ),
-          );
+          actions: [],
+          cancelAction: CancelAction(title: const Text('Close')),
+        );
+
         },
     );
 

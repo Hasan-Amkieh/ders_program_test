@@ -187,9 +187,9 @@ class Subject { // represents a class
     List<List<int>> bgnPeriods = [], days = [];
     List<int> hours = [];
 
-    print("str is $str");
-    List<String> str_ = str.replaceAll(" ", "").split("|");
-    print("str_ is $str_");
+    // print("str is $str");
+    List<String> str_ = str.split("|");//str.replaceAll(" ", "").split("|");
+    // print("str_ is $str_");
 
     classCode = str_[0];
     name = str_[1];
