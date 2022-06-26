@@ -148,10 +148,10 @@ Future main() async {
   Main.storageUnit = StorageRepository();
   await Main.storageUnit!.init();
 
-  Main.readSettings();
+  //Main.readSettings();
 
   //TODO: For test purposes:
-  Main.faculty = "Health Sciences";
+  Main.faculty = "Engineering";
   Main.department = faculties[Main.faculty]?.keys.elementAt(0) as String;
 
   // TODO: just for test purposes, remove it later
@@ -166,6 +166,8 @@ Future main() async {
   Main.schedules.add(Schedule(scheduleName: "Schedule 1", scheduleCourses: []));
   Main.currentScheduleIndex = 0;
   Main.appDocDir = (await getApplicationDocumentsDirectory()).path;
+
+  print("update is ${Main.forceUpdate}");
 
   runApp(MaterialApp(
     themeMode: Main.theme,

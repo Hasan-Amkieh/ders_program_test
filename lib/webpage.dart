@@ -38,49 +38,42 @@ class WebpageState extends State<Webpage> {
     return Scaffold(
       body: Stack(
           children: [
-            Visibility(
-                visible: true,
-                maintainSize: true,
-                maintainAnimation: true,
-                maintainState: true,
-                // These properties will make the webpage load but nothing is shown on the display
-                child: InAppWebView(
-                    onAjaxReadyStateChange: (controller, request) async {
-                      //print("Received this file: ${request.url.toString()}");
-                      if (request.url
-                          .toString()
-                          .contains("__func=regularttGetData") &&
-                          request.readyState == AjaxRequestReadyState.DONE) {
-                        state = 3;
-                        print("Timetable Retrieved!\nLength of the response: ${request.responseText?.length}");
-                        dataClassification(request.responseText);
-                      }
+            InAppWebView(
+                onAjaxReadyStateChange: (controller, request) async {
+                  //print("Received this file: ${request.url.toString()}");
+                  if (request.url
+                      .toString()
+                      .contains("__func=regularttGetData") &&
+                      request.readyState == AjaxRequestReadyState.DONE) {
+                    state = 3;
+                    print("Timetable Retrieved!\nLength of the response: ${request.responseText?.length}");
+                    dataClassification(request.responseText);
+                  }
 
-                      return AjaxRequestAction.PROCEED;
-                    },
-                    initialUrlRequest: URLRequest(
-                        url: Uri.parse(
-                            getFacultyLink(Main.department))),
-                    initialOptions: InAppWebViewGroupOptions(
-                      crossPlatform: InAppWebViewOptions(
-                          useShouldInterceptAjaxRequest: true),
-                    ),
-                    onWebViewCreated: (InAppWebViewController controller) {
-                      webView = controller;
-                    },
-                    onLoadStart: (controller, url) async {
-                      print("Loading of te page started!");
-                      state = 1;
-                    },
-                    onLoadStop: (controller, url) async {
-                      print("Loading of the page finished!");
-                      state = 2;
-                    })
-            ),
+                  return AjaxRequestAction.PROCEED;
+                },
+                initialUrlRequest: URLRequest(
+                    url: Uri.parse(
+                        getFacultyLink(Main.department))),
+                initialOptions: InAppWebViewGroupOptions(
+                  crossPlatform: InAppWebViewOptions(
+                      useShouldInterceptAjaxRequest: true),
+                ),
+                onWebViewCreated: (InAppWebViewController controller) {
+                  webView = controller;
+                },
+                onLoadStart: (controller, url) async {
+                  print("Loading of te page started!");
+                  state = 1;
+                },
+                onLoadStop: (controller, url) async {
+                  print("Loading of the page finished!");
+                  state = 2;
+                }),
             Container(
               child: LoadingUpdate(),
-              width: (window.physicalSize / window.devicePixelRatio).width,
-              height: (window.physicalSize / window.devicePixelRatio).height,
+              //width: (window.physicalSize / window.devicePixelRatio).width,
+              //height: (window.physicalSize / window.devicePixelRatio).height, // These caused the application not load the webpage
             ),
           ],
       ),
