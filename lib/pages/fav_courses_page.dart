@@ -36,14 +36,14 @@ class FavCoursesState extends State<FavCourses> {
               itemCount: Main.favCourses.length,
               itemBuilder: (context, count) {
               return ListTile(
-                title: Text(Main.favCourses[count].classCode),
+                title: Text(Main.favCourses[count].subject.classCode),
                 onTap: () {
-                  String name = Main.favCourses[count].customName;
+                  String name = Main.favCourses[count].subject.customName;
 
                   String classrooms, teachers, departments;
-                  classrooms = Main.favCourses[count].classrooms.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
-                  teachers = Main.favCourses[count].getTranslatedTeachers();
-                  departments = Main.favCourses[count].departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+                  classrooms = Main.favCourses[count].subject.classrooms.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+                  teachers = Main.favCourses[count].subject.getTranslatedTeachers();
+                  departments = Main.favCourses[count].subject.departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
 
                   List<String> list = classrooms.split(",").toList();
                   list = deleteRepitions(list);
@@ -196,10 +196,10 @@ class FavCoursesState extends State<FavCourses> {
                           ),
                         ),
                         SizedBox(height: height * 0.03),
-                        (Main.favCourses[count].days.isNotEmpty && Main.favCourses[count].bgnPeriods.isNotEmpty && Main.favCourses[count].hours.isNotEmpty) ?
+                        (Main.favCourses[count].subject.days.isNotEmpty && Main.favCourses[count].subject.bgnPeriods.isNotEmpty && Main.favCourses[count].subject.hours.isNotEmpty) ?
                         Container(width: width * 0.7, height: width * 0.7, child: CustomPaint(painter:
                         TimetableCanvas(
-                            beginningPeriods: Main.favCourses[count].bgnPeriods, days: Main.favCourses[count].days, hours: Main.favCourses[count].hours, isForSchedule: false))
+                            beginningPeriods: Main.favCourses[count].subject.bgnPeriods, days: Main.favCourses[count].subject.days, hours: Main.favCourses[count].subject.hours, isForSchedule: false))
                         ) : Container(),
                       ],
                     ),
@@ -209,7 +209,7 @@ class FavCoursesState extends State<FavCourses> {
                           style: const TextStyle(color: Colors.blue)),
                           onPressed: () {
                             Navigator.pop(context);
-                            Subject sub = Main.favCourses.elementAt(count);
+                            Subject sub = Main.favCourses.elementAt(count).subject;
                             bool doesExist = false;
                             for (Course sub_ in Main.schedules[Main.currentScheduleIndex].scheduleCourses) {
                               if (sub_.subject.classCode == sub.classCode) {

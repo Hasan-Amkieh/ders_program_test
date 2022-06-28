@@ -70,7 +70,7 @@ class Main {
   static String language = "English"; // currently, there is only
   static ThemeMode theme = ThemeMode.system;
 
-  static List<Subject> favCourses = [];
+  static List<Course> favCourses = [];
 
   static int currentScheduleIndex = 0;
   static List<Schedule> schedules = [];

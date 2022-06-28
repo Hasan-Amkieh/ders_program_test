@@ -255,7 +255,74 @@ class SearchPageState extends State<SearchPage> {
               ) : Container(),
             ],
           ),
-          actions: [],
+          actions: [
+            BottomSheetAction(
+              title: Text(translateEng("ADD TO SCHEDULE"), style: const TextStyle(color: Colors.blue, fontSize: 16)),
+              onPressed: () {
+                bool isFound = false;
+                for (int i = 0 ; i < Main.schedules[Main.currentScheduleIndex].scheduleCourses.length ; i++) {
+                  if (Main.schedules[Main.currentScheduleIndex].scheduleCourses[i].subject.isEqual(sub)) {
+                    isFound = true;
+                  }
+                }
+                if (!isFound) {
+                  Main.schedules[Main.currentScheduleIndex].scheduleCourses.add(Course(note: "", subject: sub));
+                  Fluttertoast.showToast(
+                      msg: sub.classCode + " " + translateEng("was added to the schedule"),
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.blue,
+                      textColor: Colors.white,
+                      fontSize: 12.0
+                  );
+                } else {
+                  Fluttertoast.showToast(
+                      msg: sub.classCode + " " + translateEng("is already in the schedule"),
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.blue,
+                      textColor: Colors.white,
+                      fontSize: 12.0
+                  );
+                }
+              },
+            ),
+            BottomSheetAction(
+              title: Text(translateEng("ADD TO FAVOURITES"), style: const TextStyle(color: Colors.blue, fontSize: 16)),
+              onPressed: () {
+                bool isFound = false;
+                for (int i = 0 ; i < Main.favCourses.length ; i++) {
+                  if (Main.favCourses[i].subject.isEqual(sub)) {
+                    isFound = true;
+                  }
+                }
+                if (!isFound) {
+                  Main.favCourses.add(Course(note: "", subject: sub));
+                  Fluttertoast.showToast(
+                      msg: sub.classCode + " " + translateEng("was added to favourites"),
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.blue,
+                      textColor: Colors.white,
+                      fontSize: 12.0
+                  );
+                } else {
+                  Fluttertoast.showToast(
+                      msg: sub.classCode + " " + translateEng("is already a favourite"),
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.blue,
+                      textColor: Colors.white,
+                      fontSize: 12.0
+                  );
+                }
+              },
+            ),
+          ],
           cancelAction: CancelAction(title: const Text('Close')),
         );
 

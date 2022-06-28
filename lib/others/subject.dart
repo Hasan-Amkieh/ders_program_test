@@ -81,6 +81,7 @@ class Subject { // represents a class
 
   void translateTeachers() {
 
+    _teachersTranslated = "";
     teacherCodes.forEach((list) {
       list.forEach((element) {
         _teachersTranslated = _teachersTranslated + ", ${translateTeacher(element)}";

@@ -10,6 +10,7 @@ import 'dart:ui';
 import 'package:ders_program_test/others/departments.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
+import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:url_launcher/url_launcher.dart';
@@ -27,7 +28,7 @@ class Home extends StatefulWidget {
 
 }
 
-class HomeState extends State<Home> {
+class HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   int pageIndex = 0;
 
@@ -54,10 +55,21 @@ class HomeState extends State<Home> {
   StreamController<String> controllerInitSession = StreamController<String>();
   StreamController<String> controllerUrl = StreamController<String>();
 
+  late AnimationController toggleButtonController;
+
   @override
   void initState() {
 
     super.initState();
+
+    toggleButtonController = AnimationController(duration: const Duration(seconds: 1), vsync: this);
+    toggleButtonController.addListener(() {
+
+      ;
+
+    });
+
+
     currentState = this;
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.blue,
@@ -93,6 +105,14 @@ class HomeState extends State<Home> {
     }
 
 
+  }
+
+  @override
+  void dispose() {
+
+    toggleButtonController.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -368,15 +388,23 @@ class HomeState extends State<Home> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(translateEng("Theme")),
-              TextButton.icon(
-                  icon: Main.theme == ThemeMode.dark ? const Icon(CupertinoIcons.moon_fill) : const Icon(CupertinoIcons.sun_max),
-                  label: const Text(""),
+              TextButton(
+                  child: Lottie.asset(
+                      "lib/icons/theme_mode_toggle_button.json",
+                      animate: false,
+                      repeat: false,
+                      controller: toggleButtonController,
+                      width: IconTheme.of(context).size! * 3.5,
+                      height: IconTheme.of(context).size! * 3.5,
+                  ),
                   style: ButtonStyle(
                     padding: MaterialStateProperty.all(EdgeInsets.zero),
                     overlayColor: MaterialStateProperty.all(Colors.transparent),
                   ),
                   onPressed: () {
                     setState(() {
+                      toggleButtonController.animateTo(Main.theme == ThemeMode.light ? 1.0 : 0.5, duration: const Duration(seconds: 1));
+                      print("The button is pressed!");
                       if (Main.theme == ThemeMode.dark) {
                         Main.theme = ThemeMode.light;
                       } else {

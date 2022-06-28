@@ -390,6 +390,7 @@ class EditCoursePageState extends State<EditCoursePage> {
                     setState(() {
                       Main.isEditingCourse = false;
                       Main.schedules[Main.currentScheduleIndex].scheduleCourses[index].subject = Main.courseToEdit!;
+                      Main.schedules[Main.currentScheduleIndex].scheduleCourses[index].subject.translateTeachers();
                       print("Finished editing, saving the course with teachers: ${Main.schedules[Main.currentScheduleIndex].scheduleCourses[index].subject.teacherCodes}");
                     });
 
