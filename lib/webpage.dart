@@ -22,6 +22,11 @@ class WebpageState extends State<Webpage> {
 
   static int state = 0;
 
+  static bool doNotRestart = false;
+
+  static WebpageState? currentState;
+  late InAppWebViewController controller;
+
   @override
   void initState() {
 
@@ -30,6 +35,9 @@ class WebpageState extends State<Webpage> {
       ;
     });*/
     super.initState();
+
+    currentState = this;
+
   }
 
   @override
@@ -62,6 +70,11 @@ class WebpageState extends State<Webpage> {
                 onWebViewCreated: (InAppWebViewController controller) {
                   webView = controller;
                 },
+                onCreateWindow: (controller, action) async {
+                  this.controller = controller;
+
+                  return true;
+                },
                 onLoadStart: (controller, url) async {
                   print("Loading of te page started!");
                   state = 1;
@@ -70,11 +83,7 @@ class WebpageState extends State<Webpage> {
                   print("Loading of the page finished!");
                   state = 2;
                 }),
-            Container(
-              child: LoadingUpdate(),
-              //width: (window.physicalSize / window.devicePixelRatio).width,
-              //height: (window.physicalSize / window.devicePixelRatio).height, // These caused the application not load the webpage
-            ),
+            LoadingUpdate(),
           ],
       ),
     );
@@ -92,6 +101,7 @@ class WebpageState extends State<Webpage> {
     }
 
     print("Starting classification:\n");
+    doNotRestart = true;
 
     //int validStart = timetableStr.indexOf("Validity:", 0)+10;
     //print("Found validStart at $validStart");

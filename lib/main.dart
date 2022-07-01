@@ -1,6 +1,7 @@
 // NOTE: minimum version of android is 4.4 for the application to run,
 
 import 'dart:async';
+import 'dart:io';
 import 'package:ders_program_test/others/subject.dart';
 import 'package:ders_program_test/pages/add_courses_page.dart';
 import 'package:ders_program_test/pages/create_custom_course_page.dart';
@@ -11,10 +12,10 @@ import 'package:ders_program_test/pages/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ders_program_test/webpage.dart';
 import 'package:ders_program_test/pages/home_page.dart';
+import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:restart_app/restart_app.dart';
-import 'package:storage_repository/implementations/storage_repository.dart';
-import 'package:storage_repository/interfaces/i_storage_repository.dart';
 
 import 'others/departments.dart';
 
@@ -57,7 +58,7 @@ then the teacher/classroom text fields are moved from the periods into the botto
 
 class Main {
 
-  static IStorageRepository? storageUnit;
+  static File? settingsStorage;
 
   static String appDocDir = "";
 
@@ -65,10 +66,11 @@ class Main {
   static bool forceUpdate = true;
   static bool isDark = false;
   static int hourUpdate = 12; // if the time has passed for these hours since the last update, then make an update
-  static String faculty = "Health Sciences";
-  static String department = "NURS";
+  static String faculty = "Engineering";
+  static String department = "AE";
   static String language = "English"; // currently, there is only
   static ThemeMode theme = ThemeMode.system;
+  static DateTime lastUpdated = DateTime.now();
 
   static List<Course> favCourses = [];
 
@@ -101,12 +103,23 @@ class Main {
 
   static void saveSettings() async {
 
-    await storageUnit!.set("force_update", forceUpdate);
-    await storageUnit!.set("is_dark", ThemeMode.dark == theme ? ThemeMode.dark : ThemeMode.light);
-    await storageUnit!.set("faculty", faculty);
-    await storageUnit!.set("department", department);
-    await storageUnit!.set("language", language);
-    await storageUnit!.set("hour_update", hourUpdate);
+    String toWrite = "";
+    try {
+      final file = File('${Main.appDocDir}/settings.txt'); // FileSystemException
+
+      toWrite = toWrite + "force_update:"+forceUpdate.toString()+"\n";
+      toWrite = toWrite + "is_dark:"+isDark.toString()+"\n";
+      toWrite = toWrite + "faculty:"+faculty.toString()+"\n";
+      toWrite = toWrite + "department:"+department.toString()+"\n";
+      toWrite = toWrite + "language:"+language.toString()+"\n";
+      toWrite = toWrite + "hour_update:"+hourUpdate.toString()+"\n";
+      toWrite = toWrite + "last_updated:"+lastUpdated.microsecondsSinceEpoch.toString()+"\n";
+
+      await file.writeAsString(toWrite, mode: FileMode.write);
+
+    } catch(err) {
+      print("The settings file was not opened bcs: $err");
+    }
 
     print("Settings were saved!");
 
@@ -114,26 +127,40 @@ class Main {
 
   static void readSettings() async {
 
-     // TODO: Reverse it back to false
-    forceUpdate = await storageUnit!.get("force_update") ?? false;
-    isDark = await storageUnit!.get("is_dark") ?? false;
-    theme = isDark ? ThemeMode.dark : ThemeMode.light;
-    faculty = await storageUnit!.get("faculty") ?? "Health Sciences";
-    department = await storageUnit!.get("department") ?? "NURS";
-    language = await storageUnit!.get("language") ?? "English";
-    hourUpdate = await storageUnit!.get("hour_update") ?? 12;
+    String content = "";
+    try {
+      final file = File('${Main.appDocDir}/settings.txt'); // FileSystemException
+
+      content = file.readAsStringSync();
+      if (content.isNotEmpty) {
+        print("Settings were found with the content of: $content");
+
+        forceUpdate = content.substring(content.indexOf("force_update:") + 13, content.indexOf("\n", content.indexOf("force_update:") + 13)) == "true" ? true : false;
+        isDark = content.substring(content.indexOf("is_dark:") + 8, content.indexOf("\n", content.indexOf("is_dark:") + 8)) == "true" ? true : false;
+        theme = isDark ? ThemeMode.dark : ThemeMode.light;
+        faculty = content.substring(content.indexOf("faculty:") + 8, content.indexOf("\n", content.indexOf("faculty:") + 8));
+        department = content.substring(content.indexOf("department:") + 11, content.indexOf("\n", content.indexOf("department:") + 11));
+        language = content.substring(content.indexOf("language:") + 9, content.indexOf("\n", content.indexOf("language:") + 9));
+        hourUpdate = int.parse(content.substring(content.indexOf("hour_update:") + 12, content.indexOf("\n", content.indexOf("hour_update:") + 12)));
+        lastUpdated = DateTime.fromMicrosecondsSinceEpoch(int.parse(content.substring(content.indexOf("last_updated:") + 13, content.indexOf("\n", content.indexOf("last_updated:") + 13))));
+
+      }
+    } catch(err) {
+      print("The settings file was not opened bcs: $err");
+    }
 
     // Sometimes the faculty is saved but the department is not:
-    if (!(faculties[Main.faculty]?.keys as Iterable<String>).contains(department)) {
-      department = faculties[Main.faculty]?.keys.elementAt(0) as String;
-    }
+    // if (!(faculties[Main.faculty]?.keys as Iterable<String>).contains(department)) {
+    //   department = faculties[Main.faculty]?.keys.elementAt(0) as String;
+    // }
 
 
   }
 
-  static void restart() async {
+  static void restart() async { // Updated: whenever the app is restarted, it will save automatically!
 
-    await Restart.restartApp();
+    Main.save();
+    Restart.restartApp().then((value) { ; });
 
   }
 
@@ -144,28 +171,29 @@ Future main() async {
   print("EXECUTING MAIN FUNCTION!!!");
 
   WidgetsFlutterBinding.ensureInitialized();
-  await StorageRepository.initFlutter();
-  Main.storageUnit = StorageRepository();
-  await Main.storageUnit!.init();
+  Main.appDocDir = (await getApplicationDocumentsDirectory()).path;
+  await [Permission.storage].request().then((value_) {
+    if (!value_.toString().contains(".granted")) {
+      print("The premission of storage was not granted! Restarting the app!");
+      Main.restart();
+    } else {
+      print("The premission of storage was granted!");
+    }
+  });
 
-  //Main.readSettings();
+  ;
+  Main.readSettings();
 
-  //TODO: For test purposes:
-  Main.faculty = "Engineering";
-  Main.department = faculties[Main.faculty]?.keys.elementAt(0) as String;
+  // NOTE: For test purposes:
+  // Main.language = "English";
+  // Main.faculty = "Engineering";
+  // Main.department = faculties[Main.faculty]?.keys.elementAt(0) as String;
 
   // TODO: just for test purposes, remove it later
   Main.forceUpdate = true;
 
-  // NOTE: These lines are only for checking the configs of Branch IO on this app!
-  // FlutterBranchSdk.initSession().listen((data) {
-  //   print("BRANCH: Received data: $data");
-  // });
-  // FlutterBranchSdk.validateSDKIntegration();
-
   Main.schedules.add(Schedule(scheduleName: "Schedule 1", scheduleCourses: []));
   Main.currentScheduleIndex = 0;
-  Main.appDocDir = (await getApplicationDocumentsDirectory()).path;
 
   print("update is ${Main.forceUpdate}");
 

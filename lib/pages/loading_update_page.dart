@@ -26,6 +26,8 @@ class LoadingUpdateState extends State<LoadingUpdate> {
   TextStyle txtStyle = const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 14, fontFamily: "Times New Roman");
   int currentState = 0;
 
+  DateTime lastChanged = DateTime.now();
+
   @override
   void initState() {
     Main.forceUpdate = false; // Since it is now updating
@@ -37,6 +39,19 @@ class LoadingUpdateState extends State<LoadingUpdate> {
 
     if(currentState != WebpageState.state) {
       setState(() {});
+    }
+
+    if (DateTime.now().difference(lastChanged).inSeconds >= 20 && !WebpageState.doNotRestart) { // then restart the whole reload process:
+
+      // WebpageState.currentState!.setState(() {
+      //   if (WebpageState.currentState?.controller != null) {
+      //     WebpageState.currentState?.controller.reload();
+      //   }
+      // });
+      // setState(() {});
+
+      Main.restart();
+
     }
 
     if (WebpageState.state != 5) {
@@ -54,6 +69,7 @@ class LoadingUpdateState extends State<LoadingUpdate> {
   @override
   Widget build(BuildContext context) {
     currentState = WebpageState.state;
+    lastChanged = DateTime.now();
     Widget loadingWidget;
     switch (currentState) {
       case 0:
@@ -101,7 +117,17 @@ class LoadingUpdateState extends State<LoadingUpdate> {
                 icon: const Icon(Icons.cancel, color: Colors.white,), label: Text("CANCEL UPDATE", style: txtStyle), style: ButtonStyle(overlayColor: MaterialStateProperty.resolveWith((states) {
                   return Colors.blue.shade300;
                 }))),
-          )
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.05,
+          ),
+          Container(
+            margin: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * 0.2, 0, MediaQuery.of(context).size.width * 0.2, 0),
+            child: TextButton.icon(onPressed: WebpageState.doNotRestart ? null : () => Main.restart(),
+                icon: const Icon(Icons.restart_alt, color: Colors.white,), label: Text("RESTART UPDATE", style: txtStyle), style: ButtonStyle(overlayColor: MaterialStateProperty.resolveWith((states) {
+                  return Colors.blue.shade300;
+                }))),
+          ),
         ],
       ),
     );

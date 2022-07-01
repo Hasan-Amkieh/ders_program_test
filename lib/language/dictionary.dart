@@ -59,7 +59,7 @@ Map<String, String> engToTurk = {
   "Economics (English)" : "Ekonomi (İngilizce)",
   "Economics (Turkish)" : "Ekonomi (Türkçe)",
   "International Relations" : "Uluslararası İlişkiler",
-  "Political Science & Business Admin." : "Siyaset Bilimi & İşletme Yönetimi",
+  "Political Science & Business Admin." : "Siyaset Bilimi & Kamu Yönetimi",
   "International Trade and Logistics" : "Uluslararası Ticaret ve Lojistik",
   "Business Administration (English)" : "İş İdaresi (İngilizce)",
   "Business Administration (Turkish)" : "İş İdaresi (Türkçe)",

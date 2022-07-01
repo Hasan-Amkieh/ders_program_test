@@ -266,10 +266,22 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                   TextButton(
                     child: Text(translateEng("SAVE")),
                     onPressed: () {
-                      setState(() {
-                        Main.schedules.add(Schedule(scheduleName: nameController.text, scheduleCourses: []));
-                      });
-                      Navigator.pop(context);
+                      if (nameController.text.trim().isNotEmpty) {
+                        setState(() {
+                          Main.schedules.add(Schedule(scheduleName: nameController.text, scheduleCourses: []));
+                        });
+                        Navigator.pop(context);
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: translateEng("The name cannot be empty!"),
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.blue,
+                            textColor: Colors.white,
+                            fontSize: 12.0
+                        );
+                      }
                     },
                   ),
                   TextButton(

@@ -35,8 +35,59 @@ class FavCoursesState extends State<FavCourses> {
             : ListView.builder(
               itemCount: Main.favCourses.length,
               itemBuilder: (context, count) {
+
+                TextEditingController notesController = TextEditingController(text: Main.favCourses.elementAt(count).note);
+
               return ListTile(
                 title: Text(Main.favCourses[count].subject.classCode),
+                trailing: IconButton(
+                    tooltip: translateEng("Notes"),
+                    icon: const Icon(CupertinoIcons.chat_bubble_text_fill, color: Colors.blue), onPressed: () {
+                  showAdaptiveActionSheet(
+                    context: context,
+                    title: Column(
+                      children: [
+                        SizedBox(
+                          width: width * 0.7,
+                          height: height * 0.3,
+                          child: TextFormField(
+                            controller: notesController,
+                            minLines: null,
+                            maxLines: null,
+                            expands: true,
+                            scrollController: ScrollController(),
+                            decoration: const InputDecoration(
+                              labelText: "Notes",
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 0.3 * height,
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      BottomSheetAction(title: Text(translateEng("Save"),
+                          style: const TextStyle(color: Colors.blue)), onPressed: () {
+                        Main.favCourses.elementAt(count).note = notesController.text;
+                        Navigator.pop(context);
+                        Fluttertoast.showToast(
+                            msg: translateEng("Notes were saved"),
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.TOP,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: const Color.fromRGBO(80, 154, 167, 1.0),
+                            textColor: Colors.white,
+                            fontSize: 12.0
+                        );
+                      }),
+                    ],
+                    cancelAction: CancelAction(title: const Text('Cancel'), onPressed: () {
+                      notesController.text = Main.favCourses.elementAt(count).note;
+                      Navigator.pop(context);
+                    }),
+                  );
+                }),
                 onTap: () {
                   String name = Main.favCourses[count].subject.customName;
 
@@ -56,96 +107,6 @@ class FavCoursesState extends State<FavCourses> {
                   teachers.trim();
                   classrooms.trim();
                   departments.trim();
-
-                  /*showDialog(context: context, builder: (context) => AlertDialog(
-                    title: Text(Main.favCourses[count].classCode),
-                    content: Builder(
-                        builder: (context) {
-                          return SizedBox(
-                            height: 0.4 * height,
-                            child: Scrollbar(
-                              thumbVisibility: true,
-                              child: ListView(
-                                children: [
-                                  ListTile(
-                                    title: Row(children: [Expanded(child: Text(name))]),
-                                    onTap: null,
-                                  ),
-                                  ListTile(
-                                    title: Row(
-                                        children: [
-                                          classrooms.isNotEmpty ? const Icon(CupertinoIcons.placemark_fill) : Container(),
-                                          Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(classrooms))),
-                                        ]),
-                                    onTap: null,
-                                  ),
-                                  ListTile(
-                                    title: Row(
-                                        children: [
-                                          teachers.isNotEmpty ? const Icon(CupertinoIcons.group_solid) : Container(),
-                                          Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(teachers))),
-                                        ]),
-                                    onTap: null,
-                                  ),
-                                  ListTile(
-                                    title: Row(children: [
-                                      departments.isNotEmpty ? const Icon(CupertinoIcons.building_2_fill) : Container(),
-                                      Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(departments))),
-                                    ]),
-                                    onTap: null,
-                                  ),
-                                  (Main.favCourses[count].days.isNotEmpty && Main.favCourses[count].bgnPeriods.isNotEmpty && Main.favCourses[count].hours.isNotEmpty) ? ListTile(
-                                    onTap: null,
-                                    title: SizedBox(width: width * 0.5, height: width * 0.5, child: CustomPaint(painter:
-                                    TimetableCanvas(beginningPeriods: Main.favCourses[count].bgnPeriods, days: Main.favCourses[count].days, hours: Main.favCourses[count].hours, isForSchedule: false))),
-
-                                  ) : Container(),
-                                ],
-                              ),
-                            ),
-                          );
-                        }
-                        ,
-                    ),
-                    actions: [
-                      TextButton(onPressed: () {
-                        Navigator.pop(context);
-                      }, child: Text(translateEng("OK"))),
-
-                      TextButton(onPressed: () {
-                        Subject sub = Main.favCourses.elementAt(count);
-                        bool doesExist = false;
-                        for (Course sub_ in Main.schedules[Main.currentScheduleIndex].scheduleCourses) {
-                          if (sub_.subject.classCode == sub.classCode) {
-                            doesExist = true;
-                          }
-                        }
-
-                        if (!doesExist) {
-                          Main.schedules[Main.currentScheduleIndex].scheduleCourses.add(Course(subject: sub, note: ""));
-                        }
-
-                        Fluttertoast.showToast(
-                            msg: translateEng(doesExist ? "The course is already in the schedule" : "Added to the current schedule"),
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM,
-                            timeInSecForIosWeb: 1,
-                            backgroundColor: Colors.blue,
-                            textColor: Colors.white,
-                            fontSize: 12.0
-                        );
-
-                      }, child: Text(translateEng("ADD TO SCHEDULE"))),
-
-                      TextButton(onPressed: () {
-                        Navigator.pop(context);
-                        setState(() {
-                          Main.favCourses.removeAt(count);
-                        });
-                      }, child: Text(translateEng("REMOVE"))),
-                    ],
-                  )
-                  );*/
 
                   showAdaptiveActionSheet(
                     context: context,
@@ -193,6 +154,15 @@ class FavCoursesState extends State<FavCourses> {
                                 departments.isNotEmpty ? const Icon(CupertinoIcons.building_2_fill) : Container(),
                                 Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(departments))),
                               ]
+                          ),
+                        ),
+                        SizedBox(height: height * 0.03),
+                        Visibility(
+                          visible: Main.favCourses[count].note.isNotEmpty,
+                          child: Row(children: [
+                            Main.favCourses[count].note.isNotEmpty ? const Icon(CupertinoIcons.text_aligncenter) : Container(width: 0),
+                            Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(Main.favCourses[count].note))),
+                          ]
                           ),
                         ),
                         SizedBox(height: height * 0.03),

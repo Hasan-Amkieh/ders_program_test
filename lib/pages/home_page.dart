@@ -63,11 +63,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
     super.initState();
 
     toggleButtonController = AnimationController(duration: const Duration(seconds: 1), vsync: this);
-    toggleButtonController.addListener(() {
-
-      ;
-
-    });
 
 
     currentState = this;
@@ -259,7 +254,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                             Main.forceUpdate = true;
                             Main.faculty = newValue!;
                             Main.department = faculties[Main.faculty]?.keys.elementAt(0) as String;
-                            Main.save();
                             Main.restart();
                           },
                             child: Text(translateEng("RESTART")),
@@ -307,7 +301,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
               TextButton(onPressed: () {
                 setState(() {
                   Main.forceUpdate = true;
-                  Main.save();
                   Main.restart();
                 });
               }, child: Text(translateEng("Update now"))),
@@ -564,7 +557,9 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
-  Container? showCourseInfo(Subject subject) {
+  Container? showCourseInfo(Course course) {
+
+    Subject subject = course.subject;
 
     String name = subject.customName;
 
@@ -637,6 +632,18 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 children: [
                   departments.isNotEmpty ? const Icon(CupertinoIcons.building_2_fill) : Container(),
                   Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(departments))),
+                ]
+            ),
+          ),
+          SizedBox(
+            height: departments.isNotEmpty ? height * 0.03 : 0,
+          ),
+          Visibility(
+            visible: departments.isNotEmpty,
+            child: Row(
+                children: [
+                  course.note.isNotEmpty ? const Icon(CupertinoIcons.text_aligncenter) : Container(),
+                  Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(course.note))),
                 ]
             ),
           ),
@@ -885,7 +892,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
           coursesList.add(
             Positioned(child: TextButton(
               //clipBehavior: Clip.none,
-                onPressed: () => showCourseInfo(course.subject),
+                onPressed: () => showCourseInfo(course),
                 // TODO: Make it pass a class called "PeriodData" / which holds only the info of the current period!
                 child: RotatedBox(
                   quarterTurns: isCol ? 1 : 0,
