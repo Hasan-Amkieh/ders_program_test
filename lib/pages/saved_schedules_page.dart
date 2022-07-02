@@ -87,7 +87,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
         hours.addAll(schedule.scheduleCourses[i].subject.hours);
 
         //print("Hours: ${schedule.scheduleCourses[i].subject.hours}");
-        for (int j = 0 ; j < schedule.scheduleCourses[i].subject.hours.length ; j++) {
+        for (int j = 0 ; j < schedule.scheduleCourses[i].subject.days.length ; j++) {
           totalHours += schedule.scheduleCourses[i].subject.hours[j] * schedule.scheduleCourses[i].subject.days[j].length;
         }
 
@@ -425,8 +425,11 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                     icon: const Icon(Icons.save_alt_outlined),
                     label: Text(translateEng("Save Screenshot to Gallery")),
                     onPressed: () async {
+                      int oldScheduleIndex = Main.currentScheduleIndex;
+                      Main.currentScheduleIndex = scheduleIndex;
                       final image = await controller.captureFromWidget(HomeState.currentState!.buildSchedulePage());
-                      saveScreenshot(image).then((value) { // TODO: Confirm this by testing the app on Android and IOS:
+                      Main.currentScheduleIndex = oldScheduleIndex;
+                      saveScreenshot(image).then((value) {
                         if (value.toString().contains("isSuccess: true")) {
                           Fluttertoast.showToast(
                               msg: translateEng("Image was saved to gallery"),
@@ -456,7 +459,10 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                     icon: const Icon(Icons.link),
                     label: Text(translateEng("Share Screenshot")),
                     onPressed: () async {
+                      int oldScheduleIndex = Main.currentScheduleIndex;
+                      Main.currentScheduleIndex = scheduleIndex;
                       final image = await controller.captureFromWidget(HomeState.currentState!.buildSchedulePage());
+                      Main.currentScheduleIndex = oldScheduleIndex;
                       shareScreenshot(image);
 
                       Navigator.pop(context);
@@ -468,7 +474,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                     icon: const Icon(CupertinoIcons.link),
                     label: Text(translateEng("Share Schedule by Link")),
                     onPressed: () async {
-                      HomeState.currentState!.initDeepLinkData();
+                      HomeState.currentState!.initDeepLinkData(scheduleIndex);
                       BranchResponse? response = await HomeState.currentState!.generateLink();
 
                       var time = DateTime.now().add(const Duration(days: 30));
@@ -493,7 +499,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
               const Icon(CupertinoIcons.checkmark_seal, color: Colors.blue),
               SizedBox(width: width * 0.03),
               Text(translateEng("Set Active"), style: const TextStyle(color: Colors.blue))]),
-            onPressed: () { // TODO:
+            onPressed: () {
               setState(() {
                 Main.currentScheduleIndex = scheduleIndex;
                 Navigator.pop(context);

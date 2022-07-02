@@ -28,7 +28,7 @@ class Home extends StatefulWidget {
 
 }
 
-class HomeState extends State<Home> with SingleTickerProviderStateMixin {
+class HomeState extends State<Home> with SingleTickerProviderStateMixin, WidgetsBindingObserver {
 
   int pageIndex = 0;
 
@@ -62,6 +62,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
     super.initState();
 
+    WidgetsBinding.instance.addObserver(this);
+
     toggleButtonController = AnimationController(duration: const Duration(seconds: 1), vsync: this);
 
 
@@ -75,13 +77,20 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
     listenDynamicLinks();
 
+    checkScheduleAddition();
+
+
+  }
+
+  void checkScheduleAddition() {
+
     print("Trying to find extra files: ");
     String content = "";
     try {
       final file = File('${Main.appDocDir}/schedule.txt'); // FileSystemException
 
       content = file.readAsStringSync();
-      file.delete();
+      file.deleteSync();
       if (content.isNotEmpty) {
         print("Extra Schedule was found with the content of: $content");
         List<String> lines = content.split("\n");
@@ -99,6 +108,33 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
       WidgetsBinding.instance.addPostFrameCallback((_) => showSnackBar());
     }
 
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+
+    print("The state of the app has changed!");
+
+    switch (state) {
+      case AppLifecycleState.detached:
+        print("The lifecycle has changed into detached");
+        break;
+      case AppLifecycleState.inactive:
+        print("The lifecycle has changed into inactive");
+        ;
+
+        break;
+      case AppLifecycleState.paused:
+        print("The lifecycle has changed into paused");
+        Main.save();
+
+        break;
+      case AppLifecycleState.resumed:
+        print("The lifecycle has changed into resumed");
+        Main.save();
+
+        break;
+    }
 
   }
 
@@ -107,11 +143,14 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
     toggleButtonController.dispose();
 
+    WidgetsBinding.instance.removeObserver(this);
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+
     width = (window.physicalSize / window.devicePixelRatio).width;
     height = (window.physicalSize / window.devicePixelRatio).height;
 
@@ -196,10 +235,10 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
       String hours = "", day, hr, mins;
       int days;
 
-      hr = (Main.semesters[0].lastUpdate.hour < 10 ? "0" : "") + Main.semesters[0].lastUpdate.hour.toString();
-      mins = (Main.semesters[0].lastUpdate.minute < 10 ? "0" : "") + Main.semesters[0].lastUpdate.minute.toString();
+      hr = (Main.facultyData.lastUpdate.hour < 10 ? "0" : "") + Main.facultyData.lastUpdate.hour.toString();
+      mins = (Main.facultyData.lastUpdate.minute < 10 ? "0" : "") + Main.facultyData.lastUpdate.minute.toString();
       hours = hr + ":" + mins;
-      days = Main.semesters[0].lastUpdate.difference(DateTime.now()).inDays;
+      days = Main.facultyData.lastUpdate.difference(DateTime.now()).inDays;
 
       if (days == 0) {
         day = "Today";
@@ -545,7 +584,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
             });
           },
           destinations: [
-            // TODO: Check, how do I know the size of the icon? is there a way to know? amd apply it to the width of the tools image:
             NavigationDestination(icon: const Icon(CupertinoIcons.calendar_today), selectedIcon: const Icon(CupertinoIcons.calendar_circle_fill), label: translateEng('Schedule')),
             NavigationDestination(icon: Image.asset("lib/icons/tools_outlines.png", width: IconTheme.of(context).size!), selectedIcon: Image.asset("lib/icons/tools_filled.png", width: IconTheme.of(context).size!), label: translateEng('Tools')),
             NavigationDestination(icon: const Icon(Icons.settings_outlined), selectedIcon: const Icon(Icons.settings), label: translateEng('Settings')),
@@ -844,6 +882,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
       ),
     ];
 
+    Main.schedules[Main.currentScheduleIndex].scheduleCourses.forEach((element) {print(element.subject.toString());});
     // First find all the collisions:
     collisions = findCourseCollisions();
     print("All the collisions are: ");
@@ -893,7 +932,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
             Positioned(child: TextButton(
               //clipBehavior: Clip.none,
                 onPressed: () => showCourseInfo(course),
-                // TODO: Make it pass a class called "PeriodData" / which holds only the info of the current period!
                 child: RotatedBox(
                   quarterTurns: isCol ? 1 : 0,
                   child: RichText(
@@ -911,7 +949,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                           ),
                           TextSpan(
                             text: (isCol ? "  " : "\n") + course.subject
-                                .classrooms[i].toString().replaceAll(
+                                .classrooms.toString().replaceAll(
                                 RegExp("[\\[.*?\\]]"), ""),
                             style: TextStyle(
                                 color: whiteThemeScheduleColors[colorIndex][1],
@@ -1089,20 +1127,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   }
 
-  // bool checkIfCommonCourseCollidesWithAll(Subject commonSub, int day, int bgnHour, int colIndex) {
-  //
-  //   ;
-  //
-  // }
-
-  bool isMoreThan3Cols() { // Returns true if there are more than 3 collisions inside the scheduledCourses List:
-    // this function should be called every time we edit on the schedule:
-
-    //TODO:
-    return false;
-
-  }
-
   // Branch IO code:
 
   void listenDynamicLinks() async {
@@ -1113,7 +1137,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
       controllerData.sink.add((data.toString()));
 
       if (data.containsKey('+clicked_branch_link') && data['+clicked_branch_link'] == true) {
-        // TODO: Starting from here, write a small file into the solid storage unit and write the schedule data into it, then when executing the main function, read that schedule again!
         final dir = await getApplicationDocumentsDirectory();
         final file = File('${dir.path}/schedule.txt');
 
@@ -1130,7 +1153,9 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
         print("Writing the following string to the file: $str");
         await file.writeAsString(str, mode: FileMode.write, flush: true);
 
-        //confirmScheduleAddtion(data['schedule_name'], courses, data['faculty']);
+        if (HomeState.currentState != null) {
+          HomeState.currentState?.setState(() { checkScheduleAddition(); });
+        }
 
       }
     }, onError: (error) {
@@ -1204,15 +1229,15 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   }
 
-  void initDeepLinkData() {
+  void initDeepLinkData(int shceduleIndex) {
     metadata = BranchContentMetaData()
-      ..addCustomMetadata('schedule_name', Main.schedules[Main.currentScheduleIndex].scheduleName)
+      ..addCustomMetadata('schedule_name', Main.schedules[shceduleIndex].scheduleName)
       //..addCustomMetadata('schedule_courses', Subject.convertToListWithClassCodes(Main.schedules[Main.currentScheduleIndex].scheduleCourses))
-      ..addCustomMetadata('number_of_courses', Main.schedules[Main.currentScheduleIndex].scheduleCourses.length)
+      ..addCustomMetadata('number_of_courses', Main.schedules[shceduleIndex].scheduleCourses.length)
       ..addCustomMetadata('faculty', Main.faculty);
-    for (int i = 0 ; i < Main.schedules[Main.currentScheduleIndex].scheduleCourses.length ; i++) {
-      metadata.addCustomMetadata("course_${i+1}", Main.schedules[Main.currentScheduleIndex].scheduleCourses[i].subject.classCode + "|"
-          + Main.schedules[Main.currentScheduleIndex].scheduleCourses[i].subject.toString());
+    for (int i = 0 ; i < Main.schedules[shceduleIndex].scheduleCourses.length ; i++) {
+      metadata.addCustomMetadata("course_${i+1}", Main.schedules[shceduleIndex].scheduleCourses[i].subject.classCode + "|"
+          + Main.schedules[shceduleIndex].scheduleCourses[i].subject.toString());
     }
 
     buo = BranchUniversalObject(
@@ -1230,7 +1255,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
         locallyIndex: true,
         expirationDateInMilliSec: DateTime.now().add(const Duration(days: 30)).millisecondsSinceEpoch);
 
-    lp = BranchLinkProperties( // TODO: Edit this in the future:
+    lp = BranchLinkProperties(
         channel: 'Dersbottest App',
         feature: 'sharing',
 

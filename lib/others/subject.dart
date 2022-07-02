@@ -1,6 +1,8 @@
 
 import 'package:ders_program_test/language/teacherdictionary.dart';
 
+import '../main.dart';
+
 class FacultySemester {
 
   List<Subject> subjects = []; // all subject codes taken inside this semester (with the section number)
@@ -190,6 +192,9 @@ class Subject { // represents a class
 
     // print("str is $str");
     List<String> str_ = str.split("|");//str.replaceAll(" ", "").split("|");
+    if (str_.length < 7) {
+      return Main.emptySubject;
+    }
     // print("str_ is $str_");
 
     classCode = str_[0];
@@ -197,14 +202,14 @@ class Subject { // represents a class
     departments = str_[2].split(',');
 
     // classrooms:
-    List<String> classroomsList = str_[3].split('],[');
+    List<String> classroomsList = str_[3].split('], [');
     for (int i = 0 ; i < classroomsList.length ; i++) { // delete '[' and ']'
       classroomsList[i] = classroomsList[i].replaceAll('[', '').replaceAll(']', '');
       classrooms.add(classroomsList[i].split(','));
     }
 
     // teachers:
-    List<String> teachersList = str_[4].split('],[');
+    List<String> teachersList = str_[4].split('], [');
     for (int i = 0 ; i < classroomsList.length ; i++) { // delete '[' and ']'
       teachersList[i] = teachersList[i].replaceAll('[', '').replaceAll(']', '');
       teacherCodes.add(teachersList[i].split(','));
@@ -220,19 +225,22 @@ class Subject { // represents a class
     }
 
     // bgnPeriods:
-    list = str_[6].split('],[');
+    list = str_[6].replaceAll(" ", "").split('],[');
+    print("Orig string: $list");
     list = list.where((element) => element.trim().isNotEmpty).toList();// ["[5, 1, 5]"]
+    list.forEach((element) {print(element);});
 
     List<int> tempList;
-    for (int i = 0 ; i < list.length ; i++) { // delete '[' and ']'
+    for (int i = 0 ; i < list.length ; i++) { // delete '[' and ']' // aa|aa||||3, 2|[1], [4]|[1], [2]
       list[i] = list[i].replaceAll('[', '').replaceAll(']', '');
       tempList = [];
       list[i].split(',').forEach((element) { tempList.add(int.parse(element)); });
+      print("temp list: $tempList");
       bgnPeriods.add(tempList);
     }
 
     // days:
-    list = str_[7].split('],[');
+    list = str_[7].replaceAll(" ", "").split('],[');
     list = list.where((element) => element.trim().isNotEmpty).toList();
     for (int i = 0 ; i < list.length ; i++) { // delete '[' and ']'
       list[i] = list[i].replaceAll('[', '').replaceAll(']', '');
@@ -286,8 +294,6 @@ class Subject { // represents a class
   }
 
 }
-
-// TODO: Use this class
 
 class Course { // This class is used inside the favourite and schedule courses, it indirectly inherits the class Subject
 

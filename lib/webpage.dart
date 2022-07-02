@@ -107,7 +107,7 @@ class WebpageState extends State<Webpage> {
     //print("Found validStart at $validStart");
     // TODO: Wait for two semesters to show up to understand how the validity date works
     //String dateStr = timetableStr.substring(validStart, timetableStr.indexOf("-", validStart));
-    Main.semesters.add(FacultySemester(facName: Main.faculty, validDate: DateTime.now(), lastUpdate: DateTime.now()));
+    Main.facultyData = FacultySemester(facName: Main.faculty, validDate: DateTime.now(), lastUpdate: DateTime.now());
 
     List<String> names = [];
     var classesInSemester = [];
@@ -329,9 +329,9 @@ class WebpageState extends State<Webpage> {
       });
     } // end for each subject
 
-    Main.semesters.elementAt(0).subjects = subjects;
+    Main.facultyData.subjects = subjects;
     // TO SEE THE RESULTS ONLY /
-    Main.semesters.elementAt(0).subjects.forEach((element) {print("${element.classCode} : $element");});
+    Main.facultyData.subjects.forEach((element) {print("${element.classCode} : $element");});
 
     state = 4;
 

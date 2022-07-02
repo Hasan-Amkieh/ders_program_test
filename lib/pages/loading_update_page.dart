@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:ders_program_test/webpage.dart';
+import 'package:restart_app/restart_app.dart';
 
 import '../main.dart';
 
@@ -50,7 +51,7 @@ class LoadingUpdateState extends State<LoadingUpdate> {
       // });
       // setState(() {});
 
-      Main.restart();
+      Restart.restartApp();
 
     }
 
@@ -123,7 +124,7 @@ class LoadingUpdateState extends State<LoadingUpdate> {
           ),
           Container(
             margin: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * 0.2, 0, MediaQuery.of(context).size.width * 0.2, 0),
-            child: TextButton.icon(onPressed: WebpageState.doNotRestart ? null : () => Main.restart(),
+            child: TextButton.icon(onPressed: WebpageState.doNotRestart ? null : () => Restart.restartApp(),
                 icon: const Icon(Icons.restart_alt, color: Colors.white,), label: Text("RESTART UPDATE", style: txtStyle), style: ButtonStyle(overlayColor: MaterialStateProperty.resolveWith((states) {
                   return Colors.blue.shade300;
                 }))),

@@ -30,8 +30,8 @@ class AddCoursesPageState extends State<AddCoursesPage> {
 
   String query = "";
 
-  List<Subject> subjects = Main.semesters[0].subjects;
-  List<Subject> subjectsOfDep = Main.semesters[0].subjects;
+  List<Subject> subjects = Main.facultyData.subjects;
+  List<Subject> subjectsOfDep = Main.facultyData.subjects;
 
   @override
   void initState() {
@@ -48,7 +48,7 @@ class AddCoursesPageState extends State<AddCoursesPage> {
 
     if (depToSearch != translateEng("All") && lastDep != depToSearch) {
       lastDep = depToSearch;
-      subjectsOfDep = Main.semesters[0].subjects.where((element) {
+      subjectsOfDep = Main.facultyData.subjects.where((element) {
 
         return element.departments.toString().contains(depToSearch);
 
@@ -57,7 +57,7 @@ class AddCoursesPageState extends State<AddCoursesPage> {
     }
     else if (depToSearch == translateEng("All") && lastDep != depToSearch) {
       lastDep = depToSearch;
-      subjectsOfDep = Main.semesters[0].subjects;
+      subjectsOfDep = Main.facultyData.subjects;
       search(query); // Because the subjects list are now reset
     }
 

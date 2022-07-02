@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'package:ders_program_test/language/dictionary.dart';
 import 'package:ders_program_test/others/subject.dart';
 import 'package:ders_program_test/pages/add_courses_page.dart';
 import 'package:ders_program_test/pages/create_custom_course_page.dart';
@@ -91,35 +92,30 @@ class Main {
       days: <List<int>>[],
       classrooms: <List<String>>[[]]);
 
-  // TODO: Extract and store the semesters here:
-  static List<FacultySemester> semesters = []; // each semester contains the subjects with their details
+  // TODO: Extract and store the semesters here: OR Delete it, since we have no semesters, automatically the last semester is only taken:
+  static late FacultySemester facultyData;
 
-  // TODO: Call the function save to save everything before closing the app:
   static void save() async {
 
     saveSettings();
+    writeSchedules();
 
   }
 
   static void saveSettings() async {
 
     String toWrite = "";
-    try {
-      final file = File('${Main.appDocDir}/settings.txt'); // FileSystemException
+    final file = File('${Main.appDocDir}/settings.txt'); // FileSystemException
 
-      toWrite = toWrite + "force_update:"+forceUpdate.toString()+"\n";
-      toWrite = toWrite + "is_dark:"+isDark.toString()+"\n";
-      toWrite = toWrite + "faculty:"+faculty.toString()+"\n";
-      toWrite = toWrite + "department:"+department.toString()+"\n";
-      toWrite = toWrite + "language:"+language.toString()+"\n";
-      toWrite = toWrite + "hour_update:"+hourUpdate.toString()+"\n";
-      toWrite = toWrite + "last_updated:"+lastUpdated.microsecondsSinceEpoch.toString()+"\n";
+    toWrite = toWrite + "force_update:"+forceUpdate.toString()+"\n";
+    toWrite = toWrite + "is_dark:"+isDark.toString()+"\n";
+    toWrite = toWrite + "faculty:"+faculty.toString()+"\n";
+    toWrite = toWrite + "department:"+department.toString()+"\n";
+    toWrite = toWrite + "language:"+language.toString()+"\n";
+    toWrite = toWrite + "hour_update:"+hourUpdate.toString()+"\n";
+    toWrite = toWrite + "last_updated:"+lastUpdated.microsecondsSinceEpoch.toString()+"\n";
 
-      await file.writeAsString(toWrite, mode: FileMode.write);
-
-    } catch(err) {
-      print("The settings file was not opened bcs: $err");
-    }
+    file.writeAsStringSync(toWrite, mode: FileMode.write);
 
     print("Settings were saved!");
 
@@ -149,15 +145,142 @@ class Main {
       print("The settings file was not opened bcs: $err");
     }
 
-    // Sometimes the faculty is saved but the department is not:
-    // if (!(faculties[Main.faculty]?.keys as Iterable<String>).contains(department)) {
-    //   department = faculties[Main.faculty]?.keys.elementAt(0) as String;
-    // }
+  }
 
+  static void writeSchedules() {
+
+    // first delete all the schedules, then write all the schedules again:
+
+    Directory dir = Directory(Main.appDocDir);
+
+    // List directory contents, recursing into sub-directories,
+    // but not following symbolic links.
+    List<FileSystemEntity> files = dir.listSync();
+
+    for (int i = 0 ; i < files.length ; i++) {
+
+      if (files[i].toString().contains("schedule_")) {
+        files[i].deleteSync();
+      }
+
+    }
+
+    for (int i = 0 ; i < schedules.length ; i++) {
+
+      // if (files[i].toString().contains("schedule_")) {
+      //
+      //   File file = File(files[i].toString());
+      //   if (file.existsSync()) {
+      //     print("The file EXISTED!!!!");
+      //   }
+      //
+      //   String content = file.readAsStringSync();
+      //   List<String> lines = content.split("\n");
+      //
+      //   String scheduleName = lines[0];
+      //   lines.removeAt(0);
+      //
+      //   List<String> notes = content.split("////\n").elementAt(0).split("\n")[1].split('\n/ /\n');
+      //   // the notes and the courses are seperated by "////\n" but each note is seperatoed by "\n/ /\n"
+      //
+      //   List<String> courses = content.split("////\n").elementAt(1).split("\n");
+      //
+      //   List<Course> courses_ = [];
+      //   int index = 0;
+      //   courses.forEach((course) { courses_.add(Course(subject: Subject.fromStringWithClassCode(course), note: notes[index])); index++; });
+      //
+      //   // print("Adding the schedule: ");
+      //   // print("Courses are: ");
+      //   // courses_.forEach((element) {print(element.subject.classCode);});
+      //   Main.schedules.add(Schedule(scheduleName: scheduleName, scheduleCourses: courses_));
+      //
+      // }
+
+      File file = File("${Main.appDocDir}/schedule_${Main.schedules[i].scheduleName}.txt");
+      String toWrite = "";
+
+      for (int j = 0 ; j < schedules[i].scheduleCourses.length ; j++) { // notes:
+
+        toWrite = toWrite + schedules[i].scheduleCourses[j].note;
+
+        if ((j + 1) < schedules[i].scheduleCourses.length) { // if it is not the last,
+          toWrite = toWrite + "\n/ /\n";
+        }
+
+      }
+
+      toWrite = toWrite + "////\n";
+
+      for (int j = 0 ; j < schedules[i].scheduleCourses.length ; j++) { // courses:
+
+        toWrite = toWrite + schedules[i].scheduleCourses[j].subject.classCode + "|" + schedules[i].scheduleCourses[j].subject.toString() + "\n";
+
+      }
+
+      print("The schedule ${Main.schedules[i].scheduleName} is written with the content of: \n\n$toWrite\n\n\n");
+
+      file.writeAsString(toWrite);
+
+    }
+
+  }
+
+  static void readSchedules() {
+
+    Directory dir = Directory(Main.appDocDir);
+
+    // List directory contents, recursing into sub-directories,
+    // but not following symbolic links.
+    List<FileSystemEntity> files = dir.listSync();
+
+    //print("All the files are: $files");
+
+    for (int i = 0 ; i < files.length ; i++) {
+
+      if (files[i].toString().contains("schedule_")) {
+
+        print("Opening file: ${files[i].toString()}");
+        File file = File(files[i].path);
+        if (file.existsSync()) {
+          print("The file EXISTED!!!!");
+
+          String content = file.readAsStringSync();
+          if (content.replaceAll("////\n", "").isEmpty) {
+            print("The file is empty, finding another file!");
+            continue;
+          }
+
+          print("File content is: $content");
+
+          String scheduleName = files[i].toString().substring(files[i].toString().indexOf("schedule_") + 9).replaceAll(".txt", "").replaceAll("'", "");
+          print("The schedule name is $scheduleName");
+
+          List<String> notes = content.split("////\n").elementAt(0).split('\n/ /\n');
+          // the notes and the courses are seperated by "////\n" but each note is seperatoed by "\n/ /\n"
+
+          List<String> courses = content.split("////\n").elementAt(1).split("\n");
+
+          List<Course> courses_ = [];
+          int index = 0;
+          courses = courses.where((element) => element.trim().isNotEmpty).toList();
+          courses.forEach((course) { print("Doing $course"); courses_.add(Course(subject: Subject.fromStringWithClassCode(course), note: notes[index < notes.length ? index : 0])); index++; });
+
+          // print("Adding the schedule: ");
+          // print("Courses are: ");
+          // courses_.forEach((element) {print(element.subject.classCode);});
+          courses_.forEach((element) {print(element.subject.toString());});
+          Main.schedules.add(Schedule(scheduleName: scheduleName, scheduleCourses: courses_));
+
+        }
+
+      }
+
+    }
 
   }
 
   static void restart() async { // Updated: whenever the app is restarted, it will save automatically!
+    // sometimes, we need normal restart without saving, so remember to call Restart.restartApp() directly!
 
     Main.save();
     Restart.restartApp().then((value) { ; });
@@ -181,7 +304,7 @@ Future main() async {
     }
   });
 
-  ;
+  Main.readSchedules();
   Main.readSettings();
 
   // NOTE: For test purposes:
@@ -192,7 +315,9 @@ Future main() async {
   // TODO: just for test purposes, remove it later
   Main.forceUpdate = true;
 
-  Main.schedules.add(Schedule(scheduleName: "Schedule 1", scheduleCourses: []));
+  if (Main.schedules.isEmpty) {
+    Main.schedules.add(Schedule(scheduleName: translateEng("Default Schedule"), scheduleCourses: []));
+  }
   Main.currentScheduleIndex = 0;
 
   print("update is ${Main.forceUpdate}");
