@@ -118,10 +118,11 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
     switch (state) {
       case AppLifecycleState.detached:
         print("The lifecycle has changed into detached");
+        Main.save();
         break;
       case AppLifecycleState.inactive:
         print("The lifecycle has changed into inactive");
-        ;
+        Main.save();
 
         break;
       case AppLifecycleState.paused:
@@ -131,7 +132,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         break;
       case AppLifecycleState.resumed:
         print("The lifecycle has changed into resumed");
-        Main.save();
 
         break;
     }
