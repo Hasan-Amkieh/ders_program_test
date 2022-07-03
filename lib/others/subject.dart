@@ -6,11 +6,10 @@ import '../main.dart';
 class FacultySemester {
 
   List<Subject> subjects = []; // all subject codes taken inside this semester (with the section number)
-  DateTime validDate;
   DateTime lastUpdate;
   String facName; // Faculty name
 
-  FacultySemester({required this.facName, required this.validDate, required this.lastUpdate});
+  FacultySemester({required this.facName, required this.lastUpdate});
 
 }
 
@@ -205,14 +204,18 @@ class Subject { // represents a class
     List<String> classroomsList = str_[3].split('], [');
     for (int i = 0 ; i < classroomsList.length ; i++) { // delete '[' and ']'
       classroomsList[i] = classroomsList[i].replaceAll('[', '').replaceAll(']', '');
-      classrooms.add(classroomsList[i].split(','));
+      var l_ = classroomsList[i].split(',');
+      l_ = l_.where((element) => element.trim().isNotEmpty).toList();
+      classrooms.add(l_);
     }
 
     // teachers:
     List<String> teachersList = str_[4].split('], [');
-    for (int i = 0 ; i < classroomsList.length ; i++) { // delete '[' and ']'
+    for (int i = 0 ; i < teachersList.length ; i++) { // delete '[' and ']'
       teachersList[i] = teachersList[i].replaceAll('[', '').replaceAll(']', '');
-      teacherCodes.add(teachersList[i].split(','));
+      var l_ = teachersList[i].split(',');
+      l_ = l_.where((element) => element.trim().isNotEmpty).toList();
+      teacherCodes.add(l_);
     }
 
     // hours:

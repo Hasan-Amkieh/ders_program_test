@@ -107,7 +107,7 @@ class WebpageState extends State<Webpage> {
     //print("Found validStart at $validStart");
     // TODO: Wait for two semesters to show up to understand how the validity date works
     //String dateStr = timetableStr.substring(validStart, timetableStr.indexOf("-", validStart));
-    Main.facultyData = FacultySemester(facName: Main.faculty, validDate: DateTime.now(), lastUpdate: DateTime.now());
+    Main.facultyData = FacultySemester(facName: Main.faculty, lastUpdate: DateTime.now());
 
     List<String> names = [];
     var classesInSemester = [];

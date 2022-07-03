@@ -389,6 +389,35 @@ class EditCoursePageState extends State<EditCoursePage> {
 
                     setState(() {
                       Main.isEditingCourse = false;
+
+                      // refinement process: remove the empty classrooms and departments:
+                      List<List<String>> list = Main.courseToEdit!.classrooms;
+                      list.forEach((element) {print(element);});
+                      for (int i = 0 ; i < list.length ; i++) {
+                        if (list[i].isEmpty) {
+                          list.removeAt(i);
+                          i--;
+                          continue;
+                        }
+                        for (int j = 0 ; j < list[i].length ; j++) {
+                          if (list[i][j].trim().isEmpty) {
+                            list[i].removeAt(j);
+                            j--;
+                          }
+                        }
+                      }
+                      Main.courseToEdit!.classrooms = list;
+
+                      List<String> list_ = Main.courseToEdit!.departments;
+                      for (int i = 0 ; i < list_.length ; i++) {
+                        if (list_[i].trim().isEmpty) {
+                          list_.removeAt(i);
+                          i--;
+                        }
+                      }
+                      Main.courseToEdit!.departments = list_;
+                      // refinement process;
+
                       Main.schedules[Main.currentScheduleIndex].scheduleCourses[index].subject = Main.courseToEdit!;
                       Main.schedules[Main.currentScheduleIndex].scheduleCourses[index].subject.translateTeachers();
                       print("Finished editing, saving the course with teachers: ${Main.schedules[Main.currentScheduleIndex].scheduleCourses[index].subject.teacherCodes}");

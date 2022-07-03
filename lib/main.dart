@@ -64,14 +64,13 @@ class Main {
   static String appDocDir = "";
 
   // NOTE: Default values are inside the function readSettings:
-  static bool forceUpdate = true;
+  static bool forceUpdate = false;
   static bool isDark = false;
   static int hourUpdate = 12; // if the time has passed for these hours since the last update, then make an update
   static String faculty = "Engineering";
   static String department = "AE";
   static String language = "English"; // currently, there is only
   static ThemeMode theme = ThemeMode.system;
-  static DateTime lastUpdated = DateTime.now();
 
   static List<Course> favCourses = [];
 
@@ -92,17 +91,18 @@ class Main {
       days: <List<int>>[],
       classrooms: <List<String>>[[]]);
 
-  // TODO: Extract and store the semesters here: OR Delete it, since we have no semesters, automatically the last semester is only taken:
   static late FacultySemester facultyData;
 
   static void save() async {
 
-    saveSettings();
+    writeSettings();
     writeSchedules();
+    writeFacultyCourses();
+    writeFavCourses();
 
   }
 
-  static void saveSettings() async {
+  static void writeSettings() async {
 
     String toWrite = "";
     final file = File('${Main.appDocDir}/settings.txt'); // FileSystemException
@@ -113,7 +113,6 @@ class Main {
     toWrite = toWrite + "department:"+department.toString()+"\n";
     toWrite = toWrite + "language:"+language.toString()+"\n";
     toWrite = toWrite + "hour_update:"+hourUpdate.toString()+"\n";
-    toWrite = toWrite + "last_updated:"+lastUpdated.microsecondsSinceEpoch.toString()+"\n";
 
     file.writeAsStringSync(toWrite, mode: FileMode.write);
 
@@ -138,8 +137,6 @@ class Main {
         department = content.substring(content.indexOf("department:") + 11, content.indexOf("\n", content.indexOf("department:") + 11));
         language = content.substring(content.indexOf("language:") + 9, content.indexOf("\n", content.indexOf("language:") + 9));
         hourUpdate = int.parse(content.substring(content.indexOf("hour_update:") + 12, content.indexOf("\n", content.indexOf("hour_update:") + 12)));
-        lastUpdated = DateTime.fromMicrosecondsSinceEpoch(int.parse(content.substring(content.indexOf("last_updated:") + 13, content.indexOf("\n", content.indexOf("last_updated:") + 13))));
-
       }
     } catch(err) {
       print("The settings file was not opened bcs: $err");
@@ -167,35 +164,6 @@ class Main {
 
     for (int i = 0 ; i < schedules.length ; i++) {
 
-      // if (files[i].toString().contains("schedule_")) {
-      //
-      //   File file = File(files[i].toString());
-      //   if (file.existsSync()) {
-      //     print("The file EXISTED!!!!");
-      //   }
-      //
-      //   String content = file.readAsStringSync();
-      //   List<String> lines = content.split("\n");
-      //
-      //   String scheduleName = lines[0];
-      //   lines.removeAt(0);
-      //
-      //   List<String> notes = content.split("////\n").elementAt(0).split("\n")[1].split('\n/ /\n');
-      //   // the notes and the courses are seperated by "////\n" but each note is seperatoed by "\n/ /\n"
-      //
-      //   List<String> courses = content.split("////\n").elementAt(1).split("\n");
-      //
-      //   List<Course> courses_ = [];
-      //   int index = 0;
-      //   courses.forEach((course) { courses_.add(Course(subject: Subject.fromStringWithClassCode(course), note: notes[index])); index++; });
-      //
-      //   // print("Adding the schedule: ");
-      //   // print("Courses are: ");
-      //   // courses_.forEach((element) {print(element.subject.classCode);});
-      //   Main.schedules.add(Schedule(scheduleName: scheduleName, scheduleCourses: courses_));
-      //
-      // }
-
       File file = File("${Main.appDocDir}/schedule_${Main.schedules[i].scheduleName}.txt");
       String toWrite = "";
 
@@ -219,7 +187,7 @@ class Main {
 
       print("The schedule ${Main.schedules[i].scheduleName} is written with the content of: \n\n$toWrite\n\n\n");
 
-      file.writeAsString(toWrite);
+      file.writeAsStringSync(toWrite);
 
     }
 
@@ -265,10 +233,7 @@ class Main {
           courses = courses.where((element) => element.trim().isNotEmpty).toList();
           courses.forEach((course) { print("Doing $course"); courses_.add(Course(subject: Subject.fromStringWithClassCode(course), note: notes[index < notes.length ? index : 0])); index++; });
 
-          // print("Adding the schedule: ");
-          // print("Courses are: ");
-          // courses_.forEach((element) {print(element.subject.classCode);});
-          courses_.forEach((element) {print(element.subject.toString());});
+          //courses_.forEach((element) {print(element.subject.toString());});
           Main.schedules.add(Schedule(scheduleName: scheduleName, scheduleCourses: courses_));
 
         }
@@ -284,6 +249,113 @@ class Main {
 
     Main.save();
     Restart.restartApp().then((value) { ; });
+
+  }
+
+  static void writeFacultyCourses() {
+
+    File file = File("${Main.appDocDir}/faculty_courses.txt");
+    if (file.existsSync()) {
+      file.deleteSync();
+    }
+
+    file = File("${Main.appDocDir}/faculty_courses.txt");
+    String toWrite = "";
+
+    toWrite = toWrite + Main.faculty + "\n";
+    toWrite = toWrite + Main.facultyData.lastUpdate.microsecondsSinceEpoch.toString() + "\n";
+    for (int i = 0 ; i < Main.facultyData.subjects.length ; i++) {
+
+      toWrite = toWrite + Main.facultyData.subjects[i].classCode + "|" + Main.facultyData.subjects[i].toString() + "\n";
+
+    }
+    //print("Writing the subjects: $toWrite");
+    file.writeAsStringSync(toWrite);
+
+  }
+
+  static void readFacultyCourses() {
+
+    File file = File("${Main.appDocDir}/faculty_courses.txt");
+
+    if (file.existsSync()) {
+
+      print("The faculty courses exists!");
+
+      List<String> lines = file.readAsStringSync().split("\n");
+      String facultyName = lines[0];
+      if (facultyName != Main.faculty) {
+        Main.forceUpdate = true;
+        print("The faculties are different, updating!");
+        return;
+      }
+      lines.removeAt(0);
+
+      DateTime lastUpdated = DateTime.fromMicrosecondsSinceEpoch(int.parse(lines[0]));
+      print("Time difference is ${DateTime.now().difference(lastUpdated).inHours}, updating!");
+      if (DateTime.now().difference(lastUpdated).inHours >= Main.hourUpdate) {
+        print("Time difference is ${DateTime.now().difference(lastUpdated).inHours}, updating!");
+        Main.forceUpdate = true;
+        return;
+      }
+      lines.removeAt(0);
+
+      int index = 0;
+      lines = lines.where((element) => element.trim().isNotEmpty).toList();
+      Main.facultyData = FacultySemester(facName: facultyName, lastUpdate: lastUpdated);
+      lines.forEach((course) { Main.facultyData.subjects.add(Subject.fromStringWithClassCode(course)); index++; });
+
+    } else {
+      print("The faculty courses DID NOT exist!");
+      Main.forceUpdate = true;
+    }
+
+  }
+
+  static void readFavCourses() {
+
+    File file = File("${Main.appDocDir}/fav_courses.txt");
+
+    if (file.existsSync()) {
+
+      print("Favourite courses exists!");
+
+      List<String> sections = file.readAsStringSync().split("////\n");
+      List<String> notes = sections[0].split("\n/ /\n");
+      List<String> courses = sections[1].split("\n");
+
+      int index = 0;
+      courses = courses.where((element) => element.trim().isNotEmpty).toList();
+      courses.forEach((course) { Main.favCourses.add(Course(subject: Subject.fromStringWithClassCode(course), note: notes[index])); index++; });
+
+    } else {
+      print("Favourite courses DID NOT exist!");
+    }
+
+  }
+
+  static void writeFavCourses() {
+
+    File file = File("${Main.appDocDir}/fav_courses.txt");
+    String toWrite = "";
+
+    for (int i = 0 ; i < Main.favCourses.length ; i++) {
+
+      toWrite = toWrite + Main.favCourses[i].note;
+      if (i + 1 < Main.favCourses.length) { // if it is not the lats note:
+        toWrite = toWrite + "\n/ /\n";
+      }
+
+    }
+
+    toWrite = toWrite + "////\n";
+    for (int i = 0 ; i < Main.favCourses.length ; i++) {
+
+      toWrite = toWrite + Main.favCourses[i].subject.classCode + "|" + Main.facultyData.subjects[i].toString() + "\n";
+
+    }
+
+    file.writeAsStringSync(toWrite);
 
   }
 
@@ -306,14 +378,15 @@ Future main() async {
 
   Main.readSchedules();
   Main.readSettings();
+  if (!Main.forceUpdate) {
+    Main.readFacultyCourses();
+  }
+  Main.readFavCourses();
 
   // NOTE: For test purposes:
   // Main.language = "English";
   // Main.faculty = "Engineering";
   // Main.department = faculties[Main.faculty]?.keys.elementAt(0) as String;
-
-  // TODO: just for test purposes, remove it later
-  Main.forceUpdate = true;
 
   if (Main.schedules.isEmpty) {
     Main.schedules.add(Schedule(scheduleName: translateEng("Default Schedule"), scheduleCourses: []));

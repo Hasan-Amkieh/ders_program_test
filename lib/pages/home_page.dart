@@ -62,6 +62,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
     super.initState();
 
+    Main.forceUpdate = false;
+
     WidgetsBinding.instance.addObserver(this);
 
     toggleButtonController = AnimationController(duration: const Duration(seconds: 1), vsync: this);
@@ -265,7 +267,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                 onChanged: (String? newValue) {
                   setState(() {
                     Main.language = newValue!;
-                    Main.saveSettings();
                   });
                 },
               )
@@ -324,7 +325,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                 onChanged: (String? newValue) {
                   setState(() {
                     Main.department = newValue!;
-                    Main.saveSettings();
                   });
                 },
               )
@@ -371,7 +371,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                           setState(() {
                             if (Main.hourUpdate == 12) return;
                             Main.hourUpdate--;
-                            Main.saveSettings();
                           });
                         },
                       ),
@@ -406,7 +405,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                           setState(() {
                             if (Main.hourUpdate == 24) return;
                             Main.hourUpdate++;
-                            Main.saveSettings();
                           });
                         },
                       ),
@@ -948,9 +946,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                                 fontSize: 12.0),
                           ),
                           TextSpan(
-                            text: (isCol ? "  " : "\n") + course.subject
-                                .classrooms.toString().replaceAll(
-                                RegExp("[\\[.*?\\]]"), ""),
+                            text: (isCol ? "  " : "\n") + (i < course.subject.classrooms.length ? course.subject.classrooms[i].toString().replaceAll(RegExp("[\\[.*?\\]]"), "") : ""),
                             style: TextStyle(
                                 color: whiteThemeScheduleColors[colorIndex][1],
                                 fontSize: 10.0),

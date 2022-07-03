@@ -243,6 +243,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                                 widget.subject.bgnPeriods = listBgnHrs;
                                 widget.subject.hours.addAll(widget.hours);
                                 widget.subject.departments.add(widget.dep);
+                                ;
 
                                 // Check if the course code is already used or not:
 

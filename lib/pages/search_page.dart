@@ -62,7 +62,7 @@ class SearchPageState extends State<SearchPage> {
       subjectsOfDep = Main.facultyData.subjects;
       search(query); // Because the subjects list are now reset
     }
-    print("The query: $query");
+    //print("The query: $query");
 
     return Scaffold(
       appBar: AppBar(),
@@ -142,7 +142,7 @@ class SearchPageState extends State<SearchPage> {
               ),
               TextFormField(
                 decoration: InputDecoration(
-                  hintText: translateEng("Course code, teacher name or classroom"),
+                  hintText: (searchByCourseName ? (translateEng("Course Code") + ", ") : "") + (searchByTeacher ? (translateEng("Teacher Name") + ", ") : "") + (searchByClassroom ? translateEng("classroom") : ""),
                   labelText: translateEng("SEARCH"),
                 ),
                 onChanged: search,
