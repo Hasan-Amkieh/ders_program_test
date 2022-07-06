@@ -104,6 +104,11 @@ class SearchPageState extends State<SearchPage> {
                             if (!searchByClassroom && !searchByTeacher) {
                               return;
                             }
+                            if (query.isNotEmpty) { // redo the query if it was not empty:
+                              searchByCourseName = newVal!;
+                              search(query);
+                              return;
+                            }
                             searchByCourseName = newVal!;
                           });
                         }),
@@ -118,6 +123,11 @@ class SearchPageState extends State<SearchPage> {
                             if (!searchByClassroom && !searchByCourseName) {
                               return;
                             }
+                            if (query.isNotEmpty) { // redo the query if it was not empty:
+                              searchByTeacher = newVal!;
+                              search(query);
+                              return;
+                            }
                             searchByTeacher = newVal!;
                           });
                         }),
@@ -130,6 +140,11 @@ class SearchPageState extends State<SearchPage> {
                         Checkbox(value: searchByClassroom, onChanged: (newVal) {
                           setState(() {
                             if (!searchByCourseName && !searchByTeacher) {
+                              return;
+                            }
+                            if (query.isNotEmpty) { // redo the query if it was not empty:
+                              searchByClassroom = newVal!;
+                              search(query);
                               return;
                             }
                             searchByClassroom = newVal!;

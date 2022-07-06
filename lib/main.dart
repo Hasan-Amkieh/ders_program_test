@@ -8,6 +8,7 @@ import 'package:ders_program_test/pages/add_courses_page.dart';
 import 'package:ders_program_test/pages/create_custom_course_page.dart';
 import 'package:ders_program_test/pages/edit_courses_page.dart';
 import 'package:ders_program_test/pages/fav_courses_page.dart';
+import 'package:ders_program_test/pages/personalinfo.dart';
 import 'package:ders_program_test/pages/saved_schedules_page.dart';
 import 'package:ders_program_test/pages/search_page.dart';
 import 'package:flutter/material.dart';
@@ -410,6 +411,7 @@ Future main() async {
       "/home/editcourses/createcustomcourse": (context) => CustomCoursePage(),
       "/home/editcourses/editcourseinfo": (context) { CustomCoursePage page = CustomCoursePage(); page.subject = Main.courseToEdit ?? Main.emptySubject; return page; },
       "/home/savedschedules" : (context) => SavedSchedulePage(),
+      "/home/personalinfo" : (context) => PersonalInfo(),
     },
   ));
 

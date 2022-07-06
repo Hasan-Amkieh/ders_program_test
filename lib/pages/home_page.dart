@@ -534,16 +534,22 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
       aboutPage = ListView(
         children: [
           ListTile(
-            title: Text(translateEng('Donate me')),
+            title: Text(translateEng('About the Creator')),
             onTap: () async {
-              const url = 'https://www.buymeacoffee.com/hasanamkieh?new=1';
-              if (await canLaunch(url)) {
-                await launch(url);
-              } else {
-                throw 'Could not launch $url';
-              }
+              Navigator.pushNamed(context, "/home/personalinfo");
             },
-          )
+          ),
+          // ListTile(
+          //   title: Text(translateEng('Donate me')),
+          //   onTap: () async {
+          //     const url = 'https://www.buymeacoffee.com/hasanamkieh?new=1';
+          //     if (await canLaunch(url)) {
+          //       await launch(url);
+          //     } else {
+          //       throw 'Could not launch $url';
+          //     }
+          //   },
+          // ),
         ],
       );
     }
