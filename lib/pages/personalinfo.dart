@@ -30,7 +30,10 @@ class PersonalInfo extends StatelessWidget {
                   SizedBox(height: height * 0.1),
                   Text(
                     translateEng(
-                        "Studying Computer Engineering at Atilim\n\nI made this app to help students choose and set up their courses prior the course registration phase, it aims to help the student avoid courses conflicts\nIt helps the students to easily share their schedules with their friends by a screenshot of the schedule or by a generated link"
+                        "Studying Computer Engineering at Atilim\n\n"
+                            "I made this app to help students choose and set up their courses prior the course registration phase, it aims to help the student avoid courses' conflicts\n"
+                            "It helps the students to easily share their schedules with their friends by a screenshot of the schedule or by a generated link\n"
+                            "I wanted to leave something remarkable that will help all the students, I hope that I have achieved my purpose, it took me 2 months, I hope the time that I have spent was worth it"
                     ),
                     style: TextStyle(height: 2.0, fontSize: 16),
                     textAlign: TextAlign.center,

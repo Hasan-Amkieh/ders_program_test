@@ -2,6 +2,7 @@
 import 'dart:ffi';
 import 'dart:ui' as ui;
 
+import 'package:ders_program_test/others/subject.dart';
 import 'package:flutter/material.dart';
 
 import '../language/dictionary.dart';
@@ -17,6 +18,8 @@ class TimetableCanvas extends CustomPainter {
 
   @override
   void paint(Canvas canvas, size) {
+
+    List<PeriodData> reservedPeriods = [];
 
     //TODO: Complete drawing the following timetable to nicely express the time of the course in the week:
 
@@ -139,21 +142,45 @@ class TimetableCanvas extends CustomPainter {
     Paint periodPaint = Paint()
     ..color = Colors.blue
     ..style = PaintingStyle.fill;
+
+    Paint periodPaintCol = Paint()
+      ..color = Colors.red
+      ..style = PaintingStyle.fill;
+
     double dx, dy;
     Rect rect;
     int hourVal;
 
     //print("days: $days / bgnperiods: $beginningPeriods / hours: $hours");
     // Expressing the time and date of the course by drawing boxes:
+    bool isCol = false;
+    int day1, day2, bgnHour1, bgnHour2, hours1, hours2;
     for (int i = 0 ; i < days.length ; i++) {
       for (int j = 0 ; j < days[i].length ; j++) {
+        isCol = false;
+        // check if it collides or not:
+        for (int k = 0 ; k < reservedPeriods.length ; k++) {
+          day1 = reservedPeriods[k].day;
+          bgnHour1 = reservedPeriods[k].bgnPeriod;
+          hours1 = reservedPeriods[k].hours;
+
+          day2 = days[i][j];
+          bgnHour2 = beginningPeriods[i][j];
+          hours2 = hours[i];
+          if (day1 == day2 &&
+              ((bgnHour1 >= bgnHour2 && bgnHour1 < (bgnHour2 + hours2)) || ((bgnHour1 + hours1) > bgnHour2 && (bgnHour1 + hours1) < (bgnHour2 + hours2)))) {
+            isCol = true;
+            break;
+          }
+        }
+        reservedPeriods.add(PeriodData(day: days[i][j], bgnPeriod: beginningPeriods[i][j], hours: hours[i]));
 
         dx = (days[i][j]) * colWidth + (days[i][j] == 1 ? 1 : 0);
         dy = (beginningPeriods[i][j]) * rowHeight + (beginningPeriods[i][j] == 1 ? 1 : 0);
 
         hourVal = hours[i];
         rect = Offset(dx, dy) & ui.Size(colWidth * (days[i][j] == 6 ? 1.09 : 1.00), rowHeight * hourVal);
-        canvas.drawRect(rect, periodPaint);
+        canvas.drawRect(rect, isCol ? periodPaintCol : periodPaint);
       }
     }
 
