@@ -142,86 +142,87 @@ class CustomCoursePageState extends State<CustomCoursePage> {
     return Scaffold(
       appBar: AppBar(),
       body: SafeArea(
-        child: Container(
-          padding: EdgeInsets.all(width * 0.05),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(translateEng("Course Name")),
-                    SizedBox(
-                        width: width * 0.6,
-                        child: Main.isEditingCourse ? Text(name) : TextFieldWidget(
-                            text: "",
-                            onChanged: (str) { setState(() {widget.subject.customName = str;}); },
-                            hintText: translateEng("e.g.   Basic English II")
-                        )
-                    ),
-                  ],
-                ),
-                SizedBox(height: Main.isEditingCourse ? height * 0.02 : 0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                  Text(translateEng("Course Code")),
-                  SizedBox(
-                      width: width * 0.6,
-                      child: Main.isEditingCourse ? Text(widget.subject.classCode) :
-                      TextFieldWidget(text: "", onChanged: (str) { setState(() {widget.subject.classCode = str;}); }, hintText: translateEng("e.g.   ENG102"))
+        child: SingleChildScrollView(
+          child: Container(
+            height: height * 0.9 + MediaQuery.of(context).viewInsets.bottom, // the keyboard height, if removed it will cause an overflow error!
+            padding: EdgeInsets.all(width * 0.05),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(translateEng("Course Name")),
+                      SizedBox(
+                          width: width * 0.6,
+                          child: Main.isEditingCourse ? Text(name) : TextFieldWidget(
+                              text: "",
+                              onChanged: (str) { setState(() {widget.subject.customName = str;}); },
+                              hintText: translateEng("e.g.   Basic English II")
+                          )
+                      ),
+                    ],
                   ),
-                  ],
-                ),
-                SizedBox(height: Main.isEditingCourse ? height * 0.02 : 0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Icon(CupertinoIcons.building_2_fill),
+                  SizedBox(height: Main.isEditingCourse ? height * 0.02 : 0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                    Text(translateEng("Course Code")),
                     SizedBox(
                         width: width * 0.6,
-                        child: TextFieldWidget(text: "", onChanged: (str) { setState(() {widget.dep = str;}); }, hintText: translateEng("e.g.   CMPE"))
+                        child: Main.isEditingCourse ? Text(widget.subject.classCode) :
+                        TextFieldWidget(text: "", onChanged: (str) { setState(() {widget.subject.classCode = str;}); }, hintText: translateEng("e.g.   ENG102"))
                     ),
-                  ],
-                ),
-                Expanded(
-                  child: Container(padding: EdgeInsets.symmetric(horizontal: 0.02 * width, vertical: 0.05 * height),
+                    ],
+                  ),
+                  SizedBox(height: Main.isEditingCourse ? height * 0.02 : 0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Icon(CupertinoIcons.building_2_fill),
+                      SizedBox(
+                          width: width * 0.6,
+                          child: TextFieldWidget(text: "", onChanged: (str) { setState(() {widget.dep = str;}); }, hintText: translateEng("e.g.   CMPE"))
+                      ),
+                    ],
+                  ),
+                  Container(
+                      padding: EdgeInsets.symmetric(horizontal: 0.02 * width, vertical: 0.05 * height),
+                    height: height * 0.55,
                     child: Theme(
                       data: Theme.of(context).copyWith(
                       // splashColor: Colors.transparent,
                       // highlightColor: Colors.transparent,
                       // hoverColor: Colors.transparent
                       ),
-                    child: buildPeriods(width),
-                )
-            ),
-          ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TextButton.icon(
-                    icon: const Icon(Icons.add),
-                    label: Text(translateEng("Add a period")),
-                    onPressed: () {
-                      setState(() {
-                        widget.periodData.add(["", ""]);
-                        widget.subject.teacherCodes.add([]);
-                        widget.subject.classrooms.add([]);
-                        widget.days.add("Monday");
-                        widget.bgnHour.add("9:30");
-                        widget.hours.add(1);
+                      child: buildPeriods(width),
+                  )
+              ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    TextButton.icon(
+                      icon: const Icon(Icons.add),
+                      label: Text(translateEng("Add a period")),
+                      onPressed: () {
+                        setState(() {
+                          widget.periodData.add(["", ""]);
+                          widget.subject.teacherCodes.add([]);
+                          widget.subject.classrooms.add([]);
+                          widget.days.add("Monday");
+                          widget.bgnHour.add("9:30");
+                          widget.hours.add(1);
 
-                        widget.showTeacherField.add(false);
-                        widget.showClassroomField.add(false);
-                        widget.editingTeacher.add([]);
-                        widget.editingClassroom.add([]);
+                          widget.showTeacherField.add(false);
+                          widget.showClassroomField.add(false);
+                          widget.editingTeacher.add([]);
+                          widget.editingClassroom.add([]);
 
-                      });
-                    })
-                ],
-                ),
-                  Visibility(
-                    child: Visibility(
+                        });
+                      })
+                  ],
+                  ),
+                    Visibility(
                       visible: checkIfReadyToConfirm(),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -288,11 +289,11 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                               }
                           ),
                         ]),
-                  ),
-                )
-        ],
+                    ),
+          ],
       ),
     ),
+        ),
       ),
     );
 

@@ -57,6 +57,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
   late AnimationController toggleButtonController;
 
+  var listener;
+
   @override
   void initState() {
 
@@ -67,7 +69,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
     WidgetsBinding.instance.addObserver(this);
 
     toggleButtonController = AnimationController(duration: const Duration(seconds: 1), vsync: this);
-
 
     currentState = this;
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -423,6 +424,13 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                       "lib/icons/theme_mode_toggle_button.json",
                       animate: false,
                       repeat: false,
+                      onLoaded: (_) {
+                        setState(() {
+                          if (Main.theme == ThemeMode.dark) {
+                            toggleButtonController.animateTo(0.5, duration: Duration(seconds: 1));
+                          }
+                        });
+                      },
                       controller: toggleButtonController,
                       width: IconTheme.of(context).size! * 3.5,
                       height: IconTheme.of(context).size! * 3.5,
@@ -433,8 +441,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                   ),
                   onPressed: () {
                     setState(() {
-                      toggleButtonController.animateTo(Main.theme == ThemeMode.light ? 1.0 : 0.5, duration: const Duration(seconds: 1));
-                      print("The button is pressed!");
+                      toggleButtonController.animateTo(Main.theme == ThemeMode.light ? 0.5 : 1.0, duration: const Duration(seconds: 1));
                       if (Main.theme == ThemeMode.dark) {
                         Main.theme = ThemeMode.light;
                       } else {
