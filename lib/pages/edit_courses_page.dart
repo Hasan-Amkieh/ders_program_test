@@ -430,7 +430,7 @@ class EditCoursePageState extends State<EditCoursePage> {
                     String str = Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).subject.classCode;
                     Main.schedules[Main.currentScheduleIndex].scheduleCourses.removeAt(index);
                     Fluttertoast.showToast(
-                        msg: "$str " + translateEng("was removed"),
+                        msg: "'$str' " + translateEng("was removed"),
                         toastLength: Toast.LENGTH_SHORT,
                         gravity: ToastGravity.TOP,
                         timeInSecForIosWeb: 1,

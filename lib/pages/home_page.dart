@@ -541,8 +541,32 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
       aboutPage = ListView(
         children: [
           ListTile(
-            title: Text(translateEng('About the Creator')),
-            onTap: () async {
+            title: Row(
+              children: [
+                const Icon(CupertinoIcons.mail_solid),
+                SizedBox(width: width * 0.03),
+                Text(translateEng('Send a Message')),
+              ],
+            ),
+            subtitle: Text(translateEng("Complains and Suggestions")),
+            onTap: () async { // TODO: Change in the future:
+              const url = 'mailto:hassan1551@outlook.com?subject:Scheduling%20App&body=%0A%0A%0AThank you for 2 months of effort'; // %0A new line / %20 white space
+                  if (await canLaunch(url)) {
+                    await launch(url);
+                  } else {
+                    throw 'Could not launch $url';
+                  }
+            },
+          ),
+          ListTile(
+            title: Row(
+              children: [
+                const Icon(Icons.person),
+                SizedBox(width: width * 0.03),
+                Text(translateEng('About the Creator')),
+              ],
+            ),
+            onTap: () {
               Navigator.pushNamed(context, "/home/personalinfo");
             },
           ),

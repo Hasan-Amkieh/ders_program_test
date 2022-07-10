@@ -13,7 +13,6 @@ class TimetableCanvas extends CustomPainter {
   List<List<int>> days;
   List<int> hours;
   bool isForSchedule;
-
   TimetableCanvas({required this.beginningPeriods, required this.days, required this.hours, required this.isForSchedule});
 
   @override
@@ -149,7 +148,6 @@ class TimetableCanvas extends CustomPainter {
 
     double dx, dy;
     Rect rect;
-    int hourVal;
 
     //print("days: $days / bgnperiods: $beginningPeriods / hours: $hours");
     // Expressing the time and date of the course by drawing boxes:

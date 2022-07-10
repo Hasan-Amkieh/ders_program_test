@@ -59,6 +59,9 @@ class CustomCoursePage extends StatefulWidget {
 
 class CustomCoursePageState extends State<CustomCoursePage> {
 
+  bool isPeriodAdded = false;
+  DateTime lastColWarningShown = DateTime.now();
+
   @override
   void initState() {
 
@@ -141,6 +144,65 @@ class CustomCoursePageState extends State<CustomCoursePage> {
 
     return Scaffold(
       appBar: AppBar(),
+      floatingActionButton: Visibility(
+        visible: checkIfReadyToConfirm(),
+        child: FloatingActionButton(
+          child: const Icon(Icons.check, color: Colors.white),
+          onPressed: () {
+
+            var v = convertDaysNHrs();
+            List<List<int>> listDays = v[0], listBgnHrs = v[1];
+
+            widget.subject.days = listDays;
+            widget.subject.bgnPeriods = listBgnHrs;
+            widget.subject.hours.addAll(widget.hours);
+            widget.subject.departments.add(widget.dep);
+            ;
+
+            // Check if the course code is already used or not:
+
+            if (!Main.isEditingCourse) {
+              print("Checking the course code!");
+              bool isUsed = false;
+              String str = widget.subject.classCode.toLowerCase();
+              Main.schedules[Main.currentScheduleIndex].scheduleCourses.forEach((sub) {
+                if (str == sub.subject.classCode.toLowerCase()) {
+                  isUsed = true;
+                  return ;
+                }
+              });
+              if (isUsed) {
+                Fluttertoast.showToast(
+                    msg: translateEng("The course code ") + "${widget.subject.classCode} " + translateEng("is already used"),
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.blue,
+                    textColor: Colors.white,
+                    fontSize: 12.0
+                );
+                return;
+              }
+            }
+
+            // For test:
+            //print("days: ${widget.subject.days} / bgnHours: ${widget.subject.bgnPeriods} / hours: ${widget.subject.hours}");
+
+            if (Main.isEditingCourse) {
+              //print("Teachers: ${widget.subject.teacherCodes}");
+              widget.subject.hours.clear();
+              widget.subject.hours.addAll(widget.hours);
+              Main.courseToEdit = widget.subject;
+            } else {
+              Main.schedules[Main.currentScheduleIndex].scheduleCourses.add(
+                  Course(
+                      note: "", subject: widget.subject));
+            }
+            Navigator.pop(context);
+
+          },
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
@@ -206,6 +268,8 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                       label: Text(translateEng("Add a period")),
                       onPressed: () {
                         setState(() {
+                          isPeriodAdded = true;
+
                           widget.periodData.add(["", ""]);
                           widget.subject.teacherCodes.add([]);
                           widget.subject.classrooms.add([]);
@@ -222,74 +286,6 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                       })
                   ],
                   ),
-                    Visibility(
-                      visible: checkIfReadyToConfirm(),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          TextButton.icon(
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(Colors.blue),
-                              overlayColor: MaterialStateProperty.all(const Color.fromRGBO(255, 255, 255, 0.2)),
-                            ),
-                              icon: const Icon(Icons.check, color: Colors.white),
-                              label: const Text(""),
-                              onPressed: () {
-
-                                dynamic v = convertDaysNHrs();
-                                List<List<int>> listDays = v[0], listBgnHrs = v[1];
-
-                                widget.subject.days = listDays;
-                                widget.subject.bgnPeriods = listBgnHrs;
-                                widget.subject.hours.addAll(widget.hours);
-                                widget.subject.departments.add(widget.dep);
-                                ;
-
-                                // Check if the course code is already used or not:
-
-                                if (!Main.isEditingCourse) {
-                                  print("Checking the course code!");
-                                  bool isUsed = false;
-                                  String str = widget.subject.classCode.toLowerCase();
-                                  Main.schedules[Main.currentScheduleIndex].scheduleCourses.forEach((sub) {
-                                    if (str == sub.subject.classCode.toLowerCase()) {
-                                      isUsed = true;
-                                      return ;
-                                    }
-                                  });
-                                  if (isUsed) {
-                                    Fluttertoast.showToast(
-                                        msg: translateEng("The course code ") + "${widget.subject.classCode} " + translateEng("is already used"),
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM,
-                                        timeInSecForIosWeb: 1,
-                                        backgroundColor: Colors.blue,
-                                        textColor: Colors.white,
-                                        fontSize: 12.0
-                                    );
-                                    return;
-                                  }
-                                }
-
-                                // For test:
-                                //print("days: ${widget.subject.days} / bgnHours: ${widget.subject.bgnPeriods} / hours: ${widget.subject.hours}");
-
-                                if (Main.isEditingCourse) {
-                                  //print("Teachers: ${widget.subject.teacherCodes}");
-                                  widget.subject.hours.clear();
-                                  widget.subject.hours.addAll(widget.hours);
-                                  Main.courseToEdit = widget.subject;
-                                } else {
-                                  Main.schedules[Main.currentScheduleIndex].scheduleCourses.add(
-                                      Course(
-                                          note: "", subject: widget.subject));
-                                }
-                                Navigator.pop(context);
-                              }
-                          ),
-                        ]),
-                    ),
           ],
       ),
     ),
@@ -359,6 +355,26 @@ class CustomCoursePageState extends State<CustomCoursePage> {
 
   bool checkIfReadyToConfirm() {
 
+    if (isThereCol()) { // if there is a collision within the course, then you are not allowed to save the course!
+
+      if (!isPeriodAdded && DateTime.now().difference(lastColWarningShown).inSeconds >= 10) {
+        lastColWarningShown = DateTime.now();
+        Fluttertoast.showToast(
+            msg: translateEng("Please fix the collisions before saving"),
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.blue,
+            textColor: Colors.white,
+            fontSize: 12.0
+        );
+      }
+
+      return false;
+    }
+
+    isPeriodAdded = false;
+
     // if we are editing a course, we have no restrictions, bcs the course code and the name are both unchangeable
     if (Main.isEditingCourse) {
       return true;
@@ -388,12 +404,38 @@ class CustomCoursePageState extends State<CustomCoursePage> {
   Widget buildPeriods(double width) {
 
     List<Widget> tiles = [];
+    String dayShort = "";
+    String endHour = "";
 
     for (int i = 0 ; i < widget.days.length ; i++) { // loop through each period
+
+      switch (widget.days[i]) {
+        case "Monday":
+          dayShort = "Mon";
+          break;
+        case "Tuesday":
+          dayShort = "Tue";
+          break;
+        case "Wednesday":
+          dayShort = "Wed";
+          break;
+        case "Thursday":
+          dayShort = "Thur";
+          break;
+        case "Friday":
+          dayShort = "Fri";
+          break;
+        case "Saturday":
+          dayShort = "Sat";
+          break;
+      }
+
+      endHour = (widget.hours[i]+int.parse(widget.bgnHour[i].toString().substring(0, widget.bgnHour[i].toString().indexOf(":")))).toString();
+
       tiles.add(ExpansionTile(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         initiallyExpanded: true, // It is not making any difference
-        title: Text(translateEng("Period") + " ${i + 1}"),
+        title: Text("$dayShort. ${widget.bgnHour[i]} - $endHour:20"),
         children: [
           Container(
             padding: EdgeInsets.all(width * 0.05),
@@ -411,7 +453,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                 Wrap(
                   alignment: WrapAlignment.center,
                   crossAxisAlignment: WrapCrossAlignment.center,
-                  children: buildList(widget.subject.teacherCodes[i].toString().replaceAll(RegExp("[\\[.*?\\]]"), ""), i, width, true),
+                  children: buildList(widget.subject.teacherCodes[i].toString().replaceAll(RegExp("[\\[.*?\\]]"), ""), i, width, 0),
                 ),
 
                 // Classrooms:
@@ -423,7 +465,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                 Wrap(
                   alignment: WrapAlignment.center,
                   crossAxisAlignment: WrapCrossAlignment.center,
-                  children: buildList(widget.subject.classrooms[i].toString().replaceAll(RegExp("[\\[.*?\\]]"), ""), i, width, false),
+                  children: buildList(widget.subject.classrooms[i].toString().replaceAll(RegExp("[\\[.*?\\]]"), ""), i, width, 1),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -571,7 +613,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
       );
     }
 
-    dynamic v = convertDaysNHrs();
+    var v = convertDaysNHrs();
     List<List<int>> bgnPeriods = v[1], days = v[0];
 
     tiles.add(
@@ -597,7 +639,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
 
   }
 
-  List<Widget> buildList(String teachers, int periodIndex, double width, bool isForTeacher) {
+  List<Widget> buildList(String teachers, int periodIndex, double width, int fieldNumber) { // 0 for teachers, 1 for classrooms, 2 for departments
 
     List<Widget> bts = [];
     List<String> teachersList = teachers.split(',');
@@ -611,7 +653,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
 
       print("Index is $teacherIndex");
       bts.add(Visibility(
-        visible: isForTeacher ? !widget.editingTeacher[periodIndex][teacherIndex] : !widget.editingClassroom[periodIndex][teacherIndex],
+        visible: fieldNumber == 0 ? !widget.editingTeacher[periodIndex][teacherIndex] : !widget.editingClassroom[periodIndex][teacherIndex],
         child: Container(
           margin: EdgeInsets.symmetric(horizontal: 0.01 * width),
           child: TextButton(
@@ -622,18 +664,18 @@ class CustomCoursePageState extends State<CustomCoursePage> {
               ),
               child: Text(teacher, style: const TextStyle(color: Colors.black)),
               onPressed: () {
-                if (isForTeacher ? widget.showTeacherField[periodIndex] : widget.showClassroomField[periodIndex]) {
+                if (fieldNumber == 0 ? widget.showTeacherField[periodIndex] : widget.showClassroomField[periodIndex]) {
                   return;
                 }
                 setState(() {
-                  if (isForTeacher) {
+                  if (fieldNumber == 0) {
                     widget.editingTeacher[periodIndex][teacherIndex] = true;
                     widget.showTeacherField[periodIndex] = true;
                   } else {
                     widget.editingClassroom[periodIndex][teacherIndex] = true;
                     widget.showClassroomField[periodIndex] = true;
                   }
-                  widget.periodData[periodIndex][isForTeacher ? 0 : 1] = teacher;
+                  widget.periodData[periodIndex][fieldNumber == 0 ? 0 : 1] = teacher;
                 });
               }),
         ),
@@ -644,8 +686,8 @@ class CustomCoursePageState extends State<CustomCoursePage> {
     int teacherInd;
     bool isEditing = false;
     teacherInd = 0;
-    for (teacherInd = 0 ; teacherInd < (isForTeacher ? widget.editingTeacher[periodIndex].length : widget.editingClassroom[periodIndex].length) ; teacherInd++) {
-      if (isForTeacher ? widget.editingTeacher[periodIndex][teacherInd] : widget.editingClassroom[periodIndex][teacherInd]) {
+    for (teacherInd = 0 ; teacherInd < (fieldNumber == 0 ? widget.editingTeacher[periodIndex].length : widget.editingClassroom[periodIndex].length) ; teacherInd++) {
+      if (fieldNumber == 0 ? widget.editingTeacher[periodIndex][teacherInd] : widget.editingClassroom[periodIndex][teacherInd]) {
         isEditing = true;
         break;
       }
@@ -654,22 +696,22 @@ class CustomCoursePageState extends State<CustomCoursePage> {
 
     bts.addAll([
       Visibility(
-        visible: isForTeacher ? widget.showTeacherField[periodIndex] : widget.showClassroomField[periodIndex],
+        visible: fieldNumber == 0 ? widget.showTeacherField[periodIndex] : widget.showClassroomField[periodIndex],
         child: SizedBox(
           width: width * 0.4,
           child: TextFieldWidget(
-              text: isEditing ? (isForTeacher ? widget.subject.teacherCodes[periodIndex][teacherInd] : widget.subject.classrooms[periodIndex][teacherInd])
-                  : widget.periodData[periodIndex][isForTeacher ? 0 : 1],
-              onChanged: (str) { widget.periodData[periodIndex][isForTeacher ? 0 : 1] = str; }
-              , hintText: isForTeacher ? "teacher name" : "classroom"),
+              text: isEditing ? (fieldNumber == 0 ? widget.subject.teacherCodes[periodIndex][teacherInd] : widget.subject.classrooms[periodIndex][teacherInd])
+                  : widget.periodData[periodIndex][fieldNumber == 0 ? 0 : 1],
+              onChanged: (str) { widget.periodData[periodIndex][fieldNumber == 0 ? 0 : 1] = str; }
+              , hintText: fieldNumber == 0 ? "teacher name" : "classroom"),
         ),
       ),
-      TextButton.icon(icon: Icon((isForTeacher ? widget.showTeacherField[periodIndex] : widget.showClassroomField[periodIndex]) ?
+      TextButton.icon(icon: Icon((fieldNumber == 0 ? widget.showTeacherField[periodIndex] : widget.showClassroomField[periodIndex]) ?
         Icons.check : Icons.add), label: const Text(""), onPressed: () {
         setState(() {
           if (isEditing) { // Editing:
 
-            if (isForTeacher) {
+            if (fieldNumber == 0) {
               widget.editingTeacher[periodIndex][teacherInd] = false;
               widget.showTeacherField[periodIndex] = false;
             } else {
@@ -677,15 +719,15 @@ class CustomCoursePageState extends State<CustomCoursePage> {
               widget.showClassroomField[periodIndex] = false;
             }
 
-            if (widget.periodData[periodIndex][isForTeacher ? 0 : 1].isNotEmpty) { // 0 for teachers and 1 for classrooms
-              if (isForTeacher) {
-                widget.subject.teacherCodes[periodIndex][teacherInd] = widget.periodData[periodIndex][isForTeacher ? 0 : 1];
+            if (widget.periodData[periodIndex][fieldNumber == 0 ? 0 : 1].isNotEmpty) { // 0 for teachers and 1 for classrooms
+              if (fieldNumber == 0) {
+                widget.subject.teacherCodes[periodIndex][teacherInd] = widget.periodData[periodIndex][fieldNumber == 0 ? 0 : 1];
               } else {
-                widget.subject.classrooms[periodIndex][teacherInd] = widget.periodData[periodIndex][isForTeacher ? 0 : 1];
+                widget.subject.classrooms[periodIndex][teacherInd] = widget.periodData[periodIndex][fieldNumber == 0 ? 0 : 1];
               }
-              widget.periodData[periodIndex][isForTeacher ? 0 : 1] = "";
+              widget.periodData[periodIndex][fieldNumber == 0 ? 0 : 1] = "";
             } else {
-              if (isForTeacher) {
+              if (fieldNumber == 0) {
                 widget.subject.teacherCodes[periodIndex].removeAt(teacherInd);
                 widget.editingTeacher[periodIndex].removeAt(teacherInd);
               } else {
@@ -696,20 +738,20 @@ class CustomCoursePageState extends State<CustomCoursePage> {
 
           } else { // Adding:
 
-            if (isForTeacher ? widget.showTeacherField[periodIndex] : widget.showClassroomField[periodIndex]) { // confirm
-              if (widget.periodData[periodIndex][isForTeacher ? 0 : 1].isNotEmpty) {
-                isForTeacher ?
-                  (widget.subject.teacherCodes[periodIndex].add(widget.periodData[periodIndex][isForTeacher ? 0 : 1]))
+            if (fieldNumber == 0 ? widget.showTeacherField[periodIndex] : widget.showClassroomField[periodIndex]) { // confirm
+              if (widget.periodData[periodIndex][fieldNumber == 0 ? 0 : 1].isNotEmpty) {
+                fieldNumber == 0 ?
+                  (widget.subject.teacherCodes[periodIndex].add(widget.periodData[periodIndex][fieldNumber == 0 ? 0 : 1]))
                     :
-                  (widget.subject.classrooms[periodIndex].add(widget.periodData[periodIndex][isForTeacher ? 0 : 1])); // 0 for teachers
-                widget.periodData[periodIndex][isForTeacher ? 0 : 1] = "";
-                isForTeacher ?
+                  (widget.subject.classrooms[periodIndex].add(widget.periodData[periodIndex][fieldNumber == 0 ? 0 : 1])); // 0 for teachers
+                widget.periodData[periodIndex][fieldNumber == 0 ? 0 : 1] = "";
+                fieldNumber == 0 ?
                   widget.editingTeacher[periodIndex].add(false)
                     :
                   widget.editingClassroom[periodIndex].add(false);
               }
             }
-            isForTeacher ?  widget.showTeacherField[periodIndex] = !widget.showTeacherField[periodIndex]
+            fieldNumber == 0 ?  widget.showTeacherField[periodIndex] = !widget.showTeacherField[periodIndex]
                 : widget.showClassroomField[periodIndex] = !widget.showClassroomField[periodIndex];
           }
         });
@@ -717,6 +759,30 @@ class CustomCoursePageState extends State<CustomCoursePage> {
     ]);
 
     return bts;
+
+  }
+
+  bool isThereCol() {
+
+    var v = convertDaysNHrs();
+    List<List<int>> listDays = v[0], listBgnHrs = v[1];
+
+    List<List<int>> reservedPeriods = [];
+
+    for (int i = 0 ; i < listDays.length ; i++) {
+      for (int j = 0 ; j < listDays[i].length ; j++) {
+        for (int l = 0 ; l < widget.hours[i] ; l++) { // I just had a mental break down writing this part of code
+          for (int k = 0 ; k < reservedPeriods.length ; k++) {
+            if (reservedPeriods[k][0] == listDays[i][j] && reservedPeriods[k][1] == (listBgnHrs[i][j] + l)) {
+              return true;
+            }
+          }
+          reservedPeriods.add([listDays[i][j], listBgnHrs[i][j] + l]);
+        }
+      }
+    }
+
+    return false;
 
   }
 
