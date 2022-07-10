@@ -3,6 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:ders_program_test/webpage.dart';
 import 'package:restart_app/restart_app.dart';
 
+import '../language/dictionary.dart';
 import '../main.dart';
 
 List<String> msgs = ["CONNECTING TO THE INTERNET", // state 0
@@ -43,13 +44,6 @@ class LoadingUpdateState extends State<LoadingUpdate> {
     }
 
     if (DateTime.now().difference(lastChanged).inSeconds >= 20 && !WebpageState.doNotRestart) { // then restart the whole reload process:
-
-      // WebpageState.currentState!.setState(() {
-      //   if (WebpageState.currentState?.controller != null) {
-      //     WebpageState.currentState?.controller.reload();
-      //   }
-      // });
-      // setState(() {});
 
       Restart.restartApp();
 
@@ -107,20 +101,8 @@ class LoadingUpdateState extends State<LoadingUpdate> {
           loadingWidget,
           SizedBox(height: MediaQuery.of(context).size.height * 0.05),
           Text(msg, style: txtStyle, textAlign: TextAlign.center,),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.2),
-          Container(
-            margin: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * 0.2, 0, MediaQuery.of(context).size.width * 0.2, 0),
-            child: TextButton.icon(onPressed: () {
-              // TODO:
-
-              ;
-            },
-                icon: const Icon(Icons.cancel, color: Colors.white,), label: Text("CANCEL UPDATE", style: txtStyle), style: ButtonStyle(overlayColor: MaterialStateProperty.resolveWith((states) {
-                  return Colors.blue.shade300;
-                }))),
-          ),
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.05,
+            height: MediaQuery.of(context).size.height * 0.2,
           ),
           Container(
             margin: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * 0.2, 0, MediaQuery.of(context).size.width * 0.2, 0),

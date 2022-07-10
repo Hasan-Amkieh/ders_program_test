@@ -8,18 +8,16 @@ import 'package:ders_program_test/pages/add_courses_page.dart';
 import 'package:ders_program_test/pages/create_custom_course_page.dart';
 import 'package:ders_program_test/pages/edit_courses_page.dart';
 import 'package:ders_program_test/pages/fav_courses_page.dart';
+import 'package:ders_program_test/pages/no_internet_page.dart';
 import 'package:ders_program_test/pages/personalinfo.dart';
 import 'package:ders_program_test/pages/saved_schedules_page.dart';
 import 'package:ders_program_test/pages/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ders_program_test/webpage.dart';
 import 'package:ders_program_test/pages/home_page.dart';
-import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:restart_app/restart_app.dart';
-
-import 'others/departments.dart';
 
 /* NOTES about the project:
 
@@ -92,6 +90,8 @@ class Main {
       classrooms: <List<String>>[[]]);
 
   static late FacultySemester facultyData;
+
+  static bool isInternetOn = true;
 
   static void save() async {
 
@@ -217,7 +217,7 @@ class Main {
             continue;
           }
 
-          print("File content is: $content");
+          //print("File content is: $content");
 
           String scheduleName = files[i].toString().substring(files[i].toString().indexOf("schedule_") + 9).replaceAll(".txt", "").replaceAll("'", "");
           print("The schedule name is $scheduleName");
@@ -382,24 +382,21 @@ Future main() async {
   }
   Main.readFavCourses();
 
-  // NOTE: For test purposes:
-  // Main.language = "English";
-  // Main.faculty = "Engineering";
-  // Main.department = faculties[Main.faculty]?.keys.elementAt(0) as String;
-
   if (Main.schedules.isEmpty) {
     Main.schedules.add(Schedule(scheduleName: translateEng("Default Schedule"), scheduleCourses: []));
   }
+  // TODO: Store the schedule index along the settings file inside writeSettings and readSettings:
   Main.currentScheduleIndex = 0;
 
-  print("update is ${Main.forceUpdate}");
+  if (Main.forceUpdate) { // if we are going to update then check for internet:
+    await NoInternetPageState.checkInternet();
+  }
 
   runApp(MaterialApp(
     themeMode: Main.theme,
-    //theme: AppThemes.lightTheme,
-    //darkTheme: AppThemes.darkTheme,
-    initialRoute: Main.forceUpdate ? "/webpage" : "/home",
+    initialRoute: Main.isInternetOn ? (Main.forceUpdate ? "/webpage" : "/home") : "/nointernet",
     routes: {
+      "/nointernet" : (context) => NoInternetPage(),
       "/home" : (context) => Home(),
       "/webpage": (context) => Webpage(),
       "/home/searchcourses": (contetx) => const SearchPage(),

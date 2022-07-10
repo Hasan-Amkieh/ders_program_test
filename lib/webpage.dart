@@ -53,9 +53,11 @@ class WebpageState extends State<Webpage> {
                       .toString()
                       .contains("__func=regularttGetData") &&
                       request.readyState == AjaxRequestReadyState.DONE) {
-                    state = 3;
-                    print("Timetable Retrieved!\nLength of the response: ${request.responseText?.length}");
-                    dataClassification(request.responseText);
+                    if (request.responseText!.isNotEmpty) {
+                      state = 3;
+                      print("Timetable Retrieved!\nLength of the response: ${request.responseText?.length}");
+                      dataClassification(request.responseText);
+                    }
                   }
 
                   return AjaxRequestAction.PROCEED;
