@@ -32,10 +32,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
   int pageIndex = 0;
 
-  TextStyle headerTxtStyle = const TextStyle(color: Colors.white, fontWeight: FontWeight.bold);
   late double width;
   late double height;
-  static const navigationBarColor = Color.fromRGBO(80, 114, 150, 1.0);
 
   static HomeState? currentState;
 
@@ -57,8 +55,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
   late AnimationController toggleButtonController;
 
-  var listener;
-
   @override
   void initState() {
 
@@ -71,10 +67,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
     toggleButtonController = AnimationController(duration: const Duration(seconds: 1), vsync: this);
 
     currentState = this;
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.blue,
-      systemNavigationBarColor: navigationBarColor,
-    ));
 
     print("Initializing the home page state!");
 
@@ -154,10 +146,13 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
   @override
   Widget build(BuildContext context) {
 
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Main.appTheme.headerBackgroundColor,
+      systemNavigationBarColor: Main.appTheme.navigationBarColor,
+    ));
+
     width = (window.physicalSize / window.devicePixelRatio).width;
     height = (window.physicalSize / window.devicePixelRatio).height;
-
-    isLangEng = Main.language == "English";
 
     var isPortrait = MediaQuery
         .of(context)
@@ -178,26 +173,26 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                 onTap: () {
                   Navigator.pushNamed(context, "/home/editcourses");
                 },
-                title: Text(translateEng('Edit Courses')),
-                subtitle: Text(translateEng('Add and edit the courses on the current schedule')),
-                leading: const Icon(Icons.edit),
+                title: Text(translateEng('Edit Courses'), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                subtitle: Text(translateEng('Add and edit the courses on the current schedule'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
+                leading: Icon(Icons.edit, color: Main.appTheme.titleIconColor),
               ),
               SizedBox(height: height * 0.01),
               ListTile(
                 onTap: () {
                   Navigator.pushNamed(context, "/home/searchcourses");
                 },
-                title: Text(translateEng('Search for Courses')),
-                subtitle: Text(translateEng('Search for courses using its name, classroom number, teacher or department')),
-                leading: const Icon(Icons.search),
+                title: Text(translateEng('Search for Courses'), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                subtitle: Text(translateEng('Search for courses using its name, classroom number, teacher or department'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
+                leading: Icon(Icons.search, color: Main.appTheme.titleIconColor),
               ),
               SizedBox(height: height * 0.01),
               ListTile(
                 onTap: () {
                   Navigator.pushNamed(context, "/home/favcourses");
                 },
-                title: Text(translateEng('Favourite Courses')),
-                leading: const Icon(Icons.star_border),
+                title: Text(translateEng('Favourite Courses'), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                leading: Icon(Icons.star, color: Main.appTheme.titleIconColor),
               ),
               SizedBox(height: height * 0.01),
               ListTile(
@@ -205,9 +200,9 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                   // TODO:
                   ;
                 },
-                title: Text(translateEng('Scheduler')),
-                subtitle: Text(translateEng('Choose the courses with the sections with specific options, then choose your appropriate schedule')),
-                leading: const Icon(Icons.calendar_today),
+                title: Text(translateEng('Scheduler'), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                subtitle: Text(translateEng('Choose the courses with the sections with specific options, then choose your appropriate schedule'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
+                leading: Icon(Icons.calendar_today, color: Main.appTheme.titleIconColor),
               ),
               SizedBox(height: height * 0.01),
               ListTile(
@@ -215,18 +210,18 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                   // TODO:
                   ;
                 },
-                title: Text(translateEng('Choose Made-up Plans')),
-                subtitle: Text(translateEng('These plans are provided by the university')),
-                leading: const Icon(CupertinoIcons.square_arrow_right),
+                title: Text(translateEng('Department Plans'), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                subtitle: Text(translateEng('These plans are provided by the university'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
+                leading: Icon(CupertinoIcons.square_arrow_right, color: Main.appTheme.titleIconColor),
               ),
               SizedBox(height: height * 0.01),
               ListTile(
                 onTap: () {
                   Navigator.pushNamed(context, "/home/savedschedules");
                 },
-                title: Text(translateEng('Saved Schedules')),
-                subtitle: Text(translateEng('You can save schedules and set them back again')),
-                leading: const Icon(Icons.edit_calendar),
+                title: Text(translateEng('Saved Schedules'), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                subtitle: Text(translateEng('You can save schedules and set them back again'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
+                leading: Icon(Icons.edit_calendar, color: Main.appTheme.titleIconColor),
               ),
             ],
           )
@@ -257,12 +252,16 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(translateEng("Language")),
+              Text(translateEng("Language"), style: TextStyle(color: Main.appTheme.titleTextColor)),
               DropdownButton<String>(
+                dropdownColor: Main.appTheme.scaffoldBackgroundColor,
                 value: Main.language,
                 items: langs.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem(value: value, child:
-                  TextButton.icon(onPressed: null, icon: Image.asset("lib/icons/" + value + ".png"), label: Text(translateEng(value)))
+                  return DropdownMenuItem(
+                      value: value,
+                      child: TextButton.icon(onPressed: null, icon: Image.asset("lib/icons/" + value + ".png"),
+                          label: Text(translateEng(value), style: TextStyle(color: Main.appTheme.titleTextColor))
+                      ),
                   );
                 }).toList(),
                 onChanged: (String? newValue) {
@@ -276,11 +275,12 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(translateEng("Faculty")),
+              Text(translateEng("Faculty"), style: TextStyle(color: Main.appTheme.titleTextColor)),
               DropdownButton<String>(
+                dropdownColor: Main.appTheme.scaffoldBackgroundColor,
                 value: Main.faculty,
                 items: faculties.keys.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem(value: value, child: Text(translateEng(value)));
+                  return DropdownMenuItem(value: value, child: Text(translateEng(value), style: TextStyle(color: Main.appTheme.titleTextColor)));
                 }).toList(),
                 onChanged: (String? newValue) {
                   if (newValue == Main.faculty) {
@@ -289,7 +289,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                   setState(() {
                     showDialog(context: context, builder: (context) {
                       return AlertDialog(
-                        title: Text(translateEng("Restarting the application")),
+                        backgroundColor: Main.appTheme.scaffoldBackgroundColor,
+                        title: Text(translateEng("Restarting the application"), style: TextStyle(color: Main.appTheme.titleTextColor)),
                         actions: [
                           TextButton(onPressed: () {
                             Main.forceUpdate = true;
@@ -315,12 +316,13 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(translateEng("Department")),
+              Text(translateEng("Department"), style: TextStyle(color: Main.appTheme.titleTextColor)),
               DropdownButton<String>(
+                dropdownColor: Main.appTheme.scaffoldBackgroundColor,
                 value: Main.department,
                 items: faculties[Main.faculty]?.keys.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem(value: value, child: Row(children: [
-                    Text(translateEng(value) + "  "), Text(translateEng(faculties[Main.faculty]![value] as String), style: TextStyle(fontSize: 10))
+                    Text(translateEng(value) + "  ", style: TextStyle(color: Main.appTheme.titleTextColor)), Text(translateEng(faculties[Main.faculty]![value] as String), style: TextStyle(fontSize: 10, color: Main.appTheme.titleTextColor))
                   ],),);
                 }).toList(),
                 onChanged: (String? newValue) {
@@ -336,7 +338,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             children: [
               Text(
                 translateEng("Last Updated") + "    ${day}  ${hours}",
-                style: TextStyle(color: Colors.red.shade500),
+                style: TextStyle(color: Colors.red.shade500, fontWeight: FontWeight.bold),
               ),
               TextButton(onPressed: () {
                 setState(() {
@@ -349,7 +351,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(translateEng("Update Timeout (hours)")),
+              Text(translateEng("Update Timeout (hours)"), style: TextStyle(color: Main.appTheme.titleTextColor)),
               Row(
                 children: [
                   SizedBox(
@@ -381,7 +383,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                     width: width * 0.03,
                     height: height * 0.03,
                   ),
-                  Text("${Main.hourUpdate}"),
+                  Text("${Main.hourUpdate}", style: TextStyle(color: Main.appTheme.titleTextColor)),
                   SizedBox(
                     width: width * 0.03,
                     height: height * 0.03,
@@ -418,7 +420,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(translateEng("Theme")),
+              Text(translateEng("Theme"), style: TextStyle(color: Main.appTheme.titleTextColor)),
               TextButton(
                   child: Lottie.asset(
                       "lib/icons/theme_mode_toggle_button.json",
@@ -427,7 +429,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                       onLoaded: (_) {
                         setState(() {
                           if (Main.theme == ThemeMode.dark) {
-                            toggleButtonController.animateTo(0.5, duration: Duration(seconds: 1));
+                            toggleButtonController.animateTo(0.5, duration: const Duration(seconds: 1));
                           }
                         });
                       },
@@ -447,6 +449,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                       } else {
                         Main.theme = ThemeMode.dark;
                       }
+                      Main.appTheme = AppTheme(); // reset the styles depending on the new theme
                     });
                   }
               ),
@@ -541,14 +544,9 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
       aboutPage = ListView(
         children: [
           ListTile(
-            title: Row(
-              children: [
-                const Icon(CupertinoIcons.mail_solid),
-                SizedBox(width: width * 0.03),
-                Text(translateEng('Send a Message')),
-              ],
-            ),
-            subtitle: Text(translateEng("Complains and Suggestions")),
+            title: Text(translateEng('Send a Message'), style: TextStyle(color: Main.appTheme.titleTextColor)),
+            leading: Icon(CupertinoIcons.mail_solid, color: Main.appTheme.titleIconColor),
+            subtitle: Text(translateEng("Complains and Suggestions"), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
             onTap: () async { // TODO: Change in the future:
               const url = 'mailto:hassan1551@outlook.com?subject:Scheduling%20App&body=%0A%0A%0AThank you for 2 months of effort'; // %0A new line / %20 white space
                   if (await canLaunch(url)) {
@@ -561,9 +559,9 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           ListTile(
             title: Row(
               children: [
-                const Icon(Icons.person),
+                Icon(Icons.person, color: Main.appTheme.titleIconColor),
                 SizedBox(width: width * 0.03),
-                Text(translateEng('About the Creator')),
+                Text(translateEng('About the Creator'), style: TextStyle(color: Main.appTheme.titleTextColor)),
               ],
             ),
             onTap: () {
@@ -600,15 +598,17 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
     ];
 
     return Scaffold(
+      backgroundColor: Main.appTheme.scaffoldBackgroundColor,
       body: SafeArea(
           child: pages[pageIndex]
       ),
       bottomNavigationBar: NavigationBarTheme(
-        data: const NavigationBarThemeData(
-            indicatorColor: Color.fromRGBO(80, 154, 167, 0.8),
+        data: NavigationBarThemeData(
+            indicatorColor: Main.appTheme.navigationBarColor,
+            labelTextStyle: MaterialStateProperty.all(TextStyle(color: Main.appTheme.navIconColor)),
         ),
         child: NavigationBar(
-          backgroundColor: navigationBarColor,
+          backgroundColor: Main.appTheme.navigationBarColor,
           animationDuration: const Duration(seconds: 1),
           height: isPortrait ? height * 0.08 : width * 0.08,
           labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
@@ -619,11 +619,11 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             });
           },
           destinations: [
-            NavigationDestination(icon: const Icon(CupertinoIcons.calendar_today), selectedIcon: const Icon(CupertinoIcons.calendar_circle_fill), label: translateEng('Schedule')),
-            NavigationDestination(icon: Image.asset("lib/icons/tools_outlines.png", width: IconTheme.of(context).size!), selectedIcon: Image.asset("lib/icons/tools_filled.png", width: IconTheme.of(context).size!), label: translateEng('Tools')),
-            NavigationDestination(icon: const Icon(Icons.settings_outlined), selectedIcon: const Icon(Icons.settings), label: translateEng('Settings')),
-            NavigationDestination(icon: const Icon(CupertinoIcons.link_circle), selectedIcon: const Icon(CupertinoIcons.link_circle_fill), label: translateEng('Links')),
-            NavigationDestination(icon: const Icon(Icons.info_outlined), selectedIcon: const Icon(Icons.info), label: translateEng('About')),
+            NavigationDestination(icon: Icon(CupertinoIcons.calendar_today, color: Main.appTheme.navIconColor), selectedIcon: Icon(CupertinoIcons.calendar_circle_fill, color: Main.appTheme.navIconColor), label: translateEng('Schedule')),
+            NavigationDestination(icon: Icon(Icons.hardware_outlined, color: Main.appTheme.navIconColor), selectedIcon: Icon(Icons.hardware, color: Main.appTheme.navIconColor), label: translateEng('Tools')),
+            NavigationDestination(icon: Icon(Icons.settings_outlined, color: Main.appTheme.navIconColor), selectedIcon: Icon(Icons.settings, color: Main.appTheme.navIconColor), label: translateEng('Settings')),
+            NavigationDestination(icon: Icon(CupertinoIcons.link_circle, color: Main.appTheme.navIconColor), selectedIcon: Icon(CupertinoIcons.link_circle_fill, color: Main.appTheme.navIconColor), label: translateEng('Links')),
+            NavigationDestination(icon: Icon(Icons.info_outlined, color: Main.appTheme.navIconColor), selectedIcon: Icon(Icons.info, color: Main.appTheme.navIconColor), label: translateEng('About')),
           ],
         ),
       ),
@@ -661,12 +661,13 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
     departments.trim();
 
     showAdaptiveActionSheet(
+      bottomSheetColor: Main.appTheme.scaffoldBackgroundColor,
       context: context,
       title: Column(
         children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Expanded(
-              child: Center(child: Text(name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+              child: Center(child: Text(name, style: TextStyle(color: Main.appTheme.titleTextColor, fontSize: 16, fontWeight: FontWeight.bold))),
             ),
             ]
           ),
@@ -679,8 +680,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           Visibility(
             visible: classrooms.isNotEmpty,
             child: Row(children: [
-              classrooms.isNotEmpty ? const Icon(CupertinoIcons.placemark_fill) : Container(width: 0),
-              Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(classrooms))),
+              classrooms.isNotEmpty ? Icon(CupertinoIcons.placemark_fill, color: Main.appTheme.titleTextColor) : Container(width: 0),
+              Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(classrooms, style: TextStyle(color: Main.appTheme.titleTextColor)))),
               ]
             ),
           ),
@@ -691,8 +692,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             visible: teachers.isNotEmpty,
             child: Row(
                 children: [
-                  teachers.isNotEmpty ? const Icon(CupertinoIcons.group_solid) : Container(),
-                  Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(teachers))),
+                  teachers.isNotEmpty ? Icon(CupertinoIcons.group_solid, color: Main.appTheme.titleTextColor) : Container(),
+                  Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(teachers, style: TextStyle(color: Main.appTheme.titleTextColor)))),
                 ]
             ),
           ),
@@ -703,8 +704,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             visible: departments.isNotEmpty,
             child: Row(
                 children: [
-                  departments.isNotEmpty ? const Icon(CupertinoIcons.building_2_fill) : Container(),
-                  Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(departments))),
+                  departments.isNotEmpty ? Icon(CupertinoIcons.building_2_fill, color: Main.appTheme.titleTextColor) : Container(),
+                  Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(departments, style: TextStyle(color: Main.appTheme.titleTextColor)))),
                 ]
             ),
           ),
@@ -715,8 +716,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             visible: departments.isNotEmpty,
             child: Row(
                 children: [
-                  course.note.isNotEmpty ? const Icon(CupertinoIcons.text_aligncenter) : Container(),
-                  Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(course.note))),
+                  course.note.isNotEmpty ? Icon(CupertinoIcons.text_aligncenter, color: Main.appTheme.titleTextColor) : Container(),
+                  Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(course.note, style: TextStyle(color: Main.appTheme.titleTextColor)))),
                 ]
             ),
           ),
@@ -734,10 +735,9 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
     double colWidth = (width) / 7; // 6 days and a col for the clock
     double rowHeight = (height * 1) / 11; // 10 for the lock and one for the empty box // 91 percent because of the horizontal borders
-
-    Color headerColor = Colors.blue;
-    Color emptyCellColor = Colors.white;
-    Color horizontalBorderColor = Colors.blueGrey.shade200;
+    
+    Color emptyCellColor = Main.appTheme.emptyCellColor;
+    Color horizontalBorderColor = Colors.black38; // bgnHours seperator
     Container emptyCell = Container(decoration: BoxDecoration(
         color: emptyCellColor,
         border: Border.symmetric(
@@ -750,49 +750,61 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            color: headerColor,
+            color: Main.appTheme.headerBackgroundColor,
             child: Column( // Headers
               children: [
                 SizedBox(width: colWidth, height: rowHeight),
                 Container(
-                    child: Center(child: Text('9:30', style: headerTxtStyle,)),
+                    color: Main.appTheme.headerBackgroundColor,
+                    child: Center(child: Text('9:30', style: Main.appTheme.headerSchedulePageTextStyle)),
                     height: rowHeight),
                 Container(
-                    child: Center(child: Text('10:30', style: headerTxtStyle,)),
+                    color: Main.appTheme.headerBackgroundColor,
+                    child: Center(child: Text('10:30', style: Main.appTheme.headerSchedulePageTextStyle)),
                     height: rowHeight),
                 Container(
-                    child: Center(child: Text('11:30', style: headerTxtStyle,)),
+                    color: Main.appTheme.headerBackgroundColor,
+                    child: Center(child: Text('11:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
                     height: rowHeight),
                 Container(
-                    child: Center(child: Text('12:30', style: headerTxtStyle,)),
+                    color: Main.appTheme.headerBackgroundColor,
+                    child: Center(child: Text('12:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
                     height: rowHeight),
                 Container(
-                    child: Center(child: Text('13:30', style: headerTxtStyle,)),
+                    color: Main.appTheme.headerBackgroundColor,
+                    child: Center(child: Text('13:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
                     height: rowHeight),
                 Container(
-                    child: Center(child: Text('14:30', style: headerTxtStyle,)),
+                    color: Main.appTheme.headerBackgroundColor,
+                    child: Center(child: Text('14:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
                     height: rowHeight),
                 Container(
-                    child: Center(child: Text('15:30', style: headerTxtStyle,)),
+                    color: Main.appTheme.headerBackgroundColor,
+                    child: Center(child: Text('15:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
                     height: rowHeight),
                 Container(
-                    child: Center(child: Text('16:30', style: headerTxtStyle,)),
+                    color: Main.appTheme.headerBackgroundColor,
+                    child: Center(child: Text('16:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
                     height: rowHeight),
                 Container(
-                    child: Center(child: Text('17:30', style: headerTxtStyle,)),
+                    color: Main.appTheme.headerBackgroundColor,
+                    child: Center(child: Text('17:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
                     height: rowHeight),
                 Container(
-                    child: Center(child: Text('18:30', style: headerTxtStyle,)),
+                    color: Main.appTheme.headerBackgroundColor,
+                    child: Center(child: Text('18:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
                     height: rowHeight + height * 0.04),
               ],
             ),
           ),
           Container(
-            color: headerColor,
+            color: Main.appTheme.headerBackgroundColor,
             child: Column( // Headers
               children: [
-                Container(child: Center(
-                    child: Text(translateEng('Mon'), style: headerTxtStyle)),
+                Container(
+                  color: Main.appTheme.headerBackgroundColor,
+                  child: Center(
+                    child: Text(translateEng('Mon'), style: Main.appTheme.headerSchedulePageTextStyle)),
                   height: rowHeight,
                   width: colWidth,),
                 emptyCell,
@@ -809,11 +821,13 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             ),
           ),
           Container(
-            color: headerColor,
+            color: Main.appTheme.headerBackgroundColor,
             child: Column( // Headers
               children: [
-                Container(child: Center(
-                    child: Text(translateEng('Tue'), style: headerTxtStyle,)),
+                Container(
+                    color: Main.appTheme.headerBackgroundColor,
+                    child: Center(
+                    child: Text(translateEng('Tue'), style: Main.appTheme.headerSchedulePageTextStyle,)),
                     height: rowHeight,
                     width: colWidth),
                 emptyCell,
@@ -830,11 +844,13 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             ),
           ),
           Container(
-            color: headerColor,
+            color: Main.appTheme.headerBackgroundColor,
             child: Column( // Headers
               children: [
-                Container(child: Center(
-                    child: Text(translateEng('Wed'), style: headerTxtStyle,)),
+                Container(
+                    color: Main.appTheme.headerBackgroundColor,
+                    child: Center(
+                    child: Text(translateEng('Wed'), style: Main.appTheme.headerSchedulePageTextStyle,)),
                     height: rowHeight,
                     width: colWidth),
                 emptyCell,
@@ -851,11 +867,12 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             ),
           ),
           Container(
-            color: headerColor,
+            color: Main.appTheme.headerBackgroundColor,
             child: Column( // Headers
               children: [
-                Container(child: Center(
-                    child: Text(translateEng('Thur'), style: headerTxtStyle)),
+                Container(
+                    child: Center(
+                    child: Text(translateEng('Thur'), style: Main.appTheme.headerSchedulePageTextStyle)),
                     height: rowHeight,
                     width: colWidth),
                 emptyCell,
@@ -872,11 +889,13 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             ),
           ),
           Container(
-            color: headerColor,
+            color: Main.appTheme.headerBackgroundColor,
             child: Column( // Headers
               children: [
-                Container(child: Center(
-                    child: Text(translateEng('Fri'), style: headerTxtStyle)),
+                Container(
+                  color: Main.appTheme.headerBackgroundColor,
+                    child: Center(
+                    child: Text(translateEng('Fri'), style: Main.appTheme.headerSchedulePageTextStyle)),
                     height: rowHeight,
                     width: colWidth),
                 emptyCell,
@@ -893,11 +912,13 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             ),
           ),
           Container(
-            color: headerColor,
+            color: Main.appTheme.headerBackgroundColor,
             child: Column( // Headers
               children: [
-                Container(child: Center(
-                    child: Text(translateEng('Sat'), style: headerTxtStyle)),
+                Container(
+                    color: Main.appTheme.headerBackgroundColor,
+                    child: Center(
+                    child: Text(translateEng('Sat'), style: Main.appTheme.headerSchedulePageTextStyle)),
                     height: rowHeight,
                     width: colWidth),
                 emptyCell,

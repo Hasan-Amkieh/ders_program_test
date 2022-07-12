@@ -1,10 +1,8 @@
 import 'dart:core';
 
-import 'package:flutter/widgets.dart';
 import 'package:ders_program_test/main.dart';
 
 List<String> langs = ["English", "Turkish"];
-bool isLangEng = Main.language == "English";
 
 Map<String, String> engToTurk = {
   "Schedule" : "Takvim",
@@ -129,7 +127,7 @@ Map<String, String> engToTurk = {
 
 String translateEng(String eng) {
 
-  if (isLangEng) return eng;
+  if (Main.language == "English") return eng;
 
   if (engToTurk.containsKey(eng)) {
     return engToTurk[eng] ?? eng;

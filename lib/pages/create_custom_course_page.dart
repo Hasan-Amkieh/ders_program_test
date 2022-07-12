@@ -2,7 +2,6 @@
 import 'dart:ui';
 
 import 'package:ders_program_test/language/dictionary.dart';
-import 'package:ders_program_test/others/appthemes.dart';
 import 'package:ders_program_test/others/subject.dart';
 import 'package:ders_program_test/widgets/textfieldwidget.dart';
 import 'package:flutter/cupertino.dart';
@@ -143,7 +142,8 @@ class CustomCoursePageState extends State<CustomCoursePage> {
     String name = widget.subject.customName;
 
     return Scaffold(
-      appBar: AppBar(),
+      backgroundColor: Main.appTheme.scaffoldBackgroundColor,
+      appBar: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor),
       floatingActionButton: Visibility(
         visible: checkIfReadyToConfirm(),
         child: FloatingActionButton(
@@ -213,10 +213,10 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(translateEng("Course Name")),
+                      Text(translateEng("Course Name"), style: TextStyle(color: Main.appTheme.titleIconColor)),
                       SizedBox(
                           width: width * 0.6,
-                          child: Main.isEditingCourse ? Text(name) : TextFieldWidget(
+                          child: Main.isEditingCourse ? Text(name, style: TextStyle(color: Main.appTheme.titleIconColor)) : TextFieldWidget(
                               text: "",
                               onChanged: (str) { setState(() {widget.subject.customName = str;}); },
                               hintText: translateEng("e.g.   Basic English II")
@@ -228,10 +228,10 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                    Text(translateEng("Course Code")),
+                    Text(translateEng("Course Code"), style: TextStyle(color: Main.appTheme.titleIconColor)),
                     SizedBox(
                         width: width * 0.6,
-                        child: Main.isEditingCourse ? Text(widget.subject.classCode) :
+                        child: Main.isEditingCourse ? Text(widget.subject.classCode, style: TextStyle(color: Main.appTheme.titleIconColor)) :
                         TextFieldWidget(text: "", onChanged: (str) { setState(() {widget.subject.classCode = str;}); }, hintText: translateEng("e.g.   ENG102"))
                     ),
                     ],
@@ -240,7 +240,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Icon(CupertinoIcons.building_2_fill),
+                      Icon(CupertinoIcons.building_2_fill, color: Main.appTheme.titleIconColor),
                       SizedBox(
                           width: width * 0.6,
                           child: TextFieldWidget(text: "", onChanged: (str) { setState(() {widget.dep = str;}); }, hintText: translateEng("e.g.   CMPE"))
@@ -250,14 +250,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                   Container(
                       padding: EdgeInsets.symmetric(horizontal: 0.02 * width, vertical: 0.05 * height),
                     height: height * 0.55,
-                    child: Theme(
-                      data: Theme.of(context).copyWith(
-                      // splashColor: Colors.transparent,
-                      // highlightColor: Colors.transparent,
-                      // hoverColor: Colors.transparent
-                      ),
-                      child: buildPeriods(width),
-                  )
+                    child: buildPeriods(width),
               ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -433,21 +426,21 @@ class CustomCoursePageState extends State<CustomCoursePage> {
       endHour = (widget.hours[i]+int.parse(widget.bgnHour[i].toString().substring(0, widget.bgnHour[i].toString().indexOf(":")))).toString();
 
       tiles.add(ExpansionTile(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: Main.appTheme.periodBackgroundColor,
         initiallyExpanded: true, // It is not making any difference
-        title: Text("$dayShort. ${widget.bgnHour[i]} - $endHour:20"),
+        title: Text("$dayShort. ${widget.bgnHour[i]} - $endHour:20", style: TextStyle(color: Main.appTheme.normalTextColor)),
         children: [
           Container(
             padding: EdgeInsets.all(width * 0.05),
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(40)),
-              color: Colors.grey.shade200,
+              color: Main.appTheme.scaffoldBackgroundColor,
             ),
             child: Column(
               children: [
                 Row(
-                  children: const [
-                    Icon(CupertinoIcons.group_solid),
+                  children: [
+                    Icon(CupertinoIcons.group_solid, color: Main.appTheme.titleIconColor),
                   ],
                 ),
                 Wrap(
@@ -458,8 +451,8 @@ class CustomCoursePageState extends State<CustomCoursePage> {
 
                 // Classrooms:
                 Row(
-                  children: const [
-                    Icon(CupertinoIcons.location_solid),
+                  children: [
+                    Icon(CupertinoIcons.location_solid, color: Main.appTheme.titleIconColor),
                   ],
                 ),
                 Wrap(
@@ -470,8 +463,9 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(translateEng("Day"), style: AppThemes.headerStyle),
+                    Text(translateEng("Day"), style: Main.appTheme.headerStyle),
                     DropdownButton<String>(
+                      dropdownColor: Main.appTheme.scaffoldBackgroundColor,
                         value: widget.days[i],
                         onChanged: (newValue) {
                           setState(() {
@@ -479,20 +473,21 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                           });
                         },
                         items: [
-                          DropdownMenuItem<String>(value: "Monday", child: Text(translateEng("Monday"))),
-                          DropdownMenuItem<String>(value: "Tuesday", child: Text(translateEng("Tuesday"))),
-                          DropdownMenuItem<String>(value: "Wednesday", child: Text(translateEng("Wednesday"))),
-                          DropdownMenuItem<String>(value: "Thursday", child: Text(translateEng("Thursday"))),
-                          DropdownMenuItem<String>(value: "Friday", child: Text(translateEng("Friday"))),
-                          DropdownMenuItem<String>(value: "Saturday", child: Text(translateEng("Saturday"))),
+                          DropdownMenuItem<String>(value: "Monday", child: Text(translateEng("Monday"), style: Main.appTheme.headerStyle)),
+                          DropdownMenuItem<String>(value: "Tuesday", child: Text(translateEng("Tuesday"), style: Main.appTheme.headerStyle)),
+                          DropdownMenuItem<String>(value: "Wednesday", child: Text(translateEng("Wednesday"), style: Main.appTheme.headerStyle)),
+                          DropdownMenuItem<String>(value: "Thursday", child: Text(translateEng("Thursday"), style: Main.appTheme.headerStyle)),
+                          DropdownMenuItem<String>(value: "Friday", child: Text(translateEng("Friday"), style: Main.appTheme.headerStyle)),
+                          DropdownMenuItem<String>(value: "Saturday", child: Text(translateEng("Saturday"), style: Main.appTheme.headerStyle)),
                         ]),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(translateEng("Beginning Hour"), style: AppThemes.headerStyle),
+                    Text(translateEng("Beginning Hour"), style: Main.appTheme.headerStyle),
                     DropdownButton<String>(
+                      dropdownColor: Main.appTheme.scaffoldBackgroundColor,
                         value: widget.bgnHour[i],
                         onChanged: (newValue) {
                           setState(() {
@@ -502,24 +497,24 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                             widget.bgnHour[i] = newValue;
                           });
                         },
-                        items: const [
-                          DropdownMenuItem<String>(value: "9:30", child: Text("9:30")),
-                          DropdownMenuItem<String>(value: "10:30", child: Text("10:30")),
-                          DropdownMenuItem<String>(value: "11:30", child: Text("11:30")),
-                          DropdownMenuItem<String>(value: "12:30", child: Text("12:30")),
-                          DropdownMenuItem<String>(value: "13:30", child: Text("13:30")),
-                          DropdownMenuItem<String>(value: "14:30", child: Text("14:30")),
-                          DropdownMenuItem<String>(value: "15:30", child: Text("15:30")),
-                          DropdownMenuItem<String>(value: "16:30", child: Text("16:30")),
-                          DropdownMenuItem<String>(value: "17:30", child: Text("17:30")),
-                          DropdownMenuItem<String>(value: "18:30", child: Text("18:30")),
+                        items: [
+                          DropdownMenuItem<String>(value: "9:30", child: Text("9:30", style: Main.appTheme.headerStyle)),
+                          DropdownMenuItem<String>(value: "10:30", child: Text("10:30", style: Main.appTheme.headerStyle)),
+                          DropdownMenuItem<String>(value: "11:30", child: Text("11:30", style: Main.appTheme.headerStyle)),
+                          DropdownMenuItem<String>(value: "12:30", child: Text("12:30", style: Main.appTheme.headerStyle)),
+                          DropdownMenuItem<String>(value: "13:30", child: Text("13:30", style: Main.appTheme.headerStyle)),
+                          DropdownMenuItem<String>(value: "14:30", child: Text("14:30", style: Main.appTheme.headerStyle)),
+                          DropdownMenuItem<String>(value: "15:30", child: Text("15:30", style: Main.appTheme.headerStyle)),
+                          DropdownMenuItem<String>(value: "16:30", child: Text("16:30", style: Main.appTheme.headerStyle)),
+                          DropdownMenuItem<String>(value: "17:30", child: Text("17:30", style: Main.appTheme.headerStyle)),
+                          DropdownMenuItem<String>(value: "18:30", child: Text("18:30", style: Main.appTheme.headerStyle)),
                         ]),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(translateEng("Class Length (hours)"), style: AppThemes.headerStyle),
+                    Text(translateEng("Class Length (hours)"), style: Main.appTheme.headerStyle),
                     Row(
                       children: [
                         SizedBox(
@@ -551,7 +546,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                           width: width * 0.03,
                           height: width * 0.03,
                         ),
-                        Text("${widget.hours[i]}"),
+                        Text("${widget.hours[i]}", style: Main.appTheme.headerStyle),
                         SizedBox(
                           width: width * 0.03,
                           height: width * 0.03,

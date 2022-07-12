@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../main.dart';
+
 class SearchWidget extends StatefulWidget {
 
   final String text;
@@ -27,8 +29,8 @@ class SearchWidgetState extends State<SearchWidget> {
   @override
   Widget build(BuildContext context) {
 
-    final styleActive = TextStyle(color: Colors.black);
-    final styleHint = TextStyle(color: Colors.black54, fontSize: 12.0);
+    final styleActive = TextStyle(color: Main.appTheme.titleTextColor);
+    final styleHint = TextStyle(color: Main.appTheme.titleTextColor.withOpacity(0.9), fontSize: 12.0);
     final style = widget.text.isEmpty ? styleHint : styleActive;
 
     return Container(
@@ -36,12 +38,14 @@ class SearchWidgetState extends State<SearchWidget> {
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Colors.white,
+        color: Main.appTheme.textfieldBackgroundColor,
         border: Border.all(color: Colors.black26),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: TextField(
         controller: controller,
+        cursorColor: Main.appTheme.normalTextColor,
+        cursorWidth: 1.0,
         decoration: InputDecoration(
           icon: Icon(Icons.search, color: style.color),
           suffixIcon: widget.text.isNotEmpty

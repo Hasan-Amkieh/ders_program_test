@@ -1,3 +1,4 @@
+import 'package:ders_program_test/main.dart';
 import 'package:flutter/material.dart';
 
 /*const List<List<Color>> darkThemeScheduleColors = [ // TODO: Complete this: // Or maybe not! / maybe use both for white and dark themes!
@@ -22,16 +23,38 @@ const List<List<Color>> whiteThemeScheduleColors = [
 ];
 
 
-class AppThemes {
+class AppTheme {
 
-  static const headerStyle = TextStyle(fontWeight: FontWeight.bold, fontSize: 14);
+  TextStyle headerStyle = TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Main.theme == ThemeMode.light ? Colors.black : Colors.white);
 
-  static final darkTheme = ThemeData(
+  Color normalTextColor = Main.theme == ThemeMode.light ? Colors.blue : Colors.white;
 
-  );
+  Color titleTextColor = Main.theme == ThemeMode.light ? Colors.black : Colors.white;
 
-  static final lightTheme = ThemeData(
+  Color subtitleTextColor = Main.theme == ThemeMode.light ? Colors.grey.shade600 : Colors.grey.shade400;
 
-  );
+  TextStyle headerSchedulePageTextStyle = const TextStyle(color: Colors.white, fontWeight: FontWeight.bold);
+
+  Color headerBackgroundColor = Main.theme == ThemeMode.light ? Colors.blue : Colors.grey.shade900;
+
+  Color periodBackgroundColor = Main.theme == ThemeMode.light ? Colors.grey.shade50 : const Color.fromRGBO(13, 38, 35, 1.0).withOpacity(0.8);
+
+  Color scheduleBackgroundColor = Main.theme == ThemeMode.light ? Colors.grey.shade200 : Colors.grey.shade800;
+
+  Color navigationBarColor = Main.theme == ThemeMode.light ? const Color.fromRGBO(80, 114, 150, 1.0) : const Color.fromRGBO(48, 48, 48, 1.0);
+
+  Color navIconColor = Main.theme == ThemeMode.light ? Colors.black : Colors.white;
+
+  Color titleIconColor = Main.theme == ThemeMode.light ? Colors.grey.shade700 : Colors.white;
+
+  Color scaffoldBackgroundColor = Main.theme == ThemeMode.light ? Colors.white : const Color.fromRGBO(13, 38, 35, 1.0);
+
+  Color emptyCellColor = Main.theme == ThemeMode.light ? Colors.white : Colors.grey.shade800;
+
+  Color textfieldBackgroundColor = Main.theme == ThemeMode.light ? Colors.white : Colors.grey.shade600;
+
+  AppTheme() {
+    ;
+  }
 
 }

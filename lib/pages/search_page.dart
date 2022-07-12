@@ -65,7 +65,8 @@ class SearchPageState extends State<SearchPage> {
     //print("The query: $query");
 
     return Scaffold(
-      appBar: AppBar(),
+      backgroundColor: Main.appTheme.scaffoldBackgroundColor,
+      appBar: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor),
       body: SafeArea(
         child: Container(
           padding: EdgeInsets.all(width * 0.03),
@@ -74,11 +75,12 @@ class SearchPageState extends State<SearchPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(translateEng("Only search courses for this department")),
+                  Text(translateEng("Only search courses for this department"), style: TextStyle(color: Main.appTheme.titleTextColor)),
                   DropdownButton<String>(
+                    dropdownColor: Main.appTheme.scaffoldBackgroundColor,
                     value: depToSearch,
                     items: deps.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem(value: value, child: Text(value)
+                      return DropdownMenuItem(value: value, child: Text(value, style: TextStyle(color: Main.appTheme.titleTextColor))
                       );
                     }).toList(),
                     onChanged: (String? newValue) {
@@ -94,11 +96,11 @@ class SearchPageState extends State<SearchPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(translateEng("Search for  "), style: const TextStyle(fontSize: 12)),
+                    Text(translateEng("Search for  "), style: TextStyle(fontSize: 12, color: Main.appTheme.titleTextColor)),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(translateEng("course name"), style: const TextStyle(fontSize: 10)),
+                        Text(translateEng("course name"), style: TextStyle(fontSize: 10, color: Main.appTheme.titleTextColor)),
                         Checkbox(value: searchByCourseName, onChanged: (newVal) {
                           setState(() {
                             if (!searchByClassroom && !searchByTeacher) {
@@ -117,7 +119,7 @@ class SearchPageState extends State<SearchPage> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(translateEng("teacher"), style: const TextStyle(fontSize: 10)),
+                        Text(translateEng("teacher"), style: TextStyle(fontSize: 10, color: Main.appTheme.titleTextColor)),
                         Checkbox(value: searchByTeacher, onChanged: (newVal) {
                           setState(() {
                             if (!searchByClassroom && !searchByCourseName) {
@@ -136,7 +138,7 @@ class SearchPageState extends State<SearchPage> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(translateEng("classroom"), style: const TextStyle(fontSize: 10)),
+                        Text(translateEng("classroom"), style: TextStyle(fontSize: 10, color: Main.appTheme.titleTextColor)),
                         Checkbox(value: searchByClassroom, onChanged: (newVal) {
                           setState(() {
                             if (!searchByCourseName && !searchByTeacher) {
@@ -156,8 +158,12 @@ class SearchPageState extends State<SearchPage> {
                 ),
               ),
               TextFormField(
+                style: TextStyle(color: Main.appTheme.titleTextColor),
+                cursorColor: Main.appTheme.titleTextColor,
                 decoration: InputDecoration(
+                  hintStyle: TextStyle(color: Main.appTheme.titleTextColor),
                   hintText: (searchByCourseName ? (translateEng("Course Code") + ", ") : "") + (searchByTeacher ? (translateEng("Teacher Name") + ", ") : "") + (searchByClassroom ? translateEng("classroom") : ""),
+                  labelStyle: TextStyle(color: Main.appTheme.titleTextColor),
                   labelText: translateEng("SEARCH"),
                 ),
                 onChanged: search,
@@ -191,11 +197,11 @@ class SearchPageState extends State<SearchPage> {
     departments = sub.departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
 
     return ListTile(
-      title: Text(sub.classCode),
+      title: Text(sub.classCode, style: TextStyle(color: Main.appTheme.titleTextColor)),
       subtitle:
       Text((searchByCourseName ? name : "") +
           (searchByTeacher ? (sub.getTranslatedTeachers().isEmpty ? "" : ("\n" + sub.getTranslatedTeachers())) : "" ) +
-          (searchByClassroom ? (classrooms.isEmpty ? "" : ("\n" + classrooms)) : "" )),
+          (searchByClassroom ? (classrooms.isEmpty ? "" : ("\n" + classrooms)) : "" ), style: TextStyle(color: Main.appTheme.titleTextColor)),
       onTap: () {
         FocusScope.of(context).unfocus(); // NOTE: This hides the keyboard for once and for all when we choose a course!
 
@@ -214,12 +220,13 @@ class SearchPageState extends State<SearchPage> {
         departments.trim();
 
         showAdaptiveActionSheet(
+          bottomSheetColor: Main.appTheme.scaffoldBackgroundColor,
           context: context,
           title: Column(
             children: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Expanded(
-                  child: Center(child: Text(name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+                  child: Center(child: Text(name, style: TextStyle(color: Main.appTheme.titleTextColor, fontSize: 16, fontWeight: FontWeight.bold))),
                 ),
               ]
               ),
@@ -232,8 +239,8 @@ class SearchPageState extends State<SearchPage> {
               Visibility(
                 visible: classrooms.isNotEmpty,
                 child: Row(children: [
-                  classrooms.isNotEmpty ? const Icon(CupertinoIcons.placemark_fill) : Container(width: 0),
-                  Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(classrooms))),
+                  classrooms.isNotEmpty ? Icon(CupertinoIcons.placemark_fill, color: Main.appTheme.titleTextColor) : Container(width: 0),
+                  Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(classrooms, style: TextStyle(color: Main.appTheme.titleTextColor)))),
                 ]
                 ),
               ),
@@ -244,8 +251,8 @@ class SearchPageState extends State<SearchPage> {
                 visible: teachers.isNotEmpty,
                 child: Row(
                     children: [
-                      teachers.isNotEmpty ? const Icon(CupertinoIcons.group_solid) : Container(),
-                      Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(teachers))),
+                      teachers.isNotEmpty ? Icon(CupertinoIcons.group_solid, color: Main.appTheme.titleTextColor) : Container(),
+                      Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(teachers, style: TextStyle(color: Main.appTheme.titleTextColor)))),
                     ]
                 ),
               ),
@@ -256,8 +263,8 @@ class SearchPageState extends State<SearchPage> {
                 visible: departments.isNotEmpty,
                 child: Row(
                     children: [
-                      departments.isNotEmpty ? const Icon(CupertinoIcons.building_2_fill) : Container(),
-                      Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(departments))),
+                      departments.isNotEmpty ? Icon(CupertinoIcons.building_2_fill, color: Main.appTheme.titleTextColor) : Container(),
+                      Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(departments, style: TextStyle(color: Main.appTheme.titleTextColor)))),
                     ]
                 ),
               ),

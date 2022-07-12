@@ -4,6 +4,8 @@ import 'package:ders_program_test/language/dictionary.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../main.dart';
+
 class PersonalInfo extends StatelessWidget {
 
   @override
@@ -13,7 +15,8 @@ class PersonalInfo extends StatelessWidget {
     double height = (window.physicalSize / window.devicePixelRatio).height;
 
     return Scaffold(
-      appBar: AppBar(),
+      backgroundColor: Main.appTheme.scaffoldBackgroundColor,
+      appBar: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
@@ -26,7 +29,7 @@ class PersonalInfo extends StatelessWidget {
                     backgroundImage: Image.asset("lib/icons/personal_pic.jpg").image,
                   ),
                   SizedBox(height: height * 0.03),
-                  const Text("Hasan Amkieh", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, fontFamily: "Times New Roman")),
+                  Text("Hasan Amkieh", style: TextStyle(color: Main.appTheme.titleTextColor, fontWeight: FontWeight.bold, fontSize: 18, fontFamily: "Times New Roman")),
                   SizedBox(height: height * 0.1),
                   Text(
                     translateEng(
@@ -35,7 +38,7 @@ class PersonalInfo extends StatelessWidget {
                             "It helps the students to easily share their schedules with their friends by a screenshot of the schedule or by a generated link\n"
                             "I wanted to leave something remarkable that will help all the students, I hope that I have achieved my purpose, it took me 2 months, I hope the time that I have spent was worth it"
                     ),
-                    style: TextStyle(height: 2.0, fontSize: 16),
+                    style: TextStyle(height: 2.0, fontSize: 16, color: Main.appTheme.titleTextColor),
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: height * 0.05),
@@ -45,7 +48,7 @@ class PersonalInfo extends StatelessWidget {
                       children: [
                         Image.asset("lib/icons/github.png", width: width * 0.1, height: width * 0.1),
                         SizedBox(width: width * 0.05),
-                        const Text("Github"),
+                        Text("Github", style: TextStyle(color: Main.appTheme.titleTextColor),),
                       ],
                     ),
                     onTap: () async {
@@ -64,7 +67,7 @@ class PersonalInfo extends StatelessWidget {
                       children: [
                         Image.asset("lib/icons/stackoverflow.png", width: width * 0.1, height: width * 0.1),
                         SizedBox(width: width * 0.05),
-                        const Text("Stackoverflow"),
+                        Text("Stackoverflow", style: TextStyle(color: Main.appTheme.titleTextColor)),
                       ],
                     ),
                     onTap: () async {

@@ -2,6 +2,7 @@
 import 'dart:ffi';
 import 'dart:ui' as ui;
 
+import 'package:ders_program_test/main.dart';
 import 'package:ders_program_test/others/subject.dart';
 import 'package:flutter/material.dart';
 
@@ -68,7 +69,7 @@ class TimetableCanvas extends CustomPainter {
 
     // Headers:
     // days:
-    final style = TextStyle(fontSize: 10, color: Colors.blueGrey);
+    final style = TextStyle(fontSize: 10, color: Main.appTheme.titleTextColor);
     TextPainter textPainter = TextPainter(
         text: TextSpan(text: translateEng("Mo"), style: style),
         textAlign: TextAlign.justify,

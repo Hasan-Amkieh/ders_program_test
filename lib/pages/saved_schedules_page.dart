@@ -48,7 +48,8 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      appBar: AppBar(),
+      backgroundColor: Main.appTheme.scaffoldBackgroundColor,
+      appBar: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor),
       body: SafeArea(
         //child: Expanded( // This was causing an error, so keep it like this!
           child: Column(
@@ -95,14 +96,15 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
       courses = schedule.scheduleCourses.isNotEmpty ? courses.substring(2) : "";
 
       scheduleTiles.add(ExpansionTile(
+        backgroundColor: Main.appTheme.scaffoldBackgroundColor,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
               children: [
-                Main.currentScheduleIndex == scheduleIndex ? const Icon(CupertinoIcons.checkmark_seal_fill) : Container(),
+                Main.currentScheduleIndex == scheduleIndex ? const Icon(CupertinoIcons.checkmark_seal_fill, color: Colors.blue) : Container(),
                 SizedBox(width: 0.03 * width),
-                Text(schedule.scheduleName),
+                Text(schedule.scheduleName, style: TextStyle(color: Colors.blue)),
               ],
             ),
             Row(
@@ -112,8 +114,9 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                   icon: const Icon(CupertinoIcons.ellipsis_vertical, color: Colors.blue),
                   onPressed: () {
                     showAdaptiveActionSheet(
+                      bottomSheetColor: Main.appTheme.scaffoldBackgroundColor,
                       context: context,
-                      title: Text(Main.schedules[scheduleIndex].scheduleName),
+                      title: Text(Main.schedules[scheduleIndex].scheduleName, style: TextStyle(fontWeight: FontWeight.bold, color: Main.appTheme.titleTextColor)),
                       androidBorderRadius: 30,
                       actions: buildBottomSheetActions(scheduleIndex),
                       cancelAction: CancelAction(title: const Text('Close')),// onPressed parameter is optional by default will dismiss the ActionSheet
@@ -130,51 +133,54 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
             padding: EdgeInsets.all(width * 0.05),
             margin: EdgeInsets.all(width * 0.05),
             decoration: BoxDecoration(
-              color: Colors.grey.shade200,
+              color: Main.appTheme.scheduleBackgroundColor.withOpacity(0.6),
               borderRadius: BorderRadius.all(Radius.circular(0.05 * width)),
             ),
             child: Column(
               children: [
                 Visibility(
                   visible: schedule.scheduleCourses.isEmpty,
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    crossAxisAlignment: WrapCrossAlignment.center,
+                  child: Column(
                     children: [
-                      const Text("There are no courses inside this schedule, you can add from "),
-                      TextButton.icon(
-                        icon: const Icon(Icons.search),
-                        label: Text(translateEng("Search")),
-                        onPressed: () {
-                          setState(() {
-                            Main.currentScheduleIndex = scheduleIndex;
-                            // Just refresh the page
-                            Navigator.pushNamed(context, "/home/searchcourses").then((value) => setState(() {}));
-                          });
-                        },
-                      ),
-                      const Text(" or "),
-                      TextButton.icon(
-                        icon: const Icon(Icons.add),
-                        label: Text(translateEng("Add Course")),
-                        onPressed: () {
-                          setState(() {
-                            Main.currentScheduleIndex = scheduleIndex;
-                          });
-                          // Just refresh the page
-                          Navigator.pushNamed(context, "/home/editcourses/addcourses").then((value) => setState(() {
-                            if (Main.coursesToAdd.isNotEmpty) {
+                      Text(translateEng("No courses to show"), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextButton.icon(
+                            icon: const Icon(Icons.search),
+                            label: Text(translateEng("Search")),
+                            onPressed: () {
                               setState(() {
-                                List<Course> crses = [];
-                                Main.coursesToAdd.forEach((sub) {
-                                  crses.add(Course(subject: sub, note: ""));
-                                });
-                                Main.schedules[Main.currentScheduleIndex].scheduleCourses.addAll(crses);
-                                Main.coursesToAdd.clear();
+                                Main.currentScheduleIndex = scheduleIndex;
+                                // Just refresh the page
+                                Navigator.pushNamed(context, "/home/searchcourses").then((value) => setState(() {}));
                               });
-                            }
-                          }));
-                        },
+                            },
+                          ),
+                          Text(translateEng(" or "), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                          TextButton.icon(
+                            icon: const Icon(Icons.add),
+                            label: Text(translateEng("Add Course")),
+                            onPressed: () {
+                              setState(() {
+                                Main.currentScheduleIndex = scheduleIndex;
+                              });
+                              // Just refresh the page
+                              Navigator.pushNamed(context, "/home/editcourses/addcourses").then((value) => setState(() {
+                                if (Main.coursesToAdd.isNotEmpty) {
+                                  setState(() {
+                                    List<Course> crses = [];
+                                    Main.coursesToAdd.forEach((sub) {
+                                      crses.add(Course(subject: sub, note: ""));
+                                    });
+                                    Main.schedules[Main.currentScheduleIndex].scheduleCourses.addAll(crses);
+                                    Main.coursesToAdd.clear();
+                                  });
+                                }
+                              }));
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -183,9 +189,9 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                   visible: schedule.scheduleCourses.isNotEmpty,
                   child: Row(
                     children: [
-                      const Icon(CupertinoIcons.book_fill),
+                      Icon(CupertinoIcons.book_fill, color: Main.appTheme.titleTextColor),
                       SizedBox(width: width * 0.03),
-                      Expanded(child: Text(courses)),
+                      Expanded(child: Text(courses, style: TextStyle(color: Main.appTheme.titleTextColor))),
                     ],
                   ),
                 ),
@@ -194,9 +200,9 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                   visible: schedule.scheduleCourses.isNotEmpty,
                   child: Row(
                     children: [
-                      const Icon(CupertinoIcons.clock_fill),
+                      Icon(CupertinoIcons.clock_fill, color: Main.appTheme.titleTextColor),
                       SizedBox(width: width * 0.03),
-                      Expanded(child: Text(totalHours.toString() + " hours")),
+                      Expanded(child: Text(totalHours.toString() + " hours", style: TextStyle(color: Main.appTheme.titleTextColor))),
                     ],
                   ),
                 ),
@@ -243,7 +249,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                 title: Text(translateEng("Creating Schedule")),
                 content: Builder(
                   builder: (context) {
-                    return Container(
+                    return SizedBox(
                       width: width * 1,
                       height: height * 0.25,
                       child: Column(
@@ -340,10 +346,11 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
             TextEditingController nameController = TextEditingController(); // Main.schedules[scheduleIndex].scheduleName
 
             return AlertDialog(
-              title: Text(translateEng("Change Schedule Name")),
+              backgroundColor: Main.appTheme.scaffoldBackgroundColor,
+              title: Text(translateEng("Change Schedule Name"), style: TextStyle(color: Main.appTheme.titleTextColor)),
               content: Builder(
                   builder: (context) {
-                    return Container(
+                    return SizedBox(
                       width: width * 1,
                       height: height * 0.25,
                       child: Column(
@@ -355,9 +362,13 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                               SizedBox(
                                 width: width * 0.6,
                                 child: TextFormField(controller: nameController,
+                                    cursorColor: Main.appTheme.titleTextColor,
+                                    style: TextStyle(color: Main.appTheme.titleTextColor),
                                     decoration: InputDecoration(
                                         hintText: translateEng("e.g. Summer Semester"),
-                                        labelText: "Schedule Name"
+                                        hintStyle: TextStyle(color: Main.appTheme.titleTextColor),
+                                        labelText: "Schedule Name",
+                                        labelStyle: TextStyle(color: Main.appTheme.titleTextColor),
                                     ),
                                 ),
                               ),
@@ -408,6 +419,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
             Text(translateEng("Share"), style: const TextStyle(color: Colors.blue))]),
           onPressed: () { // TODO:
             showAdaptiveActionSheet(
+              bottomSheetColor: Main.appTheme.scaffoldBackgroundColor,
               context: context,
               title: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -415,9 +427,9 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.screenshot),
+                      Icon(Icons.screenshot, color: Main.appTheme.titleTextColor),
                       SizedBox(width: width * 0.03),
-                      Text(translateEng("By Screenshot of the Schedule")),
+                      Text(translateEng("By Screenshot of the Schedule"), style: TextStyle(color: Main.appTheme.titleTextColor)),
                     ],
                   ),
                   SizedBox(height: width * 0.03),

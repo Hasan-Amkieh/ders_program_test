@@ -29,7 +29,8 @@ class FavCoursesState extends State<FavCourses> {
     double width = (window.physicalSize / window.devicePixelRatio).width, height = (window.physicalSize / window.devicePixelRatio).height;
 
     return Scaffold(
-      appBar: AppBar(),
+      backgroundColor: Main.appTheme.scaffoldBackgroundColor,
+      appBar: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor),
       body: SafeArea(
         child: Main.favCourses.isEmpty ? Center(child: Text(translateEng("You have no favourite courses, please add them from Search for Courses page"), textAlign: TextAlign.center,))
             : ListView.builder(
@@ -39,11 +40,12 @@ class FavCoursesState extends State<FavCourses> {
                 TextEditingController notesController = TextEditingController(text: Main.favCourses.elementAt(count).note);
 
               return ListTile(
-                title: Text(Main.favCourses[count].subject.classCode),
+                title: Text(Main.favCourses[count].subject.classCode, style: TextStyle(color: Main.appTheme.titleTextColor)),
                 trailing: IconButton(
                     tooltip: translateEng("Notes"),
                     icon: const Icon(CupertinoIcons.chat_bubble_text_fill, color: Colors.blue), onPressed: () {
                   showAdaptiveActionSheet(
+                    bottomSheetColor: Main.appTheme.scaffoldBackgroundColor,
                     context: context,
                     title: Column(
                       children: [
@@ -51,13 +53,16 @@ class FavCoursesState extends State<FavCourses> {
                           width: width * 0.7,
                           height: height * 0.3,
                           child: TextFormField(
+                            style: TextStyle(color: Main.appTheme.titleTextColor),
+                            cursorColor: Main.appTheme.titleTextColor,
                             controller: notesController,
                             minLines: null,
                             maxLines: null,
                             expands: true,
                             scrollController: ScrollController(),
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: "Notes",
+                              labelStyle: TextStyle(color: Main.appTheme.titleTextColor),
                             ),
                           ),
                         ),
@@ -109,12 +114,13 @@ class FavCoursesState extends State<FavCourses> {
                   departments.trim();
 
                   showAdaptiveActionSheet(
+                    bottomSheetColor: Main.appTheme.scaffoldBackgroundColor ,
                     context: context,
                     title: Column(
                       children: [
                         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                           Expanded(
-                            child: Center(child: Text(name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+                            child: Center(child: Text(name, style: TextStyle(color: Main.appTheme.titleTextColor, fontSize: 16, fontWeight: FontWeight.bold))),
                           ),
                         ]
                         ),
@@ -127,8 +133,8 @@ class FavCoursesState extends State<FavCourses> {
                         Visibility(
                           visible: classrooms.isNotEmpty,
                           child: Row(children: [
-                            classrooms.isNotEmpty ? const Icon(CupertinoIcons.placemark_fill) : Container(width: 0),
-                            Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(classrooms))),
+                            classrooms.isNotEmpty ? Icon(CupertinoIcons.placemark_fill, color: Main.appTheme.titleTextColor) : Container(width: 0),
+                            Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(classrooms, style: TextStyle(color:Main.appTheme.titleTextColor)))),
                           ]
                           ),
                         ),
@@ -139,8 +145,8 @@ class FavCoursesState extends State<FavCourses> {
                           visible: teachers.isNotEmpty,
                           child: Row(
                               children: [
-                                teachers.isNotEmpty ? const Icon(CupertinoIcons.group_solid) : Container(),
-                                Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(teachers))),
+                                teachers.isNotEmpty ? Icon(CupertinoIcons.group_solid, color: Main.appTheme.titleTextColor) : Container(),
+                                Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(teachers, style: TextStyle(color: Main.appTheme.titleTextColor)))),
                               ]
                           ),
                         ),
@@ -151,8 +157,8 @@ class FavCoursesState extends State<FavCourses> {
                           visible: departments.isNotEmpty,
                           child: Row(
                               children: [
-                                departments.isNotEmpty ? const Icon(CupertinoIcons.building_2_fill) : Container(),
-                                Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(departments))),
+                                departments.isNotEmpty ? Icon(CupertinoIcons.building_2_fill, color: Main.appTheme.titleTextColor) : Container(),
+                                Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(departments, style: TextStyle(color: Main.appTheme.titleTextColor)))),
                               ]
                           ),
                         ),
@@ -160,8 +166,8 @@ class FavCoursesState extends State<FavCourses> {
                         Visibility(
                           visible: Main.favCourses[count].note.isNotEmpty,
                           child: Row(children: [
-                            Main.favCourses[count].note.isNotEmpty ? const Icon(CupertinoIcons.text_aligncenter) : Container(width: 0),
-                            Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(Main.favCourses[count].note))),
+                            Main.favCourses[count].note.isNotEmpty ? Icon(CupertinoIcons.text_aligncenter, color: Main.appTheme.titleTextColor) : Container(width: 0),
+                            Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(Main.favCourses[count].note, style: TextStyle(color: Main.appTheme.titleTextColor)))),
                           ]
                           ),
                         ),

@@ -19,6 +19,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:restart_app/restart_app.dart';
 
+import 'others/appthemes.dart';
+
 /* NOTES about the project:
 
 * Use the following command to get the SHA256 for Androind Applinks:
@@ -69,6 +71,8 @@ class Main {
   static String department = "AE";
   static String language = "English"; // currently, there is only
   static ThemeMode theme = ThemeMode.system;
+
+  static AppTheme appTheme = AppTheme();
 
   static List<Course> favCourses = [];
 
@@ -140,6 +144,8 @@ class Main {
     } catch(err) {
       print("The settings file was not opened bcs: $err");
     }
+
+    appTheme = AppTheme(); // this will set the styles depending on the current theme
 
   }
 
@@ -393,7 +399,6 @@ Future main() async {
   }
 
   runApp(MaterialApp(
-    themeMode: Main.theme,
     initialRoute: Main.isInternetOn ? (Main.forceUpdate ? "/webpage" : "/home") : "/nointernet",
     routes: {
       "/nointernet" : (context) => NoInternetPage(),

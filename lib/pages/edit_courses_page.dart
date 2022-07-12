@@ -58,7 +58,8 @@ class EditCoursePageState extends State<EditCoursePage> {
     }
 
     return Scaffold(
-      appBar: AppBar(),
+      backgroundColor: Main.appTheme.scaffoldBackgroundColor,
+      appBar: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor),
       body: SafeArea(
           child: Container(
             padding: EdgeInsets.all(width * 0.03),
@@ -78,7 +79,7 @@ class EditCoursePageState extends State<EditCoursePage> {
                         // TODO: Change it into the theme background color
                         //color: mode == 2 ? Colors.blue : Colors.white,
                         //borderRadius: BorderRadius.circular(100.0),
-                        border: Border(bottom: BorderSide(color: mode == 0 ? Colors.grey.shade700 : Theme.of(context).scaffoldBackgroundColor, width: 2)),
+                        border: Border(bottom: BorderSide(color: mode == 0 ? Colors.grey.shade700 : Main.appTheme.scaffoldBackgroundColor, width: 2)),
                       ),
                       child: Container(
                         child: IconButton(
@@ -102,7 +103,7 @@ class EditCoursePageState extends State<EditCoursePage> {
                         // TODO: Change it into the theme background color
                         //color: mode == 2 ? Colors.blue : Colors.white,
                         //borderRadius: BorderRadius.circular(100.0),
-                        border: Border(bottom: BorderSide(color: mode == 1 ? Colors.green.shade700 : Theme.of(context).scaffoldBackgroundColor, width: 2)),
+                        border: Border(bottom: BorderSide(color: mode == 1 ? Colors.green.shade700 : Main.appTheme.scaffoldBackgroundColor, width: 2)),
                       ),
                       child: Container(
                         child: IconButton(
@@ -126,7 +127,7 @@ class EditCoursePageState extends State<EditCoursePage> {
                         // TODO: Change it into the theme background color
                         //color: mode == 2 ? Colors.blue : Colors.white,
                         //borderRadius: BorderRadius.circular(100.0),
-                        border: Border(bottom: BorderSide(color: mode == 2 ? Colors.red.shade700 : Theme.of(context).scaffoldBackgroundColor, width: 2)),
+                        border: Border(bottom: BorderSide(color: mode == 2 ? Colors.red.shade700 : Main.appTheme.scaffoldBackgroundColor, width: 2)),
                       ),
                       child: Container(
                         child: IconButton(
@@ -167,10 +168,10 @@ class EditCoursePageState extends State<EditCoursePage> {
                         style: ButtonStyle(
                           shape: MaterialStateProperty.all(RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(0.02 * width))),
-                          backgroundColor: MaterialStateProperty.all(const Color.fromRGBO(80, 154, 167, 1.0)),
+                          backgroundColor: MaterialStateProperty.all(Main.appTheme.navigationBarColor),
                         ),
                         icon: const Icon(Icons.add, color: Colors.white),
-                        label: Text(translateEng("add courses"), style: const TextStyle(color: Colors.white, fontSize: 12)),
+                        label: Text(translateEng("add courses"), style: TextStyle(color: Main.appTheme.titleTextColor, fontSize: 12)),
                         onPressed: () {
                           Navigator.pushNamed(context, "/home/editcourses/addcourses").then((value) {
                             if (Main.coursesToAdd.isNotEmpty) {
@@ -192,7 +193,7 @@ class EditCoursePageState extends State<EditCoursePage> {
                           overlayColor: MaterialStateProperty.all(Colors.white.withOpacity(0.2)),
                           shape: MaterialStateProperty.all(RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(0.02 * width))),
-                          backgroundColor: MaterialStateProperty.all(const Color.fromRGBO(80, 154, 167, 1.0)),
+                          backgroundColor: MaterialStateProperty.all(Main.appTheme.navigationBarColor),
                         ),
                         icon: const Icon(CupertinoIcons.pencil, color: Colors.white),
                         label: Text(translateEng("custom course"), style: const TextStyle(color: Colors.white, fontSize: 12)),
@@ -225,7 +226,7 @@ class EditCoursePageState extends State<EditCoursePage> {
     }
 
     if (Main.schedules[Main.currentScheduleIndex].scheduleCourses.isEmpty) {
-      return Text(translateEng("You have no courses in the current schedule"));
+      return Text(translateEng("You have no courses in the current schedule"), style: TextStyle(color: Main.appTheme.titleTextColor));
     } else {
       return ListView.builder(itemCount: Main.schedules[Main.currentScheduleIndex].scheduleCourses.length, itemBuilder: (context, index) {
         TextEditingController notesController = TextEditingController(text: Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).note);
@@ -242,11 +243,12 @@ class EditCoursePageState extends State<EditCoursePage> {
             child: ListTile(
               style: ListTileStyle.drawer,
               contentPadding: EdgeInsets.fromLTRB(width * 0.02, 0, 0, 0),
-              title: Text(subject.classCode),
+              title: Text(subject.classCode, style: TextStyle(color: Main.appTheme.titleTextColor)),
               trailing: IconButton(
                   tooltip: translateEng("Notes"),
                   icon: const Icon(CupertinoIcons.chat_bubble_text_fill, color: Colors.blue), onPressed: () {
                     showAdaptiveActionSheet(
+                      bottomSheetColor: Main.appTheme.headerBackgroundColor,
                       context: context,
                       title: Column(
                         children: [
@@ -254,13 +256,16 @@ class EditCoursePageState extends State<EditCoursePage> {
                             width: width * 0.7,
                             height: height * 0.3,
                             child: TextFormField(
+                              cursorColor: Main.appTheme.titleTextColor,
                               controller: notesController,
                               minLines: null,
                               maxLines: null,
                               expands: true,
                               scrollController: ScrollController(),
-                              decoration: const InputDecoration(
-                                labelText: "Notes",
+                              style: TextStyle(color: Main.appTheme.titleTextColor),
+                              decoration: InputDecoration(
+                                labelStyle: TextStyle(color: Main.appTheme.titleTextColor),
+                                labelText: translateEng("Notes"),
                               ),
                             ),
                           ),
@@ -321,12 +326,13 @@ class EditCoursePageState extends State<EditCoursePage> {
                   departments.trim();
 
                   showAdaptiveActionSheet(
+                    bottomSheetColor: Main.appTheme.headerBackgroundColor,
                     context: context,
                     title: Column(
                       children: [
                         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                           Expanded(
-                            child: Center(child: Text(name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+                            child: Center(child: Text(name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Main.appTheme.titleTextColor))),
                           ),
                         ]
                         ),
@@ -339,8 +345,8 @@ class EditCoursePageState extends State<EditCoursePage> {
                         Visibility(
                           visible: classrooms.isNotEmpty,
                           child: Row(children: [
-                            classrooms.isNotEmpty ? const Icon(CupertinoIcons.placemark_fill) : Container(width: 0),
-                            Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(classrooms))),
+                            classrooms.isNotEmpty ?Icon(CupertinoIcons.placemark_fill, color: Main.appTheme.titleIconColor) : Container(width: 0),
+                            Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(classrooms, style: TextStyle(color: Main.appTheme.titleTextColor)))),
                           ]
                           ),
                         ),
@@ -351,8 +357,8 @@ class EditCoursePageState extends State<EditCoursePage> {
                           visible: teachers.isNotEmpty,
                           child: Row(
                               children: [
-                                teachers.isNotEmpty ? const Icon(CupertinoIcons.group_solid) : Container(),
-                                Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(teachers))),
+                                teachers.isNotEmpty ? Icon(CupertinoIcons.group_solid, color: Main.appTheme.titleIconColor) : Container(),
+                                Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(teachers, style: TextStyle(color: Main.appTheme.titleTextColor)))),
                               ]
                           ),
                         ),
@@ -363,8 +369,8 @@ class EditCoursePageState extends State<EditCoursePage> {
                           visible: departments.isNotEmpty,
                           child: Row(
                               children: [
-                                departments.isNotEmpty ? const Icon(CupertinoIcons.building_2_fill) : Container(),
-                                Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(departments))),
+                                departments.isNotEmpty ? Icon(CupertinoIcons.building_2_fill, color: Main.appTheme.titleIconColor) : Container(),
+                                Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(departments, style: TextStyle(color: Main.appTheme.titleTextColor)))),
                               ]
                           ),
                         ),
@@ -372,7 +378,8 @@ class EditCoursePageState extends State<EditCoursePage> {
                           height: height * 0.03,
                         ),
                         (subject.days.isNotEmpty && subject.bgnPeriods.isNotEmpty && subject.hours.isNotEmpty) ?
-                        Container(width: width * 0.7, height: width * 0.7, child: CustomPaint(painter:
+                        Container(color: Main.appTheme.scaffoldBackgroundColor,
+                            width: width * 0.7, height: width * 0.7, child: CustomPaint(painter:
                           TimetableCanvas(beginningPeriods: subject.bgnPeriods, days: subject.days, hours: subject.hours, isForSchedule: false))
                         ) : Container(),
                       ],

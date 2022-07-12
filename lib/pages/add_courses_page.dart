@@ -62,7 +62,8 @@ class AddCoursesPageState extends State<AddCoursesPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor),
+      backgroundColor: Main.appTheme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Container(
           padding: EdgeInsets.symmetric(vertical: height * 0.02, horizontal: width * 0.05),
@@ -71,11 +72,12 @@ class AddCoursesPageState extends State<AddCoursesPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(translateEng("Show courses only in ")),
+                  Text(translateEng("Show courses only in "), style: TextStyle(color: Main.appTheme.titleTextColor)),
                   DropdownButton<String>(
+                    dropdownColor: Main.appTheme.scaffoldBackgroundColor,
                     value: depToSearch,
                     items: deps.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem(value: value, child: Text(value)
+                      return DropdownMenuItem(value: value, child: Text(value, style: TextStyle(color: Main.appTheme.titleTextColor))
                       );
                     }).toList(),
                     onChanged: (String? newValue) {
@@ -128,12 +130,13 @@ class AddCoursesPageState extends State<AddCoursesPage> {
     }
 
     return ListTile(
-      title: Text(subject.classCode),
+      title: Text(subject.classCode, style: TextStyle(color: Main.appTheme.titleTextColor)),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
               name,
+              style: TextStyle(color: Main.appTheme.titleTextColor),
           ),
           isInside ? const Icon(CupertinoIcons.add_circled_solid, color: Colors.red) : Container(),
         ],
