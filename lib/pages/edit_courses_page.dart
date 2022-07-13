@@ -31,6 +31,11 @@ class EditCoursePageState extends State<EditCoursePage> {
 
     width = (window.physicalSize / window.devicePixelRatio).width; // Because if it is converted from portrait to landscape or the opposite, the width changes
     height = (window.physicalSize / window.devicePixelRatio).height;
+    // if (MediaQuery.of(context).orientation == Orientation.landscape) { // (MediaQuery.of(context).orientation == Orientation.portrait ? width : height)
+    //   double x = height;
+    //   height = width;
+    //   width = x;
+    // }
 
     if (mode != lastMode) {
       lastMode = mode;
@@ -59,13 +64,15 @@ class EditCoursePageState extends State<EditCoursePage> {
 
     return Scaffold(
       backgroundColor: Main.appTheme.scaffoldBackgroundColor,
-      appBar: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor),
+      appBar: PreferredSize(
+          preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.1),
+          child: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor)),
       body: SafeArea(
           child: Container(
-            padding: EdgeInsets.all(width * 0.03),
+            padding: EdgeInsets.all(width * 0.01),
             child: Column(
               children: [
-                SizedBox(height: height * 0.03),
+                SizedBox(height: height * 0.01),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -253,8 +260,8 @@ class EditCoursePageState extends State<EditCoursePage> {
                       title: Column(
                         children: [
                           SizedBox(
-                            width: width * 0.7,
-                            height: height * 0.3,
+                            width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.7,
+                            height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.3,
                             child: TextFormField(
                               cursorColor: Main.appTheme.titleTextColor,
                               controller: notesController,
@@ -270,7 +277,7 @@ class EditCoursePageState extends State<EditCoursePage> {
                             ),
                           ),
                           SizedBox(
-                            height: 0.3 * height,
+                            height: 0.2 * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
                           ),
                         ],
                       ),
@@ -381,7 +388,9 @@ class EditCoursePageState extends State<EditCoursePage> {
                         ),
                         (subject.days.isNotEmpty && subject.bgnPeriods.isNotEmpty && subject.hours.isNotEmpty) ?
                         Container(color: Main.appTheme.scaffoldBackgroundColor,
-                            width: width * 0.7, height: width * 0.7, child: CustomPaint(painter:
+                            width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.7,
+                            height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.7,
+                            child: CustomPaint(painter:
                           TimetableCanvas(beginningPeriods: subject.bgnPeriods, days: subject.days, hours: subject.hours, isForSchedule: false))
                         ) : Container(),
                       ],

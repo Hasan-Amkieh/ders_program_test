@@ -53,6 +53,8 @@ class AppTheme {
 
   Color textfieldBackgroundColor = Main.theme == ThemeMode.light ? Colors.white : Colors.grey.shade600;
 
+  Brightness keyboardTheme = Main.theme == ThemeMode.light ? Brightness.light : Brightness.dark;
+
   AppTheme() {
     ;
   }

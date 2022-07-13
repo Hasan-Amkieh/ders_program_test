@@ -62,7 +62,9 @@ class AddCoursesPageState extends State<AddCoursesPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor),
+      appBar: PreferredSize(
+          preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.1),
+          child: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor)),
       backgroundColor: Main.appTheme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Container(
@@ -89,7 +91,10 @@ class AddCoursesPageState extends State<AddCoursesPage> {
                 ],
               ),
 
-              SearchWidget(text: query, onChanged: search, hintText: translateEng("course code or name")),
+              SizedBox(
+                height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.18,
+                  child: SearchWidget(text: query, onChanged: search, hintText: translateEng("course code or name"))
+              ),
 
               Expanded(
                   child: ListView.builder(

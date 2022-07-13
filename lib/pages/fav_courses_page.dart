@@ -173,7 +173,7 @@ class FavCoursesState extends State<FavCourses> {
                         ),
                         SizedBox(height: height * 0.03),
                         (Main.favCourses[count].subject.days.isNotEmpty && Main.favCourses[count].subject.bgnPeriods.isNotEmpty && Main.favCourses[count].subject.hours.isNotEmpty) ?
-                        Container(width: width * 0.7, height: width * 0.7, child: CustomPaint(painter:
+                        Container(width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.7, height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.7, child: CustomPaint(painter:
                         TimetableCanvas(
                             beginningPeriods: Main.favCourses[count].subject.bgnPeriods, days: Main.favCourses[count].subject.days, hours: Main.favCourses[count].subject.hours, isForSchedule: false))
                         ) : Container(),

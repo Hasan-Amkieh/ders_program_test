@@ -153,6 +153,11 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
     width = (window.physicalSize / window.devicePixelRatio).width;
     height = (window.physicalSize / window.devicePixelRatio).height;
+    // if (MediaQuery.of(context).orientation == Orientation.landscape) { // it screwed the other pages, only apply for the counter button inside here!
+    //   double x = height;
+    //   height = width;
+    //   width = x;
+    // }
 
     var isPortrait = MediaQuery
         .of(context)
@@ -355,8 +360,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
               Row(
                 children: [
                   SizedBox(
-                    width: 0.08 * width,
-                    height: 0.08 * width,
+                    width: 0.08 * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
+                    height: 0.08 * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
                     child: Container(
                       decoration: BoxDecoration(
                         boxShadow: [
@@ -389,8 +394,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                     height: height * 0.03,
                   ),
                   SizedBox(
-                    width: 0.08 * width,
-                    height: 0.08 * width,
+                    width: 0.08 * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
+                    height: 0.08 * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
                     child: Container(
                       decoration: BoxDecoration(
                         boxShadow: [

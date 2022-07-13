@@ -32,11 +32,11 @@ class PersonalInfo extends StatelessWidget {
                   Text("Hasan Amkieh", style: TextStyle(color: Main.appTheme.titleTextColor, fontWeight: FontWeight.bold, fontSize: 18, fontFamily: "Times New Roman")),
                   SizedBox(height: height * 0.1),
                   Text(
-                    translateEng(
+                    (
                         "Studying Computer Engineering at Atilim\n\n"
                             "I made this app to help students choose and set up their courses prior the course registration phase, it aims to help the student avoid courses' conflicts\n"
                             "It helps the students to easily share their schedules with their friends by a screenshot of the schedule or by a generated link\n"
-                            "I wanted to leave something remarkable that will help all the students, I hope that I have achieved my purpose, it took me 2 months, I hope the time that I have spent was worth it"
+                            "I wanted to leave something remarkable that will help all the students, I hope that I have achieved my purpose, and I hope the months that I have spent was worth it"
                     ),
                     style: TextStyle(height: 2.0, fontSize: 16, color: Main.appTheme.titleTextColor),
                     textAlign: TextAlign.center,
@@ -46,7 +46,7 @@ class PersonalInfo extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Image.asset("lib/icons/github.png", width: width * 0.1, height: width * 0.1),
+                        Image.asset("lib/icons/github.png", width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.1, height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.1),
                         SizedBox(width: width * 0.05),
                         Text("Github", style: TextStyle(color: Main.appTheme.titleTextColor),),
                       ],
@@ -65,7 +65,7 @@ class PersonalInfo extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Image.asset("lib/icons/stackoverflow.png", width: width * 0.1, height: width * 0.1),
+                        Image.asset("lib/icons/stackoverflow.png", width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.1, height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.1),
                         SizedBox(width: width * 0.05),
                         Text("Stackoverflow", style: TextStyle(color: Main.appTheme.titleTextColor)),
                       ],

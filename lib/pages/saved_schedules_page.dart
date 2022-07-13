@@ -47,9 +47,14 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
   @override
   Widget build(BuildContext context) {
 
+    double width = (window.physicalSize / window.devicePixelRatio).width;
+    double height = (window.physicalSize / window.devicePixelRatio).height;
+
     return Scaffold(
       backgroundColor: Main.appTheme.scaffoldBackgroundColor,
-      appBar: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor),
+      appBar: PreferredSize(
+          preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.1),
+          child: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor)),
       body: SafeArea(
         //child: Expanded( // This was causing an error, so keep it like this!
           child: Column(
@@ -212,7 +217,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                   child: ListTile(
                     onTap: null,
                     title: Container(
-                        width: width * 0.7, height: width * 0.7,
+                        width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.7, height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.7,
                         child: CustomPaint(painter:
                           TimetableCanvas(beginningPeriods: beginningPeriods, days: days, hours: hours, isForSchedule: true)
                         ),

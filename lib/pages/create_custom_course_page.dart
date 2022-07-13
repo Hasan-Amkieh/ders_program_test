@@ -149,7 +149,9 @@ class CustomCoursePageState extends State<CustomCoursePage> {
 
     return Scaffold(
       backgroundColor: Main.appTheme.scaffoldBackgroundColor,
-      appBar: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor),
+      appBar: PreferredSize(
+          preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.1),
+          child: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor)),
       floatingActionButton: Visibility(
         visible: checkIfReadyToConfirm(),
         child: FloatingActionButton(
@@ -275,7 +277,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 0.02 * width, vertical: 0.05 * height),
                         height: height * 0.55,
-                        child: buildPeriods(width),
+                        child: buildPeriods(width, height),
                       ),
                       // Column(
                       //   mainAxisAlignment: MainAxisAlignment.end,
@@ -423,7 +425,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
   }
 
 
-  Widget buildPeriods(double width) {
+  Widget buildPeriods(double width, double height) {
 
     List<Widget> tiles = [];
     String dayShort = "";
@@ -547,8 +549,8 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                     Row(
                       children: [
                         SizedBox(
-                          width: 0.08 * width,
-                          height: 0.08 * width,
+                          width: 0.08 * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
+                          height: 0.08 * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
                           child: Container(
                             decoration: BoxDecoration(
                               boxShadow: [
@@ -581,8 +583,8 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                           height: width * 0.03,
                         ),
                         SizedBox(
-                          width: 0.08 * width,
-                          height: 0.08 * width,
+                          width: 0.08 * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
+                          height: 0.08 * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
                           child: Container(
                             decoration: BoxDecoration(
                               boxShadow: [
@@ -642,13 +644,16 @@ class CustomCoursePageState extends State<CustomCoursePage> {
 
     tiles.add(
       SizedBox(
-        height: width * 0.1,
+        height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.1,
       )
     );
     tiles.add(
         ListTile(
           onTap: null,
-          title: Container(width: width * 0.5, height: width * 0.5, child: CustomPaint(painter:
+          title: Container(
+              width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.5,
+              height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.5,
+              child: CustomPaint(painter:
           TimetableCanvas(beginningPeriods: bgnPeriods, days: days, hours: widget.hours, isForSchedule: false))),
 
         )

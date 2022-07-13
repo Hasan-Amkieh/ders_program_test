@@ -66,10 +66,12 @@ class SearchPageState extends State<SearchPage> {
 
     return Scaffold(
       backgroundColor: Main.appTheme.scaffoldBackgroundColor,
-      appBar: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor),
+      appBar: PreferredSize(
+          preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.1),
+          child: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor)),
       body: SafeArea(
         child: Container(
-          padding: EdgeInsets.all(width * 0.03),
+          padding: EdgeInsets.all((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.03),
           child: Column(
             children: [
               Row(
@@ -272,7 +274,10 @@ class SearchPageState extends State<SearchPage> {
                 height: height * 0.03,
               ),
               (sub.days.isNotEmpty && sub.bgnPeriods.isNotEmpty && sub.hours.isNotEmpty) ?
-              Container(width: width * 0.7, height: width * 0.7, child: CustomPaint(painter:
+              Container(
+                  width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.7,
+                  height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.7,
+                  child: CustomPaint(painter:
               TimetableCanvas(beginningPeriods: sub.bgnPeriods, days: sub.days, hours: sub.hours, isForSchedule: false))
               ) : Container(),
             ],
