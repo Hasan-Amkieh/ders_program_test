@@ -222,95 +222,93 @@ class CustomCoursePageState extends State<CustomCoursePage> {
         ),
       ),
       body: SafeArea(
-        child: Expanded(
-          child: Scrollbar(
-            trackVisibility: true,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Container(
-                    //height: height * 1 + MediaQuery.of(context).viewInsets.bottom, // the keyboard height, if removed it will cause an overflow error!
-                    padding: EdgeInsets.all(width * 0.05),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(translateEng("Course Name"), style: TextStyle(color: Main.appTheme.titleIconColor)),
-                            SizedBox(
-                                width: width * 0.6,
-                                child: Main.isEditingCourse ? Text(name, style: TextStyle(color: Main.appTheme.titleIconColor)) : TextFieldWidget(
-                                    text: "",
-                                    onChanged: (str) { setState(() {widget.subject.customName = str;}); },
-                                    hintText: translateEng("e.g.   Basic English II")
-                                )
+        child: Scrollbar(
+          trackVisibility: true,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  //height: height * 1 + MediaQuery.of(context).viewInsets.bottom, // the keyboard height, if removed it will cause an overflow error!
+                  padding: EdgeInsets.all(width * 0.05),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(translateEng("Course Name"), style: TextStyle(color: Main.appTheme.titleIconColor)),
+                          SizedBox(
+                              width: width * 0.6,
+                              child: Main.isEditingCourse ? Text(name, style: TextStyle(color: Main.appTheme.titleIconColor)) : TextFieldWidget(
+                                  text: "",
+                                  onChanged: (str) { setState(() {widget.subject.customName = str;}); },
+                                  hintText: translateEng("e.g.   Basic English II")
+                              )
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: Main.isEditingCourse ? height * 0.02 : 0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(translateEng("Course Code"), style: TextStyle(color: Main.appTheme.titleIconColor)),
+                          SizedBox(
+                              width: width * 0.6,
+                              child: Main.isEditingCourse ? Text(widget.subject.classCode, style: TextStyle(color: Main.appTheme.titleIconColor)) :
+                              TextFieldWidget(text: "", onChanged: (str) { setState(() {widget.subject.classCode = str;}); }, hintText: translateEng("e.g.   ENG102"))
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: Main.isEditingCourse ? height * 0.02 : 0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Icon(CupertinoIcons.building_2_fill, color: Main.appTheme.titleIconColor),
+                          Expanded(
+                            child: Wrap(
+                              alignment: WrapAlignment.center,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: buildDepList(widget.subject.departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), ""), width),
                             ),
-                          ],
-                        ),
-                        SizedBox(height: Main.isEditingCourse ? height * 0.02 : 0),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(translateEng("Course Code"), style: TextStyle(color: Main.appTheme.titleIconColor)),
-                            SizedBox(
-                                width: width * 0.6,
-                                child: Main.isEditingCourse ? Text(widget.subject.classCode, style: TextStyle(color: Main.appTheme.titleIconColor)) :
-                                TextFieldWidget(text: "", onChanged: (str) { setState(() {widget.subject.classCode = str;}); }, hintText: translateEng("e.g.   ENG102"))
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: Main.isEditingCourse ? height * 0.02 : 0),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Icon(CupertinoIcons.building_2_fill, color: Main.appTheme.titleIconColor),
-                            Expanded(
-                              child: Wrap(
-                                alignment: WrapAlignment.center,
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                children: buildDepList(widget.subject.departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), ""), width),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 0.02 * width, vertical: 0.05 * height),
-                          height: height * 0.55,
-                          child: buildPeriods(width),
-                        ),
-                        // Column(
-                        //   mainAxisAlignment: MainAxisAlignment.end,
-                        //   crossAxisAlignment: CrossAxisAlignment.stretch,
-                        //   children: [
-                        //
-                        //   ],
-                        // ),
-                      ],
-                    ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 0.02 * width, vertical: 0.05 * height),
+                        height: height * 0.55,
+                        child: buildPeriods(width),
+                      ),
+                      // Column(
+                      //   mainAxisAlignment: MainAxisAlignment.end,
+                      //   crossAxisAlignment: CrossAxisAlignment.stretch,
+                      //   children: [
+                      //
+                      //   ],
+                      // ),
+                    ],
                   ),
-                  TextButton.icon(
-                      icon: const Icon(Icons.add),
-                      label: Text(translateEng("Add a period")),
-                      onPressed: () {
-                        setState(() {
-                          isPeriodAdded = true;
+                ),
+                TextButton.icon(
+                    icon: const Icon(Icons.add),
+                    label: Text(translateEng("Add a period")),
+                    onPressed: () {
+                      setState(() {
+                        isPeriodAdded = true;
 
-                          widget.periodData.add(["", ""]);
-                          widget.subject.teacherCodes.add([]);
-                          widget.subject.classrooms.add([]);
-                          widget.days.add("Monday");
-                          widget.bgnHour.add("9:30");
-                          widget.hours.add(1);
+                        widget.periodData.add(["", ""]);
+                        widget.subject.teacherCodes.add([]);
+                        widget.subject.classrooms.add([]);
+                        widget.days.add("Monday");
+                        widget.bgnHour.add("9:30");
+                        widget.hours.add(1);
 
-                          widget.showTeacherField.add(false);
-                          widget.showClassroomField.add(false);
-                          widget.editingTeacher.add([]);
-                          widget.editingClassroom.add([]);
+                        widget.showTeacherField.add(false);
+                        widget.showClassroomField.add(false);
+                        widget.editingTeacher.add([]);
+                        widget.editingClassroom.add([]);
 
-                        });
-                      })
-                ],
-              ),
+                      });
+                    })
+              ],
             ),
           ),
         ),

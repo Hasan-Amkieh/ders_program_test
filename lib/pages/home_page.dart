@@ -464,20 +464,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
       linksPage = ListView(
         children: [
           Container(
-            padding: EdgeInsets.fromLTRB(0.05 * width, 0.03 * width, 0, 0),
-            child: Text(
-              translateEng("Important Links"),
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blueGrey),
-            ),
-          ),
-          Divider(
-            height: 2.0,
-            thickness: 2.0,
-            indent: 0.03 * width,
-            endIndent: 0.03 * width,
-            color: Colors.blueGrey.withOpacity(0.8),
-          ),
-          Container(
             padding: EdgeInsets.fromLTRB(0.1 * width, 0.03 * width, 0, 0),
             child: ListTile(
               leading: Image.asset("lib/icons/atacs.png", width: IconTheme.of(context).size!, height: IconTheme.of(context).size!),
@@ -522,20 +508,20 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             ),
           ),
 
-          Container(
-            padding: EdgeInsets.fromLTRB(0.05 * width, 0.03 * width, 0, 0),
-            child: const Text(
-              "Announcements",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blueGrey),
-            ),
-          ),
-          Divider(
-            height: 2.0,
-            thickness: 2.0,
-            indent: 0.03 * width,
-            endIndent: 0.03 * width,
-            color: Colors.blueGrey.withOpacity(0.8),
-          ),
+          // Container(
+          //   padding: EdgeInsets.fromLTRB(0.05 * width, 0.03 * width, 0, 0),
+          //   child: const Text(
+          //     "Announcements",
+          //     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blueGrey),
+          //   ),
+          // ),
+          // Divider(
+          //   height: 2.0,
+          //   thickness: 2.0,
+          //   indent: 0.03 * width,
+          //   endIndent: 0.03 * width,
+          //   color: Colors.blueGrey.withOpacity(0.8),
+          // ),
           // TODO: Use this link to list all the latest announcements, only list the last 6, show thw title of the announcement, date and part of its article, like first 10 words:
           // https://www.atilim.edu.tr/en/home/announcement/list
         ],
@@ -1007,7 +993,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                                 fontSize: 12.0),
                           ),
                           TextSpan(
-                            text: (isCol ? "  " : "\n") + (i < course.subject.classrooms.length ? course.subject.classrooms[i].toString().replaceAll(RegExp("[\\[.*?\\]]"), "") : ""),
+                            text: (isCol ? "  " : "\n") + (i < course.subject.classrooms.length ? deleteRepitions(course.subject.classrooms[i]).toString().replaceAll(RegExp("[\\[.*?\\]]"), "") : ""),
                             style: TextStyle(
                                 color: whiteThemeScheduleColors[colorIndex][1],
                                 fontSize: 10.0),

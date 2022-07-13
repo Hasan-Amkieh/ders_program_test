@@ -238,7 +238,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
     tiles.add(
       TextButton.icon(
         icon: const Icon(Icons.add),
-        label: const Text("create empty schedule"),
+        label: Text(translateEng("create schedule")),
         onPressed: () {
           setState(() {
             showDialog(context: context, builder: (context) {
@@ -246,7 +246,8 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
               TextEditingController nameController = TextEditingController();
 
               return AlertDialog(
-                title: Text(translateEng("Creating Schedule")),
+                backgroundColor: Main.appTheme.scaffoldBackgroundColor,
+                title: Text(translateEng("Creating Schedule"), style: TextStyle(color: Main.appTheme.titleTextColor)),
                 content: Builder(
                   builder: (context) {
                     return SizedBox(
@@ -258,9 +259,9 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(translateEng("Name")),
+                              Text(translateEng("Name"), style: TextStyle(color: Main.appTheme.titleTextColor)),
                               SizedBox(width: width * 0.4,
-                                  child: TextFormField(controller: nameController, decoration: InputDecoration(hintText: translateEng("e.g. Summer Semester"))))
+                                  child: TextFormField(controller: nameController, cursorColor: Main.appTheme.titleTextColor, style: TextStyle(color: Main.appTheme.titleTextColor), decoration: InputDecoration(hintStyle: TextStyle(color: Main.appTheme.titleTextColor), hintText: translateEng("e.g. Summer Semester"))))
                             ],
                           ),
                         ],
