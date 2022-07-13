@@ -55,6 +55,8 @@ make them scanned and addaed into the DropList to be chosen, excluse all the dep
 - Inside the Add Custom Course page, add two choises of CheckBoxes, both basically say "Link Teachers/Classrooms", if it is checked,
 then the teacher/classroom text fields are moved from the periods into the bottom of the Course Code field.
 
+- Add a section inside the links page that shows upcoming important days from the schools page link, like add/drop period, courses drop period etc...
+
 */
 
 

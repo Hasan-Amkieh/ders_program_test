@@ -465,8 +465,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         children: [
           Container(
             padding: EdgeInsets.fromLTRB(0.05 * width, 0.03 * width, 0, 0),
-            child: const Text(
-              "Important Links",
+            child: Text(
+              translateEng("Important Links"),
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blueGrey),
             ),
           ),
@@ -480,7 +480,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           Container(
             padding: EdgeInsets.fromLTRB(0.1 * width, 0.03 * width, 0, 0),
             child: ListTile(
-              title: Text('Atacs'),
+              leading: Image.asset("lib/icons/atacs.png", width: IconTheme.of(context).size!, height: IconTheme.of(context).size!),
+              title: Text('Atacs', style: TextStyle(color: Main.appTheme.titleTextColor)),
               onTap: () async {
                 const url = 'https://atacs.atilim.edu.tr/Anasayfa/Student';
                 if (await canLaunch(url)) {
@@ -494,7 +495,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           Container(
             padding: EdgeInsets.fromLTRB(0.1 * width, 0, 0, 0),
             child: ListTile(
-              title: Text(translateEng("School's Schedules")),
+              leading: Icon(Icons.schedule, color: Main.appTheme.titleTextColor),
+              title: Text(translateEng("School's Schedules"), style: TextStyle(color: Main.appTheme.titleTextColor)),
               onTap: () async {
                 const url = 'https://www.atilim.edu.tr/en/dersprogrami';
                 if (await canLaunch(url)) {
@@ -507,7 +509,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           ),Container(
             padding: EdgeInsets.fromLTRB(0.1 * width, 0, 0, 0),
             child: ListTile(
-              title: Text(translateEng("GPA Calculator")),
+              leading: Icon(Icons.calculate, color: Main.appTheme.titleTextColor),
+              title: Text(translateEng("GPA Calculator"), style: TextStyle(color: Main.appTheme.titleTextColor)),
               onTap: () async {
                 const url = 'https://metugpa.com';
                 if (await canLaunch(url)) {

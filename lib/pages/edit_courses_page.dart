@@ -314,10 +314,12 @@ class EditCoursePageState extends State<EditCoursePage> {
                   }
 
                   List<String> list = classrooms.split(",").toList();
+                  list = list.where((element) => element.trim().isNotEmpty).toList();
                   list = deleteRepitions(list);
                   classrooms = list.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
 
                   list = teachers.split(",").toList();
+                  list = list.where((element) => element.trim().isNotEmpty).toList();
                   list = deleteRepitions(list);
                   teachers = list.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
 

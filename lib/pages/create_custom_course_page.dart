@@ -24,8 +24,11 @@ class CustomCoursePage extends StatefulWidget {
       classrooms: <List<String>>[[]]);
 
   List<bool> showTeacherField = [false], showClassroomField = [false]; // by Periods, a bool for each period
+  bool showDepField = false;
   List<List<bool>> editingTeacher = [[]], editingClassroom = [[]]; // by teachers inside each period, a list for each period
+  List<bool> editingDep = [];
   List<List<String>> periodData = [["", ""]]; // Each list inside will have 2 strings, teacher names and classrooms accordingly
+  String depData = "";
   List<String> days = ["Monday"], bgnHour = ["9:30"];
   List<int> hours = [1];
   String dep = "";
@@ -74,12 +77,15 @@ class CustomCoursePageState extends State<CustomCoursePage> {
 
       widget.editingTeacher.clear();
       widget.editingClassroom.clear();
+      widget.editingDep.clear();
 
       widget.periodData.clear();
 
       widget.days.clear();
       widget.bgnHour.clear();
       widget.hours.clear();
+
+      widget.subject.departments.forEach((element) { widget.editingDep.add(false); });
 
       int periodIndex = 0;// looping each period
 
@@ -156,8 +162,6 @@ class CustomCoursePageState extends State<CustomCoursePage> {
             widget.subject.days = listDays;
             widget.subject.bgnPeriods = listBgnHrs;
             widget.subject.hours.addAll(widget.hours);
-            widget.subject.departments.add(widget.dep);
-            ;
 
             // Check if the course code is already used or not:
 
@@ -188,6 +192,20 @@ class CustomCoursePageState extends State<CustomCoursePage> {
             // For test:
             //print("days: ${widget.subject.days} / bgnHours: ${widget.subject.bgnPeriods} / hours: ${widget.subject.hours}");
 
+            // Refinement process:  loop through each list and if it is empty remove it!
+            // for (int i = 0 ; i < widget.subject.classrooms.length ; i++) {
+            //   if (widget.subject.classrooms[i].isEmpty) {
+            //     widget.subject.classrooms.removeAt(i);
+            //     i--;
+            //   }
+            // }
+            // for (int i = 0 ; i < widget.subject.teacherCodes.length ; i++) {
+            //   if (widget.subject.teacherCodes[i].isEmpty) {
+            //     widget.subject.teacherCodes.removeAt(i);
+            //     i--;
+            //   }
+            // }
+
             if (Main.isEditingCourse) {
               //print("Teachers: ${widget.subject.teacherCodes}");
               widget.subject.hours.clear();
@@ -204,59 +222,73 @@ class CustomCoursePageState extends State<CustomCoursePage> {
         ),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            height: height * 0.9 + MediaQuery.of(context).viewInsets.bottom, // the keyboard height, if removed it will cause an overflow error!
-            padding: EdgeInsets.all(width * 0.05),
+        child: Expanded(
+          child: Scrollbar(
+            trackVisibility: true,
+            child: SingleChildScrollView(
               child: Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(translateEng("Course Name"), style: TextStyle(color: Main.appTheme.titleIconColor)),
-                      SizedBox(
-                          width: width * 0.6,
-                          child: Main.isEditingCourse ? Text(name, style: TextStyle(color: Main.appTheme.titleIconColor)) : TextFieldWidget(
-                              text: "",
-                              onChanged: (str) { setState(() {widget.subject.customName = str;}); },
-                              hintText: translateEng("e.g.   Basic English II")
-                          )
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: Main.isEditingCourse ? height * 0.02 : 0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                    Text(translateEng("Course Code"), style: TextStyle(color: Main.appTheme.titleIconColor)),
-                    SizedBox(
-                        width: width * 0.6,
-                        child: Main.isEditingCourse ? Text(widget.subject.classCode, style: TextStyle(color: Main.appTheme.titleIconColor)) :
-                        TextFieldWidget(text: "", onChanged: (str) { setState(() {widget.subject.classCode = str;}); }, hintText: translateEng("e.g.   ENG102"))
-                    ),
-                    ],
-                  ),
-                  SizedBox(height: Main.isEditingCourse ? height * 0.02 : 0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Icon(CupertinoIcons.building_2_fill, color: Main.appTheme.titleIconColor),
-                      SizedBox(
-                          width: width * 0.6,
-                          child: TextFieldWidget(text: "", onChanged: (str) { setState(() {widget.dep = str;}); }, hintText: translateEng("e.g.   CMPE"))
-                      ),
-                    ],
-                  ),
                   Container(
-                      padding: EdgeInsets.symmetric(horizontal: 0.02 * width, vertical: 0.05 * height),
-                    height: height * 0.55,
-                    child: buildPeriods(width),
-              ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    TextButton.icon(
+                    //height: height * 1 + MediaQuery.of(context).viewInsets.bottom, // the keyboard height, if removed it will cause an overflow error!
+                    padding: EdgeInsets.all(width * 0.05),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(translateEng("Course Name"), style: TextStyle(color: Main.appTheme.titleIconColor)),
+                            SizedBox(
+                                width: width * 0.6,
+                                child: Main.isEditingCourse ? Text(name, style: TextStyle(color: Main.appTheme.titleIconColor)) : TextFieldWidget(
+                                    text: "",
+                                    onChanged: (str) { setState(() {widget.subject.customName = str;}); },
+                                    hintText: translateEng("e.g.   Basic English II")
+                                )
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: Main.isEditingCourse ? height * 0.02 : 0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(translateEng("Course Code"), style: TextStyle(color: Main.appTheme.titleIconColor)),
+                            SizedBox(
+                                width: width * 0.6,
+                                child: Main.isEditingCourse ? Text(widget.subject.classCode, style: TextStyle(color: Main.appTheme.titleIconColor)) :
+                                TextFieldWidget(text: "", onChanged: (str) { setState(() {widget.subject.classCode = str;}); }, hintText: translateEng("e.g.   ENG102"))
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: Main.isEditingCourse ? height * 0.02 : 0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Icon(CupertinoIcons.building_2_fill, color: Main.appTheme.titleIconColor),
+                            Expanded(
+                              child: Wrap(
+                                alignment: WrapAlignment.center,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: buildDepList(widget.subject.departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), ""), width),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 0.02 * width, vertical: 0.05 * height),
+                          height: height * 0.55,
+                          child: buildPeriods(width),
+                        ),
+                        // Column(
+                        //   mainAxisAlignment: MainAxisAlignment.end,
+                        //   crossAxisAlignment: CrossAxisAlignment.stretch,
+                        //   children: [
+                        //
+                        //   ],
+                        // ),
+                      ],
+                    ),
+                  ),
+                  TextButton.icon(
                       icon: const Icon(Icons.add),
                       label: Text(translateEng("Add a period")),
                       onPressed: () {
@@ -277,11 +309,10 @@ class CustomCoursePageState extends State<CustomCoursePage> {
 
                         });
                       })
-                  ],
-                  ),
-          ],
-      ),
-    ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -634,7 +665,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
 
   }
 
-  List<Widget> buildList(String teachers, int periodIndex, double width, int fieldNumber) { // 0 for teachers, 1 for classrooms, 2 for departments
+  List<Widget> buildList(String teachers, int periodIndex, double width, int fieldNumber) { // 0 for teachers, 1 for classrooms
 
     List<Widget> bts = [];
     List<String> teachersList = teachers.split(',');
@@ -748,6 +779,109 @@ class CustomCoursePageState extends State<CustomCoursePage> {
             }
             fieldNumber == 0 ?  widget.showTeacherField[periodIndex] = !widget.showTeacherField[periodIndex]
                 : widget.showClassroomField[periodIndex] = !widget.showClassroomField[periodIndex];
+          }
+        });
+      }),
+    ]);
+
+    return bts;
+
+  }
+
+  List<Widget> buildDepList(String deps, double width) {
+
+    List<Widget> bts = [];
+    List<String> depList = deps.split(',');
+    depList = depList.where((element)  {
+      return element.isNotEmpty;
+    }).toList();
+
+    String teacher;
+    for (int depIndex = 0 ; depIndex < depList.length ; depIndex++) {
+      teacher = depList[depIndex];
+
+      print("Index is $depIndex");
+      bts.add(Visibility(
+        visible: !widget.editingDep[depIndex],
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 0.01 * width),
+          child: TextButton(
+              style: ButtonStyle(
+                padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 0.01 * width, horizontal: 0.02 * width)),
+                backgroundColor: MaterialStateProperty.all(Colors.blue.shade400),
+                overlayColor: MaterialStateProperty.all(const Color.fromRGBO(255, 255, 255, 0.2)),
+              ),
+              child: Text(teacher, style: const TextStyle(color: Colors.black)),
+              onPressed: () {
+                if (widget.showDepField) {
+                  return;
+                }
+                setState(() {
+                  widget.editingDep[depIndex] = true;
+                  widget.showDepField = true;
+                  //widget.periodData[periodIndex][fieldNumber == 0 ? 0 : 1] = teacher;
+                });
+              }),
+        ),
+      ));
+    }
+
+    // Determine if it is adding or editing:
+    bool isEditing = false;
+    int depInd;
+    for (depInd = 0 ; depInd < widget.editingDep.length ; depInd++) {
+      if (widget.editingDep[depInd]) {
+        isEditing = true;
+        break;
+      }
+    }
+    //print("Editing mode $isEditing with index $depInd");
+
+    print("PUTTING ${isEditing ? widget.subject.departments[depInd]
+        : widget.depData} of bool $isEditing");
+
+    if (isEditing) {
+      widget.depData = widget.subject.departments[depInd];
+    }
+
+    bts.addAll([
+      Visibility(
+        visible: widget.showDepField,
+        child: SizedBox(
+          width: width * 0.4,
+          child: TextFieldWidget(
+              text: isEditing ? widget.subject.departments[depInd]
+                  : widget.depData,
+              onChanged: (str) { widget.depData = str; print("CHANGED INTO $str"); },
+              hintText: translateEng("Department/Tag")),
+        ),
+      ),
+      TextButton.icon(icon: Icon(widget.showDepField ?
+      Icons.check : Icons.add), label: const Text(""), onPressed: () {
+        setState(() {
+          if (isEditing) { // Editing:
+
+            widget.editingDep[depInd] = false;
+            widget.showDepField = false;
+
+            if (widget.depData.isNotEmpty) {
+              widget.subject.departments[depInd] = widget.depData;
+              widget.depData = "";
+            } else {
+              widget.subject.departments.removeAt(depInd);
+              widget.editingDep.removeAt(depInd);
+            }
+
+          } else { // Adding:
+
+            if (widget.showDepField) { // confirm
+              if (widget.depData.isNotEmpty) {
+                (widget.subject.departments.add(widget.depData)); // 0 for teachers
+                widget.depData = "";
+                widget.editingDep.add(false);
+              }
+            }
+            widget.showDepField = !widget.showDepField;
           }
         });
       }),
