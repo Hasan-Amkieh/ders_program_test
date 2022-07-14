@@ -56,12 +56,10 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
           preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.1),
           child: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor)),
       body: SafeArea(
-        //child: Expanded( // This was causing an error, so keep it like this!
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: buildSchedulesList(),
           ),
-        //),
       ),
     );
 

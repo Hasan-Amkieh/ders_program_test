@@ -49,7 +49,7 @@ class LoadingUpdateState extends State<LoadingUpdate> {
 
     }
 
-    if (WebpageState.state != 5) {
+    if (WebpageState.state != 4) {
       Future.delayed(const Duration(milliseconds: 300), () => checkState());
     } else {
       ModalRoute.of(context)?.popped.then((value) {
