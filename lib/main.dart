@@ -11,6 +11,7 @@ import 'package:ders_program_test/pages/fav_courses_page.dart';
 import 'package:ders_program_test/pages/no_internet_page.dart';
 import 'package:ders_program_test/pages/personalinfo.dart';
 import 'package:ders_program_test/pages/saved_schedules_page.dart';
+import 'package:ders_program_test/pages/scheduler_page.dart';
 import 'package:ders_program_test/pages/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ders_program_test/webpage.dart';
@@ -414,6 +415,7 @@ Future main() async {
       "/home/editcourses/editcourseinfo": (context) { CustomCoursePage page = CustomCoursePage(); page.subject = Main.courseToEdit ?? Main.emptySubject; return page; },
       "/home/savedschedules" : (context) => SavedSchedulePage(),
       "/home/personalinfo" : (context) => PersonalInfo(),
+      "/home/scheduler" : (context) => SchedulerPage(),
     },
   ));
 

@@ -202,8 +202,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
               SizedBox(height: height * 0.01),
               ListTile(
                 onTap: () {
-                  // TODO:
-                  ;
+                  Navigator.pushNamed(context, "/home/scheduler");
                 },
                 title: Text(translateEng('Scheduler'), style: TextStyle(color: Main.appTheme.titleTextColor)),
                 subtitle: Text(translateEng('Choose the courses with the sections with specific options, then choose your appropriate schedule'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),

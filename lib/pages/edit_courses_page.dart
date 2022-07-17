@@ -27,6 +27,15 @@ class EditCoursePageState extends State<EditCoursePage> {
   static const Duration duration = Duration(milliseconds: 300);
 
   @override
+  void initState() {
+
+    super.initState();
+
+    ;
+
+  }
+
+  @override
   Widget build(BuildContext context) {
 
     width = (window.physicalSize / window.devicePixelRatio).width; // Because if it is converted from portrait to landscape or the opposite, the width changes

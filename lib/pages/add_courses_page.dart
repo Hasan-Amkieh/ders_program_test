@@ -13,6 +13,9 @@ import '../widgets/searchwidget.dart';
 
 class AddCoursesPage extends StatefulWidget {
 
+  @override // TODO: Implement this in EVERY PAGE WIDGET!
+  Key key = Key("AddCoursesPage"); // This solved an error
+
   @override
   State<StatefulWidget> createState() {
     return AddCoursesPageState();
@@ -28,13 +31,42 @@ class AddCoursesPageState extends State<AddCoursesPage> {
   String lastDep = translateEng("All");
   List<String> deps = faculties[Main.faculty]!.keys.toList();
 
+  static bool isForScheduler = false;
+
+  List<Subject> subjectsWithoutSecs = []; // subjects without their sections, only used for the scheduler
+
   String query = "";
 
   List<Subject> subjects = Main.facultyData.subjects;
   List<Subject> subjectsOfDep = Main.facultyData.subjects;
 
+  late List<Subject> subjectsWithoutSecsOrigin;
+
   @override
   void initState() {
+
+    super.initState();
+
+    if (!isForScheduler) {
+      Main.coursesToAdd.clear();
+    } else {
+      bool isAdded = false;
+
+      for (Subject sub in subjects) {
+        isAdded = false;
+        for (Subject s in subjectsWithoutSecs) {
+          if (s.getClassCodeWithoutSectionNumber() == sub.getClassCodeWithoutSectionNumber()) {
+            isAdded = true;
+            break;
+          }
+        }
+        if (!isAdded) {
+          subjectsWithoutSecs.add(Subject(classCode: sub.getClassCodeWithoutSectionNumber(), customName: sub.getNameWithoutSection(), departments: sub.departments, teacherCodes: sub.teacherCodes, hours: sub.hours, bgnPeriods: sub.bgnPeriods, days: sub.days, classrooms: sub.classrooms));
+        }
+      }
+      subjectsOfDep = subjectsWithoutSecs;
+      subjectsWithoutSecsOrigin = subjectsWithoutSecs;
+    }
 
     deps.add(depToSearch);
 
@@ -64,7 +96,8 @@ class AddCoursesPageState extends State<AddCoursesPage> {
     return Scaffold(
       appBar: PreferredSize(
           preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.1),
-          child: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor)),
+          child: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor)
+      ),
       backgroundColor: Main.appTheme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Container(
@@ -74,7 +107,7 @@ class AddCoursesPageState extends State<AddCoursesPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(translateEng("Show courses only in "), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                  Text(translateEng("Show courses only for "), style: TextStyle(color: Main.appTheme.titleTextColor)),
                   DropdownButton<String>(
                     dropdownColor: Main.appTheme.scaffoldBackgroundColor,
                     value: depToSearch,
@@ -100,7 +133,7 @@ class AddCoursesPageState extends State<AddCoursesPage> {
                   child: ListView.builder(
                       scrollDirection: Axis.vertical,
                       shrinkWrap: true,
-                      itemCount: subjects.length, itemBuilder: (context, index) {
+                      itemCount: isForScheduler ? subjectsWithoutSecs.length : subjects.length, itemBuilder: (context, index) {
                     return buildTile(context, index);
                   })
               ),
@@ -114,15 +147,17 @@ class AddCoursesPageState extends State<AddCoursesPage> {
 
   ListTile buildTile(context, index) {
 
-    Subject subject = subjects[index];
+    Subject subject = isForScheduler ? subjectsWithoutSecs[index] : subjects[index];
     String name = subject.customName;
     bool isInside = false;
 
     //print("current schedule is: ${Main.schedules[Main.currentScheduleIndex].scheduleCourses}");
-    for (Course crs in Main.schedules[Main.currentScheduleIndex].scheduleCourses) {
-      if (crs.subject.classCode == subject.classCode) {
-        isInside = true;
-        break;
+    if (!isForScheduler) {
+      for (Course crs in Main.schedules[Main.currentScheduleIndex].scheduleCourses) {
+        if (crs.subject.classCode == subject.classCode) {
+          isInside = true;
+          break;
+        }
       }
     }
     if (!isInside) {
@@ -139,15 +174,19 @@ class AddCoursesPageState extends State<AddCoursesPage> {
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-              name,
-              style: TextStyle(color: Main.appTheme.titleTextColor),
+          isForScheduler ? Container() : Text(
+            name,
+            style: TextStyle(color: Main.appTheme.titleTextColor),
           ),
           isInside ? const Icon(CupertinoIcons.add_circled_solid, color: Colors.red) : Container(),
         ],
       ),
       onTap: () {
-        setState(() {Main.coursesToAdd.add(subject);});
+        if (!isInside) {
+          setState(() {
+            Main.coursesToAdd.add(subject);
+          });
+        }
         Fluttertoast.showToast(
             msg: translateEng(isInside ? "${subject.classCode} " + translateEng("is already in the schedule") : "${subject.classCode} " + translateEng("was added to the schedule")),
             toastLength: Toast.LENGTH_SHORT,
@@ -166,7 +205,7 @@ class AddCoursesPageState extends State<AddCoursesPage> {
 
     final subjects = subjectsOfDep.where((subject) {
 
-      String name = subject.customName;
+      String name = subject.getNameWithoutSection();
 
       query = query.toLowerCase();
       name = name.toLowerCase();
@@ -177,7 +216,11 @@ class AddCoursesPageState extends State<AddCoursesPage> {
 
     setState(() {
       this.query = query;
-      this.subjects = subjects;
+      if (isForScheduler) {
+        subjectsWithoutSecs = subjects;
+      } else {
+        this.subjects = subjects;
+      }
     });
 
   }

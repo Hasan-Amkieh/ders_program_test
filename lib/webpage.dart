@@ -145,8 +145,8 @@ class WebpageState extends State<Webpage> {
 
           String timetableStr = msg[1];
 
-          print("Starting classification:\n");
-          sPort.send(["setDoNotrestart"]); // doNotRestart = true;
+          //print("Starting classification:\n");
+          sPort.send(["setDoNotRestart"]); // doNotRestart = true;
 
           //FacultySemester facultyData = FacultySemester(facName: Main.faculty, lastUpdate: DateTime.now());
 
@@ -188,9 +188,8 @@ class WebpageState extends State<Webpage> {
 
           // TODO: Instead of searching of all the file, cut the string part that you need and use it instead of using the whole file (better performance)
 
-          print("Resolving all ids with subjectid!");
-          // TODO: Second, store all the classcodes with their data in Main.semesters
-              { // for each subjectId, we have this:
+          //print("Resolving all ids with subjectid!");
+          { // for each subjectId, we have this:
             List<String> lessonIds; // lessonId is used to find the time for the class
             List<String> classIds, classes;
             List<List<String>> teacherCodesIds, teacherCodes;
@@ -313,10 +312,11 @@ class WebpageState extends State<Webpage> {
 
               });
 
+              searchStart = timetableStr.indexOf('"name":"AE 1 ","short":"AE 1 ","teacherid":""') - 57;
               // departments (classIds):
               classIds.forEach((element) {
                 if (element.isNotEmpty) {
-                  lastFound = timetableStr.indexOf('"id":"$element","name":"') + 16 +
+                  lastFound = searchStart_ = timetableStr.indexOf('"id":"$element","name":"', searchStart) + 16 +
                       element.length;
                   str = timetableStr.substring(
                       lastFound, timetableStr.indexOf('"', lastFound));
@@ -324,6 +324,7 @@ class WebpageState extends State<Webpage> {
                 }
               });
 
+              searchStart = timetableStr.indexOf('"id":"teachers","name":"Öğretim Elemanları","item_name":"Öğretim Elemanı"');
               // teacherCodes:
               periodIndex = 0;
               teacherCodesIds.forEach((element1) {
@@ -331,7 +332,7 @@ class WebpageState extends State<Webpage> {
                   teacherCodes.add([]);
                   element1.forEach((element2) {
                     if (element2.isNotEmpty) {
-                      lastFound = timetableStr.indexOf('"id":"$element2","short":"') +
+                      lastFound = timetableStr.indexOf('"id":"$element2","short":"', searchStart) +
                           17 + element2.length;
                       str = timetableStr.substring(lastFound, timetableStr.indexOf('"', lastFound));
                       teacherCodes.elementAt(periodIndex).add(str);
@@ -345,7 +346,7 @@ class WebpageState extends State<Webpage> {
               //print("$teacherCodes");
 
               // classrooms:
-              searchStart = timetableStr.indexOf('/global/pics/ui/classroom_32.svg');
+              searchStart = timetableStr.indexOf('id":"buildings","name":"Binalar","item_name":"Bina","icon"'); // the icon file could change which could break the whole thing!
               periodIndex = 0;
               classroomsIds.forEach((element1) {
                 if (element1.isNotEmpty){

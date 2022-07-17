@@ -288,11 +288,50 @@ class Subject { // represents a class
 
   int getSection() { // Get the section number of the class
 
-    if (!classCode.contains('(')) {
-      return 0;
+    // if (!classCode.contains('(')) {
+    //   return 0;
+    // }
+    //
+    // return int.parse(classCode.substring(classCode.indexOf('(') + 1));
+
+    if (classCode.contains('(')) { // MATH151(1) / MATH151-01 / MATH151- 01
+      print("Found the sec number : ${int.parse(classCode.substring(classCode.indexOf('(') + 1, classCode.indexOf(')')))}");
+      return int.parse(classCode.substring(classCode.indexOf('(') + 1, classCode.indexOf(')')));
+    } else if (classCode.contains('-')) {
+      String str = classCode.substring(classCode.indexOf('-') + 1).trim();
+      if (str[0] == '0') {
+        str = str.substring(1);
+      }
+      return int.parse(str);
     }
 
-    return int.parse(classCode.substring(classCode.indexOf('(') + 1));
+    return 0;
+
+  }
+
+  String getClassCodeWithoutSectionNumber() {
+
+    if (classCode.contains('(')) { // MATH151(1) / MATH151-01 / MATH151- 01
+      return classCode.substring(0, classCode.indexOf("("));
+    } else if (classCode.contains('-')) {
+      return classCode.substring(0, classCode.indexOf("-"));
+    } else if (classCode.contains(' 0')) {
+      return classCode.substring(0, classCode.indexOf(" 0"));
+    }
+
+    return classCode;
+
+  }
+
+  String getNameWithoutSection() {
+
+    if (customName.contains('(')) { // MATH151(1) / MATH151-01 / MATH151- 01
+      return customName.substring(0, customName.indexOf("("));
+    } else if (customName.contains('-')) {
+      return customName.substring(0, customName.indexOf("-"));
+    }
+
+    return customName;
 
   }
 
