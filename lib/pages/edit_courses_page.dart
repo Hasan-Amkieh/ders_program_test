@@ -242,7 +242,16 @@ class EditCoursePageState extends State<EditCoursePage> {
     }
 
     if (Main.schedules[Main.currentScheduleIndex].scheduleCourses.isEmpty) {
-      return Text(translateEng("You have no courses in the current schedule"), style: TextStyle(color: Main.appTheme.titleTextColor));
+      return Container(
+        child: Column(
+          children: [
+            SizedBox(height: height * 0.05,),
+            Icon(Icons.error, color: Colors.grey.shade700, size: (IconTheme.of(context).size ?? 64) * 2),
+            SizedBox(height: height * 0.05),
+            Text(translateEng("Nothing to show"), style: TextStyle(color: Main.appTheme.titleTextColor))
+          ],
+        ),
+      );
     } else {
       return ListView.builder(itemCount: Main.schedules[Main.currentScheduleIndex].scheduleCourses.length, itemBuilder: (context, index) {
         TextEditingController notesController = TextEditingController(text: Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).note);

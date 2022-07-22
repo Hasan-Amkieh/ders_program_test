@@ -65,19 +65,7 @@ class SchedulerPageState extends State<SchedulerPage> {
           child: Column(
             children: [
               Expanded(
-                child: subjects.isEmpty ?
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.error, color: Colors.grey.shade700, size: (IconTheme.of(context).size ?? 64) * 2),
-                      SizedBox(height: height * 0.05),
-                      Text(translateEng("You need to have 2 courses at least!"), style: TextStyle(color: Main.appTheme.titleTextColor, fontSize: 18))
-                    ],
-                  ),
-                )
-                    :
-                ListView.builder( // GFCheckbox
+                child: ListView.builder( // GFCheckbox
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
                   itemCount: subjects.length,
@@ -87,8 +75,20 @@ class SchedulerPageState extends State<SchedulerPage> {
               Container(
                 color: Main.appTheme.scaffoldBackgroundColor,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    Visibility(
+                      visible: subjects.length < 2,
+                        child: Column(
+                          children: [
+                            Icon(Icons.error, color: Colors.grey.shade700, size: (IconTheme.of(context).size ?? 64) * 2),
+                            SizedBox(height: height * 0.05),
+                            Text(translateEng("There has to be two courses at least!"),textAlign: TextAlign.center, style: TextStyle(color: Main.appTheme.titleTextColor, fontSize: 18)),
+                            SizedBox(height: height * 0.4),
+                          ],
+                        ),
+                    ),
                     TextButton.icon(
                       icon: Icon(Icons.add),
                       label: Text(translateEng("Add course")),
@@ -161,7 +161,9 @@ class SchedulerPageState extends State<SchedulerPage> {
                   showAdaptiveActionSheet(
                     bottomSheetColor: Main.appTheme.scaffoldBackgroundColor,
                     context: context,
-                    actions: buildSectionList(index),
+                    title: buildSectionList(index, width, height),
+                    actions: [],
+                    cancelAction: CancelAction(title: Text(translateEng("Close"))),
                   );
                 },
               ) : Container(),
@@ -200,9 +202,9 @@ class SchedulerPageState extends State<SchedulerPage> {
 
   }
 
-  List<BottomSheetAction> buildSectionList(int index) {
+  Column buildSectionList(int index, double width, double height) {
 
-    List<BottomSheetAction> actions = [];
+    List<Widget> actions = [];
 
     int maxSection = 1;
 
@@ -219,41 +221,76 @@ class SchedulerPageState extends State<SchedulerPage> {
 
     for (int sec = 1 ; sec <= maxSection ; sec++) {
 
+      String deps = secToSubject[sec]!.departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+      List<String> temp = deps.split(",");
+      for (int i = 0 ; i < temp.length ; i++) {
+        temp[i] = temp[i].trim().split(" ")[0];
+      }
+      deps = temp.toString().replaceAll(RegExp("[\\[.*?\\]]"), "").replaceAll(",", " ,");
+      // TODO: Make the current department highlighted!
+
       actions.add(
-        BottomSheetAction(
-          title: ListTile(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(translateEng("Section") + " " + sec.toString(), style: TextStyle(color: Main.appTheme.titleTextColor)),
-                Checkbox(
-                  value: true,
-                  onChanged: (value) {
-                    ;
-                  },
-                ),
-              ],
-            ),
-            subtitle: Column(
-              children: [
-                Text(
+        Container(
+          margin: EdgeInsets.fromLTRB(0, 0, 0, height * 0.03),
+          child: ElevatedButton(
+            onPressed: null,
+            style: const ButtonStyle(splashFactory: NoSplash.splashFactory),
+            child: ListTile(
+              enabled: false,
+              onTap: null,
+              onLongPress: null,
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(translateEng("Section") + " " + sec.toString(), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                  Checkbox(
+                    value: true,
+                    onChanged: (value) {
+                      ;
+                    },
+                  ),
+                ],
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
                     "Mon. 19:30 - 20:20",
                     style: TextStyle(color: Main.appTheme.titleTextColor),
-                ),
-                secToSubject[sec]!.departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), "").trim().isNotEmpty ? Text(
-                  translateEng("Only for ") + secToSubject[sec]!.departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), ""),
-                  style: TextStyle(color: Main.appTheme.titleTextColor),
-                ) : Container(),
-              ],
+                  ),
+                  SizedBox(height: height * 0.02),
+                  secToSubject[sec]!.departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), "").trim().isNotEmpty ? Column(children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          translateEng("Only for "),
+                          style: TextStyle(color: Main.appTheme.titleTextColor),
+                        ),
+                        SizedBox(
+                          width: width * 0.02,
+                        ),
+                        Expanded(
+                          child: Text(
+                            deps,
+                            style: TextStyle(color: Main.appTheme.titleTextColor),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: height * 0.02),
+                  ]) : Container(),
+                  SizedBox(height: height * 0.02),
+                ],
+              ),
             ),
           ),
-          onPressed: () {},
         ),
       );
 
     }
 
-    return actions;
+    return Column(children: actions);
 
   }
 

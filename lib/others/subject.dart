@@ -295,12 +295,13 @@ class Subject { // represents a class
     // return int.parse(classCode.substring(classCode.indexOf('(') + 1));
 
     if (classCode.contains('(')) { // MATH151(1) / MATH151-01 / MATH151- 01
-      print("Found the sec number : ${int.parse(classCode.substring(classCode.indexOf('(') + 1, classCode.indexOf(')')))}");
+      //print("Found the sec number : ${int.parse(classCode.substring(classCode.indexOf('(') + 1, classCode.indexOf(')')))}");
       return int.parse(classCode.substring(classCode.indexOf('(') + 1, classCode.indexOf(')')));
     } else if (classCode.contains('-')) {
       String str = classCode.substring(classCode.indexOf('-') + 1).trim();
-      if (str[0] == '0') {
-        str = str.substring(1);
+      if (str.contains("0")) {
+        int x_ = str.indexOf("-", str.indexOf("0"));
+        str = str.trim().substring(str.indexOf("0") + 1, x_ == -1 ? str.length : x_);
       }
       return int.parse(str);
     }
@@ -313,7 +314,7 @@ class Subject { // represents a class
 
     if (classCode.contains('(')) { // MATH151(1) / MATH151-01 / MATH151- 01
       return classCode.substring(0, classCode.indexOf("("));
-    } else if (classCode.contains('-')) {
+    } else if (classCode.contains('-') && classCode.contains("0")) {
       return classCode.substring(0, classCode.indexOf("-"));
     } else if (classCode.contains(' 0')) {
       return classCode.substring(0, classCode.indexOf(" 0"));

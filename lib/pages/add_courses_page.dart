@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../language/dictionary.dart';
@@ -178,7 +177,14 @@ class AddCoursesPageState extends State<AddCoursesPage> {
             name,
             style: TextStyle(color: Main.appTheme.titleTextColor),
           ),
-          isInside ? const Icon(CupertinoIcons.add_circled_solid, color: Colors.red) : Container(),
+          (isInside || subject.days.isEmpty) ? SizedBox(height: height * 0.01) : Container(),
+          Row(
+            children: [
+              isInside ? const Icon(CupertinoIcons.add_circled_solid, color: Colors.blue) : Container(),
+              (subject.days.isEmpty && isInside) ? SizedBox(width: width * 0.02) : Container(),
+              subject.days.isEmpty ? const Icon(CupertinoIcons.time_solid, color: Colors.red) : Container(),
+            ],
+          ),
         ],
       ),
       onTap: () {
