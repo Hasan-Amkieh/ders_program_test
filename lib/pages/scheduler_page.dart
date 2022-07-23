@@ -6,11 +6,15 @@ import 'package:ders_program_test/others/subject.dart';
 import 'package:ders_program_test/pages/add_courses_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:getwidget/components/checkbox/gf_checkbox.dart';
 
 import '../main.dart';
 
 class SchedulerPage extends StatefulWidget {
+
+  @override
+  Key key = const Key("SchedulerPage");
 
   @override
   State<StatefulWidget> createState() {
@@ -24,6 +28,8 @@ class SchedulerPage extends StatefulWidget {
 class SchedulerPageState extends State<SchedulerPage> {
 
   List<Subject> subjects = [], subjectsToAdd = [];
+  List<MapEntry<String, List<MapEntry<int, Subject>>>> subjectsSections = []; // sample: [{"CMPE114" : [{1:subjectOfSec1}, {2:subjectOfSec2}]}] and so on...
+  List<MapEntry<String, List<bool>>> areSectionsShown = [];
   List<bool> subjectsShown = [];
 
   @override
@@ -38,15 +44,65 @@ class SchedulerPageState extends State<SchedulerPage> {
   @override
   Widget build(BuildContext context) {
 
-    // if (AddCoursesPageState.isForScheduler) { // then it means that currently this is not the current page!
-    //   return Container(); // because when calling setState in add courses page this func is also called!
-    //   // TODO: SOLVE THIS USING THE KEY PROPERTY
-    // }
-
     double width = (window.physicalSize / window.devicePixelRatio).width;
     double height = (window.physicalSize / window.devicePixelRatio).height;
 
     if (subjectsToAdd.isNotEmpty) {
+      //subjects.addAll(subjectsToAdd);
+      for (Subject element in subjectsToAdd) {
+        bool isDone = false;
+        for (Subject sub_ in subjects) {
+          if (sub_.getClassCodeWithoutSectionNumber() == element.getClassCodeWithoutSectionNumber()) {
+            isDone = true;
+            break;
+          }
+        }
+        if (isDone) {
+          continue;
+        }
+
+        int maxSection = 0;
+        Map<int, Subject> secToSubject = {};
+        for (Subject sub in Main.facultyData.subjects) {
+          //print("Checking if ${sub.classCode} has sections or not!");
+          if (sub.getClassCodeWithoutSectionNumber() == element.classCode && sub.getClassCodeWithoutSectionNumber() != sub.classCode) {
+            print("${sub.classCode} has a section of ${sub.getSection()}!");
+            if (sub.getSection() > maxSection) {
+              maxSection = sub.getSection();
+            }
+            // TEST:
+            if (sub.classCode.contains("CMPE114") && sub.getSection() == 1) {
+              print("Debug mode!");
+            }
+            // TEST;
+            bool isFound = false;
+            int secIndex = 0;
+            for (int j = 0 ; j < subjectsSections.length ; j++) { // sample: [{"CMPE114" : [{1:subjectOfSec1}, {2:subjectOfSec2}]}] and so on...
+              if (subjectsSections[j].key == sub.getClassCodeWithoutSectionNumber()) {
+                isFound = true;
+                secIndex = j;
+                break;
+              }
+            }
+            if (!isFound) {
+              subjectsSections.add(MapEntry(sub.getClassCodeWithoutSectionNumber(), []));
+              areSectionsShown.add(MapEntry(sub.getClassCodeWithoutSectionNumber(), []));
+              // The var secIndex has to be reset bcs now there is a new element!
+              secIndex = areSectionsShown.length - 1;
+            }
+            //print("${sub.getClassCodeWithoutSectionNumber() == subjectsSections[secIndex].key} for the course ${sub.classCode}");
+            if (sub.getClassCodeWithoutSectionNumber() == subjectsSections[secIndex].key && subjectsSections[secIndex].value.length < maxSection) {
+              subjectsSections[secIndex].value.add(MapEntry(sub.getSection(), sub));
+              areSectionsShown[secIndex].value.add(true);
+              print("DOING SUBJECT: $sub OF CLASSCODE ${sub.classCode}");
+              print("Adding section ${sub.getSection()} for subject ${sub.getClassCodeWithoutSectionNumber()}");
+            }
+            //secToSubject.addEntries([MapEntry(sub.getSection(), sub)]);
+          }
+        }
+
+        // subjectsSections.add([]);
+      }
       subjects.addAll(subjectsToAdd);
       subjectsToAdd.clear();
       subjectsShown.clear();
@@ -131,11 +187,62 @@ class SchedulerPageState extends State<SchedulerPage> {
 
     bool areThereSecs = false;
     for (Subject sub in Main.facultyData.subjects) {
-
       // if the course is the same
       if (sub.getClassCodeWithoutSectionNumber() == subjects[index].classCode && sub.getClassCodeWithoutSectionNumber() != sub.classCode) {
         areThereSecs = true;
         break;
+      }
+    }
+
+    String sectionsStr = "";
+    if (areThereSecs) {
+      int secIndex = -1;
+      int ind = 0;
+      for (MapEntry<String, List<MapEntry<int, Subject>>> element in subjectsSections) {
+        if (element.key == subjects[index].getClassCodeWithoutSectionNumber()) {
+          secIndex = ind;
+        }
+        ind++;
+      }
+
+      List<MapEntry<int, bool>> sections = [];
+
+      print("SubjectSections var: ${subjectsSections[secIndex]} of index $secIndex");
+
+      for (MapEntry<int, Subject> element in subjectsSections[secIndex].value) {
+        print("Checking ${areSectionsShown[secIndex]}");
+
+        sections.add(MapEntry(element.key, areSectionsShown[secIndex].value[element.key -1]));
+      }
+
+      int numOfFalse = 0;
+      for (int secNum = 0 ; secNum < sections.length ; secNum++) {
+        if (!sections[secNum].value) {
+          numOfFalse++;
+        }
+      }
+      bool isAll = numOfFalse == 0;
+
+      if (isAll) {
+        sectionsStr = translateEng("All");
+      } else if (sections.length - numOfFalse > 1) {
+        sectionsStr = "";
+        //print("Sections var: $sections");
+        for (int secNum = 0 ; secNum < sections.length ; secNum++) {
+          if (sections[secNum].value) {
+            sectionsStr += "," + sections[secNum].key.toString();
+          }
+        }
+        print("SectionStr before : $sectionsStr");
+        sectionsStr = sectionsStr.substring(1, sectionsStr.length); // remove the last comma
+        print("SectionStr after : $sectionsStr");
+      } else { // otherwise it is only one section:
+        for (int secNum = 0 ; secNum < sections.length ; secNum++) {
+          if (sections[secNum].value) {
+            sectionsStr = sections[secNum].key.toString();
+            break;
+          }
+        }
       }
 
     }
@@ -156,15 +263,27 @@ class SchedulerPageState extends State<SchedulerPage> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               areThereSecs ? TextButton(
-                child: Text(translateEng("Sections"), style: TextStyle(color: Colors.blue, fontSize: 14)),
+                child: Text(translateEng("Sections") + ": " + sectionsStr, style: TextStyle(color: Colors.blue, fontSize: 14)),
                 onPressed: () {
+                  print("BUILDING!!!");
+                  // showModalBottomSheet(context: context, builder: (context) {
+                  //   return StatefulBuilder(
+                  //     builder: (BuildContext context, StateSetter setState) {
+                  //       return buildSectionList(index, width, height);
+                  //     },
+                  //   );
+                  // });
                   showAdaptiveActionSheet(
                     bottomSheetColor: Main.appTheme.scaffoldBackgroundColor,
                     context: context,
-                    title: buildSectionList(index, width, height),
+                    title: StatefulBuilder(
+                      builder: (BuildContext context, StateSetter setState) {
+                        return buildSectionList(index, width, height);
+                      },
+                    ),
                     actions: [],
                     cancelAction: CancelAction(title: Text(translateEng("Close"))),
-                  );
+                  ).then((value) => setState(() {}));
                 },
               ) : Container(),
               TextButton(
@@ -227,7 +346,16 @@ class SchedulerPageState extends State<SchedulerPage> {
         temp[i] = temp[i].trim().split(" ")[0];
       }
       deps = temp.toString().replaceAll(RegExp("[\\[.*?\\]]"), "").replaceAll(",", " ,");
+
+      int subIndex = -1;
+      for (int k = 0 ; k < areSectionsShown.length ; k++) {
+        if (areSectionsShown[k].key == secToSubject[sec]!.getClassCodeWithoutSectionNumber()) {
+          subIndex = k;
+        }
+      }
+
       // TODO: Make the current department highlighted!
+      // // TODO: And make it by default chosen if there deps list is not empty, if it is empty then choose it
 
       actions.add(
         Container(
@@ -243,10 +371,19 @@ class SchedulerPageState extends State<SchedulerPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(translateEng("Section") + " " + sec.toString(), style: TextStyle(color: Main.appTheme.titleTextColor)),
-                  Checkbox(
-                    value: true,
-                    onChanged: (value) {
-                      ;
+                  StatefulBuilder(
+                    builder: (BuildContext context, StateSetter setState) {
+                      return Checkbox(
+                        value: areSectionsShown[subIndex].value[sec - 1],
+                        onChanged: (value) {
+                          print("The new value is: $value");
+                          areSectionsShown[subIndex].value[sec - 1] = value ?? true;
+                          setState(() {
+                            //areSectionsShown[subIndex].value[sec - 1] = value ?? true;
+                            //Navigator.pop(context);
+                          });
+                        },
+                      );
                     },
                   ),
                 ],
@@ -254,10 +391,10 @@ class SchedulerPageState extends State<SchedulerPage> {
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  secToSubject[sec]!.days.isNotEmpty ? Text(
                     "Mon. 19:30 - 20:20",
                     style: TextStyle(color: Main.appTheme.titleTextColor),
-                  ),
+                  ) : Container(),
                   SizedBox(height: height * 0.02),
                   secToSubject[sec]!.departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), "").trim().isNotEmpty ? Column(children: [
                     Row(

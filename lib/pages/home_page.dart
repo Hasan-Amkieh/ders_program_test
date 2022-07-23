@@ -935,7 +935,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
     // First find all the collisions:
     collisions = findCourseCollisions();
     print("All the collisions are: ");
-    collisions.forEach((col) { print("\nCOLLISION:"); col.subjects.forEach((element) {print(element.classCode);}); });
+    //collisions.forEach((col) { print("\nCOLLISION:"); col.subjects.forEach((element) {print(element.classCode);}); });
 
     int colorIndex = -1;
 
@@ -944,16 +944,14 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
       for (int i = 0; i < course.subject.days.length; i++) {
         for (int j = 0; j < course.subject.days[i].length; j++) {
           bool isCol = false, isColOf3 = false;
-          int atIndex = 0,
-              drawingIndex = 0,
-              colSize = 1; // colSize determines how many subjects are actually in this collision
+          int atIndex = 0, drawingIndex = 0, colSize = 1; // colSize determines how many subjects are actually in this collision
           int colIndex = 0;
           collisions.forEach((col) {
             atIndex = 0;
             Subject sub;
             for( ; atIndex < col.subjects.length ; atIndex++ ) {
               sub = col.subjects[atIndex];
-              print("${sub.classCode} N ${course.subject.classCode}");
+              //print("${sub.classCode} N ${course.subject.classCode}");
               if (sub.isEqual(course.subject) && course.subject.days[i][j] == col.subjectsData[atIndex].day &&
                   course.subject.bgnPeriods[i][j] == col.subjectsData[atIndex].bgnPeriod && !col.isDrawn[atIndex]) {
                 print("Drawing the collisioned course: ${course.subject.classCode}");
@@ -994,13 +992,13 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                             text: course.subject.classCode,
                             style: TextStyle(
                                 color: whiteThemeScheduleColors[colorIndex][1],
-                                fontSize: 12.0),
+                                fontSize: 11.0),
                           ),
                           TextSpan(
                             text: (isCol ? "  " : "\n") + (i < course.subject.classrooms.length ? deleteRepitions(course.subject.classrooms[i]).toString().replaceAll(RegExp("[\\[.*?\\]]"), "") : ""),
                             style: TextStyle(
                                 color: whiteThemeScheduleColors[colorIndex][1],
-                                fontSize: 10.0),
+                                fontSize: 9.0),
                           ),
                         ]
                     ),

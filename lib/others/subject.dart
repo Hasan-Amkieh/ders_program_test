@@ -300,9 +300,12 @@ class Subject { // represents a class
     } else if (classCode.contains('-')) {
       String str = classCode.substring(classCode.indexOf('-') + 1).trim();
       if (str.contains("0")) {
-        int x_ = str.indexOf("-", str.indexOf("0"));
-        str = str.trim().substring(str.indexOf("0") + 1, x_ == -1 ? str.length : x_);
+        str = str.substring(str.indexOf("0") + 1);
+        if (str.contains("-")) {
+          str = str.substring(0, str.indexOf("-"));
+        }
       }
+      print("RETURNING section ${int.parse(str)} for subject ${classCode}");
       return int.parse(str);
     }
 

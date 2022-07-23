@@ -32,7 +32,7 @@ class FavCoursesState extends State<FavCourses> {
       backgroundColor: Main.appTheme.scaffoldBackgroundColor,
       appBar: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor),
       body: SafeArea(
-        child: Main.favCourses.isEmpty ? Center(child: Text(translateEng("You have no favourite courses, please add them from Search for Courses page"), style: TextStyle(color: Main.appTheme.titleTextColor), textAlign: TextAlign.center,))
+        child: Main.favCourses.isEmpty ? Center(child: Text(translateEng("Nothing to show"), style: TextStyle(color: Main.appTheme.titleTextColor), textAlign: TextAlign.center,))
             : ListView.builder(
               itemCount: Main.favCourses.length,
               itemBuilder: (context, count) {
