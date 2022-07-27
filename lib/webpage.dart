@@ -69,7 +69,7 @@ class WebpageState extends State<Webpage> {
 
                           if (msg[0] == "sPort") {
                             sPort = msg[1] as SendPort;
-                            sPort?.send(["timetableData", request.responseText]);
+                            sPort?.send(["timetableData", request.responseText, Main.faculty]);
                           }
 
                           if (msg[0] == "setDoNotRestart") {
@@ -144,6 +144,7 @@ class WebpageState extends State<Webpage> {
         if (msg[0] == "timetableData") {
 
           String timetableStr = msg[1];
+          String faculty = msg[2];
 
           //print("Starting classification:\n");
           sPort.send(["setDoNotRestart"]); // doNotRestart = true;
@@ -312,7 +313,10 @@ class WebpageState extends State<Webpage> {
 
               });
 
-              searchStart = timetableStr.indexOf('"name":"AE 1 ","short":"AE 1 ","teacherid":""') - 57;
+              // This will only enhance the peroformance of the engineering loading page,
+              // TODO: apply the rest for the other faculties:
+              searchStart = faculty == "Engineering" ? (timetableStr.indexOf('"name":"AE 1 ","short":"AE 1 ","teacherid":""') - 57) : 0;
+
               // departments (classIds):
               classIds.forEach((element) {
                 if (element.isNotEmpty) {
@@ -324,7 +328,10 @@ class WebpageState extends State<Webpage> {
                 }
               });
 
-              searchStart = timetableStr.indexOf('"id":"teachers","name":"Öğretim Elemanları","item_name":"Öğretim Elemanı"');
+              // TODO: This only works for eng and civ aviation facs, make it for all the facs too:
+              //searchStart = timetableStr.indexOf('"id":"teachers","name":"Öğretim Elemanları","item_name":"Öğretim Elemanı"');
+              searchStart = 0;
+
               // teacherCodes:
               periodIndex = 0;
               teacherCodesIds.forEach((element1) {

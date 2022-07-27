@@ -354,6 +354,23 @@ class SchedulerPageState extends State<SchedulerPage> {
         }
       }
 
+      //"$dayShort. ${widget.bgnHour[i]} - $endHour:20"
+      // secToSubject[sec]!
+      String timeStr = "";
+      if (secToSubject[sec]!.days.isNotEmpty) {
+        for (int i = 0 ; i < secToSubject[sec]!.days.length ; i++) {
+          for (int j = 0 ; j < secToSubject[sec]!.days[i].length ; j++) {
+            timeStr += "${dayToStringShort(secToSubject[sec]!.days[i][j])}. " +
+                "${bgnPeriodToStringHoursOnly(secToSubject[sec]!.bgnPeriods[i][j])}:30 - " +
+                "${bgnPeriodToStringHoursOnly(secToSubject[sec]!.bgnPeriods[i][j] + secToSubject[sec]!.hours[i])}:20" +
+                " | ";
+          }
+        }
+        if (timeStr.length > 4) {
+          timeStr = timeStr.substring(0, timeStr.length - 3);
+        }
+      }
+
       // TODO: Make the current department highlighted!
       // // TODO: And make it by default chosen if there deps list is not empty, if it is empty then choose it
 
@@ -392,7 +409,7 @@ class SchedulerPageState extends State<SchedulerPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   secToSubject[sec]!.days.isNotEmpty ? Text(
-                    "Mon. 19:30 - 20:20",
+                    timeStr,
                     style: TextStyle(color: Main.appTheme.titleTextColor),
                   ) : Container(),
                   SizedBox(height: height * 0.02),
