@@ -991,7 +991,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           }
           //print("Of period $i of subject ${course.subject.classCode} has classrooms $classroomStr");
 
-          // XOXOXO
           coursesList.add(
             Positioned(child: TextButton(
               //clipBehavior: Clip.none,

@@ -250,7 +250,9 @@ class Subject { // represents a class
     for (int i = 0 ; i < list.length ; i++) { // delete '[' and ']'
       list[i] = list[i].replaceAll('[', '').replaceAll(']', '');
       tempList = [];
-      list[i].split(',').forEach((element) { tempList.add(int.parse(element)); });
+      list[i].split(',').forEach((element) { if (element.isNotEmpty) {
+        tempList.add(int.parse(element));
+      } });
       days.add(tempList);
     }
 

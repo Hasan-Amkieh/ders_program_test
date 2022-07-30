@@ -1,5 +1,4 @@
 import 'dart:isolate';
-import 'package:stream_channel/stream_channel.dart';
 
 import 'package:ders_program_test/pages/loading_update_page.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +7,8 @@ import 'package:ders_program_test/main.dart';
 import 'package:ders_program_test/others/subject.dart';
 
 import 'others/departments.dart';
+
+import 'package:ders_program_test/others/spring_schedules.dart';
 
 class Webpage extends StatefulWidget {
 
@@ -69,7 +70,32 @@ class WebpageState extends State<Webpage> {
 
                           if (msg[0] == "sPort") {
                             sPort = msg[1] as SendPort;
-                            sPort?.send(["timetableData", request.responseText, Main.faculty]);
+                            //sPort?.send(["timetableData", request.responseText, Main.faculty]);
+                            // TODO: TEST:
+                            switch (Main.faculty) {
+                              case "Engineering":
+                                sPort?.send(["timetableData", SpringSchedules.engineeringTimeTable, Main.faculty]);
+                                break;
+                              case "Civil Aviation":
+                                sPort?.send(["timetableData", SpringSchedules.civilAviationTimeTable, Main.faculty]);
+                                break;
+                              case "Health Sciences":
+                                sPort?.send(["timetableData", SpringSchedules.healthSciencesTimeTable, Main.faculty]);
+                                break;
+                              case "Arts and Sciences":
+                                sPort?.send(["timetableData", SpringSchedules.artsNSciencesTimeTable, Main.faculty]);
+                                break;
+                              case "Fine Arts":
+                                sPort?.send(["timetableData", SpringSchedules.fineArtsNArchitetctureTimeTable, Main.faculty]);
+                                break;
+                              case "Law":
+                                sPort?.send(["timetableData", request.responseText, Main.faculty]); // cause there is no spring sem
+                                break;
+                              case "Business":
+                                sPort?.send(["timetableData", SpringSchedules.businessTimeTable, Main.faculty]);
+                                break;
+                            }
+                            // TODO: TEST;
                           }
 
                           if (msg[0] == "setDoNotRestart") {
@@ -315,7 +341,9 @@ class WebpageState extends State<Webpage> {
 
               // This will only enhance the peroformance of the engineering loading page,
               // TODO: apply the rest for the other faculties:
-              searchStart = faculty == "Engineering" ? (timetableStr.indexOf('"name":"AE 1 ","short":"AE 1 ","teacherid":""') - 57) : 0;
+              // AE 1 is only for the first semester...
+              //searchStart = faculty == "Engineering" ? (timetableStr.indexOf('"name":"AE 1 ","short":"AE 1 ","teacherid":""') - 57) : 0;
+              searchStart = 0;
 
               // departments (classIds):
               classIds.forEach((element) {
