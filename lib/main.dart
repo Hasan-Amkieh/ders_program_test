@@ -1,6 +1,7 @@
 // NOTE: minimum version of android is 4.4 for the application to run,
 
 import 'dart:async';
+import 'dart:ffi';
 import 'dart:io';
 import 'package:ders_program_test/language/dictionary.dart';
 import 'package:ders_program_test/others/subject.dart';
@@ -120,6 +121,7 @@ class Main {
     toWrite = toWrite + "department:"+department.toString()+"\n";
     toWrite = toWrite + "language:"+language.toString()+"\n";
     toWrite = toWrite + "hour_update:"+hourUpdate.toString()+"\n";
+    toWrite = toWrite + "schedule_index:"+currentScheduleIndex.toString()+"\n";
 
     file.writeAsStringSync(toWrite, mode: FileMode.write);
 
@@ -143,6 +145,7 @@ class Main {
         department = content.substring(content.indexOf("department:") + 11, content.indexOf("\n", content.indexOf("department:") + 11));
         language = content.substring(content.indexOf("language:") + 9, content.indexOf("\n", content.indexOf("language:") + 9));
         hourUpdate = int.parse(content.substring(content.indexOf("hour_update:") + 12, content.indexOf("\n", content.indexOf("hour_update:") + 12)));
+        currentScheduleIndex = int.parse(content.substring(content.indexOf("schedule_index:") + 15, content.indexOf("\n", content.indexOf("schedule_index:") + 15)));
       }
     } catch(err) {
       print("The settings file was not opened bcs: $err");
@@ -394,8 +397,6 @@ Future main() async {
   if (Main.schedules.isEmpty) {
     Main.schedules.add(Schedule(scheduleName: translateEng("Default Schedule"), scheduleCourses: []));
   }
-  // TODO: Store the schedule index along the settings file inside writeSettings and readSettings:
-  Main.currentScheduleIndex = 0;
 
   if (Main.forceUpdate) { // if we are going to update then check for internet:
     await NoInternetPageState.checkInternet();

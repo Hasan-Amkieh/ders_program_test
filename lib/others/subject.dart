@@ -44,8 +44,10 @@ class Subject { // represents a class
       if (days[i].isEmpty) {
         days.removeAt(i);
       }
-      if (bgnPeriods[i].isEmpty) {
-        bgnPeriods.removeAt(i);
+      if (bgnPeriods.isNotEmpty) { // safety, bcs the employees are doing their jobs poorly to fetch the data into the timetable website!
+        if (i < bgnPeriods.length && bgnPeriods[i].isEmpty) {
+          bgnPeriods.removeAt(i);
+        }
       }
     }
 

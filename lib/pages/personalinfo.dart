@@ -42,26 +42,26 @@ class PersonalInfo extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: height * 0.05),
-                  GestureDetector(
+                  TextButton(
+                    onPressed: () async {
+                      const url = 'https://github.com/Hasan-Amkieh';
+                      if (await canLaunch(url)) {
+                        await launch(url);
+                      } else {
+                        throw 'Could not launch $url';
+                      }
+                    },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset("lib/icons/github.png", width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.1, height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.1),
                         SizedBox(width: width * 0.05),
-                        Text("Github", style: TextStyle(color: Main.appTheme.titleTextColor),),
+                        Text("Github", style: TextStyle(color: Main.appTheme.titleTextColor)),
                       ],
                     ),
-                    onTap: () async {
-                      const url = 'https://github.com/Hasan-Amkieh';
-                      if (await canLaunch(url)) {
-                      await launch(url);
-                      } else {
-                      throw 'Could not launch $url';
-                      }
-                    },
                   ),
                   SizedBox(height: height * 0.03),
-                  GestureDetector(
+                  TextButton(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -70,7 +70,7 @@ class PersonalInfo extends StatelessWidget {
                         Text("Stackoverflow", style: TextStyle(color: Main.appTheme.titleTextColor)),
                       ],
                     ),
-                    onTap: () async {
+                    onPressed: () async {
                       const url = 'https://stackoverflow.com/users/9381321/hasan-shadi';
                       if (await canLaunch(url)) {
                         await launch(url);

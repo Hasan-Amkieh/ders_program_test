@@ -62,7 +62,7 @@ class SchedulerPageState extends State<SchedulerPage> {
         }
 
         int maxSection = 0;
-        Map<int, Subject> secToSubject = {};
+        //Map<int, Subject> secToSubject = {};
         for (Subject sub in Main.facultyData.subjects) {
           //print("Checking if ${sub.classCode} has sections or not!");
           if (sub.getClassCodeWithoutSectionNumber() == element.classCode && sub.getClassCodeWithoutSectionNumber() != sub.classCode) {
@@ -71,9 +71,9 @@ class SchedulerPageState extends State<SchedulerPage> {
               maxSection = sub.getSection();
             }
             // TEST:
-            if (sub.classCode.contains("CMPE114") && sub.getSection() == 1) {
-              print("Debug mode!");
-            }
+            // if (sub.classCode.contains("CMPE114") && sub.getSection() == 1) {
+            //   print("Debug mode!");
+            // }
             // TEST;
             bool isFound = false;
             int secIndex = 0;

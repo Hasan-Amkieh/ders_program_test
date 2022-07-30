@@ -163,7 +163,7 @@ class SearchPageState extends State<SearchPage> {
                 style: TextStyle(color: Main.appTheme.titleTextColor),
                 cursorColor: Main.appTheme.titleTextColor,
                 decoration: InputDecoration(
-                  hintStyle: TextStyle(color: Main.appTheme.titleTextColor),
+                  hintStyle: TextStyle(color: Main.appTheme.hintTextColor),
                   hintText: (searchByCourseName ? (translateEng("Course Code") + ", ") : "") + (searchByTeacher ? (translateEng("Teacher Name") + ", ") : "") + (searchByClassroom ? translateEng("classroom") : ""),
                   labelStyle: TextStyle(color: Main.appTheme.titleTextColor),
                   labelText: translateEng("SEARCH"),

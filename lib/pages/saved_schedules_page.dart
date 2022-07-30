@@ -264,7 +264,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                             children: [
                               Text(translateEng("Name"), style: TextStyle(color: Main.appTheme.titleTextColor)),
                               SizedBox(width: width * 0.4,
-                                  child: TextFormField(controller: nameController, cursorColor: Main.appTheme.titleTextColor, style: TextStyle(color: Main.appTheme.titleTextColor), decoration: InputDecoration(hintStyle: TextStyle(color: Main.appTheme.titleTextColor), hintText: translateEng("e.g. Summer Semester"))))
+                                  child: TextFormField(controller: nameController, cursorColor: Main.appTheme.titleTextColor, style: TextStyle(color: Main.appTheme.titleTextColor), decoration: InputDecoration(hintStyle: TextStyle(color: Main.appTheme.hintTextColor), hintText: translateEng("e.g. Summer Semester"))))
                             ],
                           ),
                         ],
@@ -370,7 +370,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                                     style: TextStyle(color: Main.appTheme.titleTextColor),
                                     decoration: InputDecoration(
                                         hintText: translateEng("e.g. Summer Semester"),
-                                        hintStyle: TextStyle(color: Main.appTheme.titleTextColor),
+                                        hintStyle: TextStyle(color: Main.appTheme.hintTextColor),
                                         labelText: "Schedule Name",
                                         labelStyle: TextStyle(color: Main.appTheme.titleTextColor),
                                     ),

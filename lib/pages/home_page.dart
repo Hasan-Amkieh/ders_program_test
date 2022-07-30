@@ -208,16 +208,15 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                 subtitle: Text(translateEng('Choose the courses with the sections with specific options, then choose your appropriate schedule'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
                 leading: Icon(Icons.calendar_today, color: Main.appTheme.titleIconColor),
               ),
-              SizedBox(height: height * 0.01),
-              ListTile(
-                onTap: () {
-                  // TODO:
-                  ;
-                },
-                title: Text(translateEng('Department Plans'), style: TextStyle(color: Main.appTheme.titleTextColor)),
-                subtitle: Text(translateEng('These plans are provided by the university'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
-                leading: Icon(CupertinoIcons.square_arrow_right, color: Main.appTheme.titleIconColor),
-              ),
+              // SizedBox(height: height * 0.01),
+              // ListTile(
+              //   onTap: () {
+              //     ;
+              //   },
+              //   title: Text(translateEng('Department Plans'), style: TextStyle(color: Main.appTheme.titleTextColor)),
+              //   subtitle: Text(translateEng('These plans are provided by the university'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
+              //   leading: Icon(CupertinoIcons.square_arrow_right, color: Main.appTheme.titleIconColor),
+              // ),
               SizedBox(height: height * 0.01),
               ListTile(
                 onTap: () {
@@ -468,7 +467,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
       linksPage = ListView(
         children: [
           Container(
-            padding: EdgeInsets.fromLTRB(0.1 * width, 0.03 * width, 0, 0),
+            padding: EdgeInsets.fromLTRB(0 * width, 0.03 * width, 0, 0),
             child: ListTile(
               leading: Image.asset("lib/icons/atacs.png", width: IconTheme.of(context).size!, height: IconTheme.of(context).size!),
               title: Text('Atacs', style: TextStyle(color: Main.appTheme.titleTextColor)),
@@ -483,7 +482,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             ),
           ),
           Container(
-            padding: EdgeInsets.fromLTRB(0.1 * width, 0, 0, 0),
+            padding: EdgeInsets.fromLTRB(0 * width, 0, 0, 0),
             child: ListTile(
               leading: Icon(Icons.schedule, color: Main.appTheme.titleTextColor),
               title: Text(translateEng("School's Schedules"), style: TextStyle(color: Main.appTheme.titleTextColor)),
@@ -497,7 +496,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
               },
             ),
           ),Container(
-            padding: EdgeInsets.fromLTRB(0.1 * width, 0, 0, 0),
+            padding: EdgeInsets.fromLTRB(0 * width, 0, 0, 0),
             child: ListTile(
               leading: Icon(Icons.calculate, color: Main.appTheme.titleTextColor),
               title: Text(translateEng("GPA Calculator"), style: TextStyle(color: Main.appTheme.titleTextColor)),
@@ -534,45 +533,48 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
     Widget? aboutPage;
     if (pageIndex == 4) {
-      aboutPage = ListView(
-        children: [
-          ListTile(
-            title: Text(translateEng('Send a Message'), style: TextStyle(color: Main.appTheme.titleTextColor)),
-            leading: Icon(CupertinoIcons.mail_solid, color: Main.appTheme.titleIconColor),
-            subtitle: Text(translateEng("Complains and Suggestions"), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
-            onTap: () async { // TODO: Change in the future:
-              const url = 'mailto:hassan1551@outlook.com?subject:Scheduling%20App&body=%0A%0A%0AThank you for 2 months of effort'; // %0A new line / %20 white space
-                  if (await canLaunch(url)) {
-                    await launch(url);
-                  } else {
-                    throw 'Could not launch $url';
-                  }
-            },
-          ),
-          ListTile(
-            title: Row(
-              children: [
-                Icon(Icons.person, color: Main.appTheme.titleIconColor),
-                SizedBox(width: width * 0.03),
-                Text(translateEng('About the Creator'), style: TextStyle(color: Main.appTheme.titleTextColor)),
-              ],
+      aboutPage = Container(
+        margin: EdgeInsets.fromLTRB(0, 0.03 * width, 0, 0),
+        child: ListView(
+          children: [
+            ListTile(
+              title: Text(translateEng('Send a Message'), style: TextStyle(color: Main.appTheme.titleTextColor)),
+              leading: Icon(CupertinoIcons.mail_solid, color: Main.appTheme.titleIconColor),
+              subtitle: Text(translateEng("Complains and Suggestions"), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
+              onTap: () async { // TODO: Change in the future:
+                const url = 'mailto:hassan1551@outlook.com?subject:Scheduling%20App&body=%0A%0A%0AThank you for the 3 months of effort'; // %0A new line / %20 white space
+                    if (await canLaunch(url)) {
+                      await launch(url);
+                    } else {
+                      throw 'Could not launch $url';
+                    }
+              },
             ),
-            onTap: () {
-              Navigator.pushNamed(context, "/home/personalinfo");
-            },
-          ),
-          // ListTile(
-          //   title: Text(translateEng('Donate me')),
-          //   onTap: () async {
-          //     const url = 'https://www.buymeacoffee.com/hasanamkieh?new=1';
-          //     if (await canLaunch(url)) {
-          //       await launch(url);
-          //     } else {
-          //       throw 'Could not launch $url';
-          //     }
-          //   },
-          // ),
-        ],
+            ListTile(
+              title: Row(
+                children: [
+                  Icon(Icons.person, color: Main.appTheme.titleIconColor),
+                  SizedBox(width: width * 0.03),
+                  Text(translateEng('About the Creator'), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                ],
+              ),
+              onTap: () {
+                Navigator.pushNamed(context, "/home/personalinfo");
+              },
+            ),
+            // ListTile(
+            //   title: Text(translateEng('Donate me')),
+            //   onTap: () async {
+            //     const url = 'https://www.buymeacoffee.com/hasanamkieh?new=1';
+            //     if (await canLaunch(url)) {
+            //       await launch(url);
+            //     } else {
+            //       throw 'Could not launch $url';
+            //     }
+            //   },
+            // ),
+          ],
+        ),
       );
     }
 
@@ -975,6 +977,21 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           });
           //print("index of ${course.subject.classCode} is $drawingIndex N $colSize");
 
+          String classroomStr = i < course.subject.classrooms.length ? deleteRepitions(course.subject.classrooms[i]).toString().replaceAll(RegExp("[\\[.*?\\]]"), "") : "";
+          if (classroomStr.isEmpty) {
+            for (int j = 0 ; j < course.subject.classrooms.length ; j++) {
+              if (classroomStr.isNotEmpty && course.subject.classrooms[j].isNotEmpty && deleteRepitions(course.subject.classrooms[j]).toString().replaceAll(RegExp("[\\[.*?\\]]"), "") != classroomStr) {
+                classroomStr = "";
+                break;
+              }
+              if (course.subject.classrooms[j].isNotEmpty) {
+                classroomStr = deleteRepitions(course.subject.classrooms[j]).toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+              }
+            }
+          }
+          //print("Of period $i of subject ${course.subject.classCode} has classrooms $classroomStr");
+
+          // XOXOXO
           coursesList.add(
             Positioned(child: TextButton(
               //clipBehavior: Clip.none,
@@ -995,7 +1012,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                                 fontSize: 11.0),
                           ),
                           TextSpan(
-                            text: (isCol ? "  " : "\n") + (i < course.subject.classrooms.length ? deleteRepitions(course.subject.classrooms[i]).toString().replaceAll(RegExp("[\\[.*?\\]]"), "") : ""),
+                            text: (isCol ? "  " : "\n") + classroomStr,
                             style: TextStyle(
                                 color: whiteThemeScheduleColors[colorIndex][1],
                                 fontSize: 9.0),

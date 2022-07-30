@@ -55,6 +55,8 @@ class AppTheme {
 
   Brightness keyboardTheme = Main.theme == ThemeMode.light ? Brightness.light : Brightness.dark;
 
+  Color hintTextColor = Colors.grey.shade500;
+
   AppTheme() {
     ;
   }
