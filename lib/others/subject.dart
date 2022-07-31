@@ -400,3 +400,12 @@ class CollisionData {
 
 }
 
+class SchedulerSubjectData { // used inside the schedule page: stores the chosen sections and whether it is allowed to be collided or not
+
+  bool allowCols; // allow collisions or not
+  List<int> sections;
+
+  SchedulerSubjectData({required this.allowCols, required this.sections});
+
+}
+

@@ -168,7 +168,7 @@ class SchedulerPageState extends State<SchedulerPage> {
                         icon: const Icon(Icons.search),
                         label: Text(translateEng("Find all possible schedules")),
                         onPressed: () {
-                          ;
+                          Navigator.pushNamed(context, "/home/scheduler/schedulerresult");
                         },
                       ),
                     ),

@@ -1095,9 +1095,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                     if (data[0] != -1) {
                       // If yes, then check if one of course1, course2 or the rest of the courses actually collide with the rest of the courses in the collision:
 
-                      Subject commonSub = data[1] == 1 ? course1.subject : course2.subject;
-                      int bgnHour = data[1] == 1 ? bgnHour1 : bgnHour2;
-                      int hours = data[1] == 1 ? hours1 : hours2;
                       //if (checkIfCommonCourseCollidesWithAll(commonSub, day1, bgnHour, data[0])) {
                         // if yes, then add the course that is NOT in common:
                       collisionsTemp[data[0]].subjects.add(data[1] == 2 ? course1.subject : course2.subject);

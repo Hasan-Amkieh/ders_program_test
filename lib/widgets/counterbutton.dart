@@ -4,7 +4,6 @@ class CounterButton extends TextButton {
 
   bool isIncrement;
 
-
   CounterButton({required this.isIncrement, required onPressed}) : super(
       onPressed: onPressed,
       child: Icon(isIncrement ? Icons.add : Icons.remove, color: Colors.white),

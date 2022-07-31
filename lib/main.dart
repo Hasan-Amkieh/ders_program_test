@@ -13,6 +13,7 @@ import 'package:ders_program_test/pages/no_internet_page.dart';
 import 'package:ders_program_test/pages/personalinfo.dart';
 import 'package:ders_program_test/pages/saved_schedules_page.dart';
 import 'package:ders_program_test/pages/scheduler_page.dart';
+import 'package:ders_program_test/pages/scheduler_result_page.dart';
 import 'package:ders_program_test/pages/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ders_program_test/webpage.dart';
@@ -417,6 +418,7 @@ Future main() async {
       "/home/savedschedules" : (context) => SavedSchedulePage(),
       "/home/personalinfo" : (context) => PersonalInfo(),
       "/home/scheduler" : (context) => SchedulerPage(),
+      "/home/scheduler/schedulerresult" : (context) => SchedulerResultPage(),
     },
   ));
 
