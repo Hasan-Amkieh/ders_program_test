@@ -4,9 +4,9 @@ import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:ders_program_test/language/dictionary.dart';
 import 'package:ders_program_test/others/subject.dart';
 import 'package:ders_program_test/pages/add_courses_page.dart';
+import 'package:ders_program_test/pages/scheduler_result_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:getwidget/components/checkbox/gf_checkbox.dart';
 
 import '../main.dart';
@@ -168,6 +168,20 @@ class SchedulerPageState extends State<SchedulerPage> {
                         icon: const Icon(Icons.search),
                         label: Text(translateEng("Find all possible schedules")),
                         onPressed: () {
+                          SchedulerResultPage.subjects = subjects;
+                          List<SchedulerSubjectData> list = [];
+                          List<int> sections = [];
+                          for (int i = 0 ; i < subjects.length ; i++) {
+                            sections = [];
+                            for (MapEntry<int, Subject> element in subjectsSections[i].value) {
+                              if (areSectionsShown[i].value[element.key -1]) {
+                                sections.add(element.key);
+                              }
+                            }
+                            //print("The sections of ${subjectsSections[i].key} are $sections and have cols permit of ${subjectsShown[i]}");
+                            list.add(SchedulerSubjectData(allowCols: subjectsShown[i], sections: sections));
+                          }
+                          SchedulerResultPage.subjectsData = list;
                           Navigator.pushNamed(context, "/home/scheduler/schedulerresult");
                         },
                       ),

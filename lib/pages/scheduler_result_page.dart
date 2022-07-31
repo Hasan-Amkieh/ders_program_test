@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
-import 'package:ders_program_test/pages/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +12,7 @@ import '../others/subject.dart';
 class SchedulerResultPage extends StatefulWidget {
 
   // to be filled before opening this page!
-  static late List<Subject> subjects;
+  static late List<Subject> subjects; // this has the class codes of the subjects, it does not have the section number
   static late List<SchedulerSubjectData> subjectsData; // referenced by the same index inside subjects
   List<Schedule> schedules = []; // to be filled up!
 
@@ -30,12 +29,72 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
 
   double width = (window.physicalSize / window.devicePixelRatio).width;
   double height = (window.physicalSize / window.devicePixelRatio).height;
+  int currentScheduleIndex = 0;
+
+  @override
+  void initState() {
+
+    super.initState();
+
+    // finding all the possible schedules:
+    chosenSections = [];
+    findPossibleSchedule(0);
+    //print("All the schedules are: \n\n");
+    //widget.schedules.forEach((element) { print("${element.scheduleName} of courses: "); element.scheduleCourses.forEach((element) {print("${element.subject.classCode}");}); });
+
+  }
+
+  List<int> chosenSections = [];
+
+  void findPossibleSchedule(int subjectIndex) { // Recursion is used here:
+
+    for (int sectionIndex = 0 ; sectionIndex < SchedulerResultPage.subjectsData[subjectIndex].sections.length ; sectionIndex++) { // loop through each section
+      // SchedulerResultPage.subjectsData[subjectIndex].sections[sectionIndex]
+      if (subjectIndex != (SchedulerResultPage.subjects.length - 1)) { // if it is not the last subject in the list of subjects, then go deeper:
+
+        chosenSections.add(SchedulerResultPage.subjectsData[subjectIndex].sections[sectionIndex]);
+        findPossibleSchedule(subjectIndex + 1);
+
+      } else { // make a schedule:
+
+        //chosenSections.add(SchedulerResultPage.subjectsData[subjectIndex].sections[sectionIndex]); // Add the current subject
+        List<Course> courses = [];
+        Subject sub = Main.emptySubject;
+        chosenSections.add(SchedulerResultPage.subjectsData[subjectIndex].sections[sectionIndex]);
+        print("Doing search inside $chosenSections");
+        for (int index = 0 ; index < chosenSections.length ; index++) { // translate the sections into their subjects:
+          for (int i = 0 ; i < Main.facultyData.subjects.length ; i++) {
+            if (Main.facultyData.subjects[i].getClassCodeWithoutSectionNumber() == SchedulerResultPage.subjects[index].classCode
+                && Main.facultyData.subjects[i].getSection() == chosenSections[index]) {
+              print("Adding ${Main.facultyData.subjects[i]}");
+              sub = Main.facultyData.subjects[i];
+            }
+          }
+          courses.add(Course(note: "", subject: sub));
+        }
+        if (chosenSections.isNotEmpty) {
+          chosenSections.removeLast();
+        }
+
+        // TODO: Check if it the schedule has allowable collisions or not:
+        widget.schedules.add(Schedule(scheduleName: "Schedule - " + widget.schedules.length.toString(), scheduleCourses: courses));
+
+      }
+    }
+
+    if (chosenSections.isNotEmpty) {
+      chosenSections.removeLast();
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
 
+    ;
+
     return Scaffold(
-      backgroundColor: Main.appTheme.headerBackgroundColor,
+      backgroundColor: Main.appTheme.scaffoldBackgroundColor,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.1),
         child: AppBar(
@@ -44,12 +103,15 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
       ),
       body: Column(
         children: [
-          Row( // remove the schedule or the save the schedule commands
+          widget.schedules.isEmpty ? Container() : Row( // remove the schedule or the save the schedule commands
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextButton.icon(
                 icon: Icon(Icons.remove_circle, color: Colors.red),
                 label: Text(translateEng("Remove Schedule"), style: TextStyle(color: Colors.red)),
+                style: ButtonStyle(
+                  overlayColor: MaterialStateProperty.all(Colors.red.withOpacity(0.2)),
+                ),
                 onPressed: () {
 
                 },
@@ -66,7 +128,18 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
               ),
             ],
           ),
-          Row( // counter of the schedules
+          widget.schedules.isEmpty ? Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error, color: Colors.grey.shade700, size: (IconTheme.of(context).size ?? 64) * 2),
+                  SizedBox(height: height * 0.05),
+                  Text(translateEng("No possible schedules were found!"),textAlign: TextAlign.center, style: TextStyle(color: Main.appTheme.titleTextColor, fontSize: 18)),
+                  SizedBox(height: height * 0.4),
+                ],
+              ),
+          )
+              : Row( // counter of the schedules
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextButton(
@@ -75,11 +148,17 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
                   padding: MaterialStateProperty.all(EdgeInsets.zero),
                 ),
                 onPressed: () {
-
+                  setState(() {
+                    if (currentScheduleIndex == 0) {
+                      currentScheduleIndex = widget.schedules.length - 1;
+                    } else {
+                      currentScheduleIndex--;
+                    }
+                  });
                 },
               ),
               SizedBox(width: width * 0.03),
-              Text("1 / 40", style: TextStyle(color: Main.appTheme.titleTextColor)),
+              Text((currentScheduleIndex + 1).toString() + " / " + widget.schedules.length.toString(), style: TextStyle(color: Main.appTheme.titleTextColor)),
               SizedBox(width: width * 0.03),
               TextButton(
                 child: Icon(Icons.chevron_right, color: Colors.blue),
@@ -87,12 +166,22 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
                   padding: MaterialStateProperty.all(EdgeInsets.zero),
                 ),
                 onPressed: () {
-
+                  setState(() {
+                    if (currentScheduleIndex + 1 == widget.schedules.length) {
+                      currentScheduleIndex = 0;
+                    } else {
+                      currentScheduleIndex++;
+                    }
+                  });
                 },
               ),
             ],
           ),
-
+          Expanded(
+            child: SingleChildScrollView(
+              child: buildSchedule(currentScheduleIndex),
+            ),
+          ),
         ],
       ),
     );
