@@ -399,6 +399,11 @@ Future main() async {
     Main.schedules.add(Schedule(scheduleName: translateEng("Default Schedule"), scheduleCourses: []));
   }
 
+  // after the scheudles list has been filled, do this:
+  if (Main.currentScheduleIndex >= Main.schedules.length) { // precation for preventing errors:
+    Main.currentScheduleIndex = Main.schedules.length - 1;
+  }
+
   if (Main.forceUpdate) { // if we are going to update then check for internet:
     await NoInternetPageState.checkInternet();
   }

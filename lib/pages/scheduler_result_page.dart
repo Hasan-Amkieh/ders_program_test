@@ -76,8 +76,37 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
           chosenSections.removeLast();
         }
 
-        // TODO: Check if it the schedule has allowable collisions or not:
-        widget.schedules.add(Schedule(scheduleName: "Schedule - " + widget.schedules.length.toString(), scheduleCourses: courses));
+        bool toAdd = true;
+
+        List<Subject> notToCollideSubjects = [];
+        for (int i = 0 ; i < SchedulerResultPage.subjectsData.length ; i++) {
+          if (!SchedulerResultPage.subjectsData[i].allowCols) {
+            notToCollideSubjects.add(SchedulerResultPage.subjects[i]);
+          }
+        }
+
+        List<CollisionData> collisions = findCourseCollisions(courses);
+        for (CollisionData col in collisions) {
+
+          // check notToCollideSubjects, if a course inside the col var had a subject inside notToCollide subs then, make toAdd false and break
+          for (int i = 0 ; i < col.subjects.length ; i++) {
+            for (int j = 0 ; j < notToCollideSubjects.length ; j++) {
+              if (col.subjects[i].getClassCodeWithoutSectionNumber() == notToCollideSubjects[j].getClassCodeWithoutSectionNumber()) {
+                toAdd = false;
+                break;
+              }
+            }
+          }
+
+          if (!toAdd) {
+            break;
+          }
+
+        }
+
+        if (toAdd) {
+          widget.schedules.add(Schedule(scheduleName: "Schedule - " + widget.schedules.length.toString(), scheduleCourses: courses));
+        }
 
       }
     }
@@ -397,7 +426,7 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
 
     widget.schedules[scheduleIndex].scheduleCourses.forEach((element) {print(element.subject.toString());});
     // First find all the collisions:
-    List<CollisionData> collisions = findCourseCollisions(scheduleIndex);
+    List<CollisionData> collisions = findCourseCollisionsWithIndex(scheduleIndex);
     print("All the collisions are: ");
     //collisions.forEach((col) { print("\nCOLLISION:"); col.subjects.forEach((element) {print(element.classCode);}); });
 
@@ -522,18 +551,24 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
 
   List<CollisionData> collisionsTemp = [];
 
-  List<CollisionData> findCourseCollisions(int scheduleIndex) {
+  List<CollisionData> findCourseCollisionsWithIndex(int scheduleIndex) {
+
+    return findCourseCollisions(widget.schedules[scheduleIndex].scheduleCourses);
+
+  }
+
+  List<CollisionData> findCourseCollisions(List<Course> courses) {
 
     collisionsTemp = [];
 
-    widget.schedules[scheduleIndex].scheduleCourses.forEach((course1) {
+    courses.forEach((course1) {
 
       for (int i1 = 0 ; i1 < course1.subject.days.length ; i1++) {
         for (int j1 = 0 ; j1 < course1.subject.days[i1].length ; j1++) {
 
           int day1 = course1.subject.days[i1][j1], bgnHour1 = course1.subject.bgnPeriods[i1][j1], hours1 = course1.subject.hours[i1];
 
-          widget.schedules[scheduleIndex].scheduleCourses.forEach((course2) {
+          courses.forEach((course2) {
 
             // Check if they are not the same:
             if (course1.subject.isEqual(course2.subject)) {

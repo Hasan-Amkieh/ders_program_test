@@ -221,11 +221,10 @@ class SchedulerPageState extends State<SchedulerPage> {
 
       List<MapEntry<int, bool>> sections = [];
 
-      print("SubjectSections var: ${subjectsSections[secIndex]} of index $secIndex");
+      //print("SubjectSections var: ${subjectsSections[secIndex]} of index $secIndex");
 
       for (MapEntry<int, Subject> element in subjectsSections[secIndex].value) {
-        print("Checking ${areSectionsShown[secIndex]}");
-
+        //print("Checking ${areSectionsShown[secIndex]}");
         sections.add(MapEntry(element.key, areSectionsShown[secIndex].value[element.key -1]));
       }
 
@@ -247,9 +246,9 @@ class SchedulerPageState extends State<SchedulerPage> {
             sectionsStr += "," + sections[secNum].key.toString();
           }
         }
-        print("SectionStr before : $sectionsStr");
+        //print("SectionStr before : $sectionsStr");
         sectionsStr = sectionsStr.substring(1, sectionsStr.length); // remove the last comma
-        print("SectionStr after : $sectionsStr");
+        //print("SectionStr after : $sectionsStr");
       } else { // otherwise it is only one section:
         for (int secNum = 0 ; secNum < sections.length ; secNum++) {
           if (sections[secNum].value) {
@@ -273,33 +272,45 @@ class SchedulerPageState extends State<SchedulerPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(subjects[index].classCode, style: TextStyle(color: Main.appTheme.titleTextColor)),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+
+        ],
+      ),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          areThereSecs ? TextButton(
+            child: Text(translateEng("Sections") + ": " + sectionsStr, style: TextStyle(color: Colors.blue, fontSize: 14)),
+            onPressed: () {
+              showAdaptiveActionSheet(
+                bottomSheetColor: Main.appTheme.scaffoldBackgroundColor,
+                context: context,
+                title: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                    return buildSectionList(index, width, height);
+                  },
+                ),
+                actions: [],
+                cancelAction: CancelAction(title: Text(translateEng("Close"))),
+              ).then((value) => setState(() {}));
+            },
+          ) : Container(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              areThereSecs ? TextButton(
-                child: Text(translateEng("Sections") + ": " + sectionsStr, style: TextStyle(color: Colors.blue, fontSize: 14)),
+              TextButton(
+                child: const Icon(Icons.delete_forever, color: Colors.red),
+                style: ButtonStyle(
+                  overlayColor: MaterialStateProperty.all(Colors.red.withOpacity(0.2)),
+                ),
                 onPressed: () {
-                  print("BUILDING!!!");
-                  // showModalBottomSheet(context: context, builder: (context) {
-                  //   return StatefulBuilder(
-                  //     builder: (BuildContext context, StateSetter setState) {
-                  //       return buildSectionList(index, width, height);
-                  //     },
-                  //   );
-                  // });
-                  showAdaptiveActionSheet(
-                    bottomSheetColor: Main.appTheme.scaffoldBackgroundColor,
-                    context: context,
-                    title: StatefulBuilder(
-                      builder: (BuildContext context, StateSetter setState) {
-                        return buildSectionList(index, width, height);
-                      },
-                    ),
-                    actions: [],
-                    cancelAction: CancelAction(title: Text(translateEng("Close"))),
-                  ).then((value) => setState(() {}));
+                  setState(() {
+                    subjects.removeAt(index);
+                    subjectsShown.removeAt(index);
+                    subjectsSections.removeAt(index);
+                    areSectionsShown.removeAt(index);
+                  });
                 },
-              ) : Container(),
+              ),
               TextButton(
                 style: ButtonStyle(padding: MaterialStateProperty.all(EdgeInsets.zero)),
                 onPressed: () {
@@ -308,6 +319,7 @@ class SchedulerPageState extends State<SchedulerPage> {
                   });
                 },
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(translateEng(subjectsShown[index] ? "Permit Conflicts" : "Forbid Conflicts"), style: TextStyle(color: subjectsShown[index] ? Colors.red : Colors.blue, fontSize: 14)),
                     GFCheckbox(
@@ -328,9 +340,9 @@ class SchedulerPageState extends State<SchedulerPage> {
               ),
             ],
           ),
+
         ],
       ),
-
     );
 
   }
