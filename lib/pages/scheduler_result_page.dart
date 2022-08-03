@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../language/dictionary.dart';
 import '../main.dart';
@@ -15,6 +16,7 @@ class SchedulerResultPage extends StatefulWidget {
   static late List<Subject> subjects; // this has the class codes of the subjects, it does not have the section number
   static late List<SchedulerSubjectData> subjectsData; // referenced by the same index inside subjects
   List<Schedule> schedules = []; // to be filled up!
+  List<bool> isSaved = [];
 
   @override
   State<StatefulWidget> createState() {
@@ -48,6 +50,10 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
 
   void findPossibleSchedule(int subjectIndex) { // Recursion is used here:
 
+    if (SchedulerResultPage.subjectsData[subjectIndex].sections.isEmpty) { // then this course has no sections:
+      SchedulerResultPage.subjectsData[subjectIndex].sections.add(0);
+    }
+
     for (int sectionIndex = 0 ; sectionIndex < SchedulerResultPage.subjectsData[subjectIndex].sections.length ; sectionIndex++) { // loop through each section
       // SchedulerResultPage.subjectsData[subjectIndex].sections[sectionIndex]
       if (subjectIndex != (SchedulerResultPage.subjects.length - 1)) { // if it is not the last subject in the list of subjects, then go deeper:
@@ -55,19 +61,21 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
         chosenSections.add(SchedulerResultPage.subjectsData[subjectIndex].sections[sectionIndex]);
         findPossibleSchedule(subjectIndex + 1);
 
-      } else { // make a schedule:
+      } else { // otherwise make a schedule:
 
-        //chosenSections.add(SchedulerResultPage.subjectsData[subjectIndex].sections[sectionIndex]); // Add the current subject
+        print("DOING ELSE");
+
         List<Course> courses = [];
         Subject sub = Main.emptySubject;
         chosenSections.add(SchedulerResultPage.subjectsData[subjectIndex].sections[sectionIndex]);
         print("Doing search inside $chosenSections");
         for (int index = 0 ; index < chosenSections.length ; index++) { // translate the sections into their subjects:
           for (int i = 0 ; i < Main.facultyData.subjects.length ; i++) {
-            if (Main.facultyData.subjects[i].getClassCodeWithoutSectionNumber() == SchedulerResultPage.subjects[index].classCode
-                && Main.facultyData.subjects[i].getSection() == chosenSections[index]) {
-              print("Adding ${Main.facultyData.subjects[i]}");
-              sub = Main.facultyData.subjects[i];
+            if (Main.facultyData.subjects[i].getClassCodeWithoutSectionNumber() == SchedulerResultPage.subjects[index].classCode) {
+              if (Main.facultyData.subjects[i].getSection() == chosenSections[index] || chosenSections[index] == 0) {
+                print("Adding ${Main.facultyData.subjects[i]}");
+                sub = Main.facultyData.subjects[i];
+              }
             }
           }
           courses.add(Course(note: "", subject: sub));
@@ -105,6 +113,7 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
         }
 
         if (toAdd) {
+          widget.isSaved.add(false);
           widget.schedules.add(Schedule(scheduleName: "Schedule - " + widget.schedules.length.toString(), scheduleCourses: courses));
         }
 
@@ -136,23 +145,91 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextButton.icon(
-                icon: Icon(Icons.remove_circle, color: Colors.red),
-                label: Text(translateEng("Remove Schedule"), style: TextStyle(color: Colors.red)),
+                icon: const Icon(Icons.remove_circle, color: Colors.red),
+                label: Text(translateEng("Remove Schedule"), style: const TextStyle(color: Colors.red)),
                 style: ButtonStyle(
                   overlayColor: MaterialStateProperty.all(Colors.red.withOpacity(0.2)),
                 ),
                 onPressed: () {
-
+                  setState(() {
+                    widget.isSaved.removeAt(currentScheduleIndex);
+                    widget.schedules.removeAt(currentScheduleIndex);
+                  });
                 },
               ),
               SizedBox(
                 width: width * 0.03,
               ),
-              TextButton.icon(
-                icon: Icon(Icons.save, color: Colors.blue),
+              widget.isSaved[currentScheduleIndex] ? Container() : TextButton.icon(
+                icon: const Icon(Icons.save, color: Colors.blue),
                 label: Text(translateEng("Save Schedule")),
                 onPressed: () {
+                  showDialog(context: context, builder: (context) {
+                    TextEditingController nameController = TextEditingController(); // Main.schedules[scheduleIndex].scheduleName
 
+                    return AlertDialog(
+                      backgroundColor: Main.appTheme.scaffoldBackgroundColor,
+                      title: Text(translateEng("Nam the Schedule"), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                      content: Builder(
+                          builder: (context) {
+                            return SizedBox(
+                              width: width * 1,
+                              height: height * 0.25,
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: width * 0.6,
+                                        child: TextFormField(controller: nameController,
+                                          cursorColor: Main.appTheme.titleTextColor,
+                                          style: TextStyle(color: Main.appTheme.titleTextColor),
+                                          decoration: InputDecoration(
+                                            hintText: translateEng("e.g. Fall Semester"),
+                                            hintStyle: TextStyle(color: Main.appTheme.hintTextColor),
+                                            labelText: "Schedule Name",
+                                            labelStyle: TextStyle(color: Main.appTheme.titleTextColor),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                      ),
+                      actions: [
+                        TextButton(
+                          child: Text(translateEng("SAVE")),
+                          onPressed: () {
+                            widget.schedules[currentScheduleIndex].scheduleName = nameController.text;
+                            widget.isSaved[currentScheduleIndex] = true;
+                            Main.schedules.add(widget.schedules[currentScheduleIndex]); // widget.schedules[currentScheduleIndex]
+                            Navigator.pop(context);
+                          },
+                        ),
+                        TextButton(
+                          child: Text(translateEng("CANCEL")),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                    );
+                  }).then((value) {
+                    Fluttertoast.showToast(
+                        msg: translateEng("schedule was saved"),
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.blue,
+                        textColor: Colors.white,
+                        fontSize: 12.0
+                    );
+                  });
                 },
               ),
             ],
@@ -172,7 +249,7 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextButton(
-                child: Icon(Icons.chevron_left, color: Colors.blue),
+                child: const Icon(Icons.chevron_left, color: Colors.blue),
                 style: ButtonStyle(
                   padding: MaterialStateProperty.all(EdgeInsets.zero),
                 ),
@@ -190,7 +267,7 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
               Text((currentScheduleIndex + 1).toString() + " / " + widget.schedules.length.toString(), style: TextStyle(color: Main.appTheme.titleTextColor)),
               SizedBox(width: width * 0.03),
               TextButton(
-                child: Icon(Icons.chevron_right, color: Colors.blue),
+                child: const Icon(Icons.chevron_right, color: Colors.blue),
                 style: ButtonStyle(
                   padding: MaterialStateProperty.all(EdgeInsets.zero),
                 ),
@@ -206,7 +283,7 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
               ),
             ],
           ),
-          Expanded(
+          widget.schedules.isEmpty ? Container() : Expanded(
             child: SingleChildScrollView(
               child: buildSchedule(currentScheduleIndex),
             ),
@@ -424,10 +501,10 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
       ),
     ];
 
-    widget.schedules[scheduleIndex].scheduleCourses.forEach((element) {print(element.subject.toString());});
+    //widget.schedules[scheduleIndex].scheduleCourses.forEach((element) {print(element.subject.toString());});
     // First find all the collisions:
     List<CollisionData> collisions = findCourseCollisionsWithIndex(scheduleIndex);
-    print("All the collisions are: ");
+    //print("All the collisions are: ");
     //collisions.forEach((col) { print("\nCOLLISION:"); col.subjects.forEach((element) {print(element.classCode);}); });
 
     int colorIndex = -1;

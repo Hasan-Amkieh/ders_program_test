@@ -29,7 +29,7 @@ class SchedulerPageState extends State<SchedulerPage> {
 
   List<Subject> subjects = [], subjectsToAdd = [];
   List<MapEntry<String, List<MapEntry<int, Subject>>>> subjectsSections = []; // sample: [{"CMPE114" : [{1:subjectOfSec1}, {2:subjectOfSec2}]}] and so on...
-  List<MapEntry<String, List<bool>>> areSectionsShown = [];
+  List<MapEntry<String, Map<int, bool>>> areSectionsShown = [];
   List<bool> subjectsShown = [];
 
   @override
@@ -65,16 +65,11 @@ class SchedulerPageState extends State<SchedulerPage> {
         //Map<int, Subject> secToSubject = {};
         for (Subject sub in Main.facultyData.subjects) {
           //print("Checking if ${sub.classCode} has sections or not!");
-          if (sub.getClassCodeWithoutSectionNumber() == element.classCode && sub.getClassCodeWithoutSectionNumber() != sub.classCode) {
+          if (sub.getClassCodeWithoutSectionNumber() == element.classCode && sub.getClassCodeWithoutSectionNumber() != sub.classCode) { // if sub has sections:
             print("${sub.classCode} has a section of ${sub.getSection()}!");
             if (sub.getSection() > maxSection) {
               maxSection = sub.getSection();
             }
-            // TEST:
-            // if (sub.classCode.contains("CMPE114") && sub.getSection() == 1) {
-            //   print("Debug mode!");
-            // }
-            // TEST;
             bool isFound = false;
             int secIndex = 0;
             for (int j = 0 ; j < subjectsSections.length ; j++) { // sample: [{"CMPE114" : [{1:subjectOfSec1}, {2:subjectOfSec2}]}] and so on...
@@ -85,19 +80,30 @@ class SchedulerPageState extends State<SchedulerPage> {
               }
             }
             if (!isFound) {
+              //print("*** adding ${sub.getClassCodeWithoutSectionNumber()} ***");
               subjectsSections.add(MapEntry(sub.getClassCodeWithoutSectionNumber(), []));
-              areSectionsShown.add(MapEntry(sub.getClassCodeWithoutSectionNumber(), []));
+              areSectionsShown.add(MapEntry(sub.getClassCodeWithoutSectionNumber(), <int, bool>{}));
               // The var secIndex has to be reset bcs now there is a new element!
               secIndex = areSectionsShown.length - 1;
             }
-            //print("${sub.getClassCodeWithoutSectionNumber() == subjectsSections[secIndex].key} for the course ${sub.classCode}");
-            if (sub.getClassCodeWithoutSectionNumber() == subjectsSections[secIndex].key && subjectsSections[secIndex].value.length < maxSection) {
+            // if (secIndex >= subjectsSections.length) {
+            //   continue;
+            // }
+            print("index of $secIndex");
+
+            if (sub.getClassCodeWithoutSectionNumber() == subjectsSections[secIndex ].key && subjectsSections[secIndex].value.length < maxSection && maxSection != 0) {
               subjectsSections[secIndex].value.add(MapEntry(sub.getSection(), sub));
-              areSectionsShown[secIndex].value.add(true);
+              areSectionsShown[secIndex].value.addAll({sub.getSection() : true});
               print("DOING SUBJECT: $sub OF CLASSCODE ${sub.classCode}");
               print("Adding section ${sub.getSection()} for subject ${sub.getClassCodeWithoutSectionNumber()}");
             }
             //secToSubject.addEntries([MapEntry(sub.getSection(), sub)]);
+          } else if (sub.getClassCodeWithoutSectionNumber() == element.classCode) { // if the sub does not have sections:
+
+            print("*** adding ${sub.getClassCodeWithoutSectionNumber()} ***");
+            subjectsSections.add(MapEntry(sub.getClassCodeWithoutSectionNumber(), []));
+            areSectionsShown.add(MapEntry(sub.getClassCodeWithoutSectionNumber(), <int, bool>{}));
+
           }
         }
 
@@ -171,16 +177,20 @@ class SchedulerPageState extends State<SchedulerPage> {
                           SchedulerResultPage.subjects = subjects;
                           List<SchedulerSubjectData> list = [];
                           List<int> sections = [];
+                          int skipped = 0;
                           for (int i = 0 ; i < subjects.length ; i++) {
                             sections = [];
+                            print("DOING ${subjectsSections[i].key} with ${subjectsSections[i].value}");
                             for (MapEntry<int, Subject> element in subjectsSections[i].value) {
-                              if (areSectionsShown[i].value[element.key -1]) {
+                              if (areSectionsShown[i].value.containsKey(element.key) && areSectionsShown[i].value[element.key] as bool) {
                                 sections.add(element.key);
                               }
                             }
-                            //print("The sections of ${subjectsSections[i].key} are $sections and have cols permit of ${subjectsShown[i]}");
                             list.add(SchedulerSubjectData(allowCols: subjectsShown[i], sections: sections));
                           }
+                          list.forEach((element) {
+                            print("${element.sections} has value of cols of ${element.allowCols}");
+                          });
                           SchedulerResultPage.subjectsData = list;
                           Navigator.pushNamed(context, "/home/scheduler/schedulerresult");
                         },
@@ -225,7 +235,9 @@ class SchedulerPageState extends State<SchedulerPage> {
 
       for (MapEntry<int, Subject> element in subjectsSections[secIndex].value) {
         //print("Checking ${areSectionsShown[secIndex]}");
-        sections.add(MapEntry(element.key, areSectionsShown[secIndex].value[element.key -1]));
+        if (areSectionsShown[secIndex].value.containsKey(element.key)) {
+          sections.add(MapEntry(element.key, areSectionsShown[secIndex].value[element.key] as bool));
+        } //
       }
 
       int numOfFalse = 0;
@@ -306,8 +318,20 @@ class SchedulerPageState extends State<SchedulerPage> {
                   setState(() {
                     subjects.removeAt(index);
                     subjectsShown.removeAt(index);
+                    bool hasSecs = false;
+                    for (Subject sub in Main.facultyData.subjects) {
+                      if (sub.getClassCodeWithoutSectionNumber() == subjectsSections[index].key) { // if it is the class we are looking for:
+                        if (sub.getClassCodeWithoutSectionNumber() != sub.classCode) { // if it has sections:
+                          hasSecs = true;
+                          break;
+                        }
+                      }
+                    }
+                    // if (hasSecs) { // does this course subjectsSections[index].key have sections?
+                    //   areSectionsShown.removeAt(index); // only for subs with sections
+                    // }
+                    areSectionsShown.removeAt(index); // only for subs with sections
                     subjectsSections.removeAt(index);
-                    areSectionsShown.removeAt(index);
                   });
                 },
               ),
@@ -364,8 +388,14 @@ class SchedulerPageState extends State<SchedulerPage> {
       }
     }
 
+    print("Sections are " + secToSubject.toString());
+
     for (int sec = 1 ; sec <= maxSection ; sec++) {
 
+      if (!secToSubject.containsKey(sec)) {
+        continue;
+      }
+      print("doing section $sec of length ${secToSubject}");
       String deps = secToSubject[sec]!.departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
       List<String> temp = deps.split(",");
       for (int i = 0 ; i < temp.length ; i++) {
@@ -400,6 +430,12 @@ class SchedulerPageState extends State<SchedulerPage> {
       // TODO: Make the current department highlighted!
       // // TODO: And make it by default chosen if there deps list is not empty, if it is empty then choose it
 
+      //print("The length of shown vars is : ${areSectionsShown[subIndex].value.length}");
+      if (!areSectionsShown[subIndex].value.containsKey(sec)) {
+        print("STOP HERE of index $subIndex of ${areSectionsShown[subIndex]}");
+        continue;
+      }
+
       actions.add(
         Container(
           margin: EdgeInsets.fromLTRB(0, 0, 0, height * 0.03),
@@ -417,10 +453,10 @@ class SchedulerPageState extends State<SchedulerPage> {
                   StatefulBuilder(
                     builder: (BuildContext context, StateSetter setState) {
                       return Checkbox(
-                        value: areSectionsShown[subIndex].value[sec - 1],
+                        value: areSectionsShown[subIndex].value[sec],
                         onChanged: (value) {
                           print("The new value is: $value");
-                          areSectionsShown[subIndex].value[sec - 1] = value ?? true;
+                          areSectionsShown[subIndex].value[sec] = value ?? true;
                           setState(() {
                             //areSectionsShown[subIndex].value[sec - 1] = value ?? true;
                             //Navigator.pop(context);
