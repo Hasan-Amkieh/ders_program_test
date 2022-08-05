@@ -61,8 +61,7 @@ const Map<String, String> lawDeps = {
 };
 
 const Map<String, String> businessDeps = {
-  "ECON" : "Economics (English)", // In English
-  "IKT" : "Economics (Turkish)", // In turkish
+  "ECON" : "Economics", // In English
   "IR" : "International Relations",
   "KAM" : "Political Science & Business Admin.",
   "LOG" : "International Trade and Logistics",
@@ -88,7 +87,7 @@ String getFacultyLink(String depName) {
   } else if (lawDeps.keys.contains(depName)) {
     return "https://atilimlaw.edupage.org/timetable/?&lang=tr";
   } else if (businessDeps.keys.contains(depName)) {
-    return "https://atilimmgmt.edupage.org/timetable/?&lang=tr";
+    return "https://atilimmgmt.edupage.org/timetable/view.php?num=23&subject=*372";
   }
 
   return "";

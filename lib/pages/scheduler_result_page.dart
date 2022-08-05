@@ -63,8 +63,6 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
 
       } else { // otherwise make a schedule:
 
-        print("DOING ELSE");
-
         List<Course> courses = [];
         Subject sub = Main.emptySubject;
         chosenSections.add(SchedulerResultPage.subjectsData[subjectIndex].sections[sectionIndex]);

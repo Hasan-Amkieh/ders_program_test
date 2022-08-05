@@ -256,7 +256,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                           SizedBox(
                               width: width * 0.6,
                               child: Main.isEditingCourse ? Text(widget.subject.classCode, style: TextStyle(color: Main.appTheme.titleIconColor)) :
-                              TextFieldWidget(text: "", onChanged: (str) { setState(() {widget.subject.classCode = str;}); }, hintText: translateEng("e.g.   ENG102"))
+                              TextFieldWidget(text: "", onChanged: (str) { setState(() {widget.subject.classCode = str;}); }, hintText: "e.g.   ENG102")
                           ),
                         ],
                       ),

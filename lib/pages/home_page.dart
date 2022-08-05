@@ -375,7 +375,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                         isIncrement: false,
                         onPressed: () {
                           setState(() {
-                            if (Main.hourUpdate == 12) return;
+                            if (Main.hourUpdate == 24) return;
                             Main.hourUpdate--;
                           });
                         },
@@ -409,7 +409,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                         isIncrement: true,
                         onPressed: () {
                           setState(() {
-                            if (Main.hourUpdate == 24) return;
+                            if (Main.hourUpdate == 48) return;
                             Main.hourUpdate++;
                           });
                         },

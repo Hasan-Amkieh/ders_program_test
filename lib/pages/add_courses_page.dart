@@ -106,7 +106,7 @@ class AddCoursesPageState extends State<AddCoursesPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(translateEng("Show courses only for "), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                  Text(translateEng("Show courses only for"), style: TextStyle(color: Main.appTheme.titleTextColor)),
                   DropdownButton<String>(
                     dropdownColor: Main.appTheme.scaffoldBackgroundColor,
                     value: depToSearch,

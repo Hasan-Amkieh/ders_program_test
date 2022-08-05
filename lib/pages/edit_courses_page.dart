@@ -315,7 +315,7 @@ class EditCoursePageState extends State<EditCoursePage> {
                               );
                         }),
                       ],
-                      cancelAction: CancelAction(title: const Text('Cancel'), onPressed: () {
+                      cancelAction: CancelAction(title: Text(translateEng('Cancel')), onPressed: () {
                         notesController.text = Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).note;
                         Navigator.pop(context);
                       }),
@@ -414,7 +414,7 @@ class EditCoursePageState extends State<EditCoursePage> {
                       ],
                     ),
                     actions: [],
-                    cancelAction: CancelAction(title: const Text('Close')),
+                    cancelAction: CancelAction(title: Text(translateEng('Close'))),
                   );
 
                 } else if (mode == 1) { // edit

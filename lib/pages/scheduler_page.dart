@@ -480,7 +480,7 @@ class SchedulerPageState extends State<SchedulerPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          translateEng("Only for "),
+                          translateEng("Only for the following departments"),
                           style: TextStyle(color: Main.appTheme.titleTextColor),
                         ),
                         SizedBox(

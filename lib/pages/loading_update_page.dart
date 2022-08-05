@@ -6,11 +6,11 @@ import 'package:restart_app/restart_app.dart';
 import '../language/dictionary.dart';
 import '../main.dart';
 
-List<String> msgs = ["CONNECTING TO THE INTERNET", // state 0
-  "CONNECTING TO THE SERVER", // 1
-  "RETRIEVING DATA", // 2
-  "CLASSIFYING DATA", // 3
-  "STORING INFO", // 4
+List<String> msgs = [translateEng("CONNECTING TO THE INTERNET"), // state 0
+translateEng("CONNECTING TO THE SERVER"), // 1
+  translateEng("RETRIEVING DATA"), // 2
+  translateEng("CLASSIFYING DATA"), // 3
+  translateEng("STORING INFO"), // 4
 ];
 
 class LoadingUpdate extends StatefulWidget {
@@ -107,7 +107,7 @@ class LoadingUpdateState extends State<LoadingUpdate> {
           Container(
             margin: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * 0.2, 0, MediaQuery.of(context).size.width * 0.2, 0),
             child: TextButton.icon(onPressed: WebpageState.doNotRestart ? null : () => Restart.restartApp(),
-                icon: const Icon(Icons.restart_alt, color: Colors.white,), label: Text("RESTART UPDATE", style: txtStyle), style: ButtonStyle(overlayColor: MaterialStateProperty.resolveWith((states) {
+                icon: const Icon(Icons.restart_alt, color: Colors.white,), label: Text(translateEng("RESTART UPDATE"), style: txtStyle), style: ButtonStyle(overlayColor: MaterialStateProperty.resolveWith((states) {
                   return Colors.blue.shade300;
                 }))),
           ),

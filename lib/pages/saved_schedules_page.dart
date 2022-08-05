@@ -122,7 +122,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                       title: Text(Main.schedules[scheduleIndex].scheduleName, style: TextStyle(fontWeight: FontWeight.bold, color: Main.appTheme.titleTextColor)),
                       androidBorderRadius: 30,
                       actions: buildBottomSheetActions(scheduleIndex),
-                      cancelAction: CancelAction(title: const Text('Close')),// onPressed parameter is optional by default will dismiss the ActionSheet
+                      cancelAction: CancelAction(title: Text(translateEng('Close'))),// onPressed parameter is optional by default will dismiss the ActionSheet
                     );
                   },
                 ),
@@ -404,7 +404,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
           }).then((value) {
             Navigator.pop(context);
             Fluttertoast.showToast(
-                msg: translateEng("Name was changed to ") + Main.schedules[scheduleIndex].scheduleName,
+                msg: translateEng("The name was changed"),
                 toastLength: Toast.LENGTH_SHORT,
                 gravity: ToastGravity.BOTTOM,
                 timeInSecForIosWeb: 1,
