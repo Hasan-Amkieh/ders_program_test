@@ -75,18 +75,18 @@ const Map<String, String> businessDeps = {
 String getFacultyLink(String depName) {
 
   if (engineeringDeps.keys.contains(depName)) {
-    return "https://atilimengr.edupage.org/timetable/?&lang=tr";
+    return "https://atilimengr.edupage.org/timetable/view.php?num=22&class=*2";
   } else if (civilAviationDeps.keys.contains(depName)) {
-    return "https://atilimcav.edupage.org/timetable/?&lang=tr";
+    return "https://atilimcav.edupage.org/timetable/view.php?num=20&class=-84";
   } else if (healthSciencesDeps.keys.contains(depName)) {
-    return "https://atilimhlth.edupage.org/timetable/?&lang=tr";
+    return "https://atilimhlth.edupage.org/timetable/view.php?num=12&class=*1";
   } else if (artsnScienceDeps.keys.contains(depName)) {
-    return "https://atilimartsci.edupage.org/timetable/?&lang=tr";
+    return "https://atilimartsci.edupage.org/timetable/view.php?num=22&subject=-279";
   } else if (fineArtsDeps.keys.contains(depName)) {
-    return "https://atilimgstm.edupage.org/timetable/?&lang=tr";
+    return "https://atilimgstm.edupage.org/timetable/view.php?num=19&class=-119";
   } else if (lawDeps.keys.contains(depName)) {
     return "https://atilimlaw.edupage.org/timetable/?&lang=tr";
-  } else if (businessDeps.keys.contains(depName)) {
+  } else if (businessDeps.keys.contains(depName)) { //
     return "https://atilimmgmt.edupage.org/timetable/view.php?num=23&subject=*372";
   }
 

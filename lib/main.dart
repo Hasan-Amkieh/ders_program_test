@@ -99,6 +99,11 @@ class Main {
       classrooms: <List<String>>[[]]);
 
   static late FacultySemester facultyData;
+  static bool isFacDataFilled = false;
+  static late FacultySemester facultyDataOld;
+
+  static List<Subject> newCourses = [];
+  static List<List<bool>> newCoursesChanges = []; // [isTimeChanged, isClassroomChanged]
 
   static bool isInternetOn = true;
 
@@ -312,10 +317,10 @@ class Main {
       }
       lines.removeAt(0);
 
-      int index = 0;
       lines = lines.where((element) => element.trim().isNotEmpty).toList();
+      Main.isFacDataFilled = true;
       Main.facultyData = FacultySemester(facName: facultyName, lastUpdate: lastUpdated);
-      lines.forEach((course) { Main.facultyData.subjects.add(Subject.fromStringWithClassCode(course)); index++; });
+      lines.forEach((course) { Main.facultyData.subjects.add(Subject.fromStringWithClassCode(course)); });
 
     } else {
       print("The faculty courses DID NOT exist!");
@@ -375,16 +380,13 @@ class Main {
 
 Future main() async {
 
-  print("EXECUTING MAIN FUNCTION!!!");
-
   WidgetsFlutterBinding.ensureInitialized();
   Main.appDocDir = (await getApplicationDocumentsDirectory()).path;
   await [Permission.storage].request().then((value_) {
     if (!value_.toString().contains(".granted")) {
-      print("The premission of storage was not granted! Restarting the app!");
       Main.restart();
     } else {
-      print("The premission of storage was granted!");
+      //print("The premission of storage was granted!");
     }
   });
 
@@ -400,7 +402,7 @@ Future main() async {
   }
 
   // after the scheudles list has been filled, do this:
-  if (Main.currentScheduleIndex >= Main.schedules.length) { // precation for preventing errors:
+  if (Main.currentScheduleIndex >= Main.schedules.length) { // precaution: for preventing errors:
     Main.currentScheduleIndex = Main.schedules.length - 1;
   }
 

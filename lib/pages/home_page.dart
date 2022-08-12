@@ -60,6 +60,24 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
     super.initState();
 
+    // check the newCourses list with all the courses inside all the schedules:
+    for (int i = 0 ; i < Main.schedules.length ; i++) {
+      for (int j = 0 ; j < Main.schedules[i].scheduleCourses.length ; j++) {
+        for (int k = 0 ; k < Main.newCourses.length ; k++) {
+          if (Main.newCourses[k].classCode == Main.schedules[i].scheduleCourses[j].subject.classCode) { // if the subjects are the same:
+            if (Main.newCoursesChanges[k][0]) { // if the time has changed:
+              Main.schedules[i].scheduleCourses[j].subject.days = Main.newCourses[k].days;
+              Main.schedules[i].scheduleCourses[j].subject.bgnPeriods = Main.newCourses[k].bgnPeriods;
+              Main.schedules[i].scheduleCourses[j].subject.hours = Main.newCourses[k].hours;
+            }
+            if (Main.newCoursesChanges[k][1]) { // if the classrooms have changed:
+              Main.schedules[i].scheduleCourses[j].subject.classrooms = Main.newCourses[k].classrooms;
+            }
+          }
+        }
+      }
+    }
+
     Main.forceUpdate = false;
 
     WidgetsBinding.instance.addObserver(this);

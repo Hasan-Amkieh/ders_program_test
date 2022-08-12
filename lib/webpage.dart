@@ -32,10 +32,6 @@ class WebpageState extends State<Webpage> {
   @override
   void initState() {
 
-    /*WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Navigator.pushNamed(context, "/loadingupdate");
-      ;
-    });*/
     super.initState();
 
     currentState = this;
@@ -70,31 +66,36 @@ class WebpageState extends State<Webpage> {
 
                           if (msg[0] == "sPort") {
                             sPort = msg[1] as SendPort;
-                            //sPort?.send(["timetableData", request.responseText, Main.faculty]);
+                            sPort?.send(["timetableData", request.responseText, Main.faculty]);
                             // TODO: TEST:
-                            switch (Main.faculty) {
-                              case "Engineering":
-                                sPort?.send(["timetableData", SpringSchedules.engineeringTimeTable, Main.faculty]);
-                                break;
-                              case "Civil Aviation":
-                                sPort?.send(["timetableData", SpringSchedules.civilAviationTimeTable, Main.faculty]);
-                                break;
-                              case "Health Sciences":
-                                sPort?.send(["timetableData", SpringSchedules.healthSciencesTimeTable, Main.faculty]);
-                                break;
-                              case "Arts and Sciences":
-                                sPort?.send(["timetableData", SpringSchedules.artsNSciencesTimeTable, Main.faculty]);
-                                break;
-                              case "Fine Arts":
-                                sPort?.send(["timetableData", SpringSchedules.fineArtsNArchitetctureTimeTable, Main.faculty]);
-                                break;
-                              case "Law":
-                                sPort?.send(["timetableData", request.responseText, Main.faculty]); // cause there is no spring sem
-                                break;
-                              case "Business":
-                                sPort?.send(["timetableData", SpringSchedules.businessTimeTable, Main.faculty]);
-                                break;
-                            }
+                            // switch (Main.faculty) {
+                            //   case "Engineering":
+                            //     //sPort?.send(["timetableData", SpringSchedules.engineeringTimeTable, Main.faculty]);
+                            //     sPort?.send(["timetableData", request.responseText, Main.faculty]);
+                            //     break;
+                            //   case "Civil Aviation":
+                            //     //sPort?.send(["timetableData", SpringSchedules.civilAviationTimeTable, Main.faculty]);
+                            //     sPort?.send(["timetableData", request.responseText, Main.faculty]);
+                            //     break;
+                            //   case "Health Sciences":
+                            //     //sPort?.send(["timetableData", SpringSchedules.healthSciencesTimeTable, Main.faculty]);
+                            //     sPort?.send(["timetableData", request.responseText, Main.faculty]);
+                            //     break;
+                            //   case "Arts and Sciences":
+                            //     //sPort?.send(["timetableData", SpringSchedules.artsNSciencesTimeTable, Main.faculty]);
+                            //     sPort?.send(["timetableData", request.responseText, Main.faculty]);
+                            //     break;
+                            //   case "Fine Arts":
+                            //     //sPort?.send(["timetableData", SpringSchedules.fineArtsNArchitetctureTimeTable, Main.faculty]);
+                            //     sPort?.send(["timetableData", request.responseText, Main.faculty]);
+                            //     break;
+                            //   case "Law":
+                            //     sPort?.send(["timetableData", request.responseText, Main.faculty]); // cause there is no spring sem
+                            //     break;
+                            //   case "Business":
+                            //     sPort?.send(["timetableData", SpringSchedules.businessTimeTable, Main.faculty]);
+                            //     break;
+                            // }
                             // TODO: TEST;
                           }
 
@@ -103,8 +104,57 @@ class WebpageState extends State<Webpage> {
                           }
 
                           if (msg[0] == "facultyData") { // Main.facultyData =
+                            if (Main.isFacDataFilled) {
+                              Main.facultyDataOld = Main.facultyData;
+                            }
                             Main.facultyData = FacultySemester(facName: Main.faculty, lastUpdate: DateTime.now());
                             Main.facultyData.subjects = msg[1] as List<Subject>;
+
+                            // then find all the courses that have different time or classrooms:
+                            for (int i = 0 ; i < Main.facultyDataOld.subjects.length ; i++) {
+                              for (int j = 0 ; j < Main.facultyData.subjects.length ; j++) {
+                                if (Main.facultyDataOld.subjects[i].classCode == Main.facultyData.subjects[j].classCode) { // if the course is the same:
+                                  bool isTimeDiff = false;
+                                  bool isClassroomDiff = false;
+                                  for (int k = 0 ; k < Main.facultyDataOld.subjects[i].days.length ; k++) { // loop through the period: Main.facultyDataOld.subjects[i].days[k]
+                                    if (isTimeDiff) {
+                                      break;
+                                    }
+                                    if (Main.facultyDataOld.subjects[i].hours[k] == Main.facultyData.subjects[j].hours[k]) {
+                                      for (int l = 0; l < Main.facultyDataOld.subjects[i].days[k].length; l++) {
+                                        if (Main.facultyDataOld.subjects[i].days[k][l] != Main.facultyData.subjects[j].days[k][l] && Main.facultyDataOld.subjects[i].bgnPeriods[k][l] != Main.facultyData.subjects[j].bgnPeriods[k][l]) {
+                                          isTimeDiff = true;
+                                          break;
+                                        }
+                                      }
+                                    } else {
+                                      isTimeDiff = true;
+                                      break;
+                                    }
+                                  }
+
+                                  for (int k = 0 ; k < Main.facultyDataOld.subjects[i].classrooms.length ; k++) { // check classrooms:
+                                    for (int l = 0 ; l < Main.facultyDataOld.subjects[i].classrooms[k].length ; l++) {
+                                      if (Main.facultyDataOld.subjects[i].classrooms[k][l] != Main.facultyData.subjects[j].classrooms[k][l]) {
+                                        isClassroomDiff = true;
+                                        break;
+                                      }
+                                    }
+                                    if (isClassroomDiff) {
+                                      break;
+                                    }
+                                  }
+
+                                  if (isTimeDiff || isClassroomDiff) {
+                                    // copy everything instead of copying the reference:
+                                    Main.newCourses.add(Subject(classCode: Main.facultyData.subjects[j].classCode, departments: Main.facultyData.subjects[j].departments,
+                                        teacherCodes: Main.facultyData.subjects[j].teacherCodes, hours: Main.facultyData.subjects[j].hours, bgnPeriods: Main.facultyData.subjects[j].bgnPeriods,
+                                        days: Main.facultyData.subjects[j].days, classrooms: Main.facultyData.subjects[j].classrooms, customName: Main.facultyData.subjects[j].customName));
+                                    Main.newCoursesChanges.add([isTimeDiff, isClassroomDiff]);
+                                  }
+                                }
+                              }
+                            }
                           }
 
                           if (msg[0] == "setState") { // Main.facultyData =
