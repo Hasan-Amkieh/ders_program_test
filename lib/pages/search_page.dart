@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
@@ -7,11 +9,13 @@ import 'package:ders_program_test/others/departments.dart';
 import 'package:ders_program_test/others/subject.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../main.dart';
 import '../widgets/searchwidget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../widgets/timetable_canvas.dart';
+import 'no_internet_page.dart';
 
 
 class SearchPage extends StatefulWidget {
@@ -164,7 +168,7 @@ class SearchPageState extends State<SearchPage> {
                 cursorColor: Main.appTheme.titleTextColor,
                 decoration: InputDecoration(
                   hintStyle: TextStyle(color: Main.appTheme.hintTextColor),
-                  hintText: (searchByCourseName ? (translateEng("Course Code") + ", ") : "") + (searchByTeacher ? (translateEng("Teacher Name") + ", ") : "") + (searchByClassroom ? translateEng("classroom") : ""),
+                  hintText: (searchByCourseName ? (translateEng("Course Code") + ", ") : "") + (searchByTeacher ? (translateEng("Teacher Name") + translateEng(" or ")) : "") + (searchByClassroom ? translateEng("classroom") : ""),
                   labelStyle: TextStyle(color: Main.appTheme.titleTextColor),
                   labelText: translateEng("SEARCH"),
                 ),
@@ -201,9 +205,31 @@ class SearchPageState extends State<SearchPage> {
     return ListTile(
       title: Text(sub.classCode, style: TextStyle(color: Main.appTheme.titleTextColor)),
       subtitle:
-      Text((searchByCourseName ? name : "") +
-          (searchByTeacher ? (sub.getTranslatedTeachers().isEmpty ? "" : ("\n" + sub.getTranslatedTeachers())) : "" ) +
-          (searchByClassroom ? (classrooms.isEmpty ? "" : ("\n" + classrooms)) : "" ), style: TextStyle(color: Main.appTheme.titleTextColor)),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+            child: Text((searchByCourseName ? name : "") +
+                (searchByTeacher ? (sub.getTranslatedTeachers().isEmpty ? "" : ("\n" + sub.getTranslatedTeachers())) : "" ) +
+                (searchByClassroom ? (classrooms.isEmpty ? "" : ("\n" + classrooms)) : "" ), style: TextStyle(color: Main.appTheme.titleTextColor)),
+          ),
+          sub.classCode.contains("lab") ? Container() : TextButton(child: const Icon(Icons.info_outline, color: Colors.blue), onPressed: () async {
+
+            String url = "";
+
+            var request = await HttpClient().getUrl(Uri.parse('https://www.atilim.edu.tr/get-lesson-ects/' + sub.getClassCodeWithoutSectionNumber()));
+            var response = await request.close();
+            await for (var contents in response.transform(const Utf8Decoder())) {
+              url = contents;
+            };
+
+            print("Launching : ${url}");
+            if (await canLaunchUrl(Uri.parse(url))) {
+              launchUrl(Uri.parse(url));
+            }
+          }),
+        ],
+      ),
       onTap: () {
         FocusScope.of(context).unfocus(); // NOTE: This hides the keyboard for once and for all when we choose a course!
 

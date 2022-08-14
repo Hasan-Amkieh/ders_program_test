@@ -189,18 +189,30 @@ class EditCoursePageState extends State<EditCoursePage> {
                         icon: const Icon(Icons.add, color: Colors.white),
                         label: Text(translateEng("add courses"), style: TextStyle(color: Main.appTheme.titleTextColor, fontSize: 12)),
                         onPressed: () {
-                          Navigator.pushNamed(context, "/home/editcourses/addcourses").then((value) {
-                            if (Main.coursesToAdd.isNotEmpty) {
-                              setState(() {
-                                List<Course> crses = [];
-                                Main.coursesToAdd.forEach((sub) {
-                                  crses.add(Course(subject: sub, note: ""));
+                          if (Main.isFacDataFilled) {
+                            Navigator.pushNamed(context, "/home/editcourses/addcourses").then((value) {
+                              if (Main.coursesToAdd.isNotEmpty) {
+                                setState(() {
+                                  List<Course> crses = [];
+                                  Main.coursesToAdd.forEach((sub) {
+                                    crses.add(Course(subject: sub, note: ""));
+                                  });
+                                  Main.schedules[Main.currentScheduleIndex].scheduleCourses.addAll(crses);
+                                  Main.coursesToAdd.clear();
                                 });
-                                Main.schedules[Main.currentScheduleIndex].scheduleCourses.addAll(crses);
-                                Main.coursesToAdd.clear();
-                              });
-                            }
-                          });
+                              }
+                            });
+                          } else {
+                            Fluttertoast.showToast(
+                                msg: translateEng("The courses could not be loaded!"),
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.blue,
+                                textColor: Colors.white,
+                                fontSize: 12.0
+                            );
+                          }
                         }
                     ),
                     SizedBox(width: width * 0.03),

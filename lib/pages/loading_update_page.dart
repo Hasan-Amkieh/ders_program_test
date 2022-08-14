@@ -20,6 +20,8 @@ class LoadingUpdate extends StatefulWidget {
     return LoadingUpdateState();
   }
 
+  static LoadingUpdateState? currWidget;
+
 }
 
 class LoadingUpdateState extends State<LoadingUpdate> {
@@ -35,6 +37,7 @@ class LoadingUpdateState extends State<LoadingUpdate> {
     Main.forceUpdate = false; // Since it is now updating
     checkState();
     super.initState();
+    LoadingUpdate.currWidget = this;
   }
 
   void checkState () {
@@ -45,20 +48,38 @@ class LoadingUpdateState extends State<LoadingUpdate> {
 
     if (DateTime.now().difference(lastChanged).inSeconds >= 20 && !WebpageState.doNotRestart) { // then restart the whole reload process:
 
-      Restart.restartApp();
+      if (Main.isAttemptedBefore) {
+        if (Main.facultyDataOld != null) {
+          Main.facultyData = Main.facultyDataOld!;
+          Main.isFacDataFilled = true;
+        } else {
+          Main.isFacDataFilled = false;
+        }
+        // then go to the Home page:
+        LoadingUpdate.currWidget?.endLoading();
+      } else {
+        Main.isAttemptedBefore = true;
+        Main.writeSettings();
+        Restart.restartApp();
+      }
 
     }
 
     if (WebpageState.state != 4) {
       Future.delayed(const Duration(milliseconds: 300), () => checkState());
     } else {
-      ModalRoute.of(context)?.popped.then((value) {
-        print("Loading page is popped!");
-        WebpageState.currWidget!.finish();
-      });
-      Navigator.pop(context);
+      endLoading();
     }
 
+  }
+
+  void endLoading() {
+    ModalRoute.of(context)?.popped.then((value) {
+      print("Loading page is popped!");
+      WebpageState.currWidget!.finish();
+    });
+    Navigator.pop(context);
+    Main.isAttemptedBefore = false; // it might be true or false, just do it anyway..
   }
 
   @override

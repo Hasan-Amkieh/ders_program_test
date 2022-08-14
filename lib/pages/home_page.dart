@@ -10,6 +10,7 @@ import 'dart:ui';
 import 'package:ders_program_test/others/departments.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -85,13 +86,11 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
     toggleButtonController = AnimationController(duration: const Duration(seconds: 1), vsync: this);
 
     currentState = this;
-
     print("Initializing the home page state!");
 
     listenDynamicLinks();
 
     checkScheduleAddition();
-
 
   }
 
@@ -203,7 +202,19 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
               SizedBox(height: height * 0.01),
               ListTile(
                 onTap: () {
-                  Navigator.pushNamed(context, "/home/searchcourses");
+                  if (Main.isFacDataFilled) {
+                    Navigator.pushNamed(context, "/home/searchcourses");
+                  } else {
+                    Fluttertoast.showToast(
+                        msg: translateEng("The courses could not be loaded!"),
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.blue,
+                        textColor: Colors.white,
+                        fontSize: 12.0
+                    );
+                  }
                 },
                 title: Text(translateEng('Search for Courses'), style: TextStyle(color: Main.appTheme.titleTextColor)),
                 subtitle: Text(translateEng('Search for courses using its name, classroom number, teacher or department'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
@@ -220,7 +231,19 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
               SizedBox(height: height * 0.01),
               ListTile(
                 onTap: () {
-                  Navigator.pushNamed(context, "/home/scheduler");
+                  if (Main.isFacDataFilled) {
+                    Navigator.pushNamed(context, "/home/scheduler");
+                  } else {
+                    Fluttertoast.showToast(
+                        msg: translateEng("The courses could not be loaded!"),
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.blue,
+                        textColor: Colors.white,
+                        fontSize: 12.0
+                    );
+                  }
                 },
                 title: Text(translateEng('Scheduler'), style: TextStyle(color: Main.appTheme.titleTextColor)),
                 subtitle: Text(translateEng('Choose the courses with the sections with specific options, then choose your appropriate schedule'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
@@ -251,20 +274,23 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
     Widget? settingsPage;
     if (pageIndex == 2) {
-      String hours = "", day, hr, mins;
+      String hours = "", day = "", hr, mins;
       int days;
 
-      hr = (Main.facultyData.lastUpdate.hour < 10 ? "0" : "") + Main.facultyData.lastUpdate.hour.toString();
-      mins = (Main.facultyData.lastUpdate.minute < 10 ? "0" : "") + Main.facultyData.lastUpdate.minute.toString();
-      hours = hr + ":" + mins;
-      days = Main.facultyData.lastUpdate.difference(DateTime.now()).inDays;
+      if (Main.isFacDataFilled) {
+        print("Faculty Data is FILLED!");
+        hr = (Main.facultyData.lastUpdate.hour < 10 ? "0" : "") + Main.facultyData.lastUpdate.hour.toString();
+        mins = (Main.facultyData.lastUpdate.minute < 10 ? "0" : "") + Main.facultyData.lastUpdate.minute.toString();
+        hours = hr + ":" + mins;
+        days = Main.facultyData.lastUpdate.difference(DateTime.now()).inDays;
 
-      if (days == 0) {
-        day = "Today";
-      } else if (days == 1) {
-        day = "Yesterday";
-      } else {
-        day = "$days days ago";
+        if (days == 0) {
+          day = "Today";
+        } else if (days == 1) {
+          day = "Yesterday";
+        } else {
+          day = "$days days ago";
+        }
       }
 
       settingsPage = ListView(
@@ -358,7 +384,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                translateEng("Last Updated") + "    ${day}  ${hours}",
+                Main.isFacDataFilled ? (translateEng("Last Updated") + "    ${day}  ${hours}") : translateEng("Unknown"),
                 style: TextStyle(color: Colors.red.shade500, fontWeight: FontWeight.bold),
               ),
               TextButton(onPressed: () {

@@ -65,8 +65,6 @@ then the teacher/classroom text fields are moved from the periods into the botto
 
 class Main {
 
-  static File? settingsStorage;
-
   static String appDocDir = "";
 
   // NOTE: Default values are inside the function readSettings:
@@ -76,6 +74,9 @@ class Main {
   static String department = "AE";
   static String language = "English"; // currently, there is only
   static ThemeMode theme = ThemeMode.system;
+
+  static bool isAttemptedBefore = false; // if true AND the update does not work, then:
+  // check if isFacDataFilled is false, then block the following tools: add courses, search for courses and scheduler
 
   static AppTheme appTheme = AppTheme();
 
@@ -100,12 +101,12 @@ class Main {
 
   static late FacultySemester facultyData;
   static bool isFacDataFilled = false;
-  static late FacultySemester facultyDataOld;
+  static FacultySemester? facultyDataOld;
 
   static List<Subject> newCourses = [];
   static List<List<bool>> newCoursesChanges = []; // [isTimeChanged, isClassroomChanged]
 
-  static bool isInternetOn = true;
+  static bool isInternetOn = false;
 
   static void save() async {
 
@@ -128,6 +129,7 @@ class Main {
     toWrite = toWrite + "language:"+language.toString()+"\n";
     toWrite = toWrite + "hour_update:"+hourUpdate.toString()+"\n";
     toWrite = toWrite + "schedule_index:"+currentScheduleIndex.toString()+"\n";
+    toWrite = toWrite + "is_attempted_before:"+isAttemptedBefore.toString()+"\n";
 
     file.writeAsStringSync(toWrite, mode: FileMode.write);
 
@@ -152,6 +154,7 @@ class Main {
         language = content.substring(content.indexOf("language:") + 9, content.indexOf("\n", content.indexOf("language:") + 9));
         hourUpdate = int.parse(content.substring(content.indexOf("hour_update:") + 12, content.indexOf("\n", content.indexOf("hour_update:") + 12)));
         currentScheduleIndex = int.parse(content.substring(content.indexOf("schedule_index:") + 15, content.indexOf("\n", content.indexOf("schedule_index:") + 15)));
+        isAttemptedBefore = content.substring(content.indexOf("is_attempted_before:") + 20, content.indexOf("\n", content.indexOf("is_attempted_before:") + 20)) == "true" ? true : false;
       }
     } catch(err) {
       print("The settings file was not opened bcs: $err");
@@ -392,9 +395,11 @@ Future main() async {
 
   Main.readSchedules();
   Main.readSettings();
-  if (!Main.forceUpdate) {
-    Main.readFacultyCourses();
-  }
+  // if (!Main.forceUpdate) {
+  //   Main.readFacultyCourses();
+  // }
+  Main.readFacultyCourses(); // read the faculty courses everytime, if there is an update it will be used to detect the changes inside-
+  // thew old courses and update the classrooms or the time of the class accordingly...
   Main.readFavCourses();
 
   if (Main.schedules.isEmpty) {
@@ -406,12 +411,17 @@ Future main() async {
     Main.currentScheduleIndex = Main.schedules.length - 1;
   }
 
-  if (Main.forceUpdate) { // if we are going to update then check for internet:
-    await NoInternetPageState.checkInternet();
+  // always check the internet connection for updating the courses and the app itself form app store or google play
+  await NoInternetPageState.checkInternet();
+
+  bool forceToHomePage = false;
+  //print("LAST TIME UPDATED IS ${Main.isFacDataFilled && !Main.isInternetOn && Main.facultyData.lastUpdate.difference(DateTime.now()).inDays <= 7}");
+  if (Main.isFacDataFilled && !Main.isInternetOn && Main.facultyData.lastUpdate.difference(DateTime.now()).inDays <= 7) {
+    forceToHomePage = true;
   }
 
   runApp(MaterialApp(
-    initialRoute: Main.isInternetOn ? (Main.forceUpdate ? "/webpage" : "/home") : "/nointernet",
+    initialRoute: forceToHomePage ? "/home" : (Main.isInternetOn ? (Main.forceUpdate ? "/webpage" : "/home") : "/nointernet"),
     routes: {
       "/nointernet" : (context) => NoInternetPage(),
       "/home" : (context) => Home(),

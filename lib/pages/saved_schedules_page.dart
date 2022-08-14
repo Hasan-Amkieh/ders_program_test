@@ -155,8 +155,19 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                             onPressed: () {
                               setState(() {
                                 Main.currentScheduleIndex = scheduleIndex;
-                                // Just refresh the page
-                                Navigator.pushNamed(context, "/home/searchcourses").then((value) => setState(() {}));
+                                if (Main.isFacDataFilled) {
+                                  Navigator.pushNamed(context, "/home/searchcourses").then((value) => setState(() {}));
+                                } else {
+                                  Fluttertoast.showToast(
+                                      msg: translateEng("The courses could not be loaded!"),
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.blue,
+                                      textColor: Colors.white,
+                                      fontSize: 12.0
+                                  );
+                                }
                               });
                             },
                           ),
@@ -168,19 +179,30 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                               setState(() {
                                 Main.currentScheduleIndex = scheduleIndex;
                               });
-                              // Just refresh the page
-                              Navigator.pushNamed(context, "/home/editcourses/addcourses").then((value) => setState(() {
-                                if (Main.coursesToAdd.isNotEmpty) {
-                                  setState(() {
-                                    List<Course> crses = [];
-                                    Main.coursesToAdd.forEach((sub) {
-                                      crses.add(Course(subject: sub, note: ""));
+                              if (Main.isFacDataFilled) {
+                                Navigator.pushNamed(context, "/home/editcourses/addcourses").then((value) => setState(() {
+                                  if (Main.coursesToAdd.isNotEmpty) {
+                                    setState(() {
+                                      List<Course> crses = [];
+                                      Main.coursesToAdd.forEach((sub) {
+                                        crses.add(Course(subject: sub, note: ""));
+                                      });
+                                      Main.schedules[Main.currentScheduleIndex].scheduleCourses.addAll(crses);
+                                      Main.coursesToAdd.clear();
                                     });
-                                    Main.schedules[Main.currentScheduleIndex].scheduleCourses.addAll(crses);
-                                    Main.coursesToAdd.clear();
-                                  });
-                                }
-                              }));
+                                  }
+                                }));
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg: translateEng("The courses could not be loaded!"),
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Colors.blue,
+                                    textColor: Colors.white,
+                                    fontSize: 12.0
+                                );
+                              }
                             },
                           ),
                         ],

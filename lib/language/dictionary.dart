@@ -200,7 +200,9 @@ Map<String, String> engToTurk = {
   "Forbid Conflicts" : "Çatışmaları Yasakla",
   "Only for the following departments" : "Sadece aşağıdaki bölümler için",
   "There has to be two courses at least!" : "En az iki ders olmalı!",
-  "Add Course" : "Kurs Ekle",
+  "Unknown" : "Bilinmeyen",
+  "The courses couldn't be loaded" : "Dersler yüklenemedi!",
+  "Teacher Name" : "Öğretmen Adı",
 };
 
 String translateEng(String eng) {
