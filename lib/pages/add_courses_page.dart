@@ -188,20 +188,32 @@ class AddCoursesPageState extends State<AddCoursesPage> {
         ],
       ),
       onTap: () {
-        if (!isInside) {
-          setState(() {
-            Main.coursesToAdd.add(subject);
-          });
+        if (subject.days.isNotEmpty || !isForScheduler) {
+          if (!isInside) {
+            setState(() {
+              Main.coursesToAdd.add(subject);
+            });
+          }
+          Fluttertoast.showToast(
+              msg: translateEng(isInside ? "${subject.classCode} " + translateEng("is already in the schedule") : "${subject.classCode} " + translateEng("was added to the schedule")),
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.blue,
+              textColor: Colors.white,
+              fontSize: 12.0
+          );
+        } else {
+          Fluttertoast.showToast(
+              msg: translateEng("The course has no time data"),
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.blue,
+              textColor: Colors.white,
+              fontSize: 12.0
+          );
         }
-        Fluttertoast.showToast(
-            msg: translateEng(isInside ? "${subject.classCode} " + translateEng("is already in the schedule") : "${subject.classCode} " + translateEng("was added to the schedule")),
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.blue,
-            textColor: Colors.white,
-            fontSize: 12.0
-        );
       },
     );
 

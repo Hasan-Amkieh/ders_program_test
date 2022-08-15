@@ -203,6 +203,7 @@ Map<String, String> engToTurk = {
   "Unknown" : "Bilinmeyen",
   "The courses couldn't be loaded" : "Dersler yüklenemedi!",
   "Teacher Name" : "Öğretmen Adı",
+  "The course has no time data" : "Kursta zaman verisi yok",
 };
 
 String translateEng(String eng) {

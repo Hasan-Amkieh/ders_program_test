@@ -1,7 +1,7 @@
 // NOTE: minimum version of android is 4.4 for the application to run,
 
-import 'dart:async';
-import 'dart:ffi';
+import 'dart:core';
+import 'dart:core';
 import 'dart:io';
 import 'package:ders_program_test/language/dictionary.dart';
 import 'package:ders_program_test/others/subject.dart';
@@ -74,6 +74,14 @@ class Main {
   static String department = "AE";
   static String language = "English"; // currently, there is only
   static ThemeMode theme = ThemeMode.system;
+
+  static String artsNSciencesLink = "";
+  static String fineArtsLink = "";
+  static String lawLink = "";
+  static String businessLink = "";
+  static String engineeringLink = "";
+  static String healthSciencesLink = "";
+  static String civilAviationLink = "";
 
   static bool isAttemptedBefore = false; // if true AND the update does not work, then:
   // check if isFacDataFilled is false, then block the following tools: add courses, search for courses and scheduler

@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:isolate';
 
 import 'package:ders_program_test/pages/loading_update_page.dart';
@@ -39,8 +41,68 @@ class WebpageState extends State<Webpage> {
 
   }
 
+  Future<void> getTimetableLinks() async {
+
+    var request = await HttpClient().getUrl(Uri.parse('https://www.atilim.edu.tr/en/dersprogrami'));
+    // sends the request
+    var response = await request.close();
+
+    // transforms and prints the response
+    await for (var contents in response.transform(const Utf8Decoder())) { //
+      int pos = 0;
+      if (Main.artsNSciencesLink.isEmpty) {
+        pos = contents.indexOf('https://atilimartsci');
+        if (pos != -1) {
+          Main.artsNSciencesLink = contents.substring(pos, contents.indexOf('"', pos + 32));
+        }
+      }
+      if (Main.fineArtsLink.isEmpty) {
+        pos = contents.indexOf('https://atilimgstm');
+        if (pos != -1) {
+          Main.fineArtsLink = contents.substring(pos, contents.indexOf('"', pos + 32));
+        }
+      }
+      if (Main.lawLink.isEmpty) {
+        pos = contents.indexOf('https://atilimlaw');
+        if (pos != -1) {
+          Main.lawLink = contents.substring(pos, contents.indexOf('"', pos + 32));
+        }
+      }
+      if (Main.businessLink.isEmpty) {
+        pos = contents.indexOf('https://atilimmgmt');
+        if (pos != -1) {
+          Main.businessLink = contents.substring(pos, contents.indexOf('"', pos + 32));
+        }
+      }
+      if (Main.engineeringLink.isEmpty) {
+        pos = contents.indexOf('https://atilimengr');
+        if (pos != -1) {
+          Main.engineeringLink = contents.substring(pos, contents.indexOf('"', pos + 32));
+        }
+      }
+      if (Main.healthSciencesLink.isEmpty) {
+        pos = contents.indexOf('https://atilimhlth');
+        if (pos != -1) {
+          Main.healthSciencesLink = contents.substring(pos, contents.indexOf('"', pos + 32));
+        }
+      }
+      if (Main.civilAviationLink.isEmpty) {
+        pos = contents.indexOf('https://atilimcav');
+        if (pos != -1) {
+          Main.civilAviationLink = contents.substring(pos, contents.indexOf('"', pos + 32));
+        }
+      }
+    }
+
+    // print("found the following links: "
+    //     "${Main.artsNSciencesLink}\n${Main.fineArtsLink}\n${Main.businessLink}\n${Main.engineeringLink}\n${Main.civilAviationLink}\n${Main.healthSciencesLink}\n${Main.lawLink}");
+
+  }
+
   @override
   Widget build(BuildContext context) {
+
+    getTimetableLinks();
 
     return Scaffold(
       body: Stack(

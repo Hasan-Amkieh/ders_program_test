@@ -980,7 +980,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
     Main.schedules[Main.currentScheduleIndex].scheduleCourses.forEach((element) {print(element.subject.toString());});
     // First find all the collisions:
     collisions = findCourseCollisions();
-    print("All the collisions are: ");
+    // print("All the collisions are: ");
     //collisions.forEach((col) { print("\nCOLLISION:"); col.subjects.forEach((element) {print(element.classCode);}); });
 
     int colorIndex = -1;

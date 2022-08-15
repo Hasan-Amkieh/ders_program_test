@@ -1,5 +1,7 @@
 import 'dart:core';
 
+import '../main.dart';
+
 const Map<String, Map<String, String>> faculties = {
   "Engineering" : engineeringDeps,
   "Civil Aviation" : civilAviationDeps,
@@ -75,19 +77,19 @@ const Map<String, String> businessDeps = {
 String getFacultyLink(String depName) {
 
   if (engineeringDeps.keys.contains(depName)) {
-    return "https://atilimengr.edupage.org/timetable/view.php?num=22&class=*2";
+    return Main.engineeringLink.isNotEmpty ? (Main.engineeringLink) : "https://atilimengr.edupage.org/timetable/view.php?num=22&class=*2";
   } else if (civilAviationDeps.keys.contains(depName)) {
-    return "https://atilimcav.edupage.org/timetable/view.php?num=20&class=-84";
+    return Main.civilAviationLink.isNotEmpty ? (Main.civilAviationLink) : "https://atilimcav.edupage.org/timetable/view.php?num=20&class=-84";
   } else if (healthSciencesDeps.keys.contains(depName)) {
-    return "https://atilimhlth.edupage.org/timetable/view.php?num=12&class=*1";
+    return Main.healthSciencesLink.isNotEmpty ? (Main.healthSciencesLink) : "https://atilimhlth.edupage.org/timetable/view.php?num=12&class=*1";
   } else if (artsnScienceDeps.keys.contains(depName)) {
-    return "https://atilimartsci.edupage.org/timetable/view.php?num=22&subject=-279";
+    return Main.artsNSciencesLink.isNotEmpty ? (Main.artsNSciencesLink) : "https://atilimartsci.edupage.org/timetable/view.php?num=22&subject=-279";
   } else if (fineArtsDeps.keys.contains(depName)) {
-    return "https://atilimgstm.edupage.org/timetable/view.php?num=19&class=-119";
+    return Main.fineArtsLink.isNotEmpty ? (Main.fineArtsLink) : "https://atilimgstm.edupage.org/timetable/view.php?num=19&class=-119";
   } else if (lawDeps.keys.contains(depName)) {
-    return "https://atilimlaw.edupage.org/timetable/?&lang=tr";
-  } else if (businessDeps.keys.contains(depName)) { //
-    return "https://atilimmgmt.edupage.org/timetable/view.php?num=23&subject=*372";
+    return Main.lawLink.isNotEmpty ? (Main.lawLink) : "https://atilimlaw.edupage.org/timetable/?&lang=tr";
+  } else if (businessDeps.keys.contains(depName)) {
+    return Main.businessLink.isNotEmpty ? (Main.businessLink) : "https://atilimmgmt.edupage.org/timetable/view.php?num=23&subject=*372";
   }
 
   return "";

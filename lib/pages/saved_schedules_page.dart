@@ -562,7 +562,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
           onPressed: () {
             setState(() {
               Main.schedules.removeAt(scheduleIndex);
-              if (scheduleIndex == Main.currentScheduleIndex) {
+              if (scheduleIndex <= Main.currentScheduleIndex) { // otherwise, if it is greater than the current schedule, then do nothing
                 Main.currentScheduleIndex = Main.schedules.length - 1;
               }
               Navigator.pop(context);
