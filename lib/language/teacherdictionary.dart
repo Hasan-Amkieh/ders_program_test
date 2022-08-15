@@ -1,29 +1,57 @@
 import 'dart:core';
 
 import '../main.dart';
+import '../others/subject.dart';
 
 // NOTE: No list for Arts and sciences because they have full names of teachers
 // NOTE: Law fac. does not even offer any teacher names
 // NOTE: Health Sciences have full names
-// NOTE: Business does not even offer names
 
-String translateTeacher(String teacherCode) {
+String translateTeacher({required String teacherCode, required Subject subject}) { // class code is only used inside the general dictionary
 
-  switch(Main.faculty) {
-    case "Engineering":
-      return teacherDictEngFac[teacherCode] ?? teacherCode;
-    case "Civil Aviation":
-      return teacherDictCivAvFac[teacherCode] ?? teacherCode;
-    case "Fine Arts":
-      return teacherDictFineArtsFac[teacherCode] ?? teacherCode;
-    case "Arts and Sciences":
-    case "Business":
-    case "Health Sciences":
-    case "Law":
-    default:
-      return teacherCode;
+  List<String> depsToSearch = subject.teacherCodes.toString().replaceAll(RegExp("[\\[.*?\\]]"), "").split(",");
+  String classCode = subject.getClassCodeWithoutSectionNumber();
+  bool doSearchByDeps = false;
+
+  for (int i = 0 ; i < depsToSearch.length ; i++) {
+    if (teacherDictByDeps.containsKey(depsToSearch[i])) {
+      doSearchByDeps = true;
+    } else {
+      depsToSearch.removeAt(i);
+      i--;
+    }
   }
 
+  if (doSearchByDeps && teacherDictByDeps[Main.department]!.containsKey(teacherCode)) { // first search by the department:
+
+    for (String dep in depsToSearch) {
+      if (teacherDictByDeps[dep]!.containsKey(teacherCode)) {
+        return teacherDictByDeps[dep]![teacherCode] ?? teacherCode;
+      }
+    }
+
+  } else {
+    switch(Main.faculty) { // search by the faculty
+      case "Engineering":
+        return teacherDictEngFac[teacherCode] ?? teacherCode;
+      case "Civil Aviation":
+        return teacherDictCivAvFac[teacherCode] ?? teacherCode;
+      case "Fine Arts":
+        return teacherDictFineArtsFac[teacherCode] ?? teacherCode;
+      case "Arts and Sciences":
+      case "Business":
+      case "Health Sciences":
+      case "Law":
+      default:
+        if (classCode.isNotEmpty && teacherDictGeneral.containsKey(classCode)) {
+          return teacherDictGeneral[classCode]![teacherCode] ?? teacherCode;
+        } else {
+          return teacherCode;
+        }
+    }
+  }
+
+  return teacherCode;
 }
 
 Map<String, String>	teacherDictEngFac = {
@@ -32,7 +60,7 @@ Map<String, String>	teacherDictEngFac = {
   "RB" : "RAMIN BARZEGAR",
   "EB" : "EREN BİLLUR",
   "CU" : "Candaş URUNGA",
-  "AO" : "ARDA ÖZMEN", // Fine Arts
+  //"AO" : "ARDA ÖZMEN", // Fine Arts // she already exists in other faculties
   "ES" : "RECEP ENGİN SANSA", // Fine Arts
   "OA" : "Onur AYMERGEN", // Fine Arts
   "POI" : "Pınar OLGAÇ",
@@ -45,7 +73,6 @@ Map<String, String>	teacherDictEngFac = {
   "SAKu" : "SEÇİL KUTLU",
   "HAt" : "HEDİYE ATİK",
   "ACC" : "AHMET CAN ÇALIK",
-  "ES" : "Ertan SÖNMEZ", // Civil Eng
   "SA" : "SAEİD KAZEMZADEH",
   "TA" : "Tolga AKIŞ",
   "MY" : "Meriç YILMAZ",
@@ -57,12 +84,10 @@ Map<String, String>	teacherDictEngFac = {
   "EG" : "Mustafa Erşan GÖKSU", // Civil Engineering
   "MSN" : "MUSTAFA SERDAR NALÇAKAN",
   "NM" : "Nesrin EKİNCİ MACHIN",
-  "EG" : "Enver GÜLER", // Chemical Engineering
   "SOY" : "Şeniz ÖZALP YAMAN",
   // TODO: Solve this name:
   "AKa" : "AKa", // Chemical Engineering / CEAC406
   "AC" : "Atilla CINAHER",
-  "BI" : "Sultan Belgin İŞGÖR", // Chemical Engineering
   "SErt" : "Salih ERTAN",
   "ST" : "Seha TİRKEŞ",
   "MK" : "Murat KAYA", // for chemistry engineeering department
@@ -91,7 +116,6 @@ Map<String, String>	teacherDictEngFac = {
   "AA" : "Aysel ATİMTAY",
   "AAl" : "Ayhan ALBOSTAN",
   "GG" : "Günseli GÜMÜŞEL",
-  "GK" : "GÜL KANİA", // For HIST221
   "GKB" : "GÜLTEKİN KAMİL BİRLİK",
   "AEK" : "AHMET EREN KURTER",
   "FYO" : "FATMA YERLİKAYA ÖZKURT",
@@ -105,7 +129,6 @@ Map<String, String>	teacherDictEngFac = {
   "STo" : "Sacip TOKER",
   "ME" : "Meltem ERYILMAZ",
   "BBa" : "BABUR BATURAY",
-  "MK" : "Murat KOYUNCU", // for ISE course
   "OO" : "Ozan ÖZKAN",
   "EK" : "ENDER KESKİNKILIÇ",
   "JP" : "Jongee PARK",
@@ -127,7 +150,6 @@ Map<String, String>	teacherDictEngFac = {
   "AO" : "Altan ÖZKİL", // for MDES
   "HA" : "Ahmet Hakan ARGEŞO",
   "Eki" : "SADIK ENGİN KILIÇ",
-  "OA" : "Özgür ASLAN", // Mechanical Eng Dep
   "FT" : "Fuat TİNİŞ",
   "HKa" : "Hakan KALKAN",
   "SB" : "Şakir BAYTAROĞLU",
@@ -135,16 +157,55 @@ Map<String, String>	teacherDictEngFac = {
   "EKi" : "SADIK ENGİN KILIÇ",
   "MS" : "Cemal Merih ŞENGÖNÜL",
   "HUA" : "Hasan Umur AKAY",
-  "BI" : "Bülent İRFANOĞLU", // Mechatronics
   "UK" : "Muhammad Umer KHAN",
   "ZE" : "Zühal ERDEN",
   "BSa" : "Bilge SAY",
-  "GK" : "Güler KALEM", // Software Eng
   "IA" : "Kamil İbrahim AKMAN",
   "TH" : "Tuna HACALOĞLU",
   "AY" : "Ali YAZICI",
   "DC" : "Davut ÇULHA",
   "GU" : "GÖKÇE ULUS",
+};
+
+Map<String, Map<String, String>> teacherDictByDeps = {
+  "MECE" : {
+    "BI" : "Bülent İRFANOĞLU", // Mechatronics
+  },
+  "ME" : {
+    "OA" : "Özgür ASLAN", // Mechanical Eng Dep
+  },
+  "ISE" : {
+    "MK" : "Murat KOYUNCU", // ISE dep
+  },
+  "CE" : {
+    "ES" : "Ertan SÖNMEZ", // Civil Eng
+  },
+  "SE" : {
+    "GK" : "Güler KALEM", // Software Eng
+  },
+  "CEAC" : {
+    "EG" : "Enver GÜLER", // Chemical Engineering
+    "BI" : "Sultan Belgin İŞGÖR", // Chemical Engineering
+  },
+  "GRT" : {
+    "ET" : "Evren TURAL", // for GRT314 and GRT232
+    "EE" : "Fatma Emel ERTÜRK", // GRT department
+    "MO" : "MEHMET MURAT ÖZKOYUNCU", // graphics design
+  },
+  "ICM" : {
+    "EE" : "EDİZ ERDOĞDU", // ICM101 / 102 // ICM dep
+  },
+  "MMR" : {
+    "FE" : "Faruk EŞİM", // Architecture // MMR
+    "FD" : "MEHMET FERİDUN DUYGULUER", // for MMR306
+    "MO" : "Mete ÖZ", // MMR401
+  },
+  "PLT" : {
+    "ET" : "Erdal TORO", // PLT402
+  },
+  "AVM" : {
+    "AO" : "Altan ÖZKİL", // AVM306
+  },
 };
 
 
@@ -172,14 +233,12 @@ Map<String, String>	teacherDictCivAvFac = {
   "ET" : "Emine TURGUT", // ART course\s
   "SAK" : "SEÇİL KUTLU",
   "IR" : "İzay REYHANOĞLU",
-  "AO" : "Altan ÖZKİL", // AVM306
   "ESS" : "ESRA ŞENGÖR ŞENALP",
   "GG" : "Günseli GÜMÜŞEL",
   "GK" : "Gül KANİA",
   "AEK" : "AHMET EREN KURTER",
   "BTo" : "Burcu TOSUN",
   "KB" : "Hüseyin Kamil BÜYÜKMİRZA",
-  "ET" : "Erdal TORO", // PLT402
   "GU" : "GÖKÇE ULUS",
 };
 
@@ -194,7 +253,7 @@ Map<String, String>	teacherDictFineArtsFac = {
   "NA" : "NAZLI ANGIN AKINER", // ARTS teacher, I remember that I forgot to fill the NA teacher for arts in the previousd facs
   "SP" : "ŞULE PFEIFFER",
   "ETa" : "EVREN TANDOĞAN",
-  "ET" : "Emine TURGUT",
+  "ET" : "Emine TURGUT", // ARTS courses
   "SAK" : "SEÇİL KUTLU",
   "AV" : "Ayşegül VURAL",
   "FO" : "FATMA FİLİZ ÖZSUCA",
@@ -208,27 +267,21 @@ Map<String, String>	teacherDictFineArtsFac = {
   "PG" : "Pelin GEZERYEL",
   "IO" : "ITIR TOKDEMİR ÖZÜDOĞRU",
   "FKC" : "FATİH KOYUNCU",
-  "EE" : "Fatma Emel ERTÜRK",
   "EEr" : "Ergin ERENOĞLU",
-  "ET" : "Evren TURAL", // for GRT314 and GRT232
-  "MO" : "MEHMET MURAT ÖZKOYUNCU",
   "SS" : "Serdar SÜDOR",
   "GKB" : "GÜLTEKİN KAMİL BİRLİK",
   "GC" : "Gaye ÇULCUOGLU",
   "AUg" : "MAKBULE ASLI UĞURL",
   "CB" : "Çağrı BULHAZ",
-  "EE" : "EDİZ ERDOĞDU", // ICM101 / 102
   "CR" : "Çılga RESULOĞLU",
   "MD" : "MUSTAFA DEMİR",
   "MSC" : "MELİKE SELCAN CİHANGİROĞLU",
   "BAA" : "BEGÜM AKSEL ALKAN",
   "IM" : "İpek MEMİKOĞLU",
-  "GA" : "GÖKÇE NUR AYKAÇ",
-  "TA" : "MEHMET TAHİR AYPARLAR", // Stopped at ICM201
+  "TA" : "MEHMET TAHİR AYPARLAR",
   "ITB" : "İpek BİLGİÇ",
   "FU" : "Feray ÜNLÜ",
   "BK" : "BUKET ERGUN KOCAİLİ",
-  "MSC" : "MELİKE SELCAN CİHANGİROĞL",
   "GA" : "GÖKÇE NUR AYKAÇ",
   "NY" : "ÖZLEM NUR ASLANTAMER",
   "FE" : "FERHAT ERÖZ",
@@ -242,7 +295,6 @@ Map<String, String>	teacherDictFineArtsFac = {
   "SO" : "Selahattin ÖNÜR",
   "NBB" : "NEZİH BURAK BİCAN",
   "MC" : "Mustafa Can",
-  "SP" : "ŞULE PFEIFFER",
   "GI" : "Gamze İLALAN",
   "AH" : "Ali HAKKAN",
   "MY" : "MUSTAFA KEMAL YURTTAŞ",
@@ -263,12 +315,9 @@ Map<String, String>	teacherDictFineArtsFac = {
   "KA" : "CAHİT KUMRU ALPAYDIN ALTINKÖK",
   "MS" : "Mehmet SOYLU",
   "YH" : "Yeşim HATIRLI",
-  "FD" : "MEHMET FERİDUN DUYGULUER", // for MMR306
   "TC" : "TEZCAN KARAKUŞ CANDAN",
   "FK" : "Filiz BAL KOÇYİĞİT",
   "EA" : "EMEL AKIN",
-  "MO" : "Mete ÖZ", // MMR401
-  "FE" : "Faruk EŞİM",
   "HKa" : " Haluk KARA",
   "AOz" : "Aytaç ÖZEN",
   "CKi" : "Cansen KILIÇÇÖTE",
@@ -279,4 +328,10 @@ Map<String, String>	teacherDictFineArtsFac = {
   "HD" : "Hikmet DİNÇ",
   "GS" : "GÜLŞEN SERDAR",
   "GU" : "GÜLÇİN TUĞBA NURDAN",
+};
+
+Map<String, Map<String, String>> teacherDictGeneral = {
+  "HIST221" : const {
+    "GK": "GÜL KANİA",
+  },
 };

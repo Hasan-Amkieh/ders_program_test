@@ -87,7 +87,7 @@ class Subject { // represents a class
     _teachersTranslated = "";
     teacherCodes.forEach((list) {
       list.forEach((element) {
-        _teachersTranslated = _teachersTranslated + ", ${translateTeacher(element)}";
+        _teachersTranslated = _teachersTranslated + ", ${translateTeacher(teacherCode: element, subject: Main.emptySubject)}";
       });
     });
     if (_teachersTranslated.length >= 2) {

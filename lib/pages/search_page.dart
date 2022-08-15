@@ -408,7 +408,7 @@ class SearchPageState extends State<SearchPage> {
             if (isFound) {
               return ;
             }
-            if (convertTurkishToEnglish(translateTeacher(teacherCode).toLowerCase()).contains(query)) {
+            if (convertTurkishToEnglish(translateTeacher(teacherCode: teacherCode, subject: subject).toLowerCase()).contains(query)) {
               isFound = true;
               return ;
             }

@@ -517,8 +517,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
               title: Text('Atacs', style: TextStyle(color: Main.appTheme.titleTextColor)),
               onTap: () async {
                 const url = 'https://atacs.atilim.edu.tr/Anasayfa/Student';
-                if (await canLaunch(url)) {
-                  await launch(url);
+                if (await canLaunchUrl(Uri.parse(url))) {
+                  await launchUrl(Uri.parse(url));
                 } else {
                   throw 'Could not launch $url';
                 }
@@ -532,8 +532,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
               title: Text(translateEng("School's Schedules"), style: TextStyle(color: Main.appTheme.titleTextColor)),
               onTap: () async {
                 const url = 'https://www.atilim.edu.tr/en/dersprogrami';
-                if (await canLaunch(url)) {
-                  await launch(url);
+                if (await canLaunchUrl(Uri.parse(url))) {
+                  await launchUrl(Uri.parse(url));
                 } else {
                   throw 'Could not launch $url';
                 }
@@ -546,8 +546,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
               title: Text(translateEng("GPA Calculator"), style: TextStyle(color: Main.appTheme.titleTextColor)),
               onTap: () async {
                 const url = 'https://metugpa.com';
-                if (await canLaunch(url)) {
-                  await launch(url);
+                if (await canLaunchUrl(Uri.parse(url))) {
+                  await launchUrl(Uri.parse(url));
                 } else {
                   throw 'Could not launch $url';
                 }
@@ -587,8 +587,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
               subtitle: Text(translateEng("Complains and Suggestions"), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
               onTap: () async { // TODO: Change in the future:
                 const url = 'mailto:hassan1551@outlook.com?subject:Scheduling%20App&body=%0A%0A%0AThank you for the 3 months of effort'; // %0A new line / %20 white space
-                    if (await canLaunch(url)) {
-                      await launch(url);
+                    if (await canLaunchUrl(Uri.parse(url))) {
+                      await launchUrl(Uri.parse(url));
                     } else {
                       throw 'Could not launch $url';
                     }
