@@ -204,6 +204,9 @@ Map<String, String> engToTurk = {
   "The courses couldn't be loaded" : "Dersler yüklenemedi!",
   "Teacher Name" : "Öğretmen Adı",
   "The course has no time data" : "Kursta zaman verisi yok",
+  "Current Semester" : "Mevcut Dönem",
+  "Current Version" : "Mevcut Versiyon",
+  "There is a newer version of this application,\nplease update the application first!" : "Bu uygulamanın daha yeni bir sürümü var,\nlütfen önce uygulamayı güncelleyin!",
 };
 
 String translateEng(String eng) {

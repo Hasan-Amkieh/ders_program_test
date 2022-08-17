@@ -8,8 +8,9 @@ class FacultySemester {
   List<Subject> subjects = []; // all subject codes taken inside this semester (with the section number)
   DateTime lastUpdate;
   String facName; // Faculty name
+  String semesterName;
 
-  FacultySemester({required this.facName, required this.lastUpdate});
+  FacultySemester({required this.facName, required this.lastUpdate, required this.semesterName});
 
 }
 

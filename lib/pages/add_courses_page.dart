@@ -103,7 +103,7 @@ class AddCoursesPageState extends State<AddCoursesPage> {
           padding: EdgeInsets.symmetric(vertical: height * 0.02, horizontal: width * 0.05),
           child: Column(
             children: [
-              Row(
+              isForScheduler ? Container() : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(translateEng("Show courses only for"), style: TextStyle(color: Main.appTheme.titleTextColor)),

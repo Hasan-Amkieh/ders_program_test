@@ -13,6 +13,7 @@ import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -60,6 +61,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
   void initState() {
 
     super.initState();
+
+    print("Semester name is : ${Main.facultyData.semesterName}");
 
     // check the newCourses list with all the courses inside all the schedules:
     for (int i = 0 ; i < Main.schedules.length ; i++) {
@@ -380,6 +383,25 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
               )
             ],
           ),
+          SizedBox(
+            height: height * 0.04,
+          ),
+          Main.facultyData.semesterName.isEmpty ? Container() : Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                translateEng("Current Semester")  +": ",
+                style: TextStyle(color: Main.appTheme.titleTextColor),
+              ),
+              Text(
+                Main.facultyData.semesterName,
+                style: TextStyle(color: Main.appTheme.titleTextColor),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: height * 0.01,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -499,6 +521,14 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                       Main.appTheme = AppTheme(); // reset the styles depending on the new theme
                     });
                   }
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Text(
+                translateEng("Current Version") + ": " + Main.packageInfo.version,
+                style: TextStyle(color: Main.appTheme.titleTextColor, fontSize: 14),
               ),
             ],
           ),

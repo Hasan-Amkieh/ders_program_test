@@ -1,7 +1,6 @@
 // NOTE: minimum version of android is 4.4 for the application to run,
 
 import 'dart:core';
-import 'dart:core';
 import 'dart:io';
 import 'package:ders_program_test/language/dictionary.dart';
 import 'package:ders_program_test/others/subject.dart';
@@ -15,12 +14,15 @@ import 'package:ders_program_test/pages/saved_schedules_page.dart';
 import 'package:ders_program_test/pages/scheduler_page.dart';
 import 'package:ders_program_test/pages/scheduler_result_page.dart';
 import 'package:ders_program_test/pages/search_page.dart';
+import 'package:ders_program_test/pages/update_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ders_program_test/webpage.dart';
 import 'package:ders_program_test/pages/home_page.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:restart_app/restart_app.dart';
+import 'package:new_version/new_version.dart';
 
 import 'others/appthemes.dart';
 
@@ -65,6 +67,13 @@ then the teacher/classroom text fields are moved from the periods into the botto
 
 class Main {
 
+  static NewVersion newVersion = NewVersion(
+      iOSId: 'com.google.Vespa',
+      androidId: 'com.google.android.apps.cloudconsole');
+  static late VersionStatus? versionStatus;
+
+  static late PackageInfo packageInfo;
+
   static String appDocDir = "";
 
   // NOTE: Default values are inside the function readSettings:
@@ -74,6 +83,7 @@ class Main {
   static String department = "AE";
   static String language = "English"; // currently, there is only
   static ThemeMode theme = ThemeMode.system;
+  static bool isThereNewerVersion = false;
 
   static String artsNSciencesLink = "";
   static String fineArtsLink = "";
@@ -138,6 +148,7 @@ class Main {
     toWrite = toWrite + "hour_update:"+hourUpdate.toString()+"\n";
     toWrite = toWrite + "schedule_index:"+currentScheduleIndex.toString()+"\n";
     toWrite = toWrite + "is_attempted_before:"+isAttemptedBefore.toString()+"\n";
+    toWrite = toWrite + "is_there_newer_version:"+isThereNewerVersion.toString()+"\n";
 
     file.writeAsStringSync(toWrite, mode: FileMode.write);
 
@@ -163,6 +174,7 @@ class Main {
         hourUpdate = int.parse(content.substring(content.indexOf("hour_update:") + 12, content.indexOf("\n", content.indexOf("hour_update:") + 12)));
         currentScheduleIndex = int.parse(content.substring(content.indexOf("schedule_index:") + 15, content.indexOf("\n", content.indexOf("schedule_index:") + 15)));
         isAttemptedBefore = content.substring(content.indexOf("is_attempted_before:") + 20, content.indexOf("\n", content.indexOf("is_attempted_before:") + 20)) == "true" ? true : false;
+        isThereNewerVersion = content.substring(content.indexOf("is_there_newer_version:") + 23, content.indexOf("\n", content.indexOf("is_there_newer_version:") + 23)) == "true" ? true : false;
       }
     } catch(err) {
       print("The settings file was not opened bcs: $err");
@@ -291,6 +303,7 @@ class Main {
     String toWrite = "";
 
     toWrite = toWrite + Main.faculty + "\n";
+    toWrite = toWrite + Main.facultyData.semesterName + "\n";
     toWrite = toWrite + Main.facultyData.lastUpdate.microsecondsSinceEpoch.toString() + "\n";
     for (int i = 0 ; i < Main.facultyData.subjects.length ; i++) {
 
@@ -318,6 +331,8 @@ class Main {
         return;
       }
       lines.removeAt(0);
+      String semesterName = lines[0];
+      lines.removeAt(0);
 
       DateTime lastUpdated = DateTime.fromMicrosecondsSinceEpoch(int.parse(lines[0]));
       print("Time difference is ${DateTime.now().difference(lastUpdated).inHours}, updating!");
@@ -330,7 +345,7 @@ class Main {
 
       lines = lines.where((element) => element.trim().isNotEmpty).toList();
       Main.isFacDataFilled = true;
-      Main.facultyData = FacultySemester(facName: facultyName, lastUpdate: lastUpdated);
+      Main.facultyData = FacultySemester(facName: facultyName, lastUpdate: lastUpdated, semesterName: semesterName);
       lines.forEach((course) { Main.facultyData.subjects.add(Subject.fromStringWithClassCode(course)); });
 
     } else {
@@ -428,12 +443,27 @@ Future main() async {
     forceToHomePage = true;
   }
 
+  Main.packageInfo = await PackageInfo.fromPlatform();
+
+  bool goToUpdatePage = false;
+  Main.versionStatus = await Main.newVersion.getVersionStatus();
+  if (!Main.isInternetOn && Main.isThereNewerVersion) {
+    goToUpdatePage = true;
+  }
+
+  if (Main.versionStatus != null && Main.versionStatus!.canUpdate) {
+    Main.isThereNewerVersion = true;
+    goToUpdatePage = true;
+    Main.writeSettings();
+  }
+
   runApp(MaterialApp(
-    initialRoute: forceToHomePage ? "/home" : (Main.isInternetOn ? (Main.forceUpdate ? "/webpage" : "/home") : "/nointernet"),
+    initialRoute: !goToUpdatePage ? (forceToHomePage ? "/home" : (Main.isInternetOn ? (Main.forceUpdate ? "/webpage" : "/home") : "/nointernet")) : "/update",
     routes: {
       "/nointernet" : (context) => NoInternetPage(),
       "/home" : (context) => Home(),
       "/webpage": (context) => Webpage(),
+      "/update": (context) => UpdatePage(),
       "/home/searchcourses": (contetx) => const SearchPage(),
       "/home/favcourses": (context) => FavCourses(),
       "/home/editcourses": (context) => EditCoursePage(),

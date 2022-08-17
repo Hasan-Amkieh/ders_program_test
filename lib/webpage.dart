@@ -48,8 +48,42 @@ class WebpageState extends State<Webpage> {
     var response = await request.close();
 
     // transforms and prints the response
-    await for (var contents in response.transform(const Utf8Decoder())) { //
-      int pos = 0;
+    await for (var contents in response.transform(const Utf8Decoder())) {
+      int pos;
+
+      if (semesterName.isEmpty) {
+        int pos_;
+        int start;
+        pos = contents.indexOf('https://atilimartsci'); // first search for
+        if (pos != -1) {
+          start = contents.lastIndexOf('<table', pos);
+          pos_ = contents.lastIndexOf('Schedule', pos);
+          if (pos_ == -1 || pos_ < start) {
+            pos_ = contents.lastIndexOf('schedule', pos);
+          }
+          if (pos_ == -1 || pos_ < start) {
+            pos_ = contents.lastIndexOf('SCHEDULE', pos);
+          }
+          if (pos_ == -1 || pos_ < start) {
+            pos_ = contents.lastIndexOf('School', pos);
+          }
+          if (pos_ == -1 || pos_ < start) {
+            pos_ = contents.lastIndexOf('SCHOOL', pos);
+          }
+          if (pos_ == -1 || pos_ < start) {
+            pos_ = contents.lastIndexOf('school', pos);
+          }
+
+          if (pos_ != -1 && pos_ > start) { // then the semester name is found:
+
+            pos = contents.lastIndexOf('>', pos_) + 1;
+            pos_ = contents.indexOf('<', pos_);
+            semesterName = contents.substring(pos, pos_);
+
+          }
+        }
+      }
+
       if (Main.artsNSciencesLink.isEmpty) {
         pos = contents.indexOf('https://atilimartsci');
         if (pos != -1) {
@@ -98,6 +132,8 @@ class WebpageState extends State<Webpage> {
     //     "${Main.artsNSciencesLink}\n${Main.fineArtsLink}\n${Main.businessLink}\n${Main.engineeringLink}\n${Main.civilAviationLink}\n${Main.healthSciencesLink}\n${Main.lawLink}");
 
   }
+
+  String semesterName = "";
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +207,7 @@ class WebpageState extends State<Webpage> {
                               Main.facultyDataOld = Main.facultyData;
                             }
                             Main.isFacDataFilled = true;
-                            Main.facultyData = FacultySemester(facName: Main.faculty, lastUpdate: DateTime.now());
+                            Main.facultyData = FacultySemester(facName: Main.faculty, lastUpdate: DateTime.now(), semesterName: semesterName);
                             Main.facultyData.subjects = msg[1] as List<Subject>;
 
                             // then find all the courses that have different time or classrooms:
