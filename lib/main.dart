@@ -69,7 +69,7 @@ class Main {
 
   static NewVersion newVersion = NewVersion(
       iOSId: 'com.google.Vespa',
-      androidId: 'com.google.android.apps.cloudconsole');
+      androidId: 'amkieh.hasan.atsched');
   static late VersionStatus? versionStatus;
 
   static late PackageInfo packageInfo;
@@ -446,12 +446,18 @@ Future main() async {
   Main.packageInfo = await PackageInfo.fromPlatform();
 
   bool goToUpdatePage = false;
-  Main.versionStatus = await Main.newVersion.getVersionStatus();
+  bool isThereErr = false;
+  try {
+    Main.versionStatus = await Main.newVersion.getVersionStatus();
+  } catch(err) {
+    print(err);
+    isThereErr = true;
+  }
   if (!Main.isInternetOn && Main.isThereNewerVersion) {
     goToUpdatePage = true;
   }
 
-  if (Main.versionStatus != null && Main.versionStatus!.canUpdate) {
+  if (!isThereErr && Main.versionStatus != null && Main.versionStatus!.canUpdate) {
     Main.isThereNewerVersion = true;
     goToUpdatePage = true;
     Main.writeSettings();

@@ -11,7 +11,7 @@
         </intent>
     </queries>
    <application
-        android:label="ders_program_test"
+        android:label="Atsched"
         android:requestLegacyExternalStorage="true"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
@@ -39,7 +39,7 @@
 
             <!-- Branch URI Scheme -->
             <intent-filter>
-                <data android:scheme="dersbottest" android:host="open" />
+                <data android:scheme="atsched" android:host="open" />
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
