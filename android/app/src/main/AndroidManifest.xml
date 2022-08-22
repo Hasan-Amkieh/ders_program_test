@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ders_program_test">
+    package="amkieh.hasan.atsched">
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -50,9 +50,9 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="dersbottest.app.link" />
+                <data android:scheme="https" android:host="atsched.app.link" />
                 <!-- example-alternate domain is required for App Links when the Journeys/Web SDK and Deepviews are used inside your website.  -->
-                <data android:scheme="https" android:host="dersbottest-alternate.app.link" />
+                <data android:scheme="https" android:host="atsched-alternate.app.link" />
             </intent-filter>
 
             <intent-filter android:autoVerify="true">
