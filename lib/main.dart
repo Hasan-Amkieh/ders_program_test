@@ -1,5 +1,7 @@
 // NOTE: minimum version of android is 4.4 for the application to run,
 
+import 'dart:io' show Platform;
+
 import 'dart:core';
 import 'dart:io';
 import 'package:ders_program_test/language/dictionary.dart';
@@ -138,7 +140,7 @@ class Main {
   static void writeSettings() async {
 
     String toWrite = "";
-    final file = File('${Main.appDocDir}/settings.txt'); // FileSystemException
+    final file = File(Main.appDocDir.toString() + (Platform.isWindows ? '\\' : '/' ) + 'settings.txt');
 
     toWrite = toWrite + "force_update:"+forceUpdate.toString()+"\n";
     toWrite = toWrite + "is_dark:"+(Main.theme == ThemeMode.dark).toString()+"\n";
@@ -160,7 +162,7 @@ class Main {
 
     String content = "";
     try {
-      final file = File('${Main.appDocDir}/settings.txt'); // FileSystemException
+      final file = File(Main.appDocDir.toString() + (Platform.isWindows ? '\\' : '/' ) + 'settings.txt'); // FileSystemException
 
       content = file.readAsStringSync();
       if (content.isNotEmpty) {
@@ -204,7 +206,7 @@ class Main {
 
     for (int i = 0 ; i < schedules.length ; i++) {
 
-      File file = File("${Main.appDocDir}/schedule_${Main.schedules[i].scheduleName}.txt");
+      File file = File(Main.appDocDir + (Platform.isWindows ? '\\' : '/' ) + "schedule_${Main.schedules[i].scheduleName}.txt");
       String toWrite = "";
 
       for (int j = 0 ; j < schedules[i].scheduleCourses.length ; j++) { // notes:
@@ -294,12 +296,12 @@ class Main {
 
   static void writeFacultyCourses() {
 
-    File file = File("${Main.appDocDir}/faculty_courses.txt");
+    File file = File(Main.appDocDir + (Platform.isWindows ? '\\' : '/' ) + "faculty_courses.txt");
     if (file.existsSync()) {
       file.deleteSync();
     }
 
-    file = File("${Main.appDocDir}/faculty_courses.txt");
+    file = File(Main.appDocDir + (Platform.isWindows ? '\\' : '/' ) + "faculty_courses.txt");
     String toWrite = "";
 
     toWrite = toWrite + Main.faculty + "\n";
@@ -317,7 +319,7 @@ class Main {
 
   static void readFacultyCourses() {
 
-    File file = File("${Main.appDocDir}/faculty_courses.txt");
+    File file = File(Main.appDocDir + (Platform.isWindows ? '\\' : '/' ) + "faculty_courses.txt");
 
     if (file.existsSync()) {
 
@@ -357,7 +359,7 @@ class Main {
 
   static void readFavCourses() {
 
-    File file = File("${Main.appDocDir}/fav_courses.txt");
+    File file = File(Main.appDocDir + (Platform.isWindows ? '\\' : '/' ) + "fav_courses.txt");
 
     if (file.existsSync()) {
 
@@ -379,7 +381,7 @@ class Main {
 
   static void writeFavCourses() {
 
-    File file = File("${Main.appDocDir}/fav_courses.txt");
+    File file = File(Main.appDocDir + (Platform.isWindows ? '\\' : '/' ) + "fav_courses.txt");
     String toWrite = "";
 
     for (int i = 0 ; i < Main.favCourses.length ; i++) {
@@ -408,13 +410,15 @@ Future main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   Main.appDocDir = (await getApplicationDocumentsDirectory()).path;
-  await [Permission.storage].request().then((value_) {
-    if (!value_.toString().contains(".granted")) {
-      Main.restart();
-    } else {
-      //print("The premission of storage was granted!");
-    }
-  });
+  if (!Platform.isWindows) {
+    await [Permission.storage].request().then((value_) {
+      if (!value_.toString().contains(".granted")) {
+        Main.restart();
+      } else {
+        //print("The premission of storage was granted!");
+      }
+    });
+  }
 
   Main.readSchedules();
   Main.readSettings();
