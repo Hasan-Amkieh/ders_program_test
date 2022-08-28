@@ -8,7 +8,6 @@ import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:ders_program_test/language/dictionary.dart';
 import 'package:ders_program_test/others/subject.dart';
 import 'package:ders_program_test/pages/home_page.dart';
-import 'package:ders_program_test/widgets/textfieldwidget.dart';
 import 'package:ders_program_test/widgets/timetable_canvas.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -236,11 +235,17 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                   visible: schedule.scheduleCourses.isNotEmpty,
                   child: ListTile(
                     onTap: null,
-                    title: Container(
-                        width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.7, height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.7,
-                        child: CustomPaint(painter:
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.6 : 0.7),
+                          height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.6 : 0.7),
+                          child: CustomPaint(painter:
                           TimetableCanvas(beginningPeriods: beginningPeriods, days: days, hours: hours, isForSchedule: true)
-                        ),
+                          ),
+                        )
+                      ],
                     ),
                   ),
                 ),
@@ -365,7 +370,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
     actions.add(BottomSheetAction(
         title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           const Icon(CupertinoIcons.pencil_ellipsis_rectangle, color: Colors.blue),
-          SizedBox(width: width * 0.03),
+          SizedBox(width: width * (Platform.isWindows ? 0.01 : 0.03)),
           Text(translateEng("Rename Schedule"), style: const TextStyle(color: Colors.blue))]),
         onPressed: () {
           showDialog(context: context, builder: (context) {
@@ -441,7 +446,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
       actions.add(BottomSheetAction(
           title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             const Icon(Icons.share, color: Colors.blue),
-            SizedBox(width: width * 0.03),
+            SizedBox(width: width * (Platform.isWindows ? 0.01 : 0.03)),
             Text(translateEng("Share"), style: const TextStyle(color: Colors.blue))]),
           onPressed: () { // TODO:
             showAdaptiveActionSheet(

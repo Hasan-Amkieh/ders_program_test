@@ -300,9 +300,9 @@ class SearchPageState extends State<SearchPage> {
                 height: height * 0.03,
               ),
               (sub.days.isNotEmpty && sub.bgnPeriods.isNotEmpty && sub.hours.isNotEmpty) ?
-              Container(
-                  width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.7,
-                  height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.7,
+              SizedBox(
+                  width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.4 : 0.7),
+                  height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.4 : 0.7),
                   child: CustomPaint(painter:
               TimetableCanvas(beginningPeriods: sub.bgnPeriods, days: sub.days, hours: sub.hours, isForSchedule: false))
               ) : Container(),

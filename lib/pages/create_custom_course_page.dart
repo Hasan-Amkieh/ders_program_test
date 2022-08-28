@@ -1,4 +1,4 @@
-
+import "dart:io" show Platform;
 import 'dart:ui';
 
 import 'package:ders_program_test/language/dictionary.dart';
@@ -549,8 +549,8 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                     Row(
                       children: [
                         SizedBox(
-                          width: 0.08 * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
-                          height: 0.08 * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
+                          width: (Platform.isWindows ? 0.04 : 0.08) * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
+                          height: (Platform.isWindows ? 0.04 : 0.08) * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
                           child: Container(
                             decoration: BoxDecoration(
                               boxShadow: [
@@ -583,8 +583,8 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                           height: width * 0.03,
                         ),
                         SizedBox(
-                          width: 0.08 * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
-                          height: 0.08 * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
+                          width: (Platform.isWindows ? 0.04 : 0.08) * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
+                          height: (Platform.isWindows ? 0.04 : 0.08) * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
                           child: Container(
                             decoration: BoxDecoration(
                               boxShadow: [
@@ -650,12 +650,18 @@ class CustomCoursePageState extends State<CustomCoursePage> {
     tiles.add(
         ListTile(
           onTap: null,
-          title: Container(
-              width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.5,
-              height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.5,
-              child: CustomPaint(painter:
-          TimetableCanvas(beginningPeriods: bgnPeriods, days: days, hours: widget.hours, isForSchedule: false))),
-
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                  width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.35 : 0.5),
+                  height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.35 : 0.5),
+                  child: CustomPaint(painter:
+                  TimetableCanvas(beginningPeriods: bgnPeriods, days: days, hours: widget.hours, isForSchedule: false)
+                  )
+              )
+            ],
+          ),
         )
     );
 
@@ -684,7 +690,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
       bts.add(Visibility(
         visible: fieldNumber == 0 ? !widget.editingTeacher[periodIndex][teacherIndex] : !widget.editingClassroom[periodIndex][teacherIndex],
         child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 0.01 * width),
+          margin: EdgeInsets.symmetric(horizontal: 0.01 * width, vertical: 0.005 * width),
           child: TextButton(
               style: ButtonStyle(
                 padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 0.01 * width, horizontal: 0.02 * width)),
@@ -807,7 +813,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
       bts.add(Visibility(
         visible: !widget.editingDep[depIndex],
         child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 0.01 * width),
+          margin: EdgeInsets.symmetric(horizontal: 0.01 * width, vertical: 0.005 * width),
           child: TextButton(
               style: ButtonStyle(
                 padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 0.01 * width, horizontal: 0.02 * width)),

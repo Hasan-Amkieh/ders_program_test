@@ -1,3 +1,5 @@
+import "dart:io" show Platform;
+
 import 'dart:async';
 import 'dart:io';
 
@@ -13,7 +15,6 @@ import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -424,8 +425,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
               Row(
                 children: [
                   SizedBox(
-                    width: 0.08 * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
-                    height: 0.08 * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
+                    width: (Platform.isWindows ? 0.04 : 0.08) * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
+                    height: (Platform.isWindows ? 0.04 : 0.08) * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
                     child: Container(
                       decoration: BoxDecoration(
                         boxShadow: [
@@ -458,8 +459,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                     height: height * 0.03,
                   ),
                   SizedBox(
-                    width: 0.08 * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
-                    height: 0.08 * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
+                    width: (Platform.isWindows ? 0.04 : 0.08) * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
+                    height: (Platform.isWindows ? 0.04 : 0.08) * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
                     child: Container(
                       decoration: BoxDecoration(
                         boxShadow: [
@@ -679,7 +680,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         child: NavigationBar(
           backgroundColor: Main.appTheme.navigationBarColor,
           animationDuration: const Duration(seconds: 1),
-          height: isPortrait ? height * 0.08 : width * 0.08,
+          height: Platform.isWindows ? (height * 0.08) : (isPortrait ? height * 0.08 : width * 0.08),
           labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
           selectedIndex: pageIndex,
           onDestinationSelected: (int newIndex) {

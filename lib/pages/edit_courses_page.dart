@@ -1,4 +1,5 @@
 import 'dart:ui';
+import "dart:io" show Platform;
 
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:ders_program_test/language/dictionary.dart';
@@ -418,8 +419,8 @@ class EditCoursePageState extends State<EditCoursePage> {
                         ),
                         (subject.days.isNotEmpty && subject.bgnPeriods.isNotEmpty && subject.hours.isNotEmpty) ?
                         Container(color: Main.appTheme.scaffoldBackgroundColor,
-                            width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.7,
-                            height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.7,
+                            width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.5 : 0.7),
+                            height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.5 : 0.7),
                             child: CustomPaint(painter:
                           TimetableCanvas(beginningPeriods: subject.bgnPeriods, days: subject.days, hours: subject.hours, isForSchedule: false))
                         ) : Container(),
