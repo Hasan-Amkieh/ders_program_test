@@ -1,4 +1,4 @@
-package amkieh.hasan.ders_program_test
+package amkieh.hasan.atsched
 
 import io.flutter.embedding.android.FlutterActivity
 

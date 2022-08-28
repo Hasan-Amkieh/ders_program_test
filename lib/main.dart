@@ -17,8 +17,9 @@ import 'package:ders_program_test/pages/scheduler_page.dart';
 import 'package:ders_program_test/pages/scheduler_result_page.dart';
 import 'package:ders_program_test/pages/search_page.dart';
 import 'package:ders_program_test/pages/update_page.dart';
+import 'package:ders_program_test/webpage_computer.dart';
 import 'package:flutter/material.dart';
-import 'package:ders_program_test/webpage.dart';
+import 'package:ders_program_test/webpage_phone.dart';
 import 'package:ders_program_test/pages/home_page.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
@@ -472,7 +473,7 @@ Future main() async {
     routes: {
       "/nointernet" : (context) => NoInternetPage(),
       "/home" : (context) => Home(),
-      "/webpage": (context) => Webpage(),
+      "/webpage": (context) => Platform.isWindows ? WebpageComputer() : WebpagePhone(),
       "/update": (context) => UpdatePage(),
       "/home/searchcourses": (contetx) => const SearchPage(),
       "/home/favcourses": (context) => FavCourses(),

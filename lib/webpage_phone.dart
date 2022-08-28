@@ -10,25 +10,25 @@ import 'package:ders_program_test/others/subject.dart';
 
 import 'others/departments.dart';
 
-import 'package:ders_program_test/others/spring_schedules.dart';
+//import 'package:ders_program_test/others/spring_schedules.dart';
 
-class Webpage extends StatefulWidget {
+class WebpagePhone extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return WebpageState();
+    return WebpagePhoneState();
   }
 
 }
 
-class WebpageState extends State<Webpage> {
+class WebpagePhoneState extends State<WebpagePhone> {
   InAppWebViewController? webView;
 
   static int state = 0;
 
   static bool doNotRestart = false;
 
-  static WebpageState? currentState;
+  static WebpagePhoneState? currentState;
   late InAppWebViewController controller;
 
   @override
@@ -609,7 +609,7 @@ class WebpageState extends State<Webpage> {
 
   }
 
-  static WebpageState? currWidget;
+  static WebpagePhoneState? currWidget;
 
   void finish() {
 

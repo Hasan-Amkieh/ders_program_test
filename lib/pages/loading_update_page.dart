@@ -1,10 +1,12 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:ders_program_test/webpage.dart';
+import 'package:ders_program_test/webpage_phone.dart';
 import 'package:restart_app/restart_app.dart';
 
 import '../language/dictionary.dart';
 import '../main.dart';
+import '../webpage_computer.dart';
 
 List<String> msgs = [translateEng("CONNECTING TO THE INTERNET"), // state 0
 translateEng("CONNECTING TO THE SERVER"), // 1
@@ -42,11 +44,11 @@ class LoadingUpdateState extends State<LoadingUpdate> {
 
   void checkState () {
 
-    if(currentState != WebpageState.state) {
+    if(currentState != (Platform.isWindows ? WebpageComputerState.state : WebpagePhoneState.state)) {
       setState(() {});
     }
 
-    if (DateTime.now().difference(lastChanged).inSeconds >= 20 && !WebpageState.doNotRestart) { // then restart the whole reload process:
+    if (DateTime.now().difference(lastChanged).inSeconds >= 20 && !(Platform.isWindows ? WebpageComputerState.doNotRestart : WebpagePhoneState.doNotRestart)) { // then restart the whole reload process:
 
       if (Main.isAttemptedBefore) {
         if (Main.facultyDataOld != null) {
@@ -65,7 +67,7 @@ class LoadingUpdateState extends State<LoadingUpdate> {
 
     }
 
-    if (WebpageState.state != 4) {
+    if ((Platform.isWindows ? WebpageComputerState.state : WebpagePhoneState.state) != 4) {
       Future.delayed(const Duration(milliseconds: 300), () => checkState());
     } else {
       endLoading();
@@ -76,7 +78,11 @@ class LoadingUpdateState extends State<LoadingUpdate> {
   void endLoading() {
     ModalRoute.of(context)?.popped.then((value) {
       print("Loading page is popped!");
-      WebpageState.currWidget!.finish();
+      if (Platform.isWindows) {
+        WebpageComputerState.currWidget!.finish();
+      } else {
+        WebpagePhoneState.currWidget!.finish();
+      }
     });
     Navigator.pop(context);
     Main.isAttemptedBefore = false; // it might be true or false, just do it anyway..
@@ -84,7 +90,7 @@ class LoadingUpdateState extends State<LoadingUpdate> {
 
   @override
   Widget build(BuildContext context) {
-    currentState = WebpageState.state;
+    currentState = Platform.isWindows ? WebpageComputerState.state : WebpagePhoneState.state;
     lastChanged = DateTime.now();
     Widget loadingWidget;
     switch (currentState) {
@@ -127,7 +133,7 @@ class LoadingUpdateState extends State<LoadingUpdate> {
           ),
           Container(
             margin: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * 0.2, 0, MediaQuery.of(context).size.width * 0.2, 0),
-            child: TextButton.icon(onPressed: WebpageState.doNotRestart ? null : () => Restart.restartApp(),
+            child: TextButton.icon(onPressed: (Platform.isWindows ? WebpageComputerState.doNotRestart : WebpagePhoneState.doNotRestart) ? null : () => Restart.restartApp(),
                 icon: const Icon(Icons.restart_alt, color: Colors.white,), label: Text(translateEng("RESTART UPDATE"), textAlign: TextAlign.center, style: txtStyle), style: ButtonStyle(overlayColor: MaterialStateProperty.resolveWith((states) {
                   return Colors.blue.shade300;
                 }))),
