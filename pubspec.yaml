@@ -54,6 +54,7 @@ dependencies:
   package_info_plus: ^1.4.3+1
   new_version: ^0.3.1
   desktop_webview_window: ^0.1.6
+  flutter_window_close: ^0.2.2
 
 dev_dependencies:
   flutter_test:

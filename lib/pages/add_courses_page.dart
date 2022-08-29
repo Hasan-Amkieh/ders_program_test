@@ -1,3 +1,4 @@
+import "dart:io" show Platform;
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -124,7 +125,7 @@ class AddCoursesPageState extends State<AddCoursesPage> {
               ),
 
               SizedBox(
-                height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.18,
+                height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.1 : 0.18),
                   child: SearchWidget(text: query, onChanged: search, hintText: translateEng("course code or name"))
               ),
 

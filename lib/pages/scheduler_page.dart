@@ -152,7 +152,7 @@ class SchedulerPageState extends State<SchedulerPage> {
                         ),
                     ),
                     TextButton.icon(
-                      icon: Icon(Icons.add),
+                      icon: const Icon(Icons.add),
                       label: Text(translateEng("Add course")),
                       onPressed: () {
                         Main.coursesToAdd = subjects;

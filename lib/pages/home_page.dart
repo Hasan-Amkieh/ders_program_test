@@ -12,6 +12,7 @@ import 'dart:ui';
 import 'package:ders_program_test/others/departments.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
+import 'package:flutter_window_close/flutter_window_close.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
@@ -103,7 +104,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
     print("Trying to find extra files: ");
     String content = "";
     try {
-      final file = File('${Main.appDocDir}/schedule.txt'); // FileSystemException
+      final file = File(Main.appDocDir + (Platform.isWindows ? '\\' : '/') +  'schedule.txt'); // FileSystemException
 
       content = file.readAsStringSync();
       file.deleteSync();
@@ -162,10 +163,33 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
     WidgetsBinding.instance.removeObserver(this);
 
     super.dispose();
+
   }
 
   @override
   Widget build(BuildContext context) {
+
+    if (Platform.isWindows) {
+      FlutterWindowClose.setWindowShouldCloseHandler(() async {
+        return await showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                  title: const Text('Do you really want to quit?'),
+                  actions: [
+                    ElevatedButton(
+                        onPressed: () {
+                          Main.save();
+                          Navigator.of(context).pop(true);
+                        },
+                        child: const Text('Yes')),
+                    ElevatedButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: const Text('No')),
+                  ]);
+            });
+      });
+    }
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Main.appTheme.headerBackgroundColor,
@@ -292,8 +316,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           day = "Today";
         } else if (days == 1) {
           day = "Yesterday";
-        } else {
-          day = "$days days ago";
+        } else { // basically taking the absolute of the number:
+          day = "${days < 0 ? (days * -1) : days} days ago";
         }
       }
 
@@ -394,14 +418,16 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                 translateEng("Current Semester")  +": ",
                 style: TextStyle(color: Main.appTheme.titleTextColor),
               ),
-              Text(
-                Main.facultyData.semesterName,
-                style: TextStyle(color: Main.appTheme.titleTextColor),
+              Expanded(
+                child: Text(
+                  Main.facultyData.semesterName,
+                  style: TextStyle(color: Main.appTheme.titleTextColor),
+                ),
               ),
             ],
           ),
           SizedBox(
-            height: height * 0.01,
+            height: height * 0.02,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -417,6 +443,9 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                 });
               }, child: Text(translateEng("Update now"))),
             ],
+          ),
+          SizedBox(
+            height: height * 0.02,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -617,7 +646,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
               leading: Icon(CupertinoIcons.mail_solid, color: Main.appTheme.titleIconColor),
               subtitle: Text(translateEng("Complains and Suggestions"), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
               onTap: () async { // TODO: Change in the future:
-                const url = 'mailto:hassan1551@outlook.com?subject:Scheduling%20App&body=%0A%0A%0AThank you for the 3 months of effort'; // %0A new line / %20 white space
+                const url = 'mailto:hassan1551@outlook.com?subject:Scheduling%20App&body=%0A%0A%0ARegards,'; // %0A new line / %20 white space
                     if (await canLaunchUrl(Uri.parse(url))) {
                       await launchUrl(Uri.parse(url));
                     } else {

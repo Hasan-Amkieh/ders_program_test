@@ -105,8 +105,8 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
             Row(
               children: [
                 Main.currentScheduleIndex == scheduleIndex ? const Icon(CupertinoIcons.checkmark_seal_fill, color: Colors.blue) : Container(),
-                SizedBox(width: 0.03 * width),
-                Text(schedule.scheduleName, style: TextStyle(color: Colors.blue)),
+                SizedBox(width: (Platform.isWindows ? 0.01 : 0.03) * width),
+                Text(schedule.scheduleName, style: const TextStyle(color: Colors.blue)),
               ],
             ),
             Row(
@@ -132,8 +132,8 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
         initiallyExpanded: true,
         children: [
           Container(
-            padding: EdgeInsets.all(width * 0.05),
-            margin: EdgeInsets.all(width * 0.05),
+            padding: EdgeInsets.all(width * (Platform.isWindows ? 0.03 : 0.05)),
+            margin: EdgeInsets.all(width * (Platform.isWindows ? 0.01 : 0.05)),
             decoration: BoxDecoration(
               color: Main.appTheme.scheduleBackgroundColor.withOpacity(0.6),
               borderRadius: BorderRadius.all(Radius.circular(0.05 * width)),
@@ -370,7 +370,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
     actions.add(BottomSheetAction(
         title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           const Icon(CupertinoIcons.pencil_ellipsis_rectangle, color: Colors.blue),
-          SizedBox(width: width * (Platform.isWindows ? 0.01 : 0.03)),
+          SizedBox(width: width * (Platform.isWindows ? 0.005 : 0.03)),
           Text(translateEng("Rename Schedule"), style: const TextStyle(color: Colors.blue))]),
         onPressed: () {
           showDialog(context: context, builder: (context) {
@@ -446,9 +446,10 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
       actions.add(BottomSheetAction(
           title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             const Icon(Icons.share, color: Colors.blue),
-            SizedBox(width: width * (Platform.isWindows ? 0.01 : 0.03)),
-            Text(translateEng("Share"), style: const TextStyle(color: Colors.blue))]),
-          onPressed: () { // TODO:
+            SizedBox(width: width * (Platform.isWindows ? 0.005 : 0.03)),
+            Text(translateEng("Share"), style: const TextStyle(color: Colors.blue))]
+          ),
+          onPressed: () {
             showAdaptiveActionSheet(
               bottomSheetColor: Main.appTheme.scaffoldBackgroundColor,
               context: context,
@@ -458,8 +459,8 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.screenshot, color: Main.appTheme.titleTextColor),
-                      SizedBox(width: width * 0.03),
+                      Icon(Icons.share, color: Main.appTheme.titleTextColor),
+                      SizedBox(width: width * (Platform.isWindows ? 0.01 : 0.03)),
                       Text(translateEng("By Screenshot of the Schedule"), style: TextStyle(color: Main.appTheme.titleTextColor)),
                     ],
                   ),
@@ -498,7 +499,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                       Navigator.pop(context);
                     },
                   ),
-                  TextButton.icon(
+                  Platform.isWindows ? Container() : TextButton.icon(
                     icon: const Icon(Icons.link),
                     label: Text(translateEng("Share Screenshot")),
                     onPressed: () async {
@@ -511,9 +512,9 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                       Navigator.pop(context);
                     },
                   ),
-                  SizedBox(height: width * 0.03),
-                  const Divider(height: 2.0, thickness: 2.0),
-                  TextButton.icon(
+                  Platform.isWindows ? Container() : SizedBox(height: width * 0.03),
+                  Platform.isWindows ? Container() : const Divider(height: 2.0, thickness: 2.0),
+                  Platform.isWindows ? Container() : TextButton.icon(
                     icon: const Icon(CupertinoIcons.link),
                     label: Text(translateEng("Share Schedule by Link")),
                     onPressed: () async {
@@ -562,7 +563,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
       actions.add(BottomSheetAction(
           title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             const Icon(CupertinoIcons.xmark_circle, color: Colors.red),
-            SizedBox(width: width * 0.03),
+            SizedBox(width: width * (Platform.isWindows ? 0.005 : 0.03)),
             Text(translateEng("Delete"), style: const TextStyle(color: Colors.red))]),
           onPressed: () {
             setState(() {

@@ -79,6 +79,7 @@ class WebpagePhoneState extends State<WebpagePhone> {
             pos = contents.lastIndexOf('>', pos_) + 1;
             pos_ = contents.indexOf('<', pos_);
             semesterName = contents.substring(pos, pos_);
+            semesterName = semesterName.replaceAll("&nbsp;", " ");
 
           }
         }

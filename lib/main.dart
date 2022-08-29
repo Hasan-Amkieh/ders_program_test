@@ -1,5 +1,6 @@
 // NOTE: minimum version of android is 4.4 for the application to run,
 
+import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'dart:core';
@@ -78,6 +79,8 @@ class Main {
   static late PackageInfo packageInfo;
 
   static String appDocDir = "";
+
+  static String semesterName = "";
 
   // NOTE: Default values are inside the function readSettings:
   static bool forceUpdate = false;
@@ -466,6 +469,99 @@ Future main() async {
     Main.isThereNewerVersion = true;
     goToUpdatePage = true;
     Main.writeSettings();
+  }
+
+  print("update: ${Main.forceUpdate} / internet: ${Main.isInternetOn}");
+  if (Main.forceUpdate && Main.isInternetOn) {
+    print("Getting the new links: ");
+    var request = await HttpClient().getUrl(Uri.parse('https://www.atilim.edu.tr/en/dersprogrami'));
+    // sends the request
+    var response = await request.close();
+
+    // transforms and prints the response
+    await for (var contents in response.transform(const Utf8Decoder())) {
+      int pos;
+
+      if (Main.semesterName.isEmpty) {
+        int pos_;
+        int start;
+        pos = contents.indexOf('https://atilimartsci'); // first search for
+        if (pos != -1) {
+          start = contents.lastIndexOf('<table', pos);
+          pos_ = contents.lastIndexOf('Schedule', pos);
+          if (pos_ == -1 || pos_ < start) {
+            pos_ = contents.lastIndexOf('schedule', pos);
+          }
+          if (pos_ == -1 || pos_ < start) {
+            pos_ = contents.lastIndexOf('SCHEDULE', pos);
+          }
+          if (pos_ == -1 || pos_ < start) {
+            pos_ = contents.lastIndexOf('School', pos);
+          }
+          if (pos_ == -1 || pos_ < start) {
+            pos_ = contents.lastIndexOf('SCHOOL', pos);
+          }
+          if (pos_ == -1 || pos_ < start) {
+            pos_ = contents.lastIndexOf('school', pos);
+          }
+
+          if (pos_ != -1 && pos_ > start) { // then the semester name is found:
+
+            pos = contents.lastIndexOf('>', pos_) + 1;
+            pos_ = contents.indexOf('<', pos_);
+            Main.semesterName = contents.substring(pos, pos_);
+            Main.semesterName = Main.semesterName.replaceAll("&nbsp;", " ");
+
+          }
+        }
+      }
+
+      if (Main.artsNSciencesLink.isEmpty) {
+        pos = contents.indexOf('https://atilimartsci');
+        if (pos != -1) {
+          Main.artsNSciencesLink = contents.substring(pos, contents.indexOf('"', pos + 32));
+        }
+      }
+      if (Main.fineArtsLink.isEmpty) {
+        pos = contents.indexOf('https://atilimgstm');
+        if (pos != -1) {
+          Main.fineArtsLink = contents.substring(pos, contents.indexOf('"', pos + 32));
+        }
+      }
+      if (Main.lawLink.isEmpty) {
+        pos = contents.indexOf('https://atilimlaw');
+        if (pos != -1) {
+          Main.lawLink = contents.substring(pos, contents.indexOf('"', pos + 32));
+        }
+      }
+      if (Main.businessLink.isEmpty) {
+        pos = contents.indexOf('https://atilimmgmt');
+        if (pos != -1) {
+          Main.businessLink = contents.substring(pos, contents.indexOf('"', pos + 32));
+        }
+      }
+      if (Main.engineeringLink.isEmpty) {
+        pos = contents.indexOf('https://atilimengr');
+        if (pos != -1) {
+          Main.engineeringLink = contents.substring(pos, contents.indexOf('"', pos + 32));
+        }
+      }
+      if (Main.healthSciencesLink.isEmpty) {
+        pos = contents.indexOf('https://atilimhlth');
+        if (pos != -1) {
+          Main.healthSciencesLink = contents.substring(pos, contents.indexOf('"', pos + 32));
+        }
+      }
+      if (Main.civilAviationLink.isEmpty) {
+        pos = contents.indexOf('https://atilimcav');
+        if (pos != -1) {
+          Main.civilAviationLink = contents.substring(pos, contents.indexOf('"', pos + 32));
+        }
+      }
+    }
+
+    print("found the following links: "
+        "${Main.artsNSciencesLink}\n${Main.fineArtsLink}\n${Main.businessLink}\n${Main.engineeringLink}\n${Main.civilAviationLink}\n${Main.healthSciencesLink}\n${Main.lawLink}");
   }
 
   runApp(MaterialApp(
