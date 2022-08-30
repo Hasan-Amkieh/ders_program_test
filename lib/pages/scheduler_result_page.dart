@@ -167,7 +167,7 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
 
                     return AlertDialog(
                       backgroundColor: Main.appTheme.scaffoldBackgroundColor,
-                      title: Text(translateEng("Nam the Schedule"), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                      title: Text(translateEng("Name the Schedule"), style: TextStyle(color: Main.appTheme.titleTextColor)),
                       content: Builder(
                           builder: (context) {
                             return SizedBox(

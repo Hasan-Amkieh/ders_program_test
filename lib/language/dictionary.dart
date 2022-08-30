@@ -80,7 +80,7 @@ Map<String, String> engToTurk = {
   "Search for Courses" : "Kurs Ara",
   "Saved Schedules" : "Kayıtlı Programlar",
   "Add and edit the courses on the current schedule" : "Mevcut takvimdaki kursları ekleyin ve düzenleyin",
-  "Choose the courses with the sections with specific options, then choose your appropriate schedule" : "Belirli seçeneklere sahip bölümleri olan kursları seçin, ardından uygun programınızı seçin",
+  "Choose the courses with the sections you prefer, then choose your appropriate schedule" : "Tercih ettiğiniz bölümlere sahip kursları seçin, ardından uygun programınızı seçin",
   "These plans are provided by the university" : "Bu planlar üniversite tarafından sağlanmaktadır.",
   "Search for courses using its name, classroom number, teacher or department" : "Adını, sınıf numarasını, öğretmenini veya bölümünü kullanarak kursları arayın",
   "You can save schedules and set them back again" : "Programları kaydedebilir ve tekrar ayarlayabilirsiniz",
@@ -207,6 +207,7 @@ Map<String, String> engToTurk = {
   "Current Semester" : "Mevcut Dönem",
   "Current Version" : "Mevcut Versiyon",
   "There is a newer version of this application,\nplease update the application first!" : "Bu uygulamanın daha yeni bir sürümü var,\nlütfen önce uygulamayı güncelleyin!",
+  "Name the Schedule" : "Programı Adlandır",
 };
 
 String translateEng(String eng) {

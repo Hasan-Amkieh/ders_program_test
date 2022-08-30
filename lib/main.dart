@@ -89,7 +89,7 @@ class Main {
   static String faculty = "Engineering";
   static String department = "AE";
   static String language = "English"; // currently, there is only
-  static ThemeMode theme = ThemeMode.system;
+  static ThemeMode theme = ThemeMode.dark;
   static bool isThereNewerVersion = false;
 
   static String artsNSciencesLink = "";

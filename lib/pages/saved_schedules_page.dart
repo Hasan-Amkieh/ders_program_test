@@ -339,11 +339,25 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
 
   Future saveScreenshot(Uint8List bytes) async {
 
-    await [Permission.storage].request().then((value_) {print("Permission response: $value_");});
+    //await [Permission.storage].request().then((value_) {print("Permission response: $value_");});
+    // no need to ask for permission since we already asked for it when the app started!
 
     final time = DateTime.now().toIso8601String().replaceAll('.', '-').replaceAll(':', '-');
     final name = 'screenshot_of_${Main.schedules[Main.currentScheduleIndex].scheduleName}_$time';
-    final result = await ImageGallerySaver.saveImage(bytes, name: name);
+
+    String result = "isSuccess: false";
+
+    if (Platform.isWindows) {
+      try {
+        File imgFile = await File('${Main.appDocDir.replaceAll("Documents", "Desktop")}\\$name.png').create();
+        await imgFile.writeAsBytes(bytes);
+        result = "isSuccess: true";
+      } catch (e) {
+        print(e);
+      }
+    } else {
+      result = await ImageGallerySaver.saveImage(bytes, name: name);
+    }
 
     return result;
 
@@ -463,16 +477,26 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                   SizedBox(height: width * 0.03),
                   TextButton.icon(
                     icon: const Icon(Icons.save_alt_outlined),
-                    label: Text(translateEng("Save Screenshot to Gallery")),
+                    label: Text(translateEng(Platform.isWindows ? "Save Screenshot" : "Save Screenshot to Gallery")),
                     onPressed: () async {
                       int oldScheduleIndex = Main.currentScheduleIndex;
                       Main.currentScheduleIndex = scheduleIndex;
-                      final image = await controller.captureFromWidget(HomeState.currentState!.buildSchedulePage());
+                      final image;
+                      if (Platform.isWindows) {
+                        image = await controller.captureFromWidget(
+                            MaterialApp(
+                                home: Scaffold(
+                                  body: HomeState.currentState!.buildSchedulePage(),
+                                ),
+                        ));
+                      } else {
+                        image = await controller.captureFromWidget(HomeState.currentState!.buildSchedulePage());
+                      }
                       Main.currentScheduleIndex = oldScheduleIndex;
                       saveScreenshot(image).then((value) {
                         if (value.toString().contains("isSuccess: true")) {
                           showToast(
-                            translateEng("Image was saved to gallery"),
+                            translateEng(Platform.isWindows ? "Image was saved to the Desktop" : "Image was saved to gallery"),
                             duration: const Duration(milliseconds: 1500),
                             position: ToastPosition.bottom,
                             backgroundColor: Colors.blue.withOpacity(0.8),
@@ -535,7 +559,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
         actions.add(BottomSheetAction(
             title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               const Icon(CupertinoIcons.checkmark_seal, color: Colors.blue),
-              SizedBox(width: width * 0.03),
+              SizedBox(width: width * (Platform.isWindows ? 0.005 : 0.03)),
               Text(translateEng("Set Active"), style: const TextStyle(color: Colors.blue))]),
             onPressed: () {
               setState(() {

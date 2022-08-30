@@ -175,7 +175,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             context: context,
             builder: (context) {
               return AlertDialog(
-                  title: const Text('Do you really want to quit?'),
+                  title: Text('Do you really want to quit?' + (Main.forceUpdate ? "\nNext time you open Atsched the update will start" : "")),
                   actions: [
                     ElevatedButton(
                         onPressed: () {
@@ -272,8 +272,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                   }
                 },
                 title: Text(translateEng('Scheduler'), style: TextStyle(color: Main.appTheme.titleTextColor)),
-                subtitle: Text(translateEng('Choose the courses with the sections with specific options, then choose your appropriate schedule'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
-                leading: Icon(Icons.calendar_today, color: Main.appTheme.titleIconColor),
+                subtitle: Text(translateEng('Choose the courses with the sections you prefer, then choose your appropriate schedule'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
+                leading: Icon(CupertinoIcons.calendar_badge_plus, color: Main.appTheme.titleIconColor),
               ),
               // SizedBox(height: height * 0.01),
               // ListTile(
@@ -291,7 +291,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                 },
                 title: Text(translateEng('Saved Schedules'), style: TextStyle(color: Main.appTheme.titleTextColor)),
                 subtitle: Text(translateEng('You can save schedules and set them back again'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
-                leading: Icon(Icons.edit_calendar, color: Main.appTheme.titleIconColor),
+                leading: Icon(CupertinoIcons.calendar_today, color: Main.appTheme.titleIconColor),
               ),
             ],
           )
@@ -413,12 +413,13 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                translateEng("Current Semester")  +": ",
+                translateEng("Current Semester")  + ": ",
                 style: TextStyle(color: Main.appTheme.titleTextColor),
               ),
               Expanded(
                 child: Text(
                   Main.facultyData.semesterName,
+                  textAlign: TextAlign.end,
                   style: TextStyle(color: Main.appTheme.titleTextColor),
                 ),
               ),
@@ -437,7 +438,12 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
               TextButton(onPressed: () {
                 setState(() {
                   Main.forceUpdate = true;
-                  Main.restart();
+                  if (Platform.isWindows) {
+                    Main.save();
+                    FlutterWindowClose.closeWindow();
+                  } else {
+                    Main.restart();
+                  }
                 });
               }, child: Text(translateEng("Update now"))),
             ],

@@ -310,7 +310,11 @@ class Subject { // represents a class
           str = str.substring(0, str.indexOf("-"));
         }
       }
-      print("RETURNING section ${int.parse(str)} for subject ${classCode}");
+      //print("RETURNING section ${int.parse(str)} for subject ${classCode}");
+      print("Trying to parse $str into a section number");
+      if (str.isEmpty) {
+        return 0;
+      }
       return int.parse(str);
     }
 
