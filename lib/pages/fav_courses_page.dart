@@ -6,7 +6,7 @@ import 'package:ders_program_test/language/dictionary.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ders_program_test/main.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:oktoast/oktoast.dart';
 
 import '../others/subject.dart';
 import '../widgets/timetable_canvas.dart';
@@ -75,14 +75,13 @@ class FavCoursesState extends State<FavCourses> {
                           style: const TextStyle(color: Colors.blue)), onPressed: () {
                         Main.favCourses.elementAt(count).note = notesController.text;
                         Navigator.pop(context);
-                        Fluttertoast.showToast(
-                            msg: translateEng("Notes were saved"),
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.TOP,
-                            timeInSecForIosWeb: 1,
-                            backgroundColor: const Color.fromRGBO(80, 154, 167, 1.0),
-                            textColor: Colors.white,
-                            fontSize: 12.0
+                        showToast(
+                          translateEng("Notes were saved"),
+                          duration: const Duration(milliseconds: 1500),
+                          position: ToastPosition.top,
+                          backgroundColor: const Color.fromRGBO(80, 154, 167, 1.0),
+                          radius: 100.0,
+                          textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
                         );
                       }),
                     ],
@@ -194,19 +193,16 @@ class FavCoursesState extends State<FavCourses> {
                                 doesExist = true;
                               }
                             }
-
                             if (!doesExist) {
                               Main.schedules[Main.currentScheduleIndex].scheduleCourses.add(Course(subject: sub, note: ""));
                             }
-
-                            Fluttertoast.showToast(
-                                msg: translateEng(doesExist ? "The course is already in the schedule" : "Added to the current schedule"),
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM,
-                                timeInSecForIosWeb: 1,
-                                backgroundColor: Colors.blue,
-                                textColor: Colors.white,
-                                fontSize: 12.0
+                            showToast(
+                              translateEng(doesExist ? "The course is already in the schedule" : "Added to the current schedule"),
+                              duration: const Duration(milliseconds: 1500),
+                              position: ToastPosition.bottom,
+                              backgroundColor: const Color.fromRGBO(80, 154, 167, 1.0),
+                              radius: 100.0,
+                              textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
                             );
                           }
                       ),

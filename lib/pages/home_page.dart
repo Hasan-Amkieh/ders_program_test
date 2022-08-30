@@ -13,8 +13,8 @@ import 'package:ders_program_test/others/departments.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:flutter_window_close/flutter_window_close.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:url_launcher/url_launcher.dart';
@@ -233,14 +233,13 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                   if (Main.isFacDataFilled) {
                     Navigator.pushNamed(context, "/home/searchcourses");
                   } else {
-                    Fluttertoast.showToast(
-                        msg: translateEng("The courses could not be loaded!"),
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        timeInSecForIosWeb: 1,
-                        backgroundColor: Colors.blue,
-                        textColor: Colors.white,
-                        fontSize: 12.0
+                    showToast(
+                      translateEng("The courses could not be loaded!"),
+                      duration: const Duration(milliseconds: 1500),
+                      position: ToastPosition.bottom,
+                      backgroundColor: Colors.blue.withOpacity(0.8),
+                      radius: 100.0,
+                      textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
                     );
                   }
                 },
@@ -262,14 +261,13 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                   if (Main.isFacDataFilled) {
                     Navigator.pushNamed(context, "/home/scheduler");
                   } else {
-                    Fluttertoast.showToast(
-                        msg: translateEng("The courses could not be loaded!"),
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        timeInSecForIosWeb: 1,
-                        backgroundColor: Colors.blue,
-                        textColor: Colors.white,
-                        fontSize: 12.0
+                    showToast(
+                      translateEng("The courses could not be loaded!"),
+                      duration: const Duration(milliseconds: 1500),
+                      position: ToastPosition.bottom,
+                      backgroundColor: Colors.blue.withOpacity(0.8),
+                      radius: 100.0,
+                      textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
                     );
                   }
                 },

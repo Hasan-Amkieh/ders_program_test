@@ -6,7 +6,8 @@ import 'package:ders_program_test/others/subject.dart';
 import 'package:ders_program_test/widgets/textfieldwidget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:oktoast/oktoast.dart';
+
 
 import '../main.dart';
 import '../widgets/counterbutton.dart';
@@ -178,14 +179,13 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                 }
               });
               if (isUsed) {
-                Fluttertoast.showToast(
-                    msg: translateEng("The course code ") + "${widget.subject.classCode} " + translateEng("is already used"),
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: Colors.blue,
-                    textColor: Colors.white,
-                    fontSize: 12.0
+                showToast(
+                  translateEng("The course code ") + "${widget.subject.classCode} " + translateEng("is already used"),
+                  duration: const Duration(milliseconds: 1500),
+                  position: ToastPosition.bottom,
+                  backgroundColor: Colors.blue.withOpacity(0.8),
+                  radius: 100.0,
+                  textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
                 );
                 return;
               }
@@ -383,14 +383,13 @@ class CustomCoursePageState extends State<CustomCoursePage> {
 
       if (!isPeriodAdded && DateTime.now().difference(lastColWarningShown).inSeconds >= 10) {
         lastColWarningShown = DateTime.now();
-        Fluttertoast.showToast(
-            msg: translateEng("Please fix the collisions before saving"),
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.blue,
-            textColor: Colors.white,
-            fontSize: 12.0
+        showToast(
+          translateEng("Please fix the collisions before saving"),
+          duration: const Duration(milliseconds: 1500),
+          position: ToastPosition.bottom,
+          backgroundColor: Colors.red.withOpacity(0.8),
+          radius: 100.0,
+          textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
         );
       }
 

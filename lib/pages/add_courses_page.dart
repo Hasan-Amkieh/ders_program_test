@@ -3,7 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:oktoast/oktoast.dart';
 
 import '../language/dictionary.dart';
 import '../main.dart';
@@ -195,24 +195,23 @@ class AddCoursesPageState extends State<AddCoursesPage> {
               Main.coursesToAdd.add(subject);
             });
           }
-          Fluttertoast.showToast(
-              msg: translateEng(isInside ? "${subject.classCode} " + translateEng("is already in the schedule") : "${subject.classCode} " + translateEng("was added to the schedule")),
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.blue,
-              textColor: Colors.white,
-              fontSize: 12.0
+          showToast(
+            translateEng(isInside ? "${subject.classCode} " + translateEng("is already in the schedule")
+                : "${subject.classCode} " + translateEng("was added to the schedule")),
+            duration: const Duration(milliseconds: 1500),
+            position: ToastPosition.bottom,
+            backgroundColor: Colors.blue.withOpacity(0.8),
+            radius: 100.0,
+            textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
           );
         } else {
-          Fluttertoast.showToast(
-              msg: translateEng("The course has no time data"),
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.blue,
-              textColor: Colors.white,
-              fontSize: 12.0
+          showToast(
+            translateEng("The course has no time data"),
+            duration: const Duration(milliseconds: 1500),
+            position: ToastPosition.bottom,
+            backgroundColor: Colors.red.withOpacity(0.8),
+            radius: 100.0,
+            textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
           );
         }
       },

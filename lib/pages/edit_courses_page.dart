@@ -6,7 +6,8 @@ import 'package:ders_program_test/language/dictionary.dart';
 import 'package:ders_program_test/others/subject.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:oktoast/oktoast.dart';
+
 
 import '../main.dart';
 import '../widgets/timetable_canvas.dart';
@@ -61,14 +62,13 @@ class EditCoursePageState extends State<EditCoursePage> {
           modeName = "Delete";
           break;
       }
-      Fluttertoast.showToast(
-          msg: translateEng("$modeName Mode"),
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.TOP,
-          timeInSecForIosWeb: 1,
-          backgroundColor: const Color.fromRGBO(80, 154, 167, 1.0),
-          textColor: Colors.white,
-          fontSize: 12.0
+      showToast(
+        translateEng("$modeName Mode"),
+        duration: const Duration(milliseconds: 1500),
+        position: ToastPosition.bottom,
+        backgroundColor: const Color.fromRGBO(80, 154, 167, 1.0),
+        radius: 100.0,
+        textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
       );
     }
 
@@ -204,14 +204,13 @@ class EditCoursePageState extends State<EditCoursePage> {
                               }
                             });
                           } else {
-                            Fluttertoast.showToast(
-                                msg: translateEng("The courses could not be loaded!"),
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM,
-                                timeInSecForIosWeb: 1,
-                                backgroundColor: Colors.blue,
-                                textColor: Colors.white,
-                                fontSize: 12.0
+                            showToast(
+                              translateEng("The courses could not be loaded!"),
+                              duration: const Duration(milliseconds: 1500),
+                              position: ToastPosition.bottom,
+                              backgroundColor: Colors.red.withOpacity(0.8),
+                              radius: 100.0,
+                              textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
                             );
                           }
                         }
@@ -317,14 +316,13 @@ class EditCoursePageState extends State<EditCoursePage> {
                             style: const TextStyle(color: Colors.blue)), onPressed: () {
                               Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).note = notesController.text;
                               Navigator.pop(context);
-                              Fluttertoast.showToast(
-                                  msg: translateEng("Notes were saved"),
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.TOP,
-                                  timeInSecForIosWeb: 1,
-                                  backgroundColor: const Color.fromRGBO(80, 154, 167, 1.0),
-                                  textColor: Colors.white,
-                                  fontSize: 12.0
+                              showToast(
+                                translateEng("Notes were saved"),
+                                duration: const Duration(milliseconds: 1500),
+                                position: ToastPosition.top,
+                                backgroundColor: const Color.fromRGBO(80, 154, 167, 1.0),
+                                radius: 100.0,
+                                textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
                               );
                         }),
                       ],
@@ -478,14 +476,13 @@ class EditCoursePageState extends State<EditCoursePage> {
                   setState(() {
                     String str = Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).subject.classCode;
                     Main.schedules[Main.currentScheduleIndex].scheduleCourses.removeAt(index);
-                    Fluttertoast.showToast(
-                        msg: "'$str' " + translateEng("was removed"),
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.TOP,
-                        timeInSecForIosWeb: 1,
-                        backgroundColor: Colors.blue.shade400,
-                        textColor: Colors.white,
-                        fontSize: 12.0
+                    showToast(
+                      "'$str' " + translateEng("was removed"),
+                      duration: const Duration(milliseconds: 1500),
+                      position: ToastPosition.top,
+                      backgroundColor: Colors.blue.withOpacity(0.8),
+                      radius: 100.0,
+                      textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
                     );
                   });
                 }

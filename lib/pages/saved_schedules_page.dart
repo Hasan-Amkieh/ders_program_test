@@ -12,8 +12,8 @@ import 'package:ders_program_test/widgets/timetable_canvas.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
@@ -157,14 +157,13 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                                 if (Main.isFacDataFilled) {
                                   Navigator.pushNamed(context, "/home/searchcourses").then((value) => setState(() {}));
                                 } else {
-                                  Fluttertoast.showToast(
-                                      msg: translateEng("The courses could not be loaded!"),
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.BOTTOM,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor: Colors.blue,
-                                      textColor: Colors.white,
-                                      fontSize: 12.0
+                                  showToast(
+                                    translateEng("The courses could not be loaded!"),
+                                    duration: const Duration(milliseconds: 1500),
+                                    position: ToastPosition.bottom,
+                                    backgroundColor: Colors.blue.withOpacity(0.8),
+                                    radius: 100.0,
+                                    textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
                                   );
                                 }
                               });
@@ -192,14 +191,13 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                                   }
                                 }));
                               } else {
-                                Fluttertoast.showToast(
-                                    msg: translateEng("The courses could not be loaded!"),
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.BOTTOM,
-                                    timeInSecForIosWeb: 1,
-                                    backgroundColor: Colors.blue,
-                                    textColor: Colors.white,
-                                    fontSize: 12.0
+                                showToast(
+                                  translateEng("The courses could not be loaded!"),
+                                  duration: const Duration(milliseconds: 1500),
+                                  position: ToastPosition.bottom,
+                                  backgroundColor: Colors.blue.withOpacity(0.8),
+                                  radius: 100.0,
+                                  textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
                                 );
                               }
                             },
@@ -309,14 +307,13 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                         });
                         Navigator.pop(context);
                       } else {
-                        Fluttertoast.showToast(
-                            msg: translateEng("The name cannot be empty!"),
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM,
-                            timeInSecForIosWeb: 1,
-                            backgroundColor: Colors.blue,
-                            textColor: Colors.white,
-                            fontSize: 12.0
+                        showToast(
+                          translateEng("The name cannot be empty"),
+                          duration: const Duration(milliseconds: 1500),
+                          position: ToastPosition.bottom,
+                          backgroundColor: Colors.red.withOpacity(0.8),
+                          radius: 100.0,
+                          textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
                         );
                       }
                     },
@@ -430,14 +427,13 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
             );
           }).then((value) {
             Navigator.pop(context);
-            Fluttertoast.showToast(
-                msg: translateEng("The name was changed"),
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
-                timeInSecForIosWeb: 1,
-                backgroundColor: Colors.blue,
-                textColor: Colors.white,
-                fontSize: 12.0
+            showToast(
+              translateEng("The name was changed"),
+              duration: const Duration(milliseconds: 1500),
+              position: ToastPosition.bottom,
+              backgroundColor: Colors.blue.withOpacity(0.8),
+              radius: 100.0,
+              textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
             );
           });
         }));
@@ -475,24 +471,22 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                       Main.currentScheduleIndex = oldScheduleIndex;
                       saveScreenshot(image).then((value) {
                         if (value.toString().contains("isSuccess: true")) {
-                          Fluttertoast.showToast(
-                              msg: translateEng("Image was saved to gallery"),
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: Colors.blue,
-                              textColor: Colors.white,
-                              fontSize: 12.0
+                          showToast(
+                            translateEng("Image was saved to gallery"),
+                            duration: const Duration(milliseconds: 1500),
+                            position: ToastPosition.bottom,
+                            backgroundColor: Colors.blue.withOpacity(0.8),
+                            radius: 100.0,
+                            textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
                           );
                         } else {
-                          Fluttertoast.showToast(
-                              msg: translateEng("Image was NOT saved!"),
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              fontSize: 12.0
+                          showToast(
+                            translateEng("Image was NOT saved"),
+                            duration: const Duration(milliseconds: 1500),
+                            position: ToastPosition.bottom,
+                            backgroundColor: Colors.red.withOpacity(0.8),
+                            radius: 100.0,
+                            textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
                           );
                         }
                       });
@@ -547,14 +541,13 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
               setState(() {
                 Main.currentScheduleIndex = scheduleIndex;
                 Navigator.pop(context);
-                Fluttertoast.showToast(
-                    msg: translateEng("${Main.schedules[scheduleIndex].scheduleName} " + translateEng("is active")),
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: Colors.blue,
-                    textColor: Colors.white,
-                    fontSize: 12.0
+                showToast(
+                  translateEng("${Main.schedules[scheduleIndex].scheduleName} " + translateEng("is active")),
+                  duration: const Duration(milliseconds: 1500),
+                  position: ToastPosition.bottom,
+                  backgroundColor: Colors.blue.withOpacity(0.8),
+                  radius: 100.0,
+                  textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
                 );
               });
             })

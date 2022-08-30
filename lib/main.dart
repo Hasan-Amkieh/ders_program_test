@@ -22,6 +22,7 @@ import 'package:ders_program_test/webpage_computer.dart';
 import 'package:flutter/material.dart';
 import 'package:ders_program_test/webpage_phone.dart';
 import 'package:ders_program_test/pages/home_page.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -564,24 +565,26 @@ Future main() async {
         "${Main.artsNSciencesLink}\n${Main.fineArtsLink}\n${Main.businessLink}\n${Main.engineeringLink}\n${Main.civilAviationLink}\n${Main.healthSciencesLink}\n${Main.lawLink}");
   }
 
-  runApp(MaterialApp(
-    initialRoute: !goToUpdatePage ? (forceToHomePage ? "/home" : (Main.isInternetOn ? (Main.forceUpdate ? "/webpage" : "/home") : "/nointernet")) : "/update",
-    routes: {
-      "/nointernet" : (context) => NoInternetPage(),
-      "/home" : (context) => Home(),
-      "/webpage": (context) => Platform.isWindows ? WebpageComputer() : WebpagePhone(),
-      "/update": (context) => UpdatePage(),
-      "/home/searchcourses": (contetx) => const SearchPage(),
-      "/home/favcourses": (context) => FavCourses(),
-      "/home/editcourses": (context) => EditCoursePage(),
-      "/home/editcourses/addcourses": (context) => AddCoursesPage(),
-      "/home/editcourses/createcustomcourse": (context) => CustomCoursePage(),
-      "/home/editcourses/editcourseinfo": (context) { CustomCoursePage page = CustomCoursePage(); page.subject = Main.courseToEdit ?? Main.emptySubject; return page; },
-      "/home/savedschedules" : (context) => SavedSchedulePage(),
-      "/home/personalinfo" : (context) => PersonalInfo(),
-      "/home/scheduler" : (context) => SchedulerPage(),
-      "/home/scheduler/schedulerresult" : (context) => SchedulerResultPage(),
-    },
+  runApp(OKToast(
+    child: MaterialApp(
+      initialRoute: !goToUpdatePage ? (forceToHomePage ? "/home" : (Main.isInternetOn ? (Main.forceUpdate ? "/webpage" : "/home") : "/nointernet")) : "/update",
+      routes: {
+        "/nointernet" : (context) => NoInternetPage(),
+        "/home" : (context) => Home(),
+        "/webpage": (context) => Platform.isWindows ? WebpageComputer() : WebpagePhone(),
+        "/update": (context) => UpdatePage(),
+        "/home/searchcourses": (contetx) => const SearchPage(),
+        "/home/favcourses": (context) => FavCourses(),
+        "/home/editcourses": (context) => EditCoursePage(),
+        "/home/editcourses/addcourses": (context) => AddCoursesPage(),
+        "/home/editcourses/createcustomcourse": (context) => CustomCoursePage(),
+        "/home/editcourses/editcourseinfo": (context) { CustomCoursePage page = CustomCoursePage(); page.subject = Main.courseToEdit ?? Main.emptySubject; return page; },
+        "/home/savedschedules" : (context) => SavedSchedulePage(),
+        "/home/personalinfo" : (context) => PersonalInfo(),
+        "/home/scheduler" : (context) => SchedulerPage(),
+        "/home/scheduler/schedulerresult" : (context) => SchedulerResultPage(),
+      },
+    ),
   ));
 
 }

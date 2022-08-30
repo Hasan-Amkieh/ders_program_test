@@ -9,13 +9,11 @@ import 'package:ders_program_test/others/departments.dart';
 import 'package:ders_program_test/others/subject.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../main.dart';
-import '../widgets/searchwidget.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import '../widgets/timetable_canvas.dart';
-import 'no_internet_page.dart';
 
 
 class SearchPage extends StatefulWidget {
@@ -320,24 +318,22 @@ class SearchPageState extends State<SearchPage> {
                 }
                 if (!isFound) {
                   Main.schedules[Main.currentScheduleIndex].scheduleCourses.add(Course(note: "", subject: sub));
-                  Fluttertoast.showToast(
-                      msg: sub.classCode + " " + translateEng("was added to the schedule"),
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: Colors.blue,
-                      textColor: Colors.white,
-                      fontSize: 12.0
+                  showToast(
+                    sub.classCode + " " + translateEng("was added to the schedule"),
+                    duration: const Duration(milliseconds: 1500),
+                    position: ToastPosition.bottom,
+                    backgroundColor: Colors.blue.withOpacity(0.8),
+                    radius: 100.0,
+                    textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
                   );
                 } else {
-                  Fluttertoast.showToast(
-                      msg: sub.classCode + " " + translateEng("is already in the schedule"),
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: Colors.blue,
-                      textColor: Colors.white,
-                      fontSize: 12.0
+                  showToast(
+                    sub.classCode + " " + translateEng("is already in the schedule"),
+                    duration: const Duration(milliseconds: 1500),
+                    position: ToastPosition.bottom,
+                    backgroundColor: Colors.blue.withOpacity(0.8),
+                    radius: 100.0,
+                    textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
                   );
                 }
               },
@@ -353,24 +349,22 @@ class SearchPageState extends State<SearchPage> {
                 }
                 if (!isFound) {
                   Main.favCourses.add(Course(note: "", subject: sub));
-                  Fluttertoast.showToast(
-                      msg: sub.classCode + " " + translateEng("was added to favourites"),
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: Colors.blue,
-                      textColor: Colors.white,
-                      fontSize: 12.0
+                  showToast(
+                    sub.classCode + " " + translateEng("was added to favourites"),
+                    duration: const Duration(milliseconds: 1500),
+                    position: ToastPosition.bottom,
+                    backgroundColor: Colors.blue.withOpacity(0.8),
+                    radius: 100.0,
+                    textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
                   );
                 } else {
-                  Fluttertoast.showToast(
-                      msg: sub.classCode + " " + translateEng("is already a favourite"),
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: Colors.blue,
-                      textColor: Colors.white,
-                      fontSize: 12.0
+                  showToast(
+                    sub.classCode + " " + translateEng("is already a favourite"),
+                    duration: const Duration(milliseconds: 1500),
+                    position: ToastPosition.bottom,
+                    backgroundColor: Colors.blue.withOpacity(0.8),
+                    radius: 100.0,
+                    textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
                   );
                 }
               },
