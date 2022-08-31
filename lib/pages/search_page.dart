@@ -48,7 +48,7 @@ class SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
 
     double width = (window.physicalSize / window.devicePixelRatio).width, height = (window.physicalSize / window.devicePixelRatio).height;
-    print("Putting ${subjects.length} subjects into the page");
+    // print("Putting ${subjects.length} subjects into the page");
 
     if (depToSearch != translateEng("All") && lastDep != depToSearch) {
       lastDep = depToSearch;
@@ -221,7 +221,7 @@ class SearchPageState extends State<SearchPage> {
               url = contents;
             };
 
-            print("Launching : ${url}");
+            // print("Launching : ${url}");
             if (await canLaunchUrl(Uri.parse(url))) {
               launchUrl(Uri.parse(url));
             }

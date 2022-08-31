@@ -159,7 +159,7 @@ class Main {
 
     file.writeAsStringSync(toWrite, mode: FileMode.write);
 
-    print("Settings were saved!");
+    //print("Settings were saved!");
 
   }
 
@@ -171,7 +171,7 @@ class Main {
 
       content = file.readAsStringSync();
       if (content.isNotEmpty) {
-        print("Settings were found with the content of: $content");
+        // print("Settings were found with the content of: $content");
 
         forceUpdate = content.substring(content.indexOf("force_update:") + 13, content.indexOf("\n", content.indexOf("force_update:") + 13)) == "true" ? true : false;
         theme = (content.substring(content.indexOf("is_dark:") + 8, content.indexOf("\n", content.indexOf("is_dark:") + 8)) == "true" ? true : false) ? ThemeMode.dark : ThemeMode.light;
@@ -232,7 +232,7 @@ class Main {
 
       }
 
-      print("The schedule ${Main.schedules[i].scheduleName} is written with the content of: \n\n$toWrite\n\n\n");
+      // print("The schedule ${Main.schedules[i].scheduleName} is written with the content of: \n\n$toWrite\n\n\n");
 
       file.writeAsStringSync(toWrite);
 
@@ -254,21 +254,21 @@ class Main {
 
       if (files[i].toString().contains("schedule_")) {
 
-        print("Opening file: ${files[i].toString()}");
+        // print("Opening file: ${files[i].toString()}");
         File file = File(files[i].path);
         if (file.existsSync()) {
-          print("The file EXISTED!!!!");
+          // print("The file EXISTED!!!!");
 
           String content = file.readAsStringSync();
           if (content.replaceAll("////\n", "").isEmpty) {
-            print("The file is empty, finding another file!");
+            // print("The file is empty, finding another file!");
             continue;
           }
 
           //print("File content is: $content");
 
           String scheduleName = files[i].toString().substring(files[i].toString().indexOf("schedule_") + 9).replaceAll(".txt", "").replaceAll("'", "");
-          print("The schedule name is $scheduleName");
+          // print("The schedule name is $scheduleName");
 
           List<String> notes = content.split("////\n").elementAt(0).split('\n/ /\n');
           // the notes and the courses are seperated by "////\n" but each note is seperatoed by "\n/ /\n"
@@ -278,7 +278,7 @@ class Main {
           List<Course> courses_ = [];
           int index = 0;
           courses = courses.where((element) => element.trim().isNotEmpty).toList();
-          courses.forEach((course) { print("Doing $course"); courses_.add(Course(subject: Subject.fromStringWithClassCode(course), note: notes[index < notes.length ? index : 0])); index++; });
+          courses.forEach((course) { /*print("Doing $course");*/ courses_.add(Course(subject: Subject.fromStringWithClassCode(course), note: notes[index < notes.length ? index : 0])); index++; });
 
           //courses_.forEach((element) {print(element.subject.toString());});
           Main.schedules.add(Schedule(scheduleName: scheduleName, scheduleCourses: courses_));
@@ -328,13 +328,13 @@ class Main {
 
     if (file.existsSync()) {
 
-      print("The faculty courses exists!");
+      // print("The faculty courses exists!");
 
       List<String> lines = file.readAsStringSync().split("\n");
       String facultyName = lines[0];
       if (facultyName != Main.faculty) {
         Main.forceUpdate = true;
-        print("The faculties are different, updating!");
+        // print("The faculties are different, updating!");
         return;
       }
       lines.removeAt(0);
@@ -342,9 +342,9 @@ class Main {
       lines.removeAt(0);
 
       DateTime lastUpdated = DateTime.fromMicrosecondsSinceEpoch(int.parse(lines[0]));
-      print("Time difference is ${DateTime.now().difference(lastUpdated).inHours}, updating!");
+      // print("Time difference is ${DateTime.now().difference(lastUpdated).inHours}, updating!");
       if (DateTime.now().difference(lastUpdated).inHours >= Main.hourUpdate) {
-        print("Time difference is ${DateTime.now().difference(lastUpdated).inHours}, updating!");
+        // print("Time difference is ${DateTime.now().difference(lastUpdated).inHours}, updating!");
         Main.forceUpdate = true;
         return;
       }
@@ -356,7 +356,7 @@ class Main {
       lines.forEach((course) { Main.facultyData.subjects.add(Subject.fromStringWithClassCode(course)); });
 
     } else {
-      print("The faculty courses DID NOT exist!");
+      // print("The faculty courses DID NOT exist!");
       Main.forceUpdate = true;
     }
 
@@ -368,7 +368,7 @@ class Main {
 
     if (file.existsSync()) {
 
-      print("Favourite courses exists!");
+      // print("Favourite courses exists!");
 
       List<String> sections = file.readAsStringSync().split("////\n");
       List<String> notes = sections[0].split("\n/ /\n");
@@ -378,8 +378,6 @@ class Main {
       courses = courses.where((element) => element.trim().isNotEmpty).toList();
       courses.forEach((course) { Main.favCourses.add(Course(subject: Subject.fromStringWithClassCode(course), note: notes[index])); index++; });
 
-    } else {
-      print("Favourite courses DID NOT exist!");
     }
 
   }
@@ -472,9 +470,9 @@ Future main() async {
     Main.writeSettings();
   }
 
-  print("update: ${Main.forceUpdate} / internet: ${Main.isInternetOn}");
+  // print("update: ${Main.forceUpdate} / internet: ${Main.isInternetOn}");
   if (Main.forceUpdate && Main.isInternetOn) {
-    print("Getting the new links: ");
+    // print("Getting the new links: ");
     var request = await HttpClient().getUrl(Uri.parse('https://www.atilim.edu.tr/en/dersprogrami'));
     // sends the request
     var response = await request.close();
@@ -561,12 +559,13 @@ Future main() async {
       }
     }
 
-    print("found the following links: "
-        "${Main.artsNSciencesLink}\n${Main.fineArtsLink}\n${Main.businessLink}\n${Main.engineeringLink}\n${Main.civilAviationLink}\n${Main.healthSciencesLink}\n${Main.lawLink}");
+    // print("found the following links: "
+    //     "${Main.artsNSciencesLink}\n${Main.fineArtsLink}\n${Main.businessLink}\n${Main.engineeringLink}\n${Main.civilAviationLink}\n${Main.healthSciencesLink}\n${Main.lawLink}");
   }
 
   runApp(OKToast(
     child: MaterialApp(
+      debugShowCheckedModeBanner: false,
       initialRoute: !goToUpdatePage ? (forceToHomePage ? "/home" : (Main.isInternetOn ? (Main.forceUpdate ? "/webpage" : "/home") : "/nointernet")) : "/update",
       routes: {
         "/nointernet" : (context) => NoInternetPage(),

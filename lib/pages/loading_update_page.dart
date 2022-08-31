@@ -77,7 +77,7 @@ class LoadingUpdateState extends State<LoadingUpdate> {
 
   void endLoading() {
     ModalRoute.of(context)?.popped.then((value) {
-      print("Loading page is popped!");
+      // print("Loading page is popped!");
       if (Platform.isWindows) {
         WebpageComputerState.currWidget!.finish();
       } else {

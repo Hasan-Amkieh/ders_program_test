@@ -153,7 +153,7 @@ class WebpagePhoneState extends State<WebpagePhone> {
                       request.readyState == AjaxRequestReadyState.DONE) {
                     if (request.responseText!.isNotEmpty) { // ROOT:
                       state = 3;
-                      print("Timetable Retrieved!\nLength of the response: ${request.responseText?.length}");
+                      // print("Timetable Retrieved!\nLength of the response: ${request.responseText?.length}");
                       //dataClassification(request.responseText);
                       ReceivePort rPort = ReceivePort();
                       SendPort? sPort;
@@ -162,7 +162,7 @@ class WebpagePhoneState extends State<WebpagePhone> {
                       rPort.listen((msg) {
                         if (msg is List) {
 
-                          print("RECEIVED FROM THE ISOLATE: " + msg[0].toString());
+                          // print("RECEIVED FROM THE ISOLATE: " + msg[0].toString());
 
                           if (msg[0] == "sPort") {
                             sPort = msg[1] as SendPort;
@@ -325,11 +325,11 @@ class WebpagePhoneState extends State<WebpagePhone> {
                   return true;
                 },
                 onLoadStart: (controller, url) async {
-                  print("Loading of te page started!");
+                  // print("Loading of te page started!");
                   state = 1;
                 },
                 onLoadStop: (controller, url) async {
-                  print("Loading of the page finished!");
+                  // print("Loading of the page finished!");
                   state = 2;
                 }),
             LoadingUpdate(),

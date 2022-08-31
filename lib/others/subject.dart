@@ -232,16 +232,16 @@ class Subject { // represents a class
 
     // bgnPeriods:
     list = str_[6].replaceAll(" ", "").split('],[');
-    print("Orig string: $list");
+    // print("Orig string: $list");
     list = list.where((element) => element.trim().isNotEmpty).toList();// ["[5, 1, 5]"]
-    list.forEach((element) {print(element);});
+    // list.forEach((element) {print(element);});
 
     List<int> tempList;
     for (int i = 0 ; i < list.length ; i++) { // delete '[' and ']' // aa|aa||||3, 2|[1], [4]|[1], [2]
       list[i] = list[i].replaceAll('[', '').replaceAll(']', '');
       tempList = [];
       list[i].split(',').forEach((element) { tempList.add(int.parse(element)); });
-      print("temp list: $tempList");
+      // print("temp list: $tempList");
       bgnPeriods.add(tempList);
     }
 
@@ -311,7 +311,7 @@ class Subject { // represents a class
         }
       }
       //print("RETURNING section ${int.parse(str)} for subject ${classCode}");
-      print("Trying to parse $str into a section number");
+      // print("Trying to parse $str into a section number");
       if (str.isEmpty) {
         return 0;
       }

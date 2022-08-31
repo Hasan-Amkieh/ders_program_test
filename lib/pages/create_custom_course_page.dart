@@ -119,7 +119,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
 
           }
 
-          print("teachers: $teachersList / classrooms $classroomsList");
+          // print("teachers: $teachersList / classrooms $classroomsList");
 
           widget.days.add(dayToString(widget.subject.days[i][j]));
           widget.bgnHour.add(bgnPeriodToString(widget.subject.bgnPeriods[i][j]));
@@ -169,7 +169,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
             // Check if the course code is already used or not:
 
             if (!Main.isEditingCourse) {
-              print("Checking the course code!");
+              // print("Checking the course code!");
               bool isUsed = false;
               String str = widget.subject.classCode.toLowerCase();
               Main.schedules[Main.currentScheduleIndex].scheduleCourses.forEach((sub) {
@@ -685,7 +685,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
     for (int teacherIndex = 0 ; teacherIndex < teachersList.length ; teacherIndex++) {
       teacher = teachersList[teacherIndex];
 
-      print("Index is $teacherIndex");
+      // print("Index is $teacherIndex");
       bts.add(Visibility(
         visible: fieldNumber == 0 ? !widget.editingTeacher[periodIndex][teacherIndex] : !widget.editingClassroom[periodIndex][teacherIndex],
         child: Container(
@@ -808,7 +808,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
     for (int depIndex = 0 ; depIndex < depList.length ; depIndex++) {
       teacher = depList[depIndex];
 
-      print("Index is $depIndex");
+      // print("Index is $depIndex");
       bts.add(Visibility(
         visible: !widget.editingDep[depIndex],
         child: Container(
@@ -845,8 +845,8 @@ class CustomCoursePageState extends State<CustomCoursePage> {
     }
     //print("Editing mode $isEditing with index $depInd");
 
-    print("PUTTING ${isEditing ? widget.subject.departments[depInd]
-        : widget.depData} of bool $isEditing");
+    // print("PUTTING ${isEditing ? widget.subject.departments[depInd]
+    //     : widget.depData} of bool $isEditing");
 
     if (isEditing) {
       widget.depData = widget.subject.departments[depInd];
@@ -860,7 +860,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
           child: TextFieldWidget(
               text: isEditing ? widget.subject.departments[depInd]
                   : widget.depData,
-              onChanged: (str) { widget.depData = str; print("CHANGED INTO $str"); },
+              onChanged: (str) { widget.depData = str; /*print("CHANGED INTO $str");*/ },
               hintText: translateEng("Department/Tag")),
         ),
       ),

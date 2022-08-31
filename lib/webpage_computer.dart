@@ -64,7 +64,7 @@ class WebpageComputerState extends State<WebpageComputer> {
     state = 2;
     webview
       ..registerJavaScriptMessageHandler("test", (name, body) {
-        debugPrint('on javaScipt message: $name $body');
+        // debugPrint('on javaScipt message: $name $body');
       })
     ..setApplicationNameForUserAgent(" WebviewExample/1.0.0")
       ..setPromptHandler((prompt, defaultText) {
@@ -135,14 +135,14 @@ function setupHook(xhr) {
       try {
         timetableData = await webview.evaluateJavaScript("ret") ?? "";
         timetableData = timetableData.replaceAll('\\"', '"');
-        print("timetable DATA: $timetableData\n\n\n");
+        // print("timetable DATA: $timetableData\n\n\n");
         if (timetableData.length > 1000) { // then it is a success and stop the timer
           timer.cancel();
-          print("The timetable has been received!\nSuccess!!!");
+          // print("The timetable has been received!\nSuccess!!!");
           webview.close();
           if (timetableData.isNotEmpty) { // ROOT:
             state = 3;
-            print("Timetable Retrieved!\nLength of the response: ${timetableData.length}");
+            // print("Timetable Retrieved!\nLength of the response: ${timetableData.length}");
             //dataClassification(request.responseText);
             ReceivePort rPort = ReceivePort();
             SendPort? sPort;
@@ -151,7 +151,7 @@ function setupHook(xhr) {
             rPort.listen((msg) {
               if (msg is List) {
 
-                print("RECEIVED FROM THE ISOLATE: " + msg[0].toString());
+                // print("RECEIVED FROM THE ISOLATE: " + msg[0].toString());
 
                 if (msg[0] == "sPort") {
                   sPort = msg[1] as SendPort;
@@ -245,7 +245,7 @@ function setupHook(xhr) {
                 }
 
               } else {
-                print("The received object is NOT A LIST!!!");
+                // print("The received object is NOT A LIST!!!");
               }
             });
 

@@ -75,7 +75,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
     Schedule schedule;
     for (int scheduleIndex = 0 ; scheduleIndex < Main.schedules.length ; scheduleIndex++) { // looping for each schedule
       schedule = Main.schedules[scheduleIndex];
-      print("Doing schedule ${schedule.scheduleName}");
+      // print("Doing schedule ${schedule.scheduleName}");
 
       int totalHours = 0;
       List<List<int>> beginningPeriods = [], days = [];
@@ -228,7 +228,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                     ],
                   ),
                 ),
-                SizedBox(height: width * 0.03),
+                SizedBox(height: width * (Platform.isWindows ? 0 : 0.03)),
                 Visibility(
                   visible: schedule.scheduleCourses.isNotEmpty,
                   child: ListTile(

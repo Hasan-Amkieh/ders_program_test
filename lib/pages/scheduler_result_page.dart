@@ -66,12 +66,12 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
         List<Course> courses = [];
         Subject sub = Main.emptySubject;
         chosenSections.add(SchedulerResultPage.subjectsData[subjectIndex].sections[sectionIndex]);
-        print("Doing search inside $chosenSections");
+        // print("Doing search inside $chosenSections");
         for (int index = 0 ; index < chosenSections.length ; index++) { // translate the sections into their subjects:
           for (int i = 0 ; i < Main.facultyData.subjects.length ; i++) {
             if (Main.facultyData.subjects[i].getClassCodeWithoutSectionNumber() == SchedulerResultPage.subjects[index].classCode) {
               if (Main.facultyData.subjects[i].getSection() == chosenSections[index] || chosenSections[index] == 0) {
-                print("Adding ${Main.facultyData.subjects[i]}");
+                // print("Adding ${Main.facultyData.subjects[i]}");
                 sub = Main.facultyData.subjects[i];
               }
             }
@@ -521,7 +521,7 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
               //print("${sub.classCode} N ${course.subject.classCode}");
               if (sub.isEqual(course.subject) && course.subject.days[i][j] == col.subjectsData[atIndex].day &&
                   course.subject.bgnPeriods[i][j] == col.subjectsData[atIndex].bgnPeriod && !col.isDrawn[atIndex]) {
-                print("Drawing the collisioned course: ${course.subject.classCode}");
+                // print("Drawing the collisioned course: ${course.subject.classCode}");
                 collisions[colIndex].isDrawn[atIndex] = true;
                 isCol = true;
                 isColOf3 = collisions[colIndex].subjects.length >= 3;
@@ -529,7 +529,7 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
                 colSize = col.subjects.length;
                 continue;
               } else {
-                print("NOT Drawing the collisioned course bcs the period is different: ${course.subject.classCode}");
+                // print("NOT Drawing the collisioned course bcs the period is different: ${course.subject.classCode}");
               }
               if (isCol) {
                 continue;

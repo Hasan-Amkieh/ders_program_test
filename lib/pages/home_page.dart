@@ -64,7 +64,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
     super.initState();
 
-    print("Semester name is : ${Main.facultyData.semesterName}");
+    // print("Semester name is : ${Main.facultyData.semesterName}");
 
     // check the newCourses list with all the courses inside all the schedules:
     for (int i = 0 ; i < Main.schedules.length ; i++) {
@@ -91,7 +91,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
     toggleButtonController = AnimationController(duration: const Duration(seconds: 1), vsync: this);
 
     currentState = this;
-    print("Initializing the home page state!");
+    // print("Initializing the home page state!");
 
     listenDynamicLinks();
 
@@ -101,7 +101,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
   void checkScheduleAddition() {
 
-    print("Trying to find extra files: ");
+    // print("Trying to find extra files: ");
     String content = "";
     try {
       final file = File(Main.appDocDir + (Platform.isWindows ? '\\' : '/') +  'schedule.txt'); // FileSystemException
@@ -109,7 +109,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
       content = file.readAsStringSync();
       file.deleteSync();
       if (content.isNotEmpty) {
-        print("Extra Schedule was found with the content of: $content");
+        // print("Extra Schedule was found with the content of: $content");
         List<String> lines = content.split("\n");
         String scheduleName = lines[0];
         String faculty = lines[1];
@@ -130,25 +130,25 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
 
-    print("The state of the app has changed!");
+    // print("The state of the app has changed!");
 
     switch (state) {
       case AppLifecycleState.detached:
-        print("The lifecycle has changed into detached");
+        // print("The lifecycle has changed into detached");
         Main.save();
         break;
       case AppLifecycleState.inactive:
-        print("The lifecycle has changed into inactive");
+        // print("The lifecycle has changed into inactive");
         Main.save();
 
         break;
       case AppLifecycleState.paused:
-        print("The lifecycle has changed into paused");
+        // print("The lifecycle has changed into paused");
         Main.save();
 
         break;
       case AppLifecycleState.resumed:
-        print("The lifecycle has changed into resumed");
+        // print("The lifecycle has changed into resumed");
 
         break;
     }
@@ -304,7 +304,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
       int days;
 
       if (Main.isFacDataFilled) {
-        print("Faculty Data is FILLED!");
+        // print("Faculty Data is FILLED!");
         hr = (Main.facultyData.lastUpdate.hour < 10 ? "0" : "") + Main.facultyData.lastUpdate.hour.toString();
         mins = (Main.facultyData.lastUpdate.minute < 10 ? "0" : "") + Main.facultyData.lastUpdate.minute.toString();
         hours = hr + ":" + mins;
@@ -603,21 +603,42 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                 }
               },
             ),
-          ),Container(
-            padding: EdgeInsets.fromLTRB(0 * width, 0, 0, 0),
-            child: ListTile(
-              leading: Icon(Icons.calculate, color: Main.appTheme.titleTextColor),
-              title: Text(translateEng("GPA Calculator"), style: TextStyle(color: Main.appTheme.titleTextColor)),
-              onTap: () async {
-                const url = 'https://metugpa.com';
-                if (await canLaunchUrl(Uri.parse(url))) {
-                  await launchUrl(Uri.parse(url));
-                } else {
-                  throw 'Could not launch $url';
-                }
-              },
-            ),
           ),
+          ListTile(
+            title: Text(translateEng('Send a Message'), style: TextStyle(color: Main.appTheme.titleTextColor)),
+            leading: Icon(CupertinoIcons.mail_solid, color: Main.appTheme.titleIconColor),
+            subtitle: Text(translateEng("Complains and Suggestions"), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
+            onTap: () async { // TODO: Change in the future:
+              const url = 'mailto:hassan1551@outlook.com?subject:Scheduling%20App&body=%0A%0A%0ARegards,'; // %0A new line / %20 white space
+              if (await canLaunchUrl(Uri.parse(url))) {
+                await launchUrl(Uri.parse(url));
+              } else {
+                throw 'Could not launch $url';
+              }
+            },
+          ),
+          ListTile(
+            title: Text(translateEng('About the Creator'), style: TextStyle(color: Main.appTheme.titleTextColor)),
+            leading: Icon(Icons.person, color: Main.appTheme.titleIconColor),
+            onTap: () {
+              Navigator.pushNamed(context, "/home/personalinfo");
+            },
+          ),
+          // Container(
+          //   padding: EdgeInsets.fromLTRB(0 * width, 0, 0, 0),
+          //   child: ListTile(
+          //     leading: Icon(Icons.calculate, color: Main.appTheme.titleTextColor),
+          //     title: Text(translateEng("GPA Calculator"), style: TextStyle(color: Main.appTheme.titleTextColor)),
+          //     onTap: () async {
+          //       const url = 'https://metugpa.com';
+          //       if (await canLaunchUrl(Uri.parse(url))) {
+          //         await launchUrl(Uri.parse(url));
+          //       } else {
+          //         throw 'Could not launch $url';
+          //       }
+          //     },
+          //   ),
+          // ),
 
           // Container(
           //   padding: EdgeInsets.fromLTRB(0.05 * width, 0.03 * width, 0, 0),
@@ -639,53 +660,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
       );
     }
 
-    Widget? aboutPage;
-    if (pageIndex == 4) {
-      aboutPage = Container(
-        margin: EdgeInsets.fromLTRB(0, 0.03 * width, 0, 0),
-        child: ListView(
-          children: [
-            ListTile(
-              title: Text(translateEng('Send a Message'), style: TextStyle(color: Main.appTheme.titleTextColor)),
-              leading: Icon(CupertinoIcons.mail_solid, color: Main.appTheme.titleIconColor),
-              subtitle: Text(translateEng("Complains and Suggestions"), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
-              onTap: () async { // TODO: Change in the future:
-                const url = 'mailto:hassan1551@outlook.com?subject:Scheduling%20App&body=%0A%0A%0ARegards,'; // %0A new line / %20 white space
-                    if (await canLaunchUrl(Uri.parse(url))) {
-                      await launchUrl(Uri.parse(url));
-                    } else {
-                      throw 'Could not launch $url';
-                    }
-              },
-            ),
-            ListTile(
-              title: Row(
-                children: [
-                  Icon(Icons.person, color: Main.appTheme.titleIconColor),
-                  SizedBox(width: width * 0.03),
-                  Text(translateEng('About the Creator'), style: TextStyle(color: Main.appTheme.titleTextColor)),
-                ],
-              ),
-              onTap: () {
-                Navigator.pushNamed(context, "/home/personalinfo");
-              },
-            ),
-            // ListTile(
-            //   title: Text(translateEng('Donate me')),
-            //   onTap: () async {
-            //     const url = 'https://www.buymeacoffee.com/hasanamkieh?new=1';
-            //     if (await canLaunch(url)) {
-            //       await launch(url);
-            //     } else {
-            //       throw 'Could not launch $url';
-            //     }
-            //   },
-            // ),
-          ],
-        ),
-      );
-    }
-
     Widget errorPage = Container(
       child: const Center(
         child: Text("An error has occured while trying to load the page", style: TextStyle(color: Colors.red, fontSize: 22)),
@@ -697,7 +671,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
       servicesPage ?? errorPage,
       settingsPage ?? errorPage,
       linksPage ?? errorPage,
-      aboutPage ?? errorPage,
     ];
 
     return Scaffold(
@@ -726,7 +699,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             NavigationDestination(icon: Icon(Icons.hardware_outlined, color: Main.appTheme.navIconColor), selectedIcon: Icon(Icons.hardware, color: Main.appTheme.navIconColor), label: translateEng('Tools')),
             NavigationDestination(icon: Icon(Icons.settings_outlined, color: Main.appTheme.navIconColor), selectedIcon: Icon(Icons.settings, color: Main.appTheme.navIconColor), label: translateEng('Settings')),
             NavigationDestination(icon: Icon(CupertinoIcons.link_circle, color: Main.appTheme.navIconColor), selectedIcon: Icon(CupertinoIcons.link_circle_fill, color: Main.appTheme.navIconColor), label: translateEng('Links')),
-            NavigationDestination(icon: Icon(Icons.info_outlined, color: Main.appTheme.navIconColor), selectedIcon: Icon(Icons.info, color: Main.appTheme.navIconColor), label: translateEng('About')),
           ],
         ),
       ),
@@ -1041,7 +1013,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
       ),
     ];
 
-    Main.schedules[Main.currentScheduleIndex].scheduleCourses.forEach((element) {print(element.subject.toString());});
+    // Main.schedules[Main.currentScheduleIndex].scheduleCourses.forEach((element) {print(element.subject.toString());});
     // First find all the collisions:
     collisions = findCourseCollisions();
     // print("All the collisions are: ");
@@ -1064,7 +1036,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
               //print("${sub.classCode} N ${course.subject.classCode}");
               if (sub.isEqual(course.subject) && course.subject.days[i][j] == col.subjectsData[atIndex].day &&
                   course.subject.bgnPeriods[i][j] == col.subjectsData[atIndex].bgnPeriod && !col.isDrawn[atIndex]) {
-                print("Drawing the collisioned course: ${course.subject.classCode}");
+                // print("Drawing the collisioned course: ${course.subject.classCode}");
                 collisions[colIndex].isDrawn[atIndex] = true;
                 isCol = true;
                 isColOf3 = collisions[colIndex].subjects.length >= 3;
@@ -1072,7 +1044,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                 colSize = col.subjects.length;
                 continue;
               } else {
-                print("NOT Drawing the collisioned course bcs the period is different: ${course.subject.classCode}");
+                // print("NOT Drawing the collisioned course bcs the period is different: ${course.subject.classCode}");
               }
               if (isCol) {
                 continue;
@@ -1296,18 +1268,18 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
   // Branch IO code:
 
   void listenDynamicLinks() async {
-    print("Started listening to deep links!");
+    // print("Started listening to deep links!");
     streamSubscription = FlutterBranchSdk.initSession().listen((data) async {
 
-      print('listenDynamicLinks - DeepLink Data: $data');
+      // print('listenDynamicLinks - DeepLink Data: $data');
       controllerData.sink.add((data.toString()));
 
       if (data.containsKey('+clicked_branch_link') && data['+clicked_branch_link'] == true) {
         final dir = await getApplicationDocumentsDirectory();
         final file = File('${dir.path}/schedule.txt');
 
-        print('Schedule Name: ${data['schedule_name']}');
-        print('Faculty: ${data['faculty']}');
+        // print('Schedule Name: ${data['schedule_name']}');
+        // print('Faculty: ${data['faculty']}');
 
         String str;
         str = data['schedule_name'] + "\n" + data['faculty'];
@@ -1326,7 +1298,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
       }
     }, onError: (error) {
       PlatformException platformException = error as PlatformException;
-      print('InitSession error: ${platformException.code} - ${platformException.message}');
+      // print('InitSession error: ${platformException.code} - ${platformException.message}');
       controllerInitSession.add('InitSession error: ${platformException.code} - ${platformException.message}');
     });
   }

@@ -48,7 +48,7 @@ class NoInternetPageState extends State {
       }
     } on SocketException catch (_) {
       Main.isInternetOn = false;
-      print('NO INTERNET');
+      // print('NO INTERNET');
     }
 
   }
