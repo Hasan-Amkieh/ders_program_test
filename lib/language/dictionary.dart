@@ -198,7 +198,7 @@ Map<String, String> engToTurk = {
   "Cancel" : "İptal Et",
   "Permit Conflicts" : "Çatışmalara İzin Ver",
   "Forbid Conflicts" : "Çatışmaları Yasakla",
-  "Only for the following departments" : "Sadece aşağıdaki bölümler için",
+  "Departments" : "Bölümler",
   "There has to be two courses at least!" : "En az iki ders olmalı!",
   "Unknown" : "Bilinmeyen",
   "The courses couldn't be loaded" : "Dersler yüklenemedi!",

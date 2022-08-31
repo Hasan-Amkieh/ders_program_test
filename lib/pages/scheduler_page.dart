@@ -6,8 +6,8 @@ import 'package:ders_program_test/others/subject.dart';
 import 'package:ders_program_test/pages/add_courses_page.dart';
 import 'package:ders_program_test/pages/scheduler_result_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:getwidget/components/checkbox/gf_checkbox.dart';
+import 'package:oktoast/oktoast.dart';
 
 import '../main.dart';
 
@@ -93,7 +93,7 @@ class SchedulerPageState extends State<SchedulerPage> {
 
             if (sub.getClassCodeWithoutSectionNumber() == subjectsSections[secIndex ].key && subjectsSections[secIndex].value.length < maxSection && maxSection != 0) {
               subjectsSections[secIndex].value.add(MapEntry(sub.getSection(), sub));
-              areSectionsShown[secIndex].value.addAll({sub.getSection() : true});
+              areSectionsShown[secIndex].value.addAll({sub.getSection() : sub.departments.toString().contains(Main.department)});
               // print("DOING SUBJECT: $sub OF CLASSCODE ${sub.classCode}");
               // print("Adding section ${sub.getSection()} for subject ${sub.getClassCodeWithoutSectionNumber()}");
             }
@@ -174,6 +174,7 @@ class SchedulerPageState extends State<SchedulerPage> {
                         icon: const Icon(Icons.search),
                         label: Text(translateEng("Find all possible schedules")),
                         onPressed: () {
+                          bool subIsEmpty = false;
                           SchedulerResultPage.subjects = subjects;
                           List<SchedulerSubjectData> list = [];
                           List<int> sections = [];
@@ -186,13 +187,29 @@ class SchedulerPageState extends State<SchedulerPage> {
                                 sections.add(element.key);
                               }
                             }
-                            list.add(SchedulerSubjectData(allowCols: subjectsShown[i], sections: sections));
+                            if (sections.isNotEmpty) {
+                              list.add(SchedulerSubjectData(allowCols: subjectsShown[i], sections: sections));
+                            } else {
+                              subIsEmpty = true;
+                              break;
+                            }
                           }
-                          list.forEach((element) {
+                          // list.forEach((element) {
                             // print("${element.sections} has value of cols of ${element.allowCols}");
-                          });
-                          SchedulerResultPage.subjectsData = list;
-                          Navigator.pushNamed(context, "/home/scheduler/schedulerresult");
+                          // });
+                          if (!subIsEmpty) {
+                            SchedulerResultPage.subjectsData = list;
+                            Navigator.pushNamed(context, "/home/scheduler/schedulerresult");
+                          } else {
+                            showToast(
+                              translateEng("Choose a section for each course"),
+                              duration: const Duration(milliseconds: 1500),
+                              position: ToastPosition.bottom,
+                              backgroundColor: Colors.red,
+                              radius: 100.0,
+                              textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
+                            );
+                          }
                         },
                       ),
                     ),
@@ -436,6 +453,17 @@ class SchedulerPageState extends State<SchedulerPage> {
         continue;
       }
 
+      List<TextSpan> depsList = [];
+      temp.toString().replaceAll(RegExp("[\\[.*?\\]]"), "").trim().split(",").forEach((dep) {
+        depsList.add(TextSpan(
+          text: dep + "  ",
+          style: TextStyle(
+              color: (Main.department == dep ? Colors.green.shade800 : Main.appTheme.titleTextColor),
+              fontWeight: (Main.department == dep ? FontWeight.bold : FontWeight.normal)
+          ),
+        ));
+      });
+
       actions.add(
         Container(
           margin: EdgeInsets.fromLTRB(0, 0, 0, height * 0.03),
@@ -480,16 +508,17 @@ class SchedulerPageState extends State<SchedulerPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          translateEng("Only for the following departments"),
+                          translateEng("Departments"),
                           style: TextStyle(color: Main.appTheme.titleTextColor),
                         ),
                         SizedBox(
                           width: width * 0.02,
                         ),
                         Expanded(
-                          child: Text(
-                            deps,
-                            style: TextStyle(color: Main.appTheme.titleTextColor),
+                          child: RichText(
+                            text: TextSpan(
+                              children: depsList,
+                            ),
                           ),
                         ),
                       ],

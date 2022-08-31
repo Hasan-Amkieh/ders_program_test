@@ -152,6 +152,9 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
                   setState(() {
                     widget.isSaved.removeAt(currentScheduleIndex);
                     widget.schedules.removeAt(currentScheduleIndex);
+                    if (currentScheduleIndex >= widget.isSaved.length) {
+                      currentScheduleIndex--;
+                    }
                   });
                 },
               ),
