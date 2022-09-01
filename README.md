@@ -4,7 +4,7 @@ Atsched is a scheduling application made for Atilim University students
 It helps students to build their schedules using multiple tools. This application updates itself from the timetables of this [website](https://www.atilim.edu.tr/en/dersprogrami)
 The application supports both Turkish and English languages,
 
-## [Demonstrative Video](www.youtube.com/watch?v=LldHI16tvtY)
+[Demonstrative Video](www.youtube.com/watch?v=LldHI16tvtY)
 
 ## Support
 
