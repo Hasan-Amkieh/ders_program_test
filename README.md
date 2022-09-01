@@ -1,19 +1,16 @@
-# ders_program_test
+# Atsched
 
-A new Flutter project.
+Atsched is a scheduling application made for Atilim University students
+It helps students to build their schedules using multiple tools. This application updates itself from the timetables of this [website](https://www.atilim.edu.tr/en/dersprogrami)
+The application supports both Turkish and English languages,
 
-## Getting Started
+## [Demonstrative Video](www.youtube.com/watch?v=LldHI16tvtY)
 
-This project is a starting point for a Flutter application.
+## Support
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Anyone who has some skills and has some great ideas, you can make some forks into this project,
+I will check the code that you wrote and I will accept them accordingly,
+Note that getting 'AA' in CMPE113/114 does not make a programmer,
 
 ## License
 

@@ -73,8 +73,9 @@ then the teacher/classroom text fields are moved from the periods into the botto
 class Main {
 
   static NewVersion newVersion = NewVersion(
-      iOSId: 'com.google.Vespa',
-      androidId: 'amkieh.hasan.atsched');
+      //iOSId: 'com.google.Vespa',
+      androidId: 'amkieh.hasan.atsched',
+  );
   static late VersionStatus? versionStatus;
 
   static late PackageInfo packageInfo;
