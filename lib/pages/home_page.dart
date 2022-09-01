@@ -605,11 +605,24 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             ),
           ),
           ListTile(
+            title: Text(translateEng('Source Code of the application'), style: TextStyle(color: Main.appTheme.titleTextColor)),
+            subtitle: Text(translateEng("You can read and make changes of the app's source code"), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
+            leading: Icon(Icons.code, color: Main.appTheme.titleIconColor),
+            onTap: () async {
+              const url = 'https://github.com/Hasan-Amkieh/ders_program_test'; // %0A new line / %20 white space
+              if (await canLaunchUrl(Uri.parse(url))) {
+              await launchUrl(Uri.parse(url));
+              } else {
+              throw 'Could not launch $url';
+              }
+            },
+          ),
+          ListTile(
             title: Text(translateEng('Send a Message'), style: TextStyle(color: Main.appTheme.titleTextColor)),
             leading: Icon(CupertinoIcons.mail_solid, color: Main.appTheme.titleIconColor),
             subtitle: Text(translateEng("Complains and Suggestions"), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
-            onTap: () async { // TODO: Change in the future:
-              const url = 'mailto:hassan1551@outlook.com?subject:Scheduling%20App&body=%0A%0A%0ARegards,'; // %0A new line / %20 white space
+            onTap: () async {
+              const url = 'mailto:hassan1551@outlook.com?subject=Atsched&body=%0A%0A%0ARegards,'; // %0A new line / %20 white space
               if (await canLaunchUrl(Uri.parse(url))) {
                 await launchUrl(Uri.parse(url));
               } else {
