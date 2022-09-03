@@ -240,7 +240,11 @@ class Subject { // represents a class
     for (int i = 0 ; i < list.length ; i++) { // delete '[' and ']' // aa|aa||||3, 2|[1], [4]|[1], [2]
       list[i] = list[i].replaceAll('[', '').replaceAll(']', '');
       tempList = [];
-      list[i].split(',').forEach((element) { tempList.add(int.parse(element)); });
+      list[i].split(',').forEach((element) {
+        if (element.trim().isNotEmpty) {
+          tempList.add(int.parse(element));
+        }
+      });
       // print("temp list: $tempList");
       bgnPeriods.add(tempList);
     }
