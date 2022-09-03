@@ -36,39 +36,12 @@ import 'others/appthemes.dart';
 * Use the following command to get the SHA256 for Androind Applinks:
 keytool -list -v -keystore "%USERPROFILE%\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android
 
-* Some info for the deep links:
-
-dersbottest.app.link / dersbottest-alternate.app.link
-
-branch key: key_live_ih9S9zfR2H62HMatSvr3NhnctugTyf3W
-branch secret: secret_live_IT69dUSWoQndwGZn8qHilb5ZSrJDIlf4
-app name: ders_bot_test / App ID: 1068179538950771279
-
 * Free Subscription WARNING:
 * Branch IO only provides 10k MAUS (10 thousands of Monthly Active Users),
 , means if the active users go higher than 10k users, then I have to pay 5 USD for 1K for each month
 
-*
-*/
-
-/*
-
-TODO: These following comments state the things to do in the long term inside the application:
-
-- Look into the file inside the website "ttviewer.js?...=getTTviewData"
-
-- Add the medical department using the following page https://www.atilim.edu.tr/en/tip/page/4804/course-schedule
-
-- Inisde some faculties, there are some special departments, like "Her gun" or "General Electives",
-make them scanned and addaed into the DropList to be chosen, excluse all the deps of "CMPE 1 Reg." and etc...
-
-- Inside the Add Custom Course page, add two choises of CheckBoxes, both basically say "Link Teachers/Classrooms", if it is checked,
-then the teacher/classroom text fields are moved from the periods into the bottom of the Course Code field.
-
-- Add a section inside the links page that shows upcoming important days from the schools page link, like add/drop period, courses drop period etc...
 
 */
-
 
 class Main {
 

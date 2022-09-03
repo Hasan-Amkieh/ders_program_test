@@ -93,7 +93,9 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
     currentState = this;
     // print("Initializing the home page state!");
 
-    listenDynamicLinks();
+    if (!Platform.isWindows) {
+      listenDynamicLinks();
+    }
 
     checkScheduleAddition();
 

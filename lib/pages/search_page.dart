@@ -211,21 +211,27 @@ class SearchPageState extends State<SearchPage> {
                 (searchByTeacher ? (sub.getTranslatedTeachers().isEmpty ? "" : ("\n" + sub.getTranslatedTeachers())) : "" ) +
                 (searchByClassroom ? (classrooms.isEmpty ? "" : ("\n" + classrooms)) : "" ), style: TextStyle(color: Main.appTheme.titleTextColor)),
           ),
-          sub.classCode.contains("lab") ? Container() : TextButton(child: const Icon(Icons.info_outline, color: Colors.blue), onPressed: () async {
+          Row(
+            children: [
+              sub.hours.isEmpty ? const Icon(CupertinoIcons.time_solid, color: Colors.red) : Container(),
+              (sub.classCode.contains("lab") || sub.classCode.contains("Lab") || sub.classCode.contains("LAB") || sub.classCode.contains("/")) ?
+              Container() : TextButton(child: const Icon(Icons.info_outline, color: Colors.blue), onPressed: () async {
 
-            String url = "";
+                String url = "";
 
-            var request = await HttpClient().getUrl(Uri.parse('https://www.atilim.edu.tr/get-lesson-ects/' + sub.getClassCodeWithoutSectionNumber()));
-            var response = await request.close();
-            await for (var contents in response.transform(const Utf8Decoder())) {
-              url = contents;
-            };
+                var request = await HttpClient().getUrl(Uri.parse('https://www.atilim.edu.tr/get-lesson-ects/' + sub.getClassCodeWithoutSectionNumber()));
+                var response = await request.close();
+                await for (var contents in response.transform(const Utf8Decoder())) {
+                  url = contents;
+                };
 
-            // print("Launching : ${url}");
-            if (await canLaunchUrl(Uri.parse(url))) {
-              launchUrl(Uri.parse(url));
-            }
-          }),
+                // print("Launching : ${url}");
+                if (await canLaunchUrl(Uri.parse(url))) {
+                  launchUrl(Uri.parse(url));
+                }
+              }),
+            ],
+          ),
         ],
       ),
       onTap: () {
@@ -244,6 +250,18 @@ class SearchPageState extends State<SearchPage> {
         teachers.trim();
         classrooms.trim();
         departments.trim();
+
+        List<String> deps = departments.split(",");
+        List<TextSpan> depsText = [];
+        deps.forEach((dep) {
+          depsText.add(TextSpan(
+            text: dep + "  ",
+            style: TextStyle(
+                color: (dep.contains(Main.department) ? Colors.green.shade800 : Main.appTheme.titleTextColor),
+                fontWeight: (dep.contains(Main.department) ? FontWeight.bold : FontWeight.normal)
+            ),
+          ));
+        });
 
         showAdaptiveActionSheet(
           bottomSheetColor: Main.appTheme.scaffoldBackgroundColor,
@@ -290,7 +308,7 @@ class SearchPageState extends State<SearchPage> {
                 child: Row(
                     children: [
                       departments.isNotEmpty ? Icon(CupertinoIcons.building_2_fill, color: Main.appTheme.titleTextColor) : Container(),
-                      Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(departments, style: TextStyle(color: Main.appTheme.titleTextColor)))),
+                      Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: RichText(text: TextSpan(children: depsText)))),
                     ]
                 ),
               ),
