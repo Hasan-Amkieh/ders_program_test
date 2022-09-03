@@ -176,19 +176,41 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         return await showDialog(
             context: context,
             builder: (context) {
-              return AlertDialog(
-                  title: Text('Do you really want to quit?' + (Main.forceUpdate ? "\nNext time you open Atsched the update will start" : "")),
-                  actions: [
-                    ElevatedButton(
-                        onPressed: () {
-                          Main.save();
-                          Navigator.of(context).pop(true);
-                        },
-                        child: const Text('Yes')),
-                    ElevatedButton(
-                        onPressed: () => Navigator.of(context).pop(false),
-                        child: const Text('No')),
-                  ]);
+              if (Main.newFaculty.isNotEmpty) { // then it is a faculty change
+                return AlertDialog(
+                    title: const Text('Do you want to change the faculty?\nNext time you open Atsched the faculty will change'),
+                    actions: [
+                      ElevatedButton(
+                          onPressed: () {
+                            Main.forceUpdate = true;
+                            Main.faculty = Main.newFaculty;
+                            Main.department = faculties[Main.faculty]?.keys.elementAt(0) as String;
+                            Main.save();
+                            Navigator.of(context).pop(true);
+                          },
+                          child: const Text('Yes')),
+                      ElevatedButton(
+                          onPressed: () { Main.newFaculty = ""; Navigator.of(context).pop(false); },
+                          child: const Text('No')),
+                    ]
+                );
+              }
+              else {
+                return AlertDialog(
+                    title: Text('Do you really want to quit?' + (Main.forceUpdate ? "\nNext time you open Atsched the update will start" : "")),
+                    actions: [
+                      ElevatedButton(
+                          onPressed: () {
+                            Main.save();
+                            Navigator.of(context).pop(true);
+                          },
+                          child: const Text('Yes')),
+                      ElevatedButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: const Text('No')),
+                    ]
+                );
+              }
             });
       });
     }
@@ -362,27 +384,32 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                     return;
                   }
                   setState(() {
-                    showDialog(context: context, builder: (context) {
-                      return AlertDialog(
-                        backgroundColor: Main.appTheme.scaffoldBackgroundColor,
-                        title: Text(translateEng("Restarting the application"), style: TextStyle(color: Main.appTheme.titleTextColor)),
-                        actions: [
-                          TextButton(onPressed: () {
-                            Main.forceUpdate = true;
-                            Main.faculty = newValue!;
-                            Main.department = faculties[Main.faculty]?.keys.elementAt(0) as String;
-                            Main.restart();
-                          },
-                            child: Text(translateEng("RESTART")),
-                          ),
-                          TextButton(onPressed: () {
-                            Navigator.pop(context);
-                          },
-                            child: Text(translateEng("CANCEL")),
-                          )
-                        ],
-                      );
-                    });
+                    if (Platform.isWindows) {
+                      Main.newFaculty = newValue!;
+                      FlutterWindowClose.closeWindow();
+                    } else {
+                      showDialog(context: context, builder: (context) {
+                        return AlertDialog(
+                          backgroundColor: Main.appTheme.scaffoldBackgroundColor,
+                          title: Text(translateEng("Restarting the application"), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                          actions: [
+                            TextButton(onPressed: () {
+                              Main.forceUpdate = true;
+                              Main.faculty = newValue!;
+                              Main.department = faculties[Main.faculty]?.keys.elementAt(0) as String;
+                              Main.restart();
+                            },
+                              child: Text(translateEng("RESTART")),
+                            ),
+                            TextButton(onPressed: () {
+                              Navigator.pop(context);
+                            },
+                              child: Text(translateEng("CANCEL")),
+                            )
+                          ],
+                        );
+                      });
+                    }
                   });
                 },
               )

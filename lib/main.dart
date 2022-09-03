@@ -66,6 +66,8 @@ class Main {
   static ThemeMode theme = ThemeMode.dark;
   static bool isThereNewerVersion = false;
 
+  static String newFaculty = "";
+
   static String artsNSciencesLink = "";
   static String fineArtsLink = "";
   static String lawLink = "";
