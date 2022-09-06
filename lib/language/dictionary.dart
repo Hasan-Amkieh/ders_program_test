@@ -1,6 +1,6 @@
 import 'dart:core';
 
-import 'package:ders_program_test/main.dart';
+import 'package:Atsched/main.dart';
 
 List<String> langs = ["English", "Turkish"];
 

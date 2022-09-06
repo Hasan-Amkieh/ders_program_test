@@ -3,10 +3,10 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
-import 'package:ders_program_test/language/dictionary.dart';
-import 'package:ders_program_test/language/teacherdictionary.dart';
-import 'package:ders_program_test/others/departments.dart';
-import 'package:ders_program_test/others/subject.dart';
+import 'package:Atsched/language/dictionary.dart';
+import 'package:Atsched/language/teacherdictionary.dart';
+import 'package:Atsched/others/departments.dart';
+import 'package:Atsched/others/subject.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';

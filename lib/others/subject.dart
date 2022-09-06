@@ -1,5 +1,5 @@
 
-import 'package:ders_program_test/language/teacherdictionary.dart';
+import 'package:Atsched/language/teacherdictionary.dart';
 
 import '../main.dart';
 

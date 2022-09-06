@@ -1,6 +1,6 @@
 import 'dart:ui' as ui;
 
-import 'package:ders_program_test/main.dart';
+import 'package:Atsched/main.dart';
 import 'package:flutter/material.dart';
 
 import '../language/dictionary.dart';

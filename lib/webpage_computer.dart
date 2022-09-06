@@ -1,12 +1,11 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:ders_program_test/pages/loading_update_page.dart';
+import 'package:Atsched/pages/loading_update_page.dart';
 import 'package:flutter/material.dart';
-import 'package:ders_program_test/main.dart';
-import 'package:ders_program_test/others/subject.dart';
+import 'package:Atsched/main.dart';
+import 'package:Atsched/others/subject.dart';
 
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:path/path.dart' as p;

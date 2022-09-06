@@ -2,8 +2,8 @@ import 'dart:ui';
 import "dart:io" show Platform;
 
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
-import 'package:ders_program_test/language/dictionary.dart';
-import 'package:ders_program_test/others/subject.dart';
+import 'package:Atsched/language/dictionary.dart';
+import 'package:Atsched/others/subject.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';

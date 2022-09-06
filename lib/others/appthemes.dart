@@ -1,4 +1,4 @@
-import 'package:ders_program_test/main.dart';
+import 'package:Atsched/main.dart';
 import 'package:flutter/material.dart';
 
 /*const List<List<Color>> darkThemeScheduleColors = [ // TODO: Complete this: // Or maybe not! / maybe use both for white and dark themes!

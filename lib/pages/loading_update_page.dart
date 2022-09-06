@@ -1,7 +1,7 @@
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:ders_program_test/webpage_phone.dart';
+import 'package:Atsched/webpage_phone.dart';
 import 'package:restart_app/restart_app.dart';
 
 import '../language/dictionary.dart';

@@ -2,15 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:ders_program_test/pages/loading_update_page.dart';
+import 'package:Atsched/pages/loading_update_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:ders_program_test/main.dart';
-import 'package:ders_program_test/others/subject.dart';
+import 'package:Atsched/main.dart';
+import 'package:Atsched/others/subject.dart';
 
 import 'others/departments.dart';
 
-//import 'package:ders_program_test/others/spring_schedules.dart';
+//import 'package:Atsched/others/spring_schedules.dart';
 
 class WebpagePhone extends StatefulWidget {
 

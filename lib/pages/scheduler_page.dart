@@ -1,10 +1,10 @@
 import 'dart:ui';
 
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
-import 'package:ders_program_test/language/dictionary.dart';
-import 'package:ders_program_test/others/subject.dart';
-import 'package:ders_program_test/pages/add_courses_page.dart';
-import 'package:ders_program_test/pages/scheduler_result_page.dart';
+import 'package:Atsched/language/dictionary.dart';
+import 'package:Atsched/others/subject.dart';
+import 'package:Atsched/pages/add_courses_page.dart';
+import 'package:Atsched/pages/scheduler_result_page.dart';
 import 'package:flutter/material.dart';
 import 'package:getwidget/components/checkbox/gf_checkbox.dart';
 import 'package:oktoast/oktoast.dart';

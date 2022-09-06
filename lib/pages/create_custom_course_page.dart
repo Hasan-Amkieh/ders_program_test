@@ -1,9 +1,9 @@
 import "dart:io" show Platform;
 import 'dart:ui';
 
-import 'package:ders_program_test/language/dictionary.dart';
-import 'package:ders_program_test/others/subject.dart';
-import 'package:ders_program_test/widgets/textfieldwidget.dart';
+import 'package:Atsched/language/dictionary.dart';
+import 'package:Atsched/others/subject.dart';
+import 'package:Atsched/widgets/textfieldwidget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';

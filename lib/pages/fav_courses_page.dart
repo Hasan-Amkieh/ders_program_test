@@ -2,10 +2,10 @@ import "dart:io" show Platform;
 import 'dart:ui';
 
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
-import 'package:ders_program_test/language/dictionary.dart';
+import 'package:Atsched/language/dictionary.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ders_program_test/main.dart';
+import 'package:Atsched/main.dart';
 import 'package:oktoast/oktoast.dart';
 
 import '../others/subject.dart';
