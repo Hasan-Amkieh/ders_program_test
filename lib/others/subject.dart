@@ -308,16 +308,19 @@ class Subject { // represents a class
       return int.parse(classCode.substring(classCode.indexOf('(') + 1, classCode.indexOf(')')));
     } else if (classCode.contains('-')) {
       String str = classCode.substring(classCode.indexOf('-') + 1).trim();
-      if (str.contains("0")) {
+      if (str.contains("0") && int.tryParse(str.substring(str.indexOf("0") + 1, str.indexOf("0") + 2)) != null) { // check if the zero has a number a number after it:
         str = str.substring(str.indexOf("0") + 1);
-        if (str.contains("-")) {
-          str = str.substring(0, str.indexOf("-"));
-        }
+
+      }
+      if (str.contains("-")) {
+        str = str.substring(0, str.indexOf("-"));
       }
       //print("RETURNING section ${int.parse(str)} for subject ${classCode}");
       // print("Trying to parse $str into a section number");
       if (str.isEmpty) {
         return 0;
+      } else if (str.contains("-")) {
+        str = str.substring(0, str.indexOf("-")).trim();
       }
       return int.parse(str);
     }
