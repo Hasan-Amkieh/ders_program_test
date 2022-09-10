@@ -95,7 +95,7 @@ class AddCoursesPageState extends State<AddCoursesPage> {
 
     return Scaffold(
       appBar: PreferredSize(
-          preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.1),
+          preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.05 : 0.1)),
           child: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor)
       ),
       backgroundColor: Main.appTheme.scaffoldBackgroundColor,

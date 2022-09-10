@@ -69,7 +69,7 @@ class SearchPageState extends State<SearchPage> {
     return Scaffold(
       backgroundColor: Main.appTheme.scaffoldBackgroundColor,
       appBar: PreferredSize(
-          preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.1),
+          preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.05 : 0.1)),
           child: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor)),
       body: SafeArea(
         child: Container(

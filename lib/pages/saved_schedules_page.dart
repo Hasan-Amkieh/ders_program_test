@@ -51,7 +51,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
     return Scaffold(
       backgroundColor: Main.appTheme.scaffoldBackgroundColor,
       appBar: PreferredSize(
-          preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.1),
+          preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.05 : 0.1)),
           child: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor)),
       body: SafeArea(
           child: Column(
@@ -82,7 +82,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
 
       String courses = "";
       for (int i = 0 ; i < schedule.scheduleCourses.length ; i++) { // looping for each course
-        courses = courses + ", " + schedule.scheduleCourses[i].subject.classCode;
+        courses = courses + "  |  " + schedule.scheduleCourses[i].subject.classCode;
 
         days.addAll(schedule.scheduleCourses[i].subject.days);
         beginningPeriods.addAll(schedule.scheduleCourses[i].subject.bgnPeriods);
@@ -94,7 +94,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
         }
 
       }
-      courses = schedule.scheduleCourses.isNotEmpty ? courses.substring(2) : "";
+      courses = schedule.scheduleCourses.isNotEmpty ? courses.substring(5) : "";
 
       scheduleTiles.add(ExpansionTile(
         backgroundColor: Main.appTheme.scaffoldBackgroundColor,
@@ -138,10 +138,12 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
               borderRadius: BorderRadius.all(Radius.circular(0.05 * width)),
             ),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Visibility(
                   visible: schedule.scheduleCourses.isEmpty,
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(translateEng("No courses to show"), style: TextStyle(color: Main.appTheme.titleTextColor)),
                       Row(
@@ -208,42 +210,71 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                 ),
                 Visibility(
                   visible: schedule.scheduleCourses.isNotEmpty,
-                  child: Row(
+                  child: Platform.isWindows ? Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(CupertinoIcons.book_fill, color: Main.appTheme.titleTextColor),
-                      SizedBox(width: width * 0.03),
-                      Expanded(child: Text(courses, style: TextStyle(color: Main.appTheme.titleTextColor))),
+                      Expanded(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(CupertinoIcons.book_fill, color: Main.appTheme.titleTextColor),
+                                SizedBox(width: width * 0.03),
+                                Expanded(child: Text(courses, style: TextStyle(color: Main.appTheme.titleTextColor))),
+                              ],
+                            ),
+                            SizedBox(height: width * 0.03),
+                            Row(
+                              children: [
+                                Icon(CupertinoIcons.clock_fill, color: Main.appTheme.titleTextColor),
+                                SizedBox(width: width * 0.03),
+                                Expanded(child: Text(totalHours.toString() + " hours", style: TextStyle(color: Main.appTheme.titleTextColor))),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: width * (Platform.isWindows ? 0 : 0.03)),
+                      SizedBox(
+                        width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.6 : 0.7),
+                        height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.6 : 0.7),
+                        child: CustomPaint(painter:
+                        TimetableCanvas(beginningPeriods: beginningPeriods, days: days, hours: hours, isForSchedule: true)
+                        ),
+                      ),
                     ],
-                  ),
-                ),
-                SizedBox(height: width * 0.03),
-                Visibility(
-                  visible: schedule.scheduleCourses.isNotEmpty,
-                  child: Row(
+                  ) : Column(
                     children: [
-                      Icon(CupertinoIcons.clock_fill, color: Main.appTheme.titleTextColor),
-                      SizedBox(width: width * 0.03),
-                      Expanded(child: Text(totalHours.toString() + " hours", style: TextStyle(color: Main.appTheme.titleTextColor))),
+                      Row(
+                        children: [
+                          Icon(CupertinoIcons.book_fill, color: Main.appTheme.titleTextColor),
+                          SizedBox(width: width * 0.03),
+                          Expanded(child: Text(courses, style: TextStyle(color: Main.appTheme.titleTextColor))),
+                        ],
+                      ),
+                      SizedBox(height: width * 0.03),
+                      Row(
+                        children: [
+                          Icon(CupertinoIcons.clock_fill, color: Main.appTheme.titleTextColor),
+                          SizedBox(width: width * 0.03),
+                          Expanded(child: Text(totalHours.toString() + " hours", style: TextStyle(color: Main.appTheme.titleTextColor))),
+                        ],
+                      ),
+                      SizedBox(height: width * (Platform.isWindows ? 0 : 0.03)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.6 : 0.7),
+                            height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.6 : 0.7),
+                            child: CustomPaint(painter:
+                            TimetableCanvas(beginningPeriods: beginningPeriods, days: days, hours: hours, isForSchedule: true)
+                            ),
+                          )
+                        ],
+                      ),
                     ],
-                  ),
-                ),
-                SizedBox(height: width * (Platform.isWindows ? 0 : 0.03)),
-                Visibility(
-                  visible: schedule.scheduleCourses.isNotEmpty,
-                  child: ListTile(
-                    onTap: null,
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.6 : 0.7),
-                          height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.6 : 0.7),
-                          child: CustomPaint(painter:
-                          TimetableCanvas(beginningPeriods: beginningPeriods, days: days, hours: hours, isForSchedule: true)
-                          ),
-                        )
-                      ],
-                    ),
                   ),
                 ),
               ],

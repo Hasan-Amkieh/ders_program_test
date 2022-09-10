@@ -29,7 +29,10 @@ class FavCoursesState extends State<FavCourses> {
 
     return Scaffold(
       backgroundColor: Main.appTheme.scaffoldBackgroundColor,
-      appBar: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor),
+      appBar: PreferredSize(
+          preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.05 : 0.1)),
+          child: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor)
+      ),
       body: SafeArea(
         child: Main.favCourses.isEmpty ? Center(child: Text(translateEng("Nothing to show"), style: TextStyle(color: Main.appTheme.titleTextColor), textAlign: TextAlign.center,))
             : ListView.builder(
