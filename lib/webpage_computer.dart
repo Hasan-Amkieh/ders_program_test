@@ -171,25 +171,29 @@ function setupHook(xhr) {
 
                   // find all the courses that have duplication of periods:
 
-                  for (int subIndex = 0 ; subIndex < Main.facultyData.subjects.length ; subIndex++) {
-                    for (int i = 0 ; i < Main.facultyData.subjects[subIndex].hours.length ; i++) {
-                      for (int j = 0 ; j < Main.facultyData.subjects[subIndex].days[i].length ; j++) {
-                        for (int i_ = 0 ; i_ < Main.facultyData.subjects[subIndex].hours.length ; i_++) {
-                          for (int j_ = 0 ; j_ < Main.facultyData.subjects[subIndex].days[i_].length ; j_++) {
-                            if (Main.facultyData.subjects[subIndex].hours[i] == Main.facultyData.subjects[subIndex].hours[i_] &&
-                                Main.facultyData.subjects[subIndex].days[i][j] == Main.facultyData.subjects[subIndex].days[i_][j_] &&
-                                Main.facultyData.subjects[subIndex].bgnPeriods[i][j] == Main.facultyData.subjects[subIndex].bgnPeriods[i_][j_] &&
-                                (j != j_)) { // then it is a duplicate
-                              Main.facultyData.subjects[subIndex].days[i_].removeAt(j_);
-                              Main.facultyData.subjects[subIndex].bgnPeriods[i_].removeAt(j_);
-                              if (j_ > 0) {
-                                j_--;
+                  try {
+                    for (int subIndex = 0 ; subIndex < Main.facultyData.subjects.length ; subIndex++) {
+                      for (int i = 0 ; i < Main.facultyData.subjects[subIndex].hours.length ; i++) {
+                        for (int j = 0 ; j < Main.facultyData.subjects[subIndex].days[i].length ; j++) {
+                          for (int i_ = 0 ; i_ < Main.facultyData.subjects[subIndex].hours.length ; i_++) {
+                            for (int j_ = 0 ; j_ < Main.facultyData.subjects[subIndex].days[i_].length ; j_++) {
+                              if (Main.facultyData.subjects[subIndex].hours[i] == Main.facultyData.subjects[subIndex].hours[i_] &&
+                                  Main.facultyData.subjects[subIndex].days[i][j] == Main.facultyData.subjects[subIndex].days[i_][j_] &&
+                                  Main.facultyData.subjects[subIndex].bgnPeriods[i][j] == Main.facultyData.subjects[subIndex].bgnPeriods[i_][j_] &&
+                                  (j != j_)) { // then it is a duplicate
+                                Main.facultyData.subjects[subIndex].days[i_].removeAt(j_);
+                                Main.facultyData.subjects[subIndex].bgnPeriods[i_].removeAt(j_);
+                                if (j_ > 0) {
+                                  j_--;
+                                }
                               }
                             }
                           }
                         }
                       }
                     }
+                  } catch(e) {
+                    print("An error has occurred during the course period duplication deletion");
                   }
 
                   // then find all the courses that have different time or classrooms:

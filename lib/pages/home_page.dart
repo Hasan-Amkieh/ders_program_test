@@ -1,6 +1,6 @@
 import "dart:io" show Platform;
 
-import 'dart:async';
+// import 'dart:async'; // Deep Links:
 import 'dart:io';
 
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
@@ -11,11 +11,11 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:Atsched/others/departments.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
+// import 'package:flutter_branch_sdk/flutter_branch_sdk.dart'; // Deep Links:
 import 'package:flutter_window_close/flutter_window_close.dart';
 import 'package:lottie/lottie.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:path_provider/path_provider.dart';
+// import 'package:path_provider/path_provider.dart'; // Deep Links:
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -45,17 +45,17 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
   // Branch IO vars:
 
-  final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
-  GlobalKey<ScaffoldMessengerState>();
-
-  BranchContentMetaData metadata = BranchContentMetaData();
-  BranchUniversalObject? buo;
-  BranchLinkProperties lp = BranchLinkProperties();
-
-  StreamSubscription<Map>? streamSubscription;
-  StreamController<String> controllerData = StreamController<String>();
-  StreamController<String> controllerInitSession = StreamController<String>();
-  StreamController<String> controllerUrl = StreamController<String>();
+  // final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+  // GlobalKey<ScaffoldMessengerState>();
+  //
+  // BranchContentMetaData metadata = BranchContentMetaData();
+  // BranchUniversalObject? buo;
+  // BranchLinkProperties lp = BranchLinkProperties();
+  //
+  // StreamSubscription<Map>? streamSubscription;
+  // StreamController<String> controllerData = StreamController<String>();
+  // StreamController<String> controllerInitSession = StreamController<String>();
+  // StreamController<String> controllerUrl = StreamController<String>();
 
   late AnimationController toggleButtonController;
 
@@ -91,43 +91,88 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
     toggleButtonController = AnimationController(duration: const Duration(seconds: 1), vsync: this);
 
     currentState = this;
-    // print("Initializing the home page state!");
 
-    if (!Platform.isWindows) {
-      listenDynamicLinks();
+    if (Main.isFacChange) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialog(context: context, builder: (context) => AlertDialog(
+          backgroundColor: Main.appTheme.scaffoldBackgroundColor,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(translateEng("Choose your Department"), style: TextStyle(color: Main.appTheme.titleTextColor)),
+              Container(
+                color: Main.appTheme.scaffoldBackgroundColor,
+                child: StatefulBuilder(
+                  builder: (context, setState) {
+                    return DropdownButton<String>(
+                      dropdownColor: Main.appTheme.scaffoldBackgroundColor,
+                      value: Main.department,
+                      items: faculties[Main.faculty]?.keys.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem(value: value, child: Row(children: [
+                          Text(translateEng(value) + "  ", style: TextStyle(color: Main.appTheme.titleTextColor)), Text(translateEng(faculties[Main.faculty]![value] as String), style: TextStyle(fontSize: 10, color: Main.appTheme.titleTextColor))
+                        ],),);
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          Main.department = newValue!;
+                        });
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: const Text("Ok", ),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        ));
+      });
+      Main.isFacChange = false;
     }
 
-    checkScheduleAddition();
+    // Deep Links:
+
+    // if (!Platform.isWindows) {
+    //   listenDynamicLinks();
+    // }
+    //
+    // checkScheduleAddition();
 
   }
 
-  void checkScheduleAddition() {
+  // Deep Links:
 
-    // print("Trying to find extra files: ");
-    String content = "";
-    try {
-      final file = File(Main.appDocDir + (Platform.isWindows ? '\\' : '/') +  'schedule.txt'); // FileSystemException
-
-      content = file.readAsStringSync();
-      file.deleteSync();
-      if (content.isNotEmpty) {
-        // print("Extra Schedule was found with the content of: $content");
-        List<String> lines = content.split("\n");
-        String scheduleName = lines[0];
-        String faculty = lines[1];
-        lines.removeAt(0); // schedule name
-        lines.removeAt(0); // faculty
-        confirmScheduleAddtion(scheduleName, lines, faculty);
-      }
-    } catch(err) {
-      print("The file was not opened bcs: $err");
-    }
-
-    if (fac.isNotEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => showSnackBar());
-    }
-
-  }
+  // void checkScheduleAddition() {
+  //
+  //   // print("Trying to find extra files: ");
+  //   String content = "";
+  //   try {
+  //     final file = File(Main.appDocDir + (Platform.isWindows ? '\\' : '/') +  'schedule.txt'); // FileSystemException
+  //
+  //     content = file.readAsStringSync();
+  //     file.deleteSync();
+  //     if (content.isNotEmpty) {
+  //       // print("Extra Schedule was found with the content of: $content");
+  //       List<String> lines = content.split("\n");
+  //       String scheduleName = lines[0];
+  //       String faculty = lines[1];
+  //       lines.removeAt(0); // schedule name
+  //       lines.removeAt(0); // faculty
+  //       confirmScheduleAddtion(scheduleName, lines, faculty);
+  //     }
+  //   } catch(err) {
+  //     print("The file was not opened bcs: $err");
+  //   }
+  //
+  //   if (fac.isNotEmpty) {
+  //     WidgetsBinding.instance.addPostFrameCallback((_) => showSnackBar());
+  //   }
+  //
+  // }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -185,6 +230,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                             Main.forceUpdate = true;
                             Main.faculty = Main.newFaculty;
                             Main.department = faculties[Main.faculty]?.keys.elementAt(0) as String;
+                            Main.isFacChange = true;
                             Main.save();
                             Navigator.of(context).pop(true);
                           },
@@ -397,6 +443,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                               Main.forceUpdate = true;
                               Main.faculty = newValue!;
                               Main.department = faculties[Main.faculty]?.keys.elementAt(0) as String;
+                              Main.isFacChange = true;
                               Main.restart();
                             },
                               child: Text(translateEng("RESTART")),
@@ -1309,156 +1356,157 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
   // Branch IO code:
 
-  void listenDynamicLinks() async {
-    // print("Started listening to deep links!");
-    streamSubscription = FlutterBranchSdk.initSession().listen((data) async {
+  // void listenDynamicLinks() async {
+  //   // print("Started listening to deep links!");
+  //   FlutterBranchSdk.disableTracking(true);
+  //   streamSubscription = FlutterBranchSdk.initSession().listen((data) async {
+  //
+  //     // print('listenDynamicLinks - DeepLink Data: $data');
+  //     controllerData.sink.add((data.toString()));
+  //
+  //     if (data.containsKey('+clicked_branch_link') && data['+clicked_branch_link'] == true) {
+  //       final dir = await getApplicationDocumentsDirectory();
+  //       final file = File('${dir.path}/schedule.txt');
+  //
+  //       // print('Schedule Name: ${data['schedule_name']}');
+  //       // print('Faculty: ${data['faculty']}');
+  //
+  //       String str;
+  //       str = data['schedule_name'] + "\n" + data['faculty'];
+  //       //
+  //       for (int i = 0 ; i < int.parse(data['number_of_courses']) ; i++) {
+  //         str = str + "\n" + data['course_${i+1}'];
+  //       }
+  //
+  //       print("Writing the following string to the file: $str");
+  //       await file.writeAsString(str, mode: FileMode.write, flush: true);
+  //
+  //       if (HomeState.currentState != null) {
+  //         HomeState.currentState?.setState(() { checkScheduleAddition(); });
+  //       }
+  //
+  //     }
+  //   }, onError: (error) {
+  //     PlatformException platformException = error as PlatformException;
+  //     // print('InitSession error: ${platformException.code} - ${platformException.message}');
+  //     controllerInitSession.add('InitSession error: ${platformException.code} - ${platformException.message}');
+  //   });
+  // }
 
-      // print('listenDynamicLinks - DeepLink Data: $data');
-      controllerData.sink.add((data.toString()));
+  // String fac = "", scheduleName = "";
+  // void confirmScheduleAddtion(String scheduleName, List<String> courses, String faculty) {
+  //
+  //   fac = faculty;this.scheduleName = scheduleName;
+  //   List<Course> courses_ = [];
+  //   courses.forEach((course) { courses_.add(Course(subject: Subject.fromStringWithClassCode(course), note: "")); });
+  //
+  //   // print("Adding the schedule: ");
+  //   // print("Courses are: ");
+  //   // courses_.forEach((element) {print(element.subject.classCode);});
+  //   Main.schedules.add(Schedule(scheduleName: scheduleName, scheduleCourses: courses_));
+  //
+  // }
 
-      if (data.containsKey('+clicked_branch_link') && data['+clicked_branch_link'] == true) {
-        final dir = await getApplicationDocumentsDirectory();
-        final file = File('${dir.path}/schedule.txt');
+  // void showSnackBar() {
+  //
+  //   if (fac.isEmpty) {
+  //     return;
+  //   }
+  //
+  //   String faculty = fac;
+  //   fac = "";
+  //   if (faculty == Main.faculty) {
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //       content: Text(scheduleName + " has been added to the "),
+  //       action: SnackBarAction(
+  //         label: 'Set Active',
+  //         onPressed: () {
+  //           setState(() {
+  //             Main.currentScheduleIndex = Main.schedules.length - 1;
+  //           });
+  //         },
+  //       ),
+  //     ));
+  //   } else { // If the faculty is different, warn the user, choose b/w CONTINUE or CANCEL
+  //     setState(() {
+  //       showDialog(context: context, builder: (context) {
+  //         return AlertDialog(
+  //           title: Text(translateEng("Adding Schedule")),
+  //           content: Center(
+  //             child: Text(
+  //                 "The faculty of the received schedule is $faculty, but your faculty is ${Main.faculty},\nDo you want to add the schedule?",
+  //                 style: const TextStyle(fontSize: 18)),
+  //           ),
+  //           actions: [
+  //             TextButton(onPressed: () {
+  //               Navigator.pop(context);
+  //             },
+  //               child: Text(translateEng("CONTINUE")),
+  //             ),
+  //             TextButton(onPressed: () {
+  //               Main.schedules.removeAt(Main.schedules.length - 1);
+  //               Navigator.pop(context);
+  //             },
+  //               child: Text(translateEng("CANCEL")),
+  //             )
+  //           ],
+  //         );
+  //       });
+  //     });
+  //   }
+  //
+  // }
 
-        // print('Schedule Name: ${data['schedule_name']}');
-        // print('Faculty: ${data['faculty']}');
+  // void initDeepLinkData(int shceduleIndex) {
+  //   metadata = BranchContentMetaData()
+  //     ..addCustomMetadata('schedule_name', Main.schedules[shceduleIndex].scheduleName)
+  //     //..addCustomMetadata('schedule_courses', Subject.convertToListWithClassCodes(Main.schedules[Main.currentScheduleIndex].scheduleCourses))
+  //     ..addCustomMetadata('number_of_courses', Main.schedules[shceduleIndex].scheduleCourses.length)
+  //     ..addCustomMetadata('faculty', Main.faculty);
+  //   for (int i = 0 ; i < Main.schedules[shceduleIndex].scheduleCourses.length ; i++) {
+  //     metadata.addCustomMetadata("course_${i+1}", Main.schedules[shceduleIndex].scheduleCourses[i].subject.classCode + "|"
+  //         + Main.schedules[shceduleIndex].scheduleCourses[i].subject.toString());
+  //   }
+  //
+  //   buo = BranchUniversalObject(
+  //       canonicalIdentifier: 'flutter/branch',
+  //       //parameter canonicalUrl
+  //       //If your content lives both on the web and in the app, make sure you set its canonical URL
+  //       // (i.e. the URL of this piece of content on the web) when building any BUO.
+  //       // By doing so, we’ll attribute clicks on the links that you generate back to their original web page,
+  //       // even if the user goes to the app instead of your website! This will help your SEO efforts.
+  //       title: 'Schedule Share',
+  //       contentDescription: 'Schedule Share using Deep Links',
+  //       contentMetadata: metadata,
+  //       keywords: ['Atilim University', 'Schedule', 'Timetable'],
+  //       publiclyIndex: true,
+  //       locallyIndex: true,
+  //       expirationDateInMilliSec: DateTime.now().add(const Duration(days: 30)).millisecondsSinceEpoch);
+  //
+  //   lp = BranchLinkProperties(
+  //       channel: 'Dersbottest App',
+  //       feature: 'sharing',
+  //
+  //       stage: 'Schedule Sharing',
+  //       //campaign: '',
+  //       tags: [Main.faculty, Main.department])
+  //     ..addControlParam('\$uri_redirect_mode', '1')
+  //     ..addControlParam('referring_user_id', 'default');
+  //
+  // }
 
-        String str;
-        str = data['schedule_name'] + "\n" + data['faculty'];
-        //
-        for (int i = 0 ; i < int.parse(data['number_of_courses']) ; i++) {
-          str = str + "\n" + data['course_${i+1}'];
-        }
-
-        print("Writing the following string to the file: $str");
-        await file.writeAsString(str, mode: FileMode.write, flush: true);
-
-        if (HomeState.currentState != null) {
-          HomeState.currentState?.setState(() { checkScheduleAddition(); });
-        }
-
-      }
-    }, onError: (error) {
-      PlatformException platformException = error as PlatformException;
-      // print('InitSession error: ${platformException.code} - ${platformException.message}');
-      controllerInitSession.add('InitSession error: ${platformException.code} - ${platformException.message}');
-    });
-  }
-
-  String fac = "", scheduleName = "";
-  void confirmScheduleAddtion(String scheduleName, List<String> courses, String faculty) {
-
-    fac = faculty;this.scheduleName = scheduleName;
-    List<Course> courses_ = [];
-    courses.forEach((course) { courses_.add(Course(subject: Subject.fromStringWithClassCode(course), note: "")); });
-
-    // print("Adding the schedule: ");
-    // print("Courses are: ");
-    // courses_.forEach((element) {print(element.subject.classCode);});
-    Main.schedules.add(Schedule(scheduleName: scheduleName, scheduleCourses: courses_));
-
-  }
-
-  void showSnackBar() {
-
-    if (fac.isEmpty) {
-      return;
-    }
-
-    String faculty = fac;
-    fac = "";
-    if (faculty == Main.faculty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(scheduleName + " has been added to the "),
-        action: SnackBarAction(
-          label: 'Set Active',
-          onPressed: () {
-            setState(() {
-              Main.currentScheduleIndex = Main.schedules.length - 1;
-            });
-          },
-        ),
-      ));
-    } else { // If the faculty is different, warn the user, choose b/w CONTINUE or CANCEL
-      setState(() {
-        showDialog(context: context, builder: (context) {
-          return AlertDialog(
-            title: Text(translateEng("Adding Schedule")),
-            content: Center(
-              child: Text(
-                  "The faculty of the received schedule is $faculty, but your faculty is ${Main.faculty},\nDo you want to add the schedule?",
-                  style: const TextStyle(fontSize: 18)),
-            ),
-            actions: [
-              TextButton(onPressed: () {
-                Navigator.pop(context);
-              },
-                child: Text(translateEng("CONTINUE")),
-              ),
-              TextButton(onPressed: () {
-                Main.schedules.removeAt(Main.schedules.length - 1);
-                Navigator.pop(context);
-              },
-                child: Text(translateEng("CANCEL")),
-              )
-            ],
-          );
-        });
-      });
-    }
-
-  }
-
-  void initDeepLinkData(int shceduleIndex) {
-    metadata = BranchContentMetaData()
-      ..addCustomMetadata('schedule_name', Main.schedules[shceduleIndex].scheduleName)
-      //..addCustomMetadata('schedule_courses', Subject.convertToListWithClassCodes(Main.schedules[Main.currentScheduleIndex].scheduleCourses))
-      ..addCustomMetadata('number_of_courses', Main.schedules[shceduleIndex].scheduleCourses.length)
-      ..addCustomMetadata('faculty', Main.faculty);
-    for (int i = 0 ; i < Main.schedules[shceduleIndex].scheduleCourses.length ; i++) {
-      metadata.addCustomMetadata("course_${i+1}", Main.schedules[shceduleIndex].scheduleCourses[i].subject.classCode + "|"
-          + Main.schedules[shceduleIndex].scheduleCourses[i].subject.toString());
-    }
-
-    buo = BranchUniversalObject(
-        canonicalIdentifier: 'flutter/branch',
-        //parameter canonicalUrl
-        //If your content lives both on the web and in the app, make sure you set its canonical URL
-        // (i.e. the URL of this piece of content on the web) when building any BUO.
-        // By doing so, we’ll attribute clicks on the links that you generate back to their original web page,
-        // even if the user goes to the app instead of your website! This will help your SEO efforts.
-        title: 'Schedule Share',
-        contentDescription: 'Schedule Share using Deep Links',
-        contentMetadata: metadata,
-        keywords: ['Atilim University', 'Schedule', 'Timetable'],
-        publiclyIndex: true,
-        locallyIndex: true,
-        expirationDateInMilliSec: DateTime.now().add(const Duration(days: 30)).millisecondsSinceEpoch);
-
-    lp = BranchLinkProperties(
-        channel: 'Dersbottest App',
-        feature: 'sharing',
-
-        stage: 'Schedule Sharing',
-        //campaign: '',
-        tags: [Main.faculty, Main.department])
-      ..addControlParam('\$uri_redirect_mode', '1')
-      ..addControlParam('referring_user_id', 'default');
-
-  }
-
-  Future<BranchResponse?> generateLink() async {
-    BranchResponse response =
-    await FlutterBranchSdk.getShortUrl(buo: buo!, linkProperties: lp);
-    if (response.success) {
-      controllerUrl.sink.add('${response.result}');
-      return response;
-    } else {
-      controllerUrl.sink
-          .add('Error : ${response.errorCode} - ${response.errorMessage}');
-    }
-
-    return null;
-  }
+  // Future<BranchResponse?> generateLink() async {
+  //   BranchResponse response =
+  //   await FlutterBranchSdk.getShortUrl(buo: buo!, linkProperties: lp);
+  //   if (response.success) {
+  //     controllerUrl.sink.add('${response.result}');
+  //     return response;
+  //   } else {
+  //     controllerUrl.sink
+  //         .add('Error : ${response.errorCode} - ${response.errorMessage}');
+  //   }
+  //
+  //   return null;
+  // }
 
 }

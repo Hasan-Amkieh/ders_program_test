@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'dart:io' show Platform;
 
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:Atsched/language/dictionary.dart';
@@ -203,11 +204,11 @@ class SchedulerPageState extends State<SchedulerPage> {
                           } else {
                             showToast(
                               translateEng("Choose a section for each course"),
-                              duration: const Duration(milliseconds: 1500),
+                              duration: const Duration(milliseconds: 4000),
                               position: ToastPosition.bottom,
                               backgroundColor: Colors.red,
                               radius: 100.0,
-                              textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
+                              textStyle: const TextStyle(fontSize: 16.0, color: Colors.white),
                             );
                           }
                         },
@@ -308,7 +309,18 @@ class SchedulerPageState extends State<SchedulerPage> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           areThereSecs ? TextButton(
-            child: Text(translateEng("Sections") + ": " + sectionsStr, style: TextStyle(color: Colors.blue, fontSize: 14)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                sectionsStr.isEmpty ? const Icon(Icons.warning, color: Colors.red) : Container(),
+                SizedBox(
+                  width: width * (Platform.isWindows ? 0.005 : 0.01),
+                ),
+                Text(sectionsStr.isEmpty ? (translateEng("Please choose a section")) : (translateEng("Sections") + ": " + sectionsStr),
+                    style:  TextStyle(color: (sectionsStr.isEmpty ? Colors.red : Colors.blue), fontSize: (sectionsStr.isEmpty ? 16 : 14)))
+              ],
+            ),
             onPressed: () {
               showAdaptiveActionSheet(
                 bottomSheetColor: Main.appTheme.scaffoldBackgroundColor,
@@ -481,6 +493,7 @@ class SchedulerPageState extends State<SchedulerPage> {
                   StatefulBuilder(
                     builder: (BuildContext context, StateSetter setState) {
                       return Checkbox(
+                        fillColor: MaterialStateProperty.all(Colors.blue),
                         value: areSectionsShown[subIndex].value[sec],
                         onChanged: (value) {
                           // print("The new value is: $value");

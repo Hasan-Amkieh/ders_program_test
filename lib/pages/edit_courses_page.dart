@@ -93,9 +93,6 @@ class EditCoursePageState extends State<EditCoursePage> {
                       duration: duration,
                       curve: Curves.easeIn,
                       decoration: BoxDecoration(
-                        // TODO: Change it into the theme background color
-                        //color: mode == 2 ? Colors.blue : Colors.white,
-                        //borderRadius: BorderRadius.circular(100.0),
                         border: Border(bottom: BorderSide(color: mode == 0 ? Colors.grey.shade700 : Main.appTheme.scaffoldBackgroundColor, width: 2)),
                       ),
                       child: Container(
@@ -265,25 +262,26 @@ class EditCoursePageState extends State<EditCoursePage> {
         ),
       );
     } else {
-      return ListView.builder(itemCount: Main.schedules[Main.currentScheduleIndex].scheduleCourses.length, itemBuilder: (context, index) {
-        TextEditingController notesController = TextEditingController(text: Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).note);
-        Subject subject = Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).subject;
-        //print("Building the subject of teachers ${subject.teacherCodes}");
-        return AnimatedContainer(
-          margin: EdgeInsets.symmetric(vertical: 0.01 * width),
-          duration: duration,
-          decoration: BoxDecoration(
-            border: Border(left: BorderSide(width: 3.0, color: color), top: BorderSide(width: height * 0.01, color: Colors.transparent)),
-          ),
-          child: Container(
-            margin: EdgeInsets.symmetric(vertical: 0.01 * width),
-            child: ListTile(
-              style: ListTileStyle.drawer,
-              contentPadding: EdgeInsets.fromLTRB(width * 0.02, 0, 0, 0),
-              title: Text(subject.classCode, style: TextStyle(color: Main.appTheme.titleTextColor)),
-              trailing: IconButton(
-                  tooltip: translateEng("Notes"),
-                  icon: const Icon(CupertinoIcons.chat_bubble_text_fill, color: Colors.blue), onPressed: () {
+      return ListView.builder(
+          itemCount: Main.schedules[Main.currentScheduleIndex].scheduleCourses.length, itemBuilder: (context, index) {
+            TextEditingController notesController = TextEditingController(text: Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).note);
+            Subject subject = Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).subject;
+            //print("Building the subject of teachers ${subject.teacherCodes}");
+            return AnimatedContainer(
+              margin: EdgeInsets.symmetric(vertical: (Platform.isWindows ? 0.005 : 0.01) * width),
+              duration: duration,
+              decoration: BoxDecoration(
+                border: Border(left: BorderSide(width: 3.0, color: color), top: BorderSide(width: height * (Platform.isWindows ? 0.005 : 0.01), color: Colors.transparent)),
+              ),
+              child: Container(
+                margin: EdgeInsets.symmetric(vertical: (Platform.isWindows ? 0.003 : 0.01) * width),
+                child: ListTile(
+                  style: ListTileStyle.drawer,
+                  contentPadding: EdgeInsets.fromLTRB(width * 0.02, 0, 0, 0),
+                  title: Text(subject.classCode, style: TextStyle(color: Main.appTheme.titleTextColor)),
+                  trailing: IconButton(
+                    tooltip: translateEng("Notes"),
+                    icon: const Icon(CupertinoIcons.chat_bubble_text_fill, color: Colors.blue), onPressed: () {
                     showAdaptiveActionSheet(
                       bottomSheetColor: Main.appTheme.headerBackgroundColor,
                       context: context,

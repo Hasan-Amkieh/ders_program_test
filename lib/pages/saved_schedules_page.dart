@@ -529,21 +529,22 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                       Navigator.pop(context);
                     },
                   ),
-                  Platform.isWindows ? Container() : SizedBox(height: width * 0.03),
-                  Platform.isWindows ? Container() : const Divider(height: 2.0, thickness: 2.0),
-                  Platform.isWindows ? Container() : TextButton.icon(
-                    icon: const Icon(CupertinoIcons.link),
-                    label: Text(translateEng("Share Schedule by Link")),
-                    onPressed: () async {
-                      HomeState.currentState!.initDeepLinkData(scheduleIndex);
-                      BranchResponse? response = await HomeState.currentState!.generateLink();
-
-                      var time = DateTime.now().add(const Duration(days: 30));
-                      await Share.share("${response?.result}\nThis shared link expires on ${time.year}-${time.month}-${time.day}");
-
-                      Navigator.pop(context);
-                    },
-                  ),
+                  // Platform.isWindows ? Container() : SizedBox(height: width * 0.03),
+                  // Platform.isWindows ? Container() : const Divider(height: 2.0, thickness: 2.0),
+                  // Platform.isWindows ? Container() : TextButton.icon(
+                  //   icon: const Icon(CupertinoIcons.link),
+                  //   label: Text(translateEng("Share Schedule by Link")),
+                  //   onPressed: () async {
+                  //     FlutterBranchSdk.disableTracking(true);
+                  //     HomeState.currentState!.initDeepLinkData(scheduleIndex);
+                  //     BranchResponse? response = await HomeState.currentState!.generateLink();
+                  //
+                  //     var time = DateTime.now().add(const Duration(days: 30));
+                  //     await Share.share("${response?.result}\nThis shared link expires on ${time.year}-${time.month}-${time.day}");
+                  //
+                  //     Navigator.pop(context);
+                  //   },
+                  // ),
                 ],
               ),
               actions: [],

@@ -65,6 +65,7 @@ class Main {
   static String language = "English"; // currently, there is only
   static ThemeMode theme = ThemeMode.dark;
   static bool isThereNewerVersion = false;
+  static bool isFacChange = false;
 
   static String newFaculty = "";
 
@@ -132,6 +133,7 @@ class Main {
     toWrite = toWrite + "schedule_index:"+currentScheduleIndex.toString()+"\n";
     toWrite = toWrite + "is_attempted_before:"+isAttemptedBefore.toString()+"\n";
     toWrite = toWrite + "is_there_newer_version:"+isThereNewerVersion.toString()+"\n";
+    toWrite = toWrite + "is_fac_change:"+isFacChange.toString()+"\n";
 
     file.writeAsStringSync(toWrite, mode: FileMode.write);
 
@@ -158,6 +160,7 @@ class Main {
         currentScheduleIndex = int.parse(content.substring(content.indexOf("schedule_index:") + 15, content.indexOf("\n", content.indexOf("schedule_index:") + 15)));
         isAttemptedBefore = content.substring(content.indexOf("is_attempted_before:") + 20, content.indexOf("\n", content.indexOf("is_attempted_before:") + 20)) == "true" ? true : false;
         isThereNewerVersion = content.substring(content.indexOf("is_there_newer_version:") + 23, content.indexOf("\n", content.indexOf("is_there_newer_version:") + 23)) == "true" ? true : false;
+        isFacChange = content.substring(content.indexOf("is_fac_change:") + 14, content.indexOf("\n", content.indexOf("is_fac_change:") + 14)) == "true" ? true : false;
       }
     } catch(err) {
       print("The settings file was not opened bcs: $err");

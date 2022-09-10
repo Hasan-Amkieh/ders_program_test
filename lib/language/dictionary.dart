@@ -208,6 +208,7 @@ Map<String, String> engToTurk = {
   "Current Version" : "Mevcut Versiyon",
   "There is a newer version of this application,\nplease update the application first!" : "Bu uygulamanın daha yeni bir sürümü var,\nlütfen önce uygulamayı güncelleyin!",
   "Name the Schedule" : "Programı Adlandır",
+  "Please choose a section" : "Lütfen bir bölüm seçin",
 };
 
 String translateEng(String eng) {
