@@ -11,7 +11,7 @@ import 'package:Atsched/pages/home_page.dart';
 import 'package:Atsched/widgets/timetable_canvas.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
+// import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:path_provider/path_provider.dart';

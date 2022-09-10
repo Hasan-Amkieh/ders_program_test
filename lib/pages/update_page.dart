@@ -10,7 +10,7 @@ class UpdatePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    double width = (window.physicalSize / window.devicePixelRatio).width;
+    // double width = (window.physicalSize / window.devicePixelRatio).width;
     double height = (window.physicalSize / window.devicePixelRatio).height;
 
     return Scaffold(backgroundColor: Colors.blue,

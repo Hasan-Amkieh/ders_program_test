@@ -113,7 +113,9 @@ class SchedulerPageState extends State<SchedulerPage> {
       subjects.addAll(subjectsToAdd);
       subjectsToAdd.clear();
       subjectsShown.clear();
-      subjects.forEach((element) {subjectsShown.add(false);});
+      for (int i_ = 0 ; i_ < subjects.length ; i_++) {
+        subjectsShown.add(false);
+      }
     }
 
     return Scaffold(
@@ -179,7 +181,6 @@ class SchedulerPageState extends State<SchedulerPage> {
                           SchedulerResultPage.subjects = subjects;
                           List<SchedulerSubjectData> list = [];
                           List<int> sections = [];
-                          int skipped = 0;
                           for (int i = 0 ; i < subjects.length ; i++) {
                             sections = [];
                             // print("DOING ${subjectsSections[i].key} with ${subjectsSections[i].value}");
@@ -347,11 +348,9 @@ class SchedulerPageState extends State<SchedulerPage> {
                   setState(() {
                     subjects.removeAt(index);
                     subjectsShown.removeAt(index);
-                    bool hasSecs = false;
                     for (Subject sub in Main.facultyData.subjects) {
                       if (sub.getClassCodeWithoutSectionNumber() == subjectsSections[index].key) { // if it is the class we are looking for:
                         if (sub.getClassCodeWithoutSectionNumber() != sub.classCode) { // if it has sections:
-                          hasSecs = true;
                           break;
                         }
                       }

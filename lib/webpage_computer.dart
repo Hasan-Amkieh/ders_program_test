@@ -326,7 +326,6 @@ function setupHook(xhr) {
           if (msg[0] == "timetableData") {
 
             String timetableStr = msg[1];
-            String faculty = msg[2];
 
             //print("Starting classification:\n");
             sPort.send(["setDoNotRestart"]); // doNotRestart = true;
@@ -345,7 +344,7 @@ function setupHook(xhr) {
             classCodesEnd = timetableStr.indexOf("data_columns", classCodesBegin);
 
             int lastFound = classCodesBegin;
-            String name = "", classCodeWithSec, classCodeWithoutSec;
+            String name = "", classCodeWithSec;
             while (lastFound < classCodesEnd) {
 
               lastFound = timetableStr.indexOf('name":"', lastFound) + 7;
@@ -353,11 +352,6 @@ function setupHook(xhr) {
 
               lastFound = timetableStr.indexOf('short":"', lastFound) + 8;
               classCodeWithSec = timetableStr.substring(lastFound, timetableStr.indexOf('"', lastFound));
-              if (classCodeWithSec.contains('(')) {
-                classCodeWithoutSec = classCodeWithSec.substring(0, classCodeWithSec.indexOf('('));
-              } else {
-                classCodeWithoutSec = classCodeWithSec;
-              }
 
               names.add(name);
 
