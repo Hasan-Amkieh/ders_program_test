@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'dart:io' show Platform;
 
+import 'package:Atsched/others/schedule_solution.dart';
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +35,8 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
   double height = (window.physicalSize / window.devicePixelRatio).height;
   int currentScheduleIndex = 0;
 
+  List<ScheduleSolution> scheduleSols = [];
+
   @override
   void initState() {
 
@@ -44,6 +47,13 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
     findPossibleSchedule(0);
     //print("All the schedules are: \n\n");
     //widget.schedules.forEach((element) { print("${element.scheduleName} of courses: "); element.scheduleCourses.forEach((element) {print("${element.subject.classCode}");}); });
+
+    // print("If not results were found, please fix the following collisions:");
+    // scheduleSols.forEach((element) {
+    //   String subsStr = "";
+    //   element.subs.forEach((s) {subsStr = subsStr + s.classCode; });
+    //   print("the course ${element.sub.classCode} is colliding with the following courses: $subsStr");
+    // });
 
   }
 
@@ -100,6 +110,62 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
             for (int j = 0 ; j < notToCollideSubjects.length ; j++) {
               if (col.subjects[i].getClassCodeWithoutSectionNumber() == notToCollideSubjects[j].getClassCodeWithoutSectionNumber()) {
                 toAdd = false;
+                List<Subject> subs = [];
+                for (int ind_ = 0 ; ind_ < col.subjects.length ; ind_++) {
+                  if (i != ind_) { //
+                    subs.add(col.subjects[ind_]);
+                  }
+                }
+
+                bool isToAdd = true;
+                // Check first if it was already added:
+                List<Subject> subs1 = [];
+                List<Subject> subs2 = [];
+                subs1.add(col.subjects[i]);subs1.addAll(subs);
+                List<Subject> subs1_ = [];subs1_.addAll(subs1);
+
+                for (int solIndex = 0 ; solIndex < scheduleSols.length ; solIndex++) {
+                  subs1.clear();
+                  subs1.addAll(subs1_);
+                  subs2.clear();
+                  subs2.add(scheduleSols[solIndex].sub);
+                  subs2.addAll(scheduleSols[solIndex].subs);
+                  for (int i_ = 0 ; i_ < subs1.length ; i_++) {
+                    for (int j_ = 0 ; j_ < subs2.length ; ) {
+                      if (subs1[i_].isEqual(subs2[j_])) {
+                        subs1.removeAt(i_);
+                        subs2.removeAt(j_);
+                        if (i_ != 0) {
+                          i_--;
+                        }
+                        if (j_ != 0) {
+                          j_--;
+                        }
+                      } else {
+                        j_++;
+                      }
+                      if (subs1.isEmpty && subs2.isEmpty) {
+                        isToAdd = false;
+                        break;
+                      }
+                    }
+                    if (!isToAdd) {
+                      break;
+                    }
+                  }
+                  if (!isToAdd) {
+                    break;
+                  }
+                }
+
+                if (isToAdd) { // if both are not empty, then the lists do not match:
+                  scheduleSols.add(ScheduleSolution(sub: col.subjects[i], subs: subs));
+                } else {
+                  isToAdd = true;
+                }
+
+                // print("This schedule was refused because ${notToCollideSubjects[j].getClassCodeWithoutSectionNumber()} is colliding with $subs");
+                subs = [];
                 break;
               }
             }
@@ -128,7 +194,35 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
   @override
   Widget build(BuildContext context) {
 
-    ;
+    List<TextSpan> txts = [];
+
+    if (widget.schedules.isEmpty) {
+
+      String subs = "";
+
+      scheduleSols.forEach((sol) {
+        subs = "";
+        sol.subs.forEach((sub_) {subs = subs + "  |  " + sub_.classCode;});
+        subs = subs.substring(5) + "\n";
+        txts.add(TextSpan(
+          children: [
+            TextSpan(
+              text: sol.sub.getClassCodeWithoutSectionNumber() + " Sec. ${sol.sub.getSection()}",
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.red),
+            ),
+            TextSpan(
+              text: "  is colliding with  ",
+              style: TextStyle(fontSize: 12, color: Main.appTheme.titleTextColor),
+            ),
+            TextSpan(
+              text: subs,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.red),
+            ),
+          ],
+        ));
+      });
+
+    }
 
     return Scaffold(
       backgroundColor: Main.appTheme.scaffoldBackgroundColor,
@@ -236,14 +330,20 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
             ],
           ),
           widget.schedules.isEmpty ? Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.error, color: Colors.grey.shade700, size: (IconTheme.of(context).size ?? 64) * 2),
-                  SizedBox(height: height * 0.05),
-                  Text(translateEng("No possible schedules were found!"),textAlign: TextAlign.center, style: TextStyle(color: Main.appTheme.titleTextColor, fontSize: 18)),
-                  SizedBox(height: height * 0.4),
-                ],
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error, color: Colors.grey.shade700, size: (IconTheme.of(context).size ?? 64) * 2),
+                    SizedBox(height: height * 0.05),
+                    Text(translateEng("No possible schedules were found!\nPlease fix one of the following collisions\n"),textAlign: TextAlign.center, style: TextStyle(color: Main.appTheme.titleTextColor, fontSize: 18)),
+                    RichText(
+                      text: TextSpan(
+                        children: txts,
+                      ),
+                    ),
+                  ],
+                ),
               ),
           )
               : Row( // counter of the schedules
