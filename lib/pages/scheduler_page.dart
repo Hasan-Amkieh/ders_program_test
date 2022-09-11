@@ -114,7 +114,7 @@ class SchedulerPageState extends State<SchedulerPage> {
       subjectsToAdd.clear();
       subjectsShown.clear();
       for (int i_ = 0 ; i_ < subjects.length ; i_++) {
-        subjectsShown.add(false);
+        subjectsShown.add(true);
       }
     }
 

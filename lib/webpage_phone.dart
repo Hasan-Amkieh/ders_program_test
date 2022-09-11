@@ -239,48 +239,50 @@ class WebpagePhoneState extends State<WebpagePhone> {
                             }
 
                             // then find all the courses that have different time or classrooms:
-                            for (int i = 0 ; i < Main.facultyDataOld!.subjects.length ; i++) {
-                              for (int j = 0 ; j < Main.facultyData.subjects.length ; j++) {
-                                if (Main.facultyDataOld!.subjects[i].classCode == Main.facultyData.subjects[j].classCode) { // if the course is the same:
-                                  bool isTimeDiff = false;
-                                  bool isClassroomDiff = false;
-                                  for (int k = 0 ; k < Main.facultyDataOld!.subjects[i].days.length ; k++) { // loop through the period: Main.facultyDataOld.subjects[i].days[k]
-                                    if (isTimeDiff) {
-                                      break;
-                                    }
-                                    if (Main.facultyDataOld!.subjects[i].hours[k] == Main.facultyData.subjects[j].hours[k]) {
-                                      for (int l = 0; l < Main.facultyDataOld!.subjects[i].days[k].length; l++) {
-                                        if (Main.facultyDataOld!.subjects[i].days[k][l] != Main.facultyData.subjects[j].days[k][l] && Main.facultyDataOld!.subjects[i].bgnPeriods[k][l] != Main.facultyData.subjects[j].bgnPeriods[k][l]) {
-                                          isTimeDiff = true;
-                                          break;
-                                        }
+                            if (Main.facultyDataOld != null) {
+                              for (int i = 0 ; i < Main.facultyDataOld!.subjects.length ; i++) {
+                                for (int j = 0 ; j < Main.facultyData.subjects.length ; j++) {
+                                  if (Main.facultyDataOld!.subjects[i].classCode == Main.facultyData.subjects[j].classCode) { // if the course is the same:
+                                    bool isTimeDiff = false;
+                                    bool isClassroomDiff = false;
+                                    for (int k = 0 ; k < Main.facultyDataOld!.subjects[i].days.length ; k++) { // loop through the period: Main.facultyDataOld.subjects[i].days[k]
+                                      if (isTimeDiff) {
+                                        break;
                                       }
-                                    } else {
-                                      isTimeDiff = true;
-                                      break;
-                                    }
-                                  }
-
-                                  for (int k = 0 ; k < Main.facultyDataOld!.subjects[i].classrooms.length ; k++) { // check classrooms:
-                                    for (int l = 0 ; l < Main.facultyDataOld!.subjects[i].classrooms[k].length ; l++) {
-                                      if (Main.facultyData.subjects[j].classrooms.length == Main.facultyDataOld?.subjects[i].classrooms.length &&
-                                          Main.facultyData.subjects[j].classrooms[k].length == Main.facultyDataOld?.subjects[i].classrooms[k].length
-                                      && Main.facultyDataOld!.subjects[i].classrooms[k][l] != Main.facultyData.subjects[j].classrooms[k][l]) {
-                                        isClassroomDiff = true;
+                                      if (Main.facultyDataOld!.subjects[i].hours[k] == Main.facultyData.subjects[j].hours[k]) {
+                                        for (int l = 0; l < Main.facultyDataOld!.subjects[i].days[k].length; l++) {
+                                          if (Main.facultyDataOld!.subjects[i].days[k][l] != Main.facultyData.subjects[j].days[k][l] && Main.facultyDataOld!.subjects[i].bgnPeriods[k][l] != Main.facultyData.subjects[j].bgnPeriods[k][l]) {
+                                            isTimeDiff = true;
+                                            break;
+                                          }
+                                        }
+                                      } else {
+                                        isTimeDiff = true;
                                         break;
                                       }
                                     }
-                                    if (isClassroomDiff) {
-                                      break;
-                                    }
-                                  }
 
-                                  if (isTimeDiff || isClassroomDiff) {
-                                    // copy everything instead of copying the reference:
-                                    Main.newCourses.add(Subject(classCode: Main.facultyData.subjects[j].classCode, departments: Main.facultyData.subjects[j].departments,
-                                        teacherCodes: Main.facultyData.subjects[j].teacherCodes, hours: Main.facultyData.subjects[j].hours, bgnPeriods: Main.facultyData.subjects[j].bgnPeriods,
-                                        days: Main.facultyData.subjects[j].days, classrooms: Main.facultyData.subjects[j].classrooms, customName: Main.facultyData.subjects[j].customName));
-                                    Main.newCoursesChanges.add([isTimeDiff, isClassroomDiff]);
+                                    for (int k = 0 ; k < Main.facultyDataOld!.subjects[i].classrooms.length ; k++) { // check classrooms:
+                                      for (int l = 0 ; l < Main.facultyDataOld!.subjects[i].classrooms[k].length ; l++) {
+                                        if (Main.facultyData.subjects[j].classrooms.length == Main.facultyDataOld?.subjects[i].classrooms.length &&
+                                            Main.facultyData.subjects[j].classrooms[k].length == Main.facultyDataOld?.subjects[i].classrooms[k].length
+                                            && Main.facultyDataOld!.subjects[i].classrooms[k][l] != Main.facultyData.subjects[j].classrooms[k][l]) {
+                                          isClassroomDiff = true;
+                                          break;
+                                        }
+                                      }
+                                      if (isClassroomDiff) {
+                                        break;
+                                      }
+                                    }
+
+                                    if (isTimeDiff || isClassroomDiff) {
+                                      // copy everything instead of copying the reference:
+                                      Main.newCourses.add(Subject(classCode: Main.facultyData.subjects[j].classCode, departments: Main.facultyData.subjects[j].departments,
+                                          teacherCodes: Main.facultyData.subjects[j].teacherCodes, hours: Main.facultyData.subjects[j].hours, bgnPeriods: Main.facultyData.subjects[j].bgnPeriods,
+                                          days: Main.facultyData.subjects[j].days, classrooms: Main.facultyData.subjects[j].classrooms, customName: Main.facultyData.subjects[j].customName));
+                                      Main.newCoursesChanges.add([isTimeDiff, isClassroomDiff]);
+                                    }
                                   }
                                 }
                               }

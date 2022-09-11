@@ -8,7 +8,7 @@ const Map<String, Map<String, String>> faculties = {
   "Health Sciences" : healthSciencesDeps,
   "Arts and Sciences" : artsnScienceDeps,
   "Fine Arts" : fineArtsDeps,
-  "Law" : lawDeps,
+  //"Law" : lawDeps, // Since version 1.1.1, the university stopped uploading the faculty's info
   "Business" : businessDeps,
 };
 
