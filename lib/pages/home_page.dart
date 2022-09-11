@@ -637,7 +637,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           Row(
             children: [
               Text(
-                translateEng("Current Version") + ": " + Main.packageInfo.version,
+                translateEng("Current Version") + ": " + (Platform.isWindows ? Main.atschedVersionForWindows : Main.packageInfo.version),
                 style: TextStyle(color: Main.appTheme.titleTextColor, fontSize: 14),
               ),
             ],

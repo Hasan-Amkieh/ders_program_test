@@ -184,7 +184,7 @@ class EditCoursePageState extends State<EditCoursePage> {
                               borderRadius: BorderRadius.circular(0.02 * width))),
                           backgroundColor: MaterialStateProperty.all(Main.appTheme.navigationBarColor),
                         ),
-                        icon: const Icon(Icons.add, color: Colors.white),
+                        icon: Icon(Icons.add, color: Main.appTheme.navIconColor),
                         label: Text(translateEng("add courses"), style: TextStyle(color: Main.appTheme.titleTextColor, fontSize: 12)),
                         onPressed: () {
                           if (Main.isFacDataFilled) {
@@ -220,8 +220,8 @@ class EditCoursePageState extends State<EditCoursePage> {
                               borderRadius: BorderRadius.circular(0.02 * width))),
                           backgroundColor: MaterialStateProperty.all(Main.appTheme.navigationBarColor),
                         ),
-                        icon: const Icon(CupertinoIcons.pencil, color: Colors.white),
-                        label: Text(translateEng("custom course"), style: const TextStyle(color: Colors.white, fontSize: 12)),
+                        icon: Icon(CupertinoIcons.pencil, color: Main.appTheme.navIconColor),
+                        label: Text(translateEng("custom course"), style: TextStyle(color: Main.appTheme.titleTextColor, fontSize: 12)),
                         onPressed: () {
                           Navigator.pushNamed(context, "/home/editcourses/createcustomcourse").then((value) { setState(() {}); });
                         }

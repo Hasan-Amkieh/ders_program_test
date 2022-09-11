@@ -3,6 +3,9 @@
 import 'dart:convert';
 import 'dart:io' show Platform;
 
+import 'package:Atsched/pages/windows_webview_unsupported_page.dart';
+import 'package:desktop_webview_window/desktop_webview_window.dart';
+
 import 'dart:core';
 import 'dart:io';
 import 'package:Atsched/language/dictionary.dart';
@@ -44,6 +47,8 @@ keytool -list -v -keystore "%USERPROFILE%\.android\debug.keystore" -alias androi
 */
 
 class Main {
+
+  static const String atschedVersionForWindows = "1.1.0.0";
 
   static NewVersion newVersion = NewVersion(
       //iOSId: 'com.google.Vespa',
@@ -402,6 +407,57 @@ Future main() async {
     });
   }
 
+  bool isSupported = true;
+
+  /*if (Platform.isWindows) {
+      FlutterWindowClose.setWindowShouldCloseHandler(() async {
+        return await showDialog(
+            context: context,
+            builder: (context) {
+              if (Main.newFaculty.isNotEmpty) { // then it is a faculty change
+                return AlertDialog(
+                    title: const Text('Do you want to change the faculty?\nNext time you open Atsched the faculty will change'),
+                    actions: [
+                      ElevatedButton(
+                          onPressed: () {
+                            Main.forceUpdate = true;
+                            Main.faculty = Main.newFaculty;
+                            Main.department = faculties[Main.faculty]?.keys.elementAt(0) as String;
+                            Main.isFacChange = true;
+                            Main.save();
+                            Navigator.of(context).pop(true);
+                          },
+                          child: const Text('Yes')),
+                      ElevatedButton(
+                          onPressed: () { Main.newFaculty = ""; Navigator.of(context).pop(false); },
+                          child: const Text('No')),
+                    ]
+                );
+              }
+              else {
+                return AlertDialog(
+                    title: Text('Do you really want to quit?' + (Main.forceUpdate ? "\nNext time you open Atsched the update will start" : "")),
+                    actions: [
+                      ElevatedButton(
+                          onPressed: () {
+                            Main.save();
+                            Navigator.of(context).pop(true);
+                          },
+                          child: const Text('Yes')),
+                      ElevatedButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: const Text('No')),
+                    ]
+                );
+              }
+            });
+      });
+    }*/
+
+  if (Platform.isWindows && !(await WebviewWindow.isWebviewAvailable())) { // if it is windows and the webview is not supported: then the application will stop and Webview2 Runtime has to be downloaded
+    isSupported = false;
+  }
+
   Main.readSchedules();
   Main.readSettings();
   // if (!Main.forceUpdate) {
@@ -545,10 +601,11 @@ Future main() async {
   runApp(OKToast(
     child: MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: !goToUpdatePage ? (forceToHomePage ? "/home" : (Main.isInternetOn ? (Main.forceUpdate ? "/webpage" : "/home") : "/nointernet")) : "/update",
+      initialRoute: isSupported ? (!goToUpdatePage ? (forceToHomePage ? "/home" : (Main.isInternetOn ? (Main.forceUpdate ? "/webpage" : "/home") : "/nointernet")) : "/update") : "/webviewunsupported",
       routes: {
         "/nointernet" : (context) => NoInternetPage(),
         "/home" : (context) => Home(),
+        "/webviewunsupported" : (context) => WebviewUnsupported(),
         "/webpage": (context) => Platform.isWindows ? WebpageComputer() : WebpagePhone(),
         "/update": (context) => UpdatePage(),
         "/home/searchcourses": (contetx) => const SearchPage(),

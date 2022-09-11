@@ -132,6 +132,9 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
                   subs2.addAll(scheduleSols[solIndex].subs);
                   for (int i_ = 0 ; i_ < subs1.length ; i_++) {
                     for (int j_ = 0 ; j_ < subs2.length ; ) {
+                      if (subs1.isEmpty || subs2.isEmpty) {
+                        break;
+                      }
                       if (subs1[i_].isEqual(subs2[j_])) {
                         subs1.removeAt(i_);
                         subs2.removeAt(j_);
