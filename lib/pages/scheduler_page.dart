@@ -237,6 +237,7 @@ class SchedulerPageState extends State<SchedulerPage> {
       }
     }
 
+    bool isAll = false;
     String sectionsStr = "";
     if (areThereSecs) {
       int secIndex = -1;
@@ -244,6 +245,7 @@ class SchedulerPageState extends State<SchedulerPage> {
       for (MapEntry<String, List<MapEntry<int, Subject>>> element in subjectsSections) {
         if (element.key == subjects[index].getClassCodeWithoutSectionNumber()) {
           secIndex = ind;
+          break;
         }
         ind++;
       }
@@ -256,7 +258,7 @@ class SchedulerPageState extends State<SchedulerPage> {
         //print("Checking ${areSectionsShown[secIndex]}");
         if (areSectionsShown[secIndex].value.containsKey(element.key)) {
           sections.add(MapEntry(element.key, areSectionsShown[secIndex].value[element.key] as bool));
-        } //
+        }
       }
 
       int numOfFalse = 0;
@@ -265,7 +267,7 @@ class SchedulerPageState extends State<SchedulerPage> {
           numOfFalse++;
         }
       }
-      bool isAll = numOfFalse == 0;
+      isAll = numOfFalse == 0;
 
       if (isAll) {
         sectionsStr = translateEng("All");
@@ -303,38 +305,74 @@ class SchedulerPageState extends State<SchedulerPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(subjects[index].classCode, style: TextStyle(color: Main.appTheme.titleTextColor)),
-
         ],
       ),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          areThereSecs ? TextButton(
-            child: Row(
+          areThereSecs ? Row(
               mainAxisAlignment: MainAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
-              children: [
-                sectionsStr.isEmpty ? const Icon(Icons.warning, color: Colors.red) : Container(),
-                SizedBox(
-                  width: width * (Platform.isWindows ? 0.005 : 0.01),
+            children: [
+              isAll ? Container() : Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(1000.0)),
+                  border: Border.all(color: Colors.blue, width: 2),
                 ),
-                Text(sectionsStr.isEmpty ? (translateEng("Please choose a section")) : (translateEng("Sections") + ": " + sectionsStr),
-                    style:  TextStyle(color: (sectionsStr.isEmpty ? Colors.red : Colors.blue), fontSize: (sectionsStr.isEmpty ? 16 : 14)))
-              ],
-            ),
-            onPressed: () {
-              showAdaptiveActionSheet(
-                bottomSheetColor: Main.appTheme.scaffoldBackgroundColor,
-                context: context,
-                title: StatefulBuilder(
-                  builder: (BuildContext context, StateSetter setState) {
-                    return buildSectionList(index, width, height);
+                child: TextButton(
+                  child: const Text("Choose All Sections", style: TextStyle(fontSize: 12)),
+                  onPressed: () {
+                    setState(() {
+                      int ind_ = 0;
+                      int secIndex = 0;
+                      for (MapEntry<String, List<MapEntry<int, Subject>>> element in subjectsSections) {
+                        if (element.key == subjects[index].getClassCodeWithoutSectionNumber()) {
+                          secIndex = ind_;
+                          break;
+                        }
+                        ind_++;
+                      }
+                      for (int ind = 0 ; ind < subjectsSections[secIndex].value.length ; ind++) {
+                        //print("Checking ${areSectionsShown[secIndex]}");
+                        if (areSectionsShown[secIndex].value.containsKey(subjectsSections[secIndex].value[ind].key)) {
+                          areSectionsShown[secIndex].value[subjectsSections[secIndex].value[ind].key] = true;
+                        }
+                      }
+                    });
                   },
                 ),
-                actions: [],
-                cancelAction: CancelAction(title: Text(translateEng("Close"))),
-              ).then((value) => setState(() {}));
-            },
+              ),
+              SizedBox(
+                width: width * (Platform.isWindows ? 0.015 : 0.02),
+              ),
+              TextButton(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    sectionsStr.isEmpty ? const Icon(Icons.warning, color: Colors.red) : Container(),
+                    SizedBox(
+                      width: width * (Platform.isWindows ? 0.005 : 0.01),
+                    ),
+                    Text(sectionsStr.isEmpty ? (translateEng("Please choose a section")) : (translateEng("Sections") + ": " + sectionsStr),
+                        style:  TextStyle(color: (sectionsStr.isEmpty ? Colors.red : Colors.blue), fontSize: (sectionsStr.isEmpty ? 16 : 14))),
+                  ],
+                ),
+                onPressed: () {
+                  showAdaptiveActionSheet(
+                    bottomSheetColor: Main.appTheme.scaffoldBackgroundColor,
+                    context: context,
+                    title: StatefulBuilder(
+                      builder: (BuildContext context, StateSetter setState) {
+                        return buildSectionList(index, width, height);
+                      },
+                    ),
+                    actions: [],
+                    cancelAction: CancelAction(title: Text(translateEng("Close"))),
+                  ).then((value) => setState(() {}));
+                },
+              ),
+            ]
           ) : Container(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
