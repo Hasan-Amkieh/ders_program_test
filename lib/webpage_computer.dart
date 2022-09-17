@@ -209,9 +209,14 @@ function setupHook(xhr) {
                             }
                             if (Main.facultyDataOld!.subjects[i].hours[k] == Main.facultyData.subjects[j].hours[k]) {
                               for (int l = 0; l < Main.facultyDataOld!.subjects[i].days[k].length; l++) {
-                                if (Main.facultyDataOld!.subjects[i].days[k][l] != Main.facultyData.subjects[j].days[k][l] && Main.facultyDataOld!.subjects[i].bgnPeriods[k][l] != Main.facultyData.subjects[j].bgnPeriods[k][l]) {
+                                if (Main.facultyDataOld!.subjects[i].days.length != Main.facultyData.subjects[j].days.length || Main.facultyDataOld!.subjects[i].days[k].length != Main.facultyData.subjects[j].days[k].length) {
                                   isTimeDiff = true;
                                   break;
+                                } else {
+                                  if (Main.facultyDataOld!.subjects[i].days[k][l] != Main.facultyData.subjects[j].days[k][l] && Main.facultyDataOld!.subjects[i].bgnPeriods[k][l] != Main.facultyData.subjects[j].bgnPeriods[k][l]) {
+                                    isTimeDiff = true;
+                                    break;
+                                  }
                                 }
                               }
                             } else {

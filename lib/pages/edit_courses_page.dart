@@ -183,6 +183,7 @@ class EditCoursePageState extends State<EditCoursePage> {
                           shape: MaterialStateProperty.all(RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(0.02 * width))),
                           backgroundColor: MaterialStateProperty.all(Main.appTheme.navigationBarColor),
+                          overlayColor: MaterialStateProperty.all(Colors.white.withOpacity(0.2)),
                         ),
                         icon: Icon(Icons.add, color: Main.appTheme.navIconColor),
                         label: Text(translateEng("add courses"), style: TextStyle(color: Main.appTheme.titleTextColor, fontSize: 12)),
@@ -221,7 +222,7 @@ class EditCoursePageState extends State<EditCoursePage> {
                           backgroundColor: MaterialStateProperty.all(Main.appTheme.navigationBarColor),
                         ),
                         icon: Icon(CupertinoIcons.pencil, color: Main.appTheme.navIconColor),
-                        label: Text(translateEng("custom course"), style: TextStyle(color: Main.appTheme.titleTextColor, fontSize: 12)),
+                        label: Text(translateEng("new course"), style: TextStyle(color: Main.appTheme.titleTextColor, fontSize: 12)),
                         onPressed: () {
                           Navigator.pushNamed(context, "/home/editcourses/createcustomcourse").then((value) { setState(() {}); });
                         }

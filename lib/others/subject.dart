@@ -206,7 +206,7 @@ class Subject { // represents a class
     // classrooms:
     List<String> classroomsList = str_[3].split('],[');// [1000, 2000],[3000]
     for (int i = 0 ; i < classroomsList.length ; i++) { // delete '[' and ']'
-      //classroomsList[i] = classroomsList[i].replaceAll('[', '').replaceAll(']', '');
+      classroomsList[i] = classroomsList[i].replaceAll('[', '').replaceAll(']', '');
       var l_ = classroomsList[i].split(',');
       l_ = l_.where((element) => element.trim().isNotEmpty).toList();
       classrooms.add(l_);
@@ -215,7 +215,7 @@ class Subject { // represents a class
     // teachers:
     List<String> teachersList = str_[4].split('],[');
     for (int i = 0 ; i < teachersList.length ; i++) { // delete '[' and ']'
-      //teachersList[i] = teachersList[i].replaceAll('[', '').replaceAll(']', '');
+      teachersList[i] = teachersList[i].replaceAll('[', '').replaceAll(']', '');
       var l_ = teachersList[i].split(',');
       l_ = l_.where((element) => element.trim().isNotEmpty).toList();
       teacherCodes.add(l_);

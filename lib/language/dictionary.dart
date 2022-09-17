@@ -120,7 +120,7 @@ Map<String, String> engToTurk = {
   "Th" : "Pe",
   "Fr" : "Cu",
   "Sa" : "Cm",
-  "custom course" : "özel kurs",
+  "custom course" : "yeni kurs",
   "CANCEL" : "İPTAL ET",
   "add courses" : "ders ekle",
   "Nothing to show" : "Gösterilecek bir şey yok",

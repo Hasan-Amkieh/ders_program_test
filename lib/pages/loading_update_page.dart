@@ -131,12 +131,15 @@ class LoadingUpdateState extends State<LoadingUpdate> {
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.2,
           ),
-          Container(
-            margin: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * 0.2, 0, MediaQuery.of(context).size.width * 0.2, 0),
-            child: TextButton.icon(onPressed: (Platform.isWindows ? WebpageComputerState.doNotRestart : WebpagePhoneState.doNotRestart) ? null : () => Restart.restartApp(),
-                icon: const Icon(Icons.restart_alt, color: Colors.white,), label: Text(translateEng("RESTART UPDATE"), textAlign: TextAlign.center, style: txtStyle), style: ButtonStyle(overlayColor: MaterialStateProperty.resolveWith((states) {
-                  return Colors.blue.shade300;
-                }))),
+          Visibility(
+            visible: !Platform.isWindows,
+            child: Container(
+              margin: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * 0.2, 0, MediaQuery.of(context).size.width * 0.2, 0),
+              child: TextButton.icon(onPressed: (Platform.isWindows ? WebpageComputerState.doNotRestart : WebpagePhoneState.doNotRestart) ? null : () => Restart.restartApp(),
+                  icon: const Icon(Icons.restart_alt, color: Colors.white,), label: Text(translateEng("RESTART UPDATE"), textAlign: TextAlign.center, style: txtStyle), style: ButtonStyle(overlayColor: MaterialStateProperty.resolveWith((states) {
+                    return Colors.blue.shade300;
+                  }))),
+            ),
           ),
         ],
       ),
