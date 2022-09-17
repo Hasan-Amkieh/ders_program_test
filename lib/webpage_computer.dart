@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:isolate';
 
@@ -130,7 +131,17 @@ function setupHook(xhr) {
       """)
     ..launch(getFacultyLink(Main.department));
 
-    timer = Timer.periodic(const Duration(seconds: 2), (Timer t) async {
+    timer = Timer.periodic(const Duration(seconds: 1), (Timer t) async {
+      try {
+
+        // print("EXECUTING the CPP code: ");
+        final _hideWebView = LoadingUpdateState.nativeApiLib?.lookup<NativeFunction<Void Function()>>('hideWebView');
+        Function hideWebView = _hideWebView!.asFunction<void Function()>();
+        hideWebView();
+
+      } catch (e) {
+        print("An error happened while executing the CPP code: $e");
+      }
       try {
         timetableData = await webview.evaluateJavaScript("ret") ?? "";
         timetableData = timetableData.replaceAll('\\"', '"');

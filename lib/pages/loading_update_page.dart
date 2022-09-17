@@ -8,6 +8,9 @@ import '../language/dictionary.dart';
 import '../main.dart';
 import '../webpage_computer.dart';
 
+import 'dart:ffi';
+import 'package:ffi/ffi.dart';
+
 List<String> msgs = [translateEng("CONNECTING TO THE INTERNET"), // state 0
 translateEng("CONNECTING TO THE SERVER"), // 1
   translateEng("RETRIEVING DATA"), // 2
@@ -34,12 +37,21 @@ class LoadingUpdateState extends State<LoadingUpdate> {
 
   DateTime lastChanged = DateTime.now();
 
+  static DynamicLibrary? nativeApiLib;
+
   @override
   void initState() {
+
     Main.forceUpdate = false; // Since it is now updating
     checkState();
     super.initState();
+
     LoadingUpdate.currWidget = this;
+
+    if (Platform.isWindows) {
+      nativeApiLib = DynamicLibrary.open('api.dll');
+    }
+
   }
 
   void checkState () {
