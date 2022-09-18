@@ -48,7 +48,7 @@ keytool -list -v -keystore "%USERPROFILE%\.android\debug.keystore" -alias androi
 
 class Main {
 
-  static const String atschedVersionForWindows = "1.1.1.0";
+  static const String atschedVersionForWindows = "1.1.2.0";
 
   static NewVersion newVersion = NewVersion(
       //iOSId: 'com.google.Vespa',

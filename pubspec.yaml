@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.1.1+5
+version: 1.1.2+6
 
 environment:
   sdk: ">=2.16.2 <3.0.0"
@@ -63,7 +63,7 @@ msix_config:
   display_name: Atsched
   publisher_display_name: Hasan Amkieh
   identity_name: 43955HasanAmkieh.Atsched
-  msix_version: 1.1.1.0 # remember to change this too: Main.atschedVersionForWindows
+  msix_version: 1.1.2.0 # remember to change this too: Main.atschedVersionForWindows
   logo_path: C:\Users\Hassa\StudioProjects\ders_program_test\lib\icons\atsched.PNG
   store: true
   publisher: CN=91F80E9C-250C-42A4-945B-10C7304BD88A
