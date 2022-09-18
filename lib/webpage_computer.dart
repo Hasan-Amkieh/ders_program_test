@@ -53,8 +53,8 @@ class WebpageComputerState extends State<WebpageComputer> {
 
     final webview = await WebviewWindow.create(
       configuration: CreateConfiguration(
-          windowHeight: 400,
-          windowWidth: 400,
+          windowHeight: 10,
+          windowWidth: 10,
           title: "Timetable Webpage",
           titleBarTopPadding: Platform.isMacOS ? 20 : 0,
           userDataFolderWindows: await _getWebViewPath(),

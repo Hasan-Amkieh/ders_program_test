@@ -170,7 +170,7 @@ Map<String, String> engToTurk = {
   "RETRIEVING DATA" : "VERİ ALIYOR",
   "CLASSIFYING DATA" : "VERI SINIFLANDIRIYOR",
   "STORING INFO" : "BILGI DEPOLUYOR",
-  "No internet connection\nconnect to the internet please\nIt will automatically restart" : "İnternet bağlantısı yok\ninternete bağlanın lütfen\nOtomatik olarak yeniden başlayacaktır",
+  "No internet connection\nconnect to the internet please" : "İnternet bağlantısı yok\ninternete bağlanın lütfen",
   "No courses to show" : "Gösterilecek kurs yok",
   "Search" : "Arama",
   " or " : " yoksa ",

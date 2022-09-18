@@ -110,6 +110,8 @@ class Main {
   static bool isFacDataFilled = false;
   static FacultySemester? facultyDataOld;
 
+  static String filePrefix = Platform.isWindows ? '\\' : '/' ;
+
   static List<Subject> newCourses = [];
   static List<List<bool>> newCoursesChanges = []; // [isTimeChanged, isClassroomChanged]
 
@@ -127,7 +129,7 @@ class Main {
   static void writeSettings() async {
 
     String toWrite = "";
-    final file = File(Main.appDocDir.toString() + (Platform.isWindows ? '\\' : '/' ) + 'settings.txt');
+    final file = File(Main.appDocDir.toString() + filePrefix + "Atsched" + filePrefix + 'settings.txt');
 
     toWrite = toWrite + "force_update:"+forceUpdate.toString()+"\n";
     toWrite = toWrite + "is_dark:"+(Main.theme == ThemeMode.dark).toString()+"\n";
@@ -150,7 +152,7 @@ class Main {
 
     String content = "";
     try {
-      final file = File(Main.appDocDir.toString() + (Platform.isWindows ? '\\' : '/' ) + 'settings.txt'); // FileSystemException
+      final file = File(Main.appDocDir.toString() + filePrefix + "Atsched" + filePrefix + 'settings.txt'); // FileSystemException
 
       content = file.readAsStringSync();
       if (content.isNotEmpty) {
@@ -195,7 +197,7 @@ class Main {
 
     for (int i = 0 ; i < schedules.length ; i++) {
 
-      File file = File(Main.appDocDir + (Platform.isWindows ? '\\' : '/' ) + "schedule_${Main.schedules[i].scheduleName}.txt");
+      File file = File(Main.appDocDir + filePrefix + "Atsched" + filePrefix + "schedule_${Main.schedules[i].scheduleName}.txt");
       String toWrite = "";
 
       for (int j = 0 ; j < schedules[i].scheduleCourses.length ; j++) { // notes:
@@ -285,30 +287,34 @@ class Main {
 
   static void writeFacultyCourses() {
 
-    File file = File(Main.appDocDir + (Platform.isWindows ? '\\' : '/' ) + "faculty_courses.txt");
-    if (file.existsSync()) {
-      file.deleteSync();
+    try { // this will check if we can write the new data before deleting the old data
+      if (Main.facultyData != null) {
+        File file = File(Main.appDocDir + filePrefix + "Atsched" + filePrefix + "faculty_courses.txt");
+        if (file.existsSync()) {
+          file.deleteSync();
+        }
+
+        file = File(Main.appDocDir + filePrefix + "Atsched" + filePrefix + "faculty_courses.txt");
+        String toWrite = "";
+
+        toWrite = toWrite + Main.faculty + "\n";
+        toWrite = toWrite + Main.facultyData.semesterName + "\n";
+        toWrite = toWrite + Main.facultyData.lastUpdate.microsecondsSinceEpoch.toString() + "\n";
+        for (int i = 0 ; i < Main.facultyData.subjects.length ; i++) {
+          toWrite = toWrite + Main.facultyData.subjects[i].classCode + "|" + Main.facultyData.subjects[i].toString() + "\n";
+        }
+        //print("Writing the subjects: $toWrite");
+        file.writeAsStringSync(toWrite);
+      }
+    } catch (e) {
+      print("$e");
     }
-
-    file = File(Main.appDocDir + (Platform.isWindows ? '\\' : '/' ) + "faculty_courses.txt");
-    String toWrite = "";
-
-    toWrite = toWrite + Main.faculty + "\n";
-    toWrite = toWrite + Main.facultyData.semesterName + "\n";
-    toWrite = toWrite + Main.facultyData.lastUpdate.microsecondsSinceEpoch.toString() + "\n";
-    for (int i = 0 ; i < Main.facultyData.subjects.length ; i++) {
-
-      toWrite = toWrite + Main.facultyData.subjects[i].classCode + "|" + Main.facultyData.subjects[i].toString() + "\n";
-
-    }
-    //print("Writing the subjects: $toWrite");
-    file.writeAsStringSync(toWrite);
 
   }
 
   static void readFacultyCourses() {
 
-    File file = File(Main.appDocDir + (Platform.isWindows ? '\\' : '/' ) + "faculty_courses.txt");
+    File file = File(Main.appDocDir + filePrefix + "Atsched" + filePrefix + "faculty_courses.txt");
 
     if (file.existsSync()) {
 
@@ -348,7 +354,7 @@ class Main {
 
   static void readFavCourses() {
 
-    File file = File(Main.appDocDir + (Platform.isWindows ? '\\' : '/' ) + "fav_courses.txt");
+    File file = File(Main.appDocDir + filePrefix + "Atsched" + filePrefix + "fav_courses.txt");
 
     if (file.existsSync()) {
 
@@ -368,7 +374,7 @@ class Main {
 
   static void writeFavCourses() {
 
-    File file = File(Main.appDocDir + (Platform.isWindows ? '\\' : '/' ) + "fav_courses.txt");
+    File file = File(Main.appDocDir + filePrefix + "Atsched" + filePrefix + "fav_courses.txt");
     String toWrite = "";
 
     for (int i = 0 ; i < Main.favCourses.length ; i++) {
@@ -408,6 +414,13 @@ Future main() async {
   }
 
   bool isSupported = true;
+
+  { // to save some memory:
+    Directory dir = Directory(Main.appDocDir + Main.filePrefix + "Atsched");
+    if (!dir.existsSync()) {
+      dir.createSync();
+    }
+  }
 
   /*if (Platform.isWindows) {
       FlutterWindowClose.setWindowShouldCloseHandler(() async {
