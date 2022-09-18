@@ -228,7 +228,7 @@ class Main {
 
   static void readSchedules() {
 
-    Directory dir = Directory(Main.appDocDir);
+    Directory dir = Directory(Main.appDocDir + filePrefix + "Atsched");
 
     // List directory contents, recursing into sub-directories,
     // but not following symbolic links.
