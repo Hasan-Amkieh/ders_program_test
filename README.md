@@ -10,7 +10,7 @@ The application supports both Turkish and English languages,
 
 Anyone who has some skills and has some great ideas, you can make some forks into this project,
 I will check the code that you wrote and I will accept them accordingly,
-Note that getting 'AA' in CMPE113/114 does not make a programmer,
+note that getting 'AA' in some programming courses does not make someone good at programming
 
 ## License
 
