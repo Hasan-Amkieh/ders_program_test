@@ -678,14 +678,14 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
                         children: [
                           TextSpan(
                             text: course.subject.classCode,
-                            style: TextStyle(
-                                color: whiteThemeScheduleColors[colorIndex][1],
+                            style: const TextStyle(
+                                color: Colors.white,
                                 fontSize: 11.0),
                           ),
                           TextSpan(
                             text: (isCol ? "  " : "\n") + classroomStr,
-                            style: TextStyle(
-                                color: whiteThemeScheduleColors[colorIndex][1],
+                            style: const TextStyle(
+                                color: Colors.white,
                                 fontSize: 9.0),
                           ),
                         ]
@@ -696,7 +696,8 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
                   padding: MaterialStateProperty.all(
                       isColOf3 ? EdgeInsets.symmetric(vertical: 0.01 * width, horizontal: 0.005 * width) : EdgeInsets.all(0.01 * width)),
                   backgroundColor: MaterialStateProperty.all(
-                      whiteThemeScheduleColors[colorIndex][0]),
+                      AppTheme.getColor(colorIndex),
+                  ),
                   shape: MaterialStateProperty.all(const RoundedRectangleBorder(
                       borderRadius: BorderRadius.zero)),
                   overlayColor: MaterialStateProperty.all(

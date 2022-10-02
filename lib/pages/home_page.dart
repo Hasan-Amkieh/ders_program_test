@@ -951,6 +951,9 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
   }
 
+  String courseBeingHovered = "";
+  bool isHovered = false;
+
   Widget buildSchedulePage() {
 
     double colWidth = (width) / 7; // 6 days and a col for the clock
@@ -1217,8 +1220,9 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           //print("Of period $i of subject ${course.subject.classCode} has classrooms $classroomStr");
 
           coursesList.add(
-            Positioned(child: TextButton(
-              //clipBehavior: Clip.none,
+            Positioned(
+              child: TextButton(
+                //clipBehavior: Clip.none,
                 onPressed: () => showCourseInfo(course),
                 child: RotatedBox(
                   quarterTurns: isCol ? 1 : 0,
@@ -1231,29 +1235,45 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                         children: [
                           TextSpan(
                             text: course.subject.classCode,
-                            style: TextStyle(
-                                color: whiteThemeScheduleColors[colorIndex][1],
+                            style: const TextStyle(
+                                color: Colors.white,
                                 fontSize: 11.0),
                           ),
                           TextSpan(
                             text: (isCol ? "  " : "\n") + classroomStr,
-                            style: TextStyle(
-                                color: whiteThemeScheduleColors[colorIndex][1],
-                                fontSize: 9.0),
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 9.0
+                            ),
                           ),
                         ]
                     ),
                   ),
                 ),
+                onHover: (isHovering) {
+                  setState(() {
+                    isHovered = isHovering;
+                    courseBeingHovered = course.subject.classCode;
+                  });
+                },
                 style: ButtonStyle(
                   padding: MaterialStateProperty.all(
-                      isColOf3 ? EdgeInsets.symmetric(vertical: 0.01 * width, horizontal: 0.005 * width) : EdgeInsets.all(0.01 * width)),
+                      isColOf3 ? EdgeInsets.symmetric(vertical: 0.01 * width, horizontal: 0.005 * width) : EdgeInsets.all(0.01 * width)
+                  ),
                   backgroundColor: MaterialStateProperty.all(
-                      whiteThemeScheduleColors[colorIndex][0]),
+                      ((isHovered && course.subject.classCode == courseBeingHovered)) ?
+                      AppTheme.getColor(colorIndex)
+                          .withBlue(AppTheme.getColor(colorIndex).blue + 15)
+                          .withGreen(AppTheme.getColor(colorIndex).green + 15)
+                          .withRed(AppTheme.getColor(colorIndex).red + 15)
+                          :
+                      AppTheme.getColor(colorIndex),
+                  ),
                   shape: MaterialStateProperty.all(const RoundedRectangleBorder(
                       borderRadius: BorderRadius.zero)),
                   overlayColor: MaterialStateProperty.all(
-                      const Color.fromRGBO(255, 255, 255, 0.2)),
+                      const Color.fromRGBO(255, 255, 255, 0.2)
+                  ),
                 )),
               width: isCol ? colWidth / colSize : colWidth,
               height: rowHeight * course.subject.hours[i],

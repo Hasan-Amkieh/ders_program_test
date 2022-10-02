@@ -507,8 +507,8 @@ class SchedulerPageState extends State<SchedulerPage> {
         depsList.add(TextSpan(
           text: dep + "  ",
           style: TextStyle(
-              color: (Main.department == dep ? Colors.green.shade800 : Main.appTheme.titleTextColor),
-              fontWeight: (Main.department == dep ? FontWeight.bold : FontWeight.normal)
+              color: (Main.department == dep.trim() ? Colors.green.shade800 : Main.appTheme.titleTextColor),
+              fontWeight: (Main.department == dep.trim() ? FontWeight.bold : FontWeight.normal)
           ),
         ));
       });
