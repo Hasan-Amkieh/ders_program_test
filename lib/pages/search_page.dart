@@ -200,6 +200,21 @@ class SearchPageState extends State<SearchPage> {
     classrooms = sub.classrooms.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
     departments = sub.departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
 
+    List<String> classroomsList = classrooms.split(", ");
+    // Refine the classrooms if they do have any collisions delete them:
+    for (int i = 0 ; i < classroomsList.length ; i++) {
+      for (int j = 0 ; j < classroomsList.length ; j++) {
+        if (i != j && classroomsList[i] == classroomsList[j]) {
+          classroomsList.removeAt(j);
+          if (j >= classroomsList.length) {
+            j--;
+          }
+        }
+      }
+    }
+
+    classrooms = classroomsList.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+
     return ListTile(
       title: Text(sub.classCode, style: TextStyle(color: Main.appTheme.titleTextColor)),
       subtitle:

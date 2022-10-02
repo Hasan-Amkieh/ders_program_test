@@ -87,7 +87,7 @@ Map<String, String> engToTurk = {
   "School's Schedules" : "Okulun Programları",
   "Update Timeout (hours)" : "Güncelleme Zaman Aşımı (saat)",
   "Theme" : "Tema",
-  "Donate me" : "Bana bağış yap",
+  "Donate" : "Bağış yap",
   "Light  " : "Hafif  ",
   "Dark  " : "Karanlık  ",
   "Fall" : "Güz",

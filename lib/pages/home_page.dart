@@ -713,6 +713,62 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
               Navigator.pushNamed(context, "/home/personalinfo");
             },
           ),
+          ListTile(
+            title: Text(translateEng('Donate'), style: TextStyle(color: Main.appTheme.titleTextColor)),
+            subtitle: Text(
+                translateEng("Money is needed to keep the app available on Google Play/Microsoft Store. These donations might let me upload it to App Store as they require me 100 USD"),
+                style: TextStyle(color: Main.appTheme.subtitleTextColor)),
+            leading: Icon(Icons.attach_money_rounded, color: Main.appTheme.titleIconColor),
+            onTap: () {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                        title: Column(
+                          children: [
+                            const Text('If you live in Turkey İŞ Bank is preferable\n'),
+                            TextButton.icon(
+                              label: const Text("TR27 0006 4000 0014 2381 0343 20", style: TextStyle(fontWeight: FontWeight.bold)),
+                              icon: Image.asset("lib/icons/isbank.jpg", width: IconTheme.of(context).size!, height: IconTheme.of(context).size!),
+                              onPressed: () { // Copy to clipboard and give him a message that it was copied
+                                Clipboard.setData(const ClipboardData(text: "TR27 0006 4000 0014 2381 0343 20")).then((value) {
+                                  showToast(
+                                    translateEng("The IBAN is copied"),
+                                    duration: const Duration(milliseconds: 1500),
+                                    position: ToastPosition.bottom,
+                                    backgroundColor: Colors.blue.withOpacity(0.8),
+                                    radius: 100.0,
+                                    textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
+                                  );
+                                });
+                              },
+                            ),
+                            TextButton.icon(
+                              label: const Text("Buy me a coffee", style: TextStyle(fontWeight: FontWeight.bold)),
+                              icon: const Icon(Icons.coffee, color: Colors.black),
+                              onPressed: () async {
+                                const url = 'https://www.buymeacoffee.com/hasanamkieh';
+                                if (await canLaunchUrl(Uri.parse(url))) {
+                                  await launchUrl(Uri.parse(url));
+                                } else {
+                                  throw 'Could not launch $url';
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                        actions: [
+                          ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(true);
+                              },
+                              child: const Text('OK'),
+                          ),
+                        ]
+                    );
+              });
+            },
+          ),
           // Container(
           //   padding: EdgeInsets.fromLTRB(0 * width, 0, 0, 0),
           //   child: ListTile(
