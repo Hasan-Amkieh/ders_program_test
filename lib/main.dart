@@ -502,20 +502,58 @@ Future main() async {
 
   bool goToUpdatePage = false;
   bool isThereErr = false;
-  try {
-    Main.versionStatus = await Main.newVersion.getVersionStatus();
-  } catch(err) {
-    print(err);
-    isThereErr = true;
-  }
-  if (!Main.isInternetOn && Main.isThereNewerVersion) {
-    goToUpdatePage = true;
-  }
 
-  if (!isThereErr && Main.versionStatus != null && Main.versionStatus!.canUpdate) {
-    Main.isThereNewerVersion = true;
-    goToUpdatePage = true;
-    Main.writeSettings();
+  if (!Platform.isWindows) {
+    try {
+      Main.versionStatus = await Main.newVersion.getVersionStatus();
+    } catch(err) {
+      print(err);
+      isThereErr = true;
+    }
+    if (!Main.isInternetOn && Main.isThereNewerVersion) {
+      goToUpdatePage = true;
+    }
+    if (!isThereErr && Main.versionStatus != null && Main.versionStatus!.canUpdate) {
+      Main.isThereNewerVersion = true;
+      goToUpdatePage = true;
+      Main.writeSettings();
+    }
+  } else {
+
+    var request = await HttpClient().getUrl(Uri.parse('https://apps.microsoft.com/store/detail/atsched/9NQ6G0L7FTG2?hl=en-us&gl=us'));
+    // sends the request
+    var response = await request.close();
+
+    // transforms and prints the response
+    await for (var contents in response.transform(const Utf8Decoder())) {
+      int pos;
+      String version;
+
+      if (Main.semesterName.isEmpty) {
+        pos = contents.indexOf('Latest Version: '); // first search for
+        if (pos != -1) {
+
+          version = contents.substring(pos + 16, contents.indexOf('////', pos + 16));
+          if (version.isNotEmpty) {
+            List<String> vNew = version.trim().split('.');
+            List<String> vOld = Main.atschedVersionForWindows.split('.');
+            if (int.parse(vNew[0]) > int.parse(vOld[0]) ||
+                int.parse(vNew[1]) > int.parse(vOld[1]) ||
+                int.parse(vNew[2]) > int.parse(vOld[2]) ||
+                int.parse(vNew[3]) > int.parse(vOld[3])) {
+              Main.isThereNewerVersion = true;
+              goToUpdatePage = true;
+              break;
+            }
+          }
+
+        }
+      }
+
+    }
+
+    // print("found the following links: "
+    //     "${Main.artsNSciencesLink}\n${Main.fineArtsLink}\n${Main.businessLink}\n${Main.engineeringLink}\n${Main.civilAviationLink}\n${Main.healthSciencesLink}\n${Main.lawLink}");
   }
 
   // print("update: ${Main.forceUpdate} / internet: ${Main.isInternetOn}");

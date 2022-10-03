@@ -3,8 +3,6 @@ import 'dart:ui';
 import 'package:Atsched/language/dictionary.dart';
 import 'package:flutter/material.dart';
 
-import '../main.dart';
-
 class UpdatePage extends StatelessWidget {
 
   @override
