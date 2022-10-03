@@ -304,10 +304,22 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
                         TextButton(
                           child: Text(translateEng("SAVE")),
                           onPressed: () {
-                            widget.schedules[currentScheduleIndex].scheduleName = nameController.text;
-                            widget.isSaved[currentScheduleIndex] = true;
-                            Main.schedules.add(widget.schedules[currentScheduleIndex]); // widget.schedules[currentScheduleIndex]
-                            Navigator.pop(context);
+                            if (nameController.text.isNotEmpty) {
+                              widget.schedules[currentScheduleIndex].scheduleName = nameController.text;
+                              widget.isSaved[currentScheduleIndex] = true;
+                              Main.schedules.add(widget.schedules[currentScheduleIndex]); // widget.schedules[currentScheduleIndex]
+                              Main.currentScheduleIndex = Main.schedules.length - 1;
+                              Navigator.pop(context);
+                            } else {
+                              showToast(
+                                translateEng("The name cannot be empty"),
+                                duration: const Duration(milliseconds: 1500),
+                                position: ToastPosition.bottom,
+                                backgroundColor: Colors.red.withOpacity(0.8),
+                                radius: 100.0,
+                                textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
+                              );
+                            }
                           },
                         ),
                         TextButton(

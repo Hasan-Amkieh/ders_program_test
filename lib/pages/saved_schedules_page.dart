@@ -334,6 +334,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                       if (nameController.text.trim().isNotEmpty) {
                         setState(() {
                           Main.schedules.add(Schedule(scheduleName: nameController.text, scheduleCourses: []));
+                          Main.currentScheduleIndex = Main.schedules.length - 1;
                         });
                         Navigator.pop(context);
                       } else {
