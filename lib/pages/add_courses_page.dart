@@ -130,12 +130,21 @@ class AddCoursesPageState extends State<AddCoursesPage> {
               ),
 
               Expanded(
-                  child: ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: isForScheduler ? subjectsWithoutSecs.length : subjects.length, itemBuilder: (context, index) {
-                    return buildTile(context, index);
-                  })
+                  child: RawScrollbar(
+                    crossAxisMargin: 0.0,
+                    trackVisibility: true,
+                    thumbVisibility: true,
+                    thumbColor: Colors.blueGrey,
+                    // trackColor: Colors.redAccent.shade700,
+                    trackBorderColor: Colors.white,
+                    radius: const Radius.circular(20),
+                    child: ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemCount: isForScheduler ? subjectsWithoutSecs.length : subjects.length, itemBuilder: (context, index) {
+                      return buildTile(context, index);
+                    }),
+                  )
               ),
             ],
           ),

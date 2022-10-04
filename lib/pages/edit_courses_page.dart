@@ -263,234 +263,247 @@ class EditCoursePageState extends State<EditCoursePage> {
         ),
       );
     } else {
-      return ListView.builder(
-          itemCount: Main.schedules[Main.currentScheduleIndex].scheduleCourses.length, itemBuilder: (context, index) {
-            TextEditingController notesController = TextEditingController(text: Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).note);
-            Subject subject = Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).subject;
-            //print("Building the subject of teachers ${subject.teacherCodes}");
-            return AnimatedContainer(
-              margin: EdgeInsets.symmetric(vertical: (Platform.isWindows ? 0.005 : 0.01) * width),
-              duration: duration,
-              decoration: BoxDecoration(
-                border: Border(left: BorderSide(width: 3.0, color: color), top: BorderSide(width: height * (Platform.isWindows ? 0.005 : 0.01), color: Colors.transparent)),
-              ),
-              child: Container(
-                margin: EdgeInsets.symmetric(vertical: (Platform.isWindows ? 0.003 : 0.01) * width),
-                child: ListTile(
-                  style: ListTileStyle.drawer,
-                  contentPadding: EdgeInsets.fromLTRB(width * 0.02, 0, 0, 0),
-                  title: Text(subject.classCode, style: TextStyle(color: Main.appTheme.titleTextColor)),
-                  trailing: IconButton(
-                    tooltip: translateEng("Notes"),
-                    icon: const Icon(CupertinoIcons.chat_bubble_text_fill, color: Colors.blue), onPressed: () {
+      return RawScrollbar(
+        crossAxisMargin: 0.0,
+        trackVisibility: true,
+        thumbVisibility: true,
+        thumbColor: Colors.blueGrey,
+        // trackColor: Colors.redAccent.shade700,
+        trackBorderColor: Colors.white,
+        radius: const Radius.circular(20),
+        child: ListView.builder(
+            itemCount: Main.schedules[Main.currentScheduleIndex].scheduleCourses.length, itemBuilder: (context, index) {
+              TextEditingController notesController = TextEditingController(text: Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).note);
+              Subject subject = Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).subject;
+              //print("Building the subject of teachers ${subject.teacherCodes}");
+              return AnimatedContainer(
+                margin: EdgeInsets.symmetric(vertical: (Platform.isWindows ? 0.005 : 0.01) * width),
+                duration: duration,
+                decoration: BoxDecoration(
+                  border: Border(left: BorderSide(width: 3.0, color: color), top: BorderSide(width: height * (Platform.isWindows ? 0.005 : 0.01), color: Colors.transparent)),
+                ),
+                child: Container(
+                  margin: EdgeInsets.symmetric(vertical: (Platform.isWindows ? 0.003 : 0.01) * width),
+                  child: ListTile(
+                    style: ListTileStyle.drawer,
+                    contentPadding: EdgeInsets.fromLTRB(width * 0.02, 0, 0, 0),
+                    title: Text(subject.classCode, style: TextStyle(color: Main.appTheme.titleTextColor)),
+                    trailing: Container(
+                      padding: EdgeInsets.zero,
+                      margin: EdgeInsets.only(right: 10.0),
+                      child: IconButton(
+                        tooltip: translateEng("Notes"),
+                        icon: const Icon(CupertinoIcons.chat_bubble_text_fill, color: Colors.blue), onPressed: () {
+                        showAdaptiveActionSheet(
+                          bottomSheetColor: Main.appTheme.headerBackgroundColor,
+                          context: context,
+                          title: Column(
+                            children: [
+                              SizedBox(
+                                width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.7,
+                                height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.3,
+                                child: TextFormField(
+                                  cursorColor: Main.appTheme.titleTextColor,
+                                  controller: notesController,
+                                  minLines: null,
+                                  maxLines: null,
+                                  expands: true,
+                                  scrollController: ScrollController(),
+                                  style: TextStyle(color: Main.appTheme.titleTextColor),
+                                  decoration: InputDecoration(
+                                    labelStyle: TextStyle(color: Main.appTheme.titleTextColor),
+                                    labelText: translateEng("Notes"),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 0.2 * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
+                              ),
+                            ],
+                          ),
+                          actions: [
+                            BottomSheetAction(title: Text(translateEng("Save"),
+                                style: const TextStyle(color: Colors.blue)), onPressed: () {
+                                  Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).note = notesController.text;
+                                  Navigator.pop(context);
+                                  showToast(
+                                    translateEng("Notes were saved"),
+                                    duration: const Duration(milliseconds: 1500),
+                                    position: ToastPosition.top,
+                                    backgroundColor: const Color.fromRGBO(80, 154, 167, 1.0),
+                                    radius: 100.0,
+                                    textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
+                                  );
+                            }),
+                          ],
+                          cancelAction: CancelAction(title: Text(translateEng('Cancel')), onPressed: () {
+                            notesController.text = Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).note;
+                            Navigator.pop(context);
+                          }),
+                        );
+                      }),
+                    ),
+                onTap: () {
+
+                  if (mode == 0) { // view
+
+                    String name = subject.customName;
+                    String classrooms = "", teachers = "", departments = "";
+
+                    List<List<String>> classroomsList = subject.classrooms;
+
+                    classrooms = classroomsList.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+                    departments = subject.departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+                    if (subject.getTranslatedTeachers().isEmpty) {
+                      teachers = subject.teacherCodes.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+                    } else {
+                      teachers = subject.getTranslatedTeachers();
+                    }
+
+                    List<String> list = classrooms.split(",").toList();
+                    list = list.where((element) => element.trim().isNotEmpty).toList();
+                    list = deleteRepitions(list);
+                    classrooms = list.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+
+                    list = teachers.split(",").toList();
+                    list = list.where((element) => element.trim().isNotEmpty).toList();
+                    list = deleteRepitions(list);
+                    teachers = list.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+
+                    classrooms.trim();
+                    teachers.trim();
+                    departments.trim();
+
                     showAdaptiveActionSheet(
                       bottomSheetColor: Main.appTheme.headerBackgroundColor,
                       context: context,
                       title: Column(
                         children: [
+                          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                            Expanded(
+                              child: Center(child: Text(name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Main.appTheme.titleTextColor))),
+                            ),
+                          ]
+                          ),
                           SizedBox(
-                            width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.7,
-                            height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.3,
-                            child: TextFormField(
-                              cursorColor: Main.appTheme.titleTextColor,
-                              controller: notesController,
-                              minLines: null,
-                              maxLines: null,
-                              expands: true,
-                              scrollController: ScrollController(),
-                              style: TextStyle(color: Main.appTheme.titleTextColor),
-                              decoration: InputDecoration(
-                                labelStyle: TextStyle(color: Main.appTheme.titleTextColor),
-                                labelText: translateEng("Notes"),
-                              ),
+                            height: height * 0.03,
+                          ),
+                          SizedBox(
+                            height: classrooms.isNotEmpty ? height * 0.03 : 0,
+                          ),
+                          Visibility(
+                            visible: classrooms.isNotEmpty,
+                            child: Row(children: [
+                              classrooms.isNotEmpty ?Icon(CupertinoIcons.placemark_fill, color: Main.appTheme.titleIconColor) : Container(width: 0),
+                              Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(classrooms, style: TextStyle(color: Main.appTheme.titleTextColor)))),
+                            ]
                             ),
                           ),
                           SizedBox(
-                            height: 0.2 * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
+                            height: teachers.isNotEmpty ? height * 0.03 : 0,
                           ),
+                          Visibility(
+                            visible: teachers.isNotEmpty,
+                            child: Row(
+                                children: [
+                                  teachers.isNotEmpty ? Icon(CupertinoIcons.group_solid, color: Main.appTheme.titleIconColor) : Container(),
+                                  Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(teachers, style: TextStyle(color: Main.appTheme.titleTextColor)))),
+                                ]
+                            ),
+                          ),
+                          SizedBox(
+                            height: departments.isNotEmpty ? height * 0.03 : 0,
+                          ),
+                          Visibility(
+                            visible: departments.isNotEmpty,
+                            child: Row(
+                                children: [
+                                  departments.isNotEmpty ? Icon(CupertinoIcons.building_2_fill, color: Main.appTheme.titleIconColor) : Container(),
+                                  Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(departments, style: TextStyle(color: Main.appTheme.titleTextColor)))),
+                                ]
+                            ),
+                          ),
+                          SizedBox(
+                            height: height * 0.03,
+                          ),
+                          (subject.days.isNotEmpty && subject.bgnPeriods.isNotEmpty && subject.hours.isNotEmpty) ?
+                          Container(color: Main.appTheme.scaffoldBackgroundColor,
+                              width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.5 : 0.7),
+                              height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.5 : 0.7),
+                              child: CustomPaint(painter:
+                            TimetableCanvas(beginningPeriods: subject.bgnPeriods, days: subject.days, hours: subject.hours, isForSchedule: false))
+                          ) : Container(),
                         ],
                       ),
-                      actions: [
-                        BottomSheetAction(title: Text(translateEng("Save"),
-                            style: const TextStyle(color: Colors.blue)), onPressed: () {
-                              Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).note = notesController.text;
-                              Navigator.pop(context);
-                              showToast(
-                                translateEng("Notes were saved"),
-                                duration: const Duration(milliseconds: 1500),
-                                position: ToastPosition.top,
-                                backgroundColor: const Color.fromRGBO(80, 154, 167, 1.0),
-                                radius: 100.0,
-                                textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
-                              );
-                        }),
-                      ],
-                      cancelAction: CancelAction(title: Text(translateEng('Cancel')), onPressed: () {
-                        notesController.text = Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).note;
-                        Navigator.pop(context);
-                      }),
+                      actions: [],
+                      cancelAction: CancelAction(title: Text(translateEng('Close'))),
                     );
-                  }),
-              onTap: () {
 
-                if (mode == 0) { // view
+                  } else if (mode == 1) { // edit
 
-                  String name = subject.customName;
-                  String classrooms = "", teachers = "", departments = "";
+                    Main.courseToEdit = subject;
+                    Main.isEditingCourse = true;
+                    Navigator.pushNamed(context, "/home/editcourses/editcourseinfo").then((value) {
 
-                  List<List<String>> classroomsList = subject.classrooms;
+                      setState(() {
+                        Main.isEditingCourse = false;
 
-                  classrooms = classroomsList.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
-                  departments = subject.departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
-                  if (subject.getTranslatedTeachers().isEmpty) {
-                    teachers = subject.teacherCodes.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
-                  } else {
-                    teachers = subject.getTranslatedTeachers();
-                  }
-
-                  List<String> list = classrooms.split(",").toList();
-                  list = list.where((element) => element.trim().isNotEmpty).toList();
-                  list = deleteRepitions(list);
-                  classrooms = list.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
-
-                  list = teachers.split(",").toList();
-                  list = list.where((element) => element.trim().isNotEmpty).toList();
-                  list = deleteRepitions(list);
-                  teachers = list.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
-
-                  classrooms.trim();
-                  teachers.trim();
-                  departments.trim();
-
-                  showAdaptiveActionSheet(
-                    bottomSheetColor: Main.appTheme.headerBackgroundColor,
-                    context: context,
-                    title: Column(
-                      children: [
-                        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                          Expanded(
-                            child: Center(child: Text(name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Main.appTheme.titleTextColor))),
-                          ),
-                        ]
-                        ),
-                        SizedBox(
-                          height: height * 0.03,
-                        ),
-                        SizedBox(
-                          height: classrooms.isNotEmpty ? height * 0.03 : 0,
-                        ),
-                        Visibility(
-                          visible: classrooms.isNotEmpty,
-                          child: Row(children: [
-                            classrooms.isNotEmpty ?Icon(CupertinoIcons.placemark_fill, color: Main.appTheme.titleIconColor) : Container(width: 0),
-                            Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(classrooms, style: TextStyle(color: Main.appTheme.titleTextColor)))),
-                          ]
-                          ),
-                        ),
-                        SizedBox(
-                          height: teachers.isNotEmpty ? height * 0.03 : 0,
-                        ),
-                        Visibility(
-                          visible: teachers.isNotEmpty,
-                          child: Row(
-                              children: [
-                                teachers.isNotEmpty ? Icon(CupertinoIcons.group_solid, color: Main.appTheme.titleIconColor) : Container(),
-                                Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(teachers, style: TextStyle(color: Main.appTheme.titleTextColor)))),
-                              ]
-                          ),
-                        ),
-                        SizedBox(
-                          height: departments.isNotEmpty ? height * 0.03 : 0,
-                        ),
-                        Visibility(
-                          visible: departments.isNotEmpty,
-                          child: Row(
-                              children: [
-                                departments.isNotEmpty ? Icon(CupertinoIcons.building_2_fill, color: Main.appTheme.titleIconColor) : Container(),
-                                Expanded(child: Container(padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0), child: Text(departments, style: TextStyle(color: Main.appTheme.titleTextColor)))),
-                              ]
-                          ),
-                        ),
-                        SizedBox(
-                          height: height * 0.03,
-                        ),
-                        (subject.days.isNotEmpty && subject.bgnPeriods.isNotEmpty && subject.hours.isNotEmpty) ?
-                        Container(color: Main.appTheme.scaffoldBackgroundColor,
-                            width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.5 : 0.7),
-                            height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.5 : 0.7),
-                            child: CustomPaint(painter:
-                          TimetableCanvas(beginningPeriods: subject.bgnPeriods, days: subject.days, hours: subject.hours, isForSchedule: false))
-                        ) : Container(),
-                      ],
-                    ),
-                    actions: [],
-                    cancelAction: CancelAction(title: Text(translateEng('Close'))),
-                  );
-
-                } else if (mode == 1) { // edit
-
-                  Main.courseToEdit = subject;
-                  Main.isEditingCourse = true;
-                  Navigator.pushNamed(context, "/home/editcourses/editcourseinfo").then((value) {
-
-                    setState(() {
-                      Main.isEditingCourse = false;
-
-                      // refinement process: remove the empty classrooms and departments:
-                      List<List<String>> list = Main.courseToEdit!.classrooms;
-                      // list.forEach((element) {print(element);});
-                      for (int i = 0 ; i < list.length ; i++) {
-                        if (list[i].isEmpty) {
-                          list.removeAt(i);
-                          i--;
-                          continue;
-                        }
-                        for (int j = 0 ; j < list[i].length ; j++) {
-                          if (list[i][j].trim().isEmpty) {
-                            list[i].removeAt(j);
-                            j--;
+                        // refinement process: remove the empty classrooms and departments:
+                        List<List<String>> list = Main.courseToEdit!.classrooms;
+                        // list.forEach((element) {print(element);});
+                        for (int i = 0 ; i < list.length ; i++) {
+                          if (list[i].isEmpty) {
+                            list.removeAt(i);
+                            i--;
+                            continue;
+                          }
+                          for (int j = 0 ; j < list[i].length ; j++) {
+                            if (list[i][j].trim().isEmpty) {
+                              list[i].removeAt(j);
+                              j--;
+                            }
                           }
                         }
-                      }
-                      Main.courseToEdit!.classrooms = list;
+                        Main.courseToEdit!.classrooms = list;
 
-                      List<String> list_ = Main.courseToEdit!.departments;
-                      for (int i = 0 ; i < list_.length ; i++) {
-                        if (list_[i].trim().isEmpty) {
-                          list_.removeAt(i);
-                          i--;
+                        List<String> list_ = Main.courseToEdit!.departments;
+                        for (int i = 0 ; i < list_.length ; i++) {
+                          if (list_[i].trim().isEmpty) {
+                            list_.removeAt(i);
+                            i--;
+                          }
                         }
-                      }
-                      Main.courseToEdit!.departments = list_;
-                      // refinement process;
+                        Main.courseToEdit!.departments = list_;
+                        // refinement process;
 
-                      Main.schedules[Main.currentScheduleIndex].scheduleCourses[index].subject = Main.courseToEdit!;
-                      Main.schedules[Main.currentScheduleIndex].scheduleCourses[index].subject.translateTeachers();
-                      // print("Finished editing, saving the course with teachers: ${Main.schedules[Main.currentScheduleIndex].scheduleCourses[index].subject.teacherCodes}");
+                        Main.schedules[Main.currentScheduleIndex].scheduleCourses[index].subject = Main.courseToEdit!;
+                        Main.schedules[Main.currentScheduleIndex].scheduleCourses[index].subject.translateTeachers();
+                        // print("Finished editing, saving the course with teachers: ${Main.schedules[Main.currentScheduleIndex].scheduleCourses[index].subject.teacherCodes}");
+                      });
+
                     });
 
-                  });
+                  } else { // remove
+                    setState(() {
+                      String str = Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).subject.classCode;
+                      Main.schedules[Main.currentScheduleIndex].scheduleCourses.removeAt(index);
+                      showToast(
+                        "'$str' " + translateEng("was removed"),
+                        duration: const Duration(milliseconds: 1500),
+                        position: ToastPosition.top,
+                        backgroundColor: Colors.blue.withOpacity(0.8),
+                        radius: 100.0,
+                        textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
+                      );
+                    });
+                  }
 
-                } else { // remove
-                  setState(() {
-                    String str = Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).subject.classCode;
-                    Main.schedules[Main.currentScheduleIndex].scheduleCourses.removeAt(index);
-                    showToast(
-                      "'$str' " + translateEng("was removed"),
-                      duration: const Duration(milliseconds: 1500),
-                      position: ToastPosition.top,
-                      backgroundColor: Colors.blue.withOpacity(0.8),
-                      radius: 100.0,
-                      textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
-                    );
-                  });
-                }
-
-              },
+                },
+              ),
             ),
-          ),
-        );
-      });
+          );
+        }),
+      );
     }
 
   }

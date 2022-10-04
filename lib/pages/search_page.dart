@@ -174,13 +174,22 @@ class SearchPageState extends State<SearchPage> {
               ),
               SizedBox(height: height * 0.03),
               Expanded(
-                child: ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: subjects.length,
-                  itemBuilder: (context, index) {
-                    return buildSubject(subjects[index]);
-                  },
+                child: RawScrollbar(
+                  crossAxisMargin: 0.0,
+                  trackVisibility: true,
+                  thumbVisibility: true,
+                  thumbColor: Colors.blueGrey,
+                  // trackColor: Colors.redAccent.shade700,
+                  trackBorderColor: Colors.white,
+                  radius: const Radius.circular(20),
+                  child: ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: subjects.length,
+                    itemBuilder: (context, index) {
+                      return buildSubject(subjects[index]);
+                    },
+                  ),
                 ),
               )
             ],

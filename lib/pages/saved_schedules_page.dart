@@ -286,9 +286,21 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
     }
 
     tiles.add(Expanded(
-      child: SingleChildScrollView(
-        child: Column(
-          children: scheduleTiles,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 10),
+        child: RawScrollbar(
+          crossAxisMargin: 0.0,
+          trackVisibility: true,
+          thumbVisibility: true,
+          thumbColor: Colors.blueGrey,
+          // trackColor: Colors.redAccent.shade700,
+          trackBorderColor: Colors.white,
+          radius: const Radius.circular(20),
+          child: SingleChildScrollView(
+            child: Column(
+              children: scheduleTiles,
+            ),
+          ),
         ),
       ),
     ));

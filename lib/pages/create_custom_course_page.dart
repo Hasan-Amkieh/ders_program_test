@@ -224,8 +224,11 @@ class CustomCoursePageState extends State<CustomCoursePage> {
         ),
       ),
       body: SafeArea(
-        child: Scrollbar(
+        child: RawScrollbar(
           trackVisibility: true,
+          thumbColor: Colors.redAccent,
+          radius: const Radius.circular(20),
+          thickness: 5,
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -664,10 +667,19 @@ class CustomCoursePageState extends State<CustomCoursePage> {
         )
     );
 
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: tiles,
+    return RawScrollbar(
+      crossAxisMargin: 0.0,
+      trackVisibility: true,
+      thumbVisibility: true,
+      thumbColor: Colors.blueGrey,
+      // trackColor: Colors.redAccent.shade700,
+      trackBorderColor: Colors.white,
+      radius: const Radius.circular(20),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: tiles,
+        ),
       ),
     );
 

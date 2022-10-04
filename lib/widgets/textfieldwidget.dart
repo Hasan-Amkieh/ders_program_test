@@ -1,5 +1,6 @@
-
+import "dart:io" show Platform;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../main.dart';
 
@@ -48,28 +49,32 @@ class TextFieldWidgetState extends State<TextFieldWidget> {
         color: Main.appTheme.textfieldBackgroundColor,
         border: Border.all(color: Colors.black26),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: TextField(
-        controller: controller,
-        cursorColor: Main.appTheme.normalTextColor,
-        cursorWidth: 1.0,
-        decoration: InputDecoration(
-          iconColor: Main.appTheme.navIconColor,
-          // suffixIcon: widget.text.isNotEmpty
-          //     ? GestureDetector(
-          //   child: Icon(Icons.close, color: style.color),
-          //   onTap: () {
-          //     controller.clear();
-          //     widget.onChanged('');
-          //     FocusScope.of(context).requestFocus(FocusNode());
-          //   },
-          // ) : null,
-          hintText: widget.hintText,
-          hintStyle: style,
-          border: InputBorder.none,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0.0),
+      child: Center(
+        child: TextField(
+          maxLengthEnforcement: MaxLengthEnforcement.enforced,
+          controller: controller,
+          cursorColor: Main.appTheme.normalTextColor,
+          cursorWidth: 1.0,
+          decoration: InputDecoration(
+            contentPadding: Platform.isWindows ? const EdgeInsets.symmetric(vertical: 15) : Theme.of(context).inputDecorationTheme.contentPadding,
+            iconColor: Main.appTheme.navIconColor,
+            // suffixIcon: widget.text.isNotEmpty
+            //     ? GestureDetector(
+            //   child: Icon(Icons.close, color: style.color),
+            //   onTap: () {
+            //     controller.clear();
+            //     widget.onChanged('');
+            //     FocusScope.of(context).requestFocus(FocusNode());
+            //   },
+            // ) : null,
+            hintText: widget.hintText,
+            hintStyle: style,
+            border: InputBorder.none,
+          ),
+          style: style,
+          onChanged: widget.onChanged,
         ),
-        style: style,
-        onChanged: widget.onChanged,
       ),
     );
 

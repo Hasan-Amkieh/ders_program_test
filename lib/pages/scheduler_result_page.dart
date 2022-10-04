@@ -218,8 +218,8 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
               style: TextStyle(fontSize: 12, color: Main.appTheme.titleTextColor),
             ),
             TextSpan(
-              text: subs,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.red),
+              text: subs + '\n',
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.red) ,
             ),
           ],
         ));
@@ -352,9 +352,12 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
                     Icon(Icons.error, color: Colors.grey.shade700, size: (IconTheme.of(context).size ?? 64) * 2),
                     SizedBox(height: height * 0.05),
                     Text(translateEng("No possible schedules were found!\nPlease fix one of the following collisions\n"),textAlign: TextAlign.center, style: TextStyle(color: Main.appTheme.titleTextColor, fontSize: 18)),
-                    RichText(
-                      text: TextSpan(
-                        children: txts,
+                    Container(
+                      padding: const EdgeInsets.all(12.0),
+                      child: RichText(
+                        text: TextSpan(
+                          children: txts,
+                        ),
                       ),
                     ),
                   ],
