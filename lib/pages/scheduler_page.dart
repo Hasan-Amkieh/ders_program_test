@@ -314,7 +314,7 @@ class SchedulerPageState extends State<SchedulerPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(subjects[index].classCode, style: TextStyle(color: Main.appTheme.titleTextColor)),
+          Expanded(child: Text(subjects[index].classCode, style: TextStyle(color: Main.appTheme.titleTextColor))),
         ],
       ),
       subtitle: Column(
