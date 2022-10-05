@@ -497,33 +497,32 @@ class WebpagePhoneState extends State<WebpagePhone> {
                   }
 
                   lastFound = timetableStr.indexOf('durationperiods":', lastFound) + 17;
-                  hrs.add(int .parse(timetableStr.substring(lastFound, timetableStr.indexOf(',', lastFound))));
+                  hrs.add(int.parse(timetableStr.substring(lastFound, timetableStr.indexOf(',', lastFound))));
 
-                  lastFound = timetableStr.indexOf('classroomidss":[[', lastFound) + 17;
-                  str = timetableStr.substring(lastFound, timetableStr.indexOf(']]', lastFound) );
-                  if (str.isEmpty) {
-                    classroomsIds.elementAt(periodIndex).add("");
-                  } else {
-                    int start, end = -1;
-                    while (true) { // loop for each teacherCode
-                      start = str.indexOf('"', end + 1) + 1;
-                      if (start == 0) {
-                        break;
-                      }
-                      end = str.indexOf('"', start);
-                      classroomsIds.elementAt(periodIndex).add(str.substring(start, end));
-                    }
-                  }
+                  // lastFound = timetableStr.indexOf('classroomidss":[[', lastFound) + 17;
+                  // str = timetableStr.substring(lastFound, timetableStr.indexOf(']]', lastFound) );
+                  // if (str.isEmpty) {
+                  //   classroomsIds.elementAt(periodIndex).add("");
+                  // } else {
+                  //   int start, end = -1;
+                  //   while (true) { // loop for each teacherCode
+                  //     start = str.indexOf('"', end + 1) + 1;
+                  //     if (start == 0) {
+                  //       break;
+                  //     }
+                  //     end = str.indexOf('"', start);
+                  //     classroomsIds.elementAt(periodIndex).add(str.substring(start, end));
+                  //   }
+                  // }
 
                   periodIndex++;
 
                 }
 
-                //TODO: use the lessonIds, departmentIds, teacherCodesIds, classroomIds to find the rest of the data
-
                 // lessons:
                 int searchStart = timetableStr.indexOf("lessonid"), searchStart_;
                 int listIndex = 0;
+                int classroomsIndex = 0;
                 lessonIds.forEach((lessonId) {
 
                   searchStart_ = searchStart;
@@ -538,6 +537,34 @@ class WebpagePhoneState extends State<WebpagePhone> {
                     }
                     lastFound = timetableStr.indexOf('days":"', lastFound) + 7;
                     day[listIndex].add(timetableStr.substring(lastFound, timetableStr.indexOf('"', lastFound)).indexOf('1') + 1);
+
+                    // classrooms:
+                    lastFound = timetableStr.indexOf('classroomids":[', lastFound) + 15;
+                    str = timetableStr.substring(lastFound, timetableStr.indexOf(']', lastFound) );
+                    if (str.isEmpty) {
+                      classroomsIds.elementAt(periodIndex).add("");
+                    } else {
+                      int start, end = -1;
+                      while (true) { // loop for each classroom id
+                        start = str.indexOf('"', end + 1) + 1;
+                        if (start == 0) {
+                          break;
+                        }
+                        end = str.indexOf('"', start);
+                        if (classroomsIds.length <= classroomsIndex) {
+                          classroomsIds.add([]);
+                        }
+                        classroomsIds.elementAt(classroomsIndex).add(str.substring(start, end));
+                        // Test:
+                        // if (subjectId.key.trim() == "MATH151- 01-") {
+                        //   print("Classroom id found: ${str.substring(start, end)} of index $classroomsIndex");
+                        // }
+                        // Test;
+                      }
+                      classroomsIndex++;
+                    }
+                    // classrooms;
+
                     if (!timetableStr.contains('lessonid":"$lessonId"', searchStart_)) {
                       break;
                     }

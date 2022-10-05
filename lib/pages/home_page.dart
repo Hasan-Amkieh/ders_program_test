@@ -1093,7 +1093,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             color: Main.appTheme.headerBackgroundColor,
             child: Column( // Headers
               children: [
-                Container(
+                SizedBox(
                     child: Center(
                     child: Text(translateEng('Thur'), style: Main.appTheme.headerSchedulePageTextStyle)),
                     height: rowHeight,
@@ -1171,6 +1171,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
     Main.schedules[Main.currentScheduleIndex].scheduleCourses.forEach((course) {
       colorIndex++;
+      int classroomCount = 0;
       for (int i = 0; i < course.subject.days.length; i++) {
         for (int j = 0; j < course.subject.days[i].length; j++) {
           bool isCol = false, isColOf3 = false;
@@ -1205,17 +1206,21 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           });
           //print("index of ${course.subject.classCode} is $drawingIndex N $colSize");
 
-          String classroomStr = i < course.subject.classrooms.length ? deleteRepitions(course.subject.classrooms[i]).toString().replaceAll(RegExp("[\\[.*?\\]]"), "") : "";
+          //print("classrooms: ${course.subject.classrooms}");
+
+          String classroomStr = (classroomCount) < course.subject.classrooms.length ? deleteRepitions(course.subject.classrooms[classroomCount]).toString().replaceAll(RegExp("[\\[.*?\\]]"), "") : "";
           if (classroomStr.isEmpty) {
-            for (int j = 0 ; j < course.subject.classrooms.length ; j++) {
-              if (classroomStr.isNotEmpty && course.subject.classrooms[j].isNotEmpty && deleteRepitions(course.subject.classrooms[j]).toString().replaceAll(RegExp("[\\[.*?\\]]"), "") != classroomStr) {
+            for (int j_ = 0 ; j_ < course.subject.classrooms.length ; j_++) {
+              if (classroomStr.isNotEmpty && course.subject.classrooms[j_].isNotEmpty && deleteRepitions(course.subject.classrooms[j_]).toString().replaceAll(RegExp("[\\[.*?\\]]"), "") != classroomStr) {
                 classroomStr = "";
                 break;
               }
-              if (course.subject.classrooms[j].isNotEmpty) {
-                classroomStr = deleteRepitions(course.subject.classrooms[j]).toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
+              if (course.subject.classrooms[j_].isNotEmpty) {
+                classroomStr = deleteRepitions(course.subject.classrooms[j_]).toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
               }
             }
+          } else {
+            classroomCount++;
           }
           //print("Of period $i of subject ${course.subject.classCode} has classrooms $classroomStr");
 

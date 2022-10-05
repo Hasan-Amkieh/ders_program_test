@@ -178,6 +178,7 @@ Map<String, String> engToTurk = {
   "Name" : "Ad",
   "e.g. Summer Semester" : "e.g. Yaz Dönemi",
   "SAVE" : "KAYDET",
+  "CREATE" : "OLUŞTUR",
   "The name cannot be empty!" : "İsim boş olamaz!",
   "Rename Schedule" : "Takvim Yeniden Adlandır",
   "Change Schedule Name" : "Takvim Adı Değiştir",

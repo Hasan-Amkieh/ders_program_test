@@ -341,7 +341,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                 ),
                 actions: [
                   TextButton(
-                    child: Text(translateEng("SAVE")),
+                    child: Text(translateEng("CREATE")),
                     onPressed: () {
                       if (nameController.text.trim().isNotEmpty) {
                         setState(() {
