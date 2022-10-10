@@ -4,6 +4,7 @@ import "dart:io" show Platform;
 // import 'dart:async'; // Deep Links:
 import 'dart:io';
 
+import 'package:Atsched/others/university.dart';
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:Atsched/language/dictionary.dart';
 import 'package:Atsched/others/subject.dart';
@@ -422,6 +423,30 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                 onChanged: (String? newValue) {
                   setState(() {
                     Main.language = newValue!;
+                  });
+                },
+              )
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(translateEng("University"), style: TextStyle(color: Main.appTheme.titleTextColor)),
+              DropdownButton<String>(
+                underline: Container(),
+                dropdownColor: Main.appTheme.scaffoldBackgroundColor,
+                value: Main.uni,
+                items: Main.unis.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem(
+                    value: value,
+                    child: TextButton.icon(onPressed: null, icon: Image.asset("lib/icons/" + value + ".png"),
+                        label: Text(translateEng(value), style: TextStyle(color: Main.appTheme.titleTextColor))
+                    ),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    Main.uni = newValue!;
                   });
                 },
               )
@@ -1006,56 +1031,33 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         )),
         child: SizedBox(width: colWidth, height: rowHeight,));
 
+    List<Widget> hoursWidgets = [];
+
+    // TODO: TEST: THIS IS HOW it should be made, look into all the courses and get the hours into this list:
+    List<int> neededHours = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+    // TEST;
+
+    hoursWidgets.add(SizedBox(width: colWidth, height: rowHeight));
+    neededHours.forEach((hr) {
+      hoursWidgets.add(Container(
+          padding: EdgeInsets.symmetric(horizontal: colWidth / 4),
+          decoration: BoxDecoration(
+              border: BorderDirectional(bottom: BorderSide(color: horizontalBorderColor, width: 2))
+          ),
+          // color: Main.appTheme.headerBackgroundColor,
+          child: Center(child: Text(hr.toString() + ':' + University.getBgnMinutes().toString(), style: Main.appTheme.headerSchedulePageTextStyle)),
+          height: rowHeight
+      ));
+    });
+
     List<Widget> coursesList = [
       Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            color: Main.appTheme.headerBackgroundColor,
-            child: Column( // Headers
-              children: [
-                SizedBox(width: colWidth, height: rowHeight),
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(child: Text('9:30', style: Main.appTheme.headerSchedulePageTextStyle)),
-                    height: rowHeight),
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(child: Text('10:30', style: Main.appTheme.headerSchedulePageTextStyle)),
-                    height: rowHeight),
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(child: Text('11:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
-                    height: rowHeight),
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(child: Text('12:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
-                    height: rowHeight),
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(child: Text('13:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
-                    height: rowHeight),
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(child: Text('14:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
-                    height: rowHeight),
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(child: Text('15:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
-                    height: rowHeight),
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(child: Text('16:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
-                    height: rowHeight),
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(child: Text('17:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
-                    height: rowHeight),
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(child: Text('18:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
-                    height: rowHeight + height * 0.04),
-              ],
+            color: Main.appTheme.headerBackgroundColor, // Main.appTheme.headerBackgroundColor.withGreen(50)
+            child: Column(
+              children: hoursWidgets,
             ),
           ),
           Container(

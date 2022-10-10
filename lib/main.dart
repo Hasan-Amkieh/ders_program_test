@@ -63,12 +63,18 @@ class Main {
 
   static String semesterName = "";
 
+  static List<String> unis = [
+    "Atilim",
+    "Bilkent"
+  ];
+
   // NOTE: Default values are inside the function readSettings:
   static bool forceUpdate = false;
   static int hourUpdate = 24; // if the time has passed for these hours since the last update, then make an update
   static String faculty = "Engineering";
   static String department = "AE";
   static String language = "English"; // currently, there is only
+  static String uni = "Atilim";
   static ThemeMode theme = ThemeMode.dark;
   static bool isThereNewerVersion = false;
   static bool isFacChange = false;
@@ -134,6 +140,7 @@ class Main {
 
     toWrite = toWrite + "force_update:"+forceUpdate.toString()+"\n";
     toWrite = toWrite + "is_dark:"+(Main.theme == ThemeMode.dark).toString()+"\n";
+    toWrite = toWrite + "uni:"+uni.toString()+"\n";
     toWrite = toWrite + "faculty:"+faculty.toString()+"\n";
     toWrite = toWrite + "department:"+department.toString()+"\n";
     toWrite = toWrite + "language:"+language.toString()+"\n";
@@ -161,6 +168,7 @@ class Main {
 
         forceUpdate = content.substring(content.indexOf("force_update:") + 13, content.indexOf("\n", content.indexOf("force_update:") + 13)) == "true" ? true : false;
         theme = (content.substring(content.indexOf("is_dark:") + 8, content.indexOf("\n", content.indexOf("is_dark:") + 8)) == "true" ? true : false) ? ThemeMode.dark : ThemeMode.light;
+        uni = content.substring(content.indexOf("uni:") + 4, content.indexOf("\n", content.indexOf("uni:") + 4));
         faculty = content.substring(content.indexOf("faculty:") + 8, content.indexOf("\n", content.indexOf("faculty:") + 8));
         department = content.substring(content.indexOf("department:") + 11, content.indexOf("\n", content.indexOf("department:") + 11));
         language = content.substring(content.indexOf("language:") + 9, content.indexOf("\n", content.indexOf("language:") + 9));
