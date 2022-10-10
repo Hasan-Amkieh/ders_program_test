@@ -33,6 +33,7 @@ import 'package:restart_app/restart_app.dart';
 import 'package:new_version/new_version.dart';
 
 import 'others/appthemes.dart';
+import 'others/departments.dart';
 
 /* NOTES about the project:
 
@@ -520,133 +521,156 @@ Future main() async {
     }
   } else {
 
-    var request = await HttpClient().getUrl(Uri.parse('https://apps.microsoft.com/store/detail/atsched/9NQ6G0L7FTG2?hl=en-us&gl=us'));
-    // sends the request
-    var response = await request.close();
+    //Main.isInternetOn
 
-    // transforms and prints the response
-    await for (var contents in response.transform(const Utf8Decoder())) {
-      int pos;
-      String version;
+    if (Main.isInternetOn) {
+      var request = await HttpClient().getUrl(Uri.parse('https://apps.microsoft.com/store/detail/atsched/9NQ6G0L7FTG2?hl=en-us&gl=us'));
+      // sends the request
+      var response = await request.close();
 
-      if (Main.semesterName.isEmpty) {
-        pos = contents.indexOf('Latest Version: '); // first search for
-        if (pos != -1) {
+      // transforms and prints the response
+      await for (var contents in response.transform(const Utf8Decoder())) {
+        int pos;
+        String version;
 
-          version = contents.substring(pos + 16, contents.indexOf('////', pos + 16));
-          if (version.isNotEmpty) {
-            List<String> vNew = version.trim().split('.');
-            List<String> vOld = Main.atschedVersionForWindows.split('.');
-            if (int.parse(vNew[0]) > int.parse(vOld[0]) ||
-                int.parse(vNew[1]) > int.parse(vOld[1]) ||
-                int.parse(vNew[2]) > int.parse(vOld[2]) ||
-                int.parse(vNew[3]) > int.parse(vOld[3])) {
-              Main.isThereNewerVersion = true;
-              goToUpdatePage = true;
-              break;
+        if (Main.semesterName.isEmpty) {
+          // Sample: "Latest Version: 1.3.0.0////"
+          pos = contents.indexOf('Latest Version: '); // first search for
+          if (pos != -1) {
+
+            version = contents.substring(pos + 16, contents.indexOf('////', pos + 16));
+            if (version.isNotEmpty) {
+              List<String> vNew = version.trim().split('.');
+              List<String> vOld = Main.atschedVersionForWindows.split('.');
+              //print("The new version: $vNew\n\nThe old version: $vOld");
+              if (int.parse(vNew[0]) > int.parse(vOld[0]) ||
+                  int.parse(vNew[1]) > int.parse(vOld[1]) ||
+                  int.parse(vNew[2]) > int.parse(vOld[2]) ||
+                  int.parse(vNew[3]) > int.parse(vOld[3])) {
+                Main.isThereNewerVersion = true;
+                goToUpdatePage = true;
+                break;
+              }
             }
+
           }
-
         }
-      }
 
+      }
     }
 
     // print("found the following links: "
     //     "${Main.artsNSciencesLink}\n${Main.fineArtsLink}\n${Main.businessLink}\n${Main.engineeringLink}\n${Main.civilAviationLink}\n${Main.healthSciencesLink}\n${Main.lawLink}");
   }
 
-  // print("update: ${Main.forceUpdate} / internet: ${Main.isInternetOn}");
+  // print("update: ${Main.forceUpdate} / internet: ${Main.isInternetOn}"); Main.forceUpdate
   if (Main.forceUpdate && Main.isInternetOn) {
-    // print("Getting the new links: ");
-    var request = await HttpClient().getUrl(Uri.parse('https://www.atilim.edu.tr/en/dersprogrami'));
-    // sends the request
-    var response = await request.close();
 
-    // transforms and prints the response
-    await for (var contents in response.transform(const Utf8Decoder())) {
-      int pos;
+    try {
 
-      if (Main.semesterName.isEmpty) {
-        int pos_;
-        int start;
-        pos = contents.indexOf('https://atilimartsci'); // first search for
-        if (pos != -1) {
-          start = contents.lastIndexOf('<table', pos);
-          pos_ = contents.lastIndexOf('Schedule', pos);
-          if (pos_ == -1 || pos_ < start) {
-            pos_ = contents.lastIndexOf('schedule', pos);
-          }
-          if (pos_ == -1 || pos_ < start) {
-            pos_ = contents.lastIndexOf('SCHEDULE', pos);
-          }
-          if (pos_ == -1 || pos_ < start) {
-            pos_ = contents.lastIndexOf('School', pos);
-          }
-          if (pos_ == -1 || pos_ < start) {
-            pos_ = contents.lastIndexOf('SCHOOL', pos);
-          }
-          if (pos_ == -1 || pos_ < start) {
-            pos_ = contents.lastIndexOf('school', pos);
+      // print("Getting the new links: ");
+      var request = await HttpClient().getUrl(Uri.parse('https://www.atilim.edu.tr/en/dersprogrami'));
+      // sends the request
+      var response = await request.close();
+
+      // print("The status code is : ${response.statusCode}");
+      // transforms and prints the response
+      if (response.statusCode == 200) {
+        await for (var contents in response.transform(const Utf8Decoder())) {
+          int pos;
+
+          if (Main.semesterName.isEmpty) {
+            int pos_;
+            int start;
+            pos = contents.indexOf('https://atilimartsci'); // first search for
+            if (pos != -1) {
+              start = contents.lastIndexOf('<table', pos);
+              pos_ = contents.lastIndexOf('Schedule', pos);
+              if (pos_ == -1 || pos_ < start) {
+                pos_ = contents.lastIndexOf('schedule', pos);
+              }
+              if (pos_ == -1 || pos_ < start) {
+                pos_ = contents.lastIndexOf('SCHEDULE', pos);
+              }
+              if (pos_ == -1 || pos_ < start) {
+                pos_ = contents.lastIndexOf('School', pos);
+              }
+              if (pos_ == -1 || pos_ < start) {
+                pos_ = contents.lastIndexOf('SCHOOL', pos);
+              }
+              if (pos_ == -1 || pos_ < start) {
+                pos_ = contents.lastIndexOf('school', pos);
+              }
+
+              if (pos_ != -1 && pos_ > start) { // then the semester name is found:
+
+                pos = contents.lastIndexOf('>', pos_) + 1;
+                pos_ = contents.indexOf('<', pos_);
+                Main.semesterName = contents.substring(pos, pos_);
+                Main.semesterName = Main.semesterName.replaceAll("&nbsp;", " ");
+
+              }
+            }
           }
 
-          if (pos_ != -1 && pos_ > start) { // then the semester name is found:
-
-            pos = contents.lastIndexOf('>', pos_) + 1;
-            pos_ = contents.indexOf('<', pos_);
-            Main.semesterName = contents.substring(pos, pos_);
-            Main.semesterName = Main.semesterName.replaceAll("&nbsp;", " ");
-
+          if (Main.artsNSciencesLink.isEmpty) {
+            pos = contents.indexOf('https://atilimartsci');
+            if (pos != -1) {
+              Main.artsNSciencesLink = contents.substring(pos, contents.indexOf('"', pos + 32));
+            }
+          }
+          if (Main.fineArtsLink.isEmpty) {
+            pos = contents.indexOf('https://atilimgstm');
+            if (pos != -1) {
+              Main.fineArtsLink = contents.substring(pos, contents.indexOf('"', pos + 32));
+            }
+          }
+          if (Main.lawLink.isEmpty) {
+            pos = contents.indexOf('https://atilimlaw');
+            if (pos != -1) {
+              Main.lawLink = contents.substring(pos, contents.indexOf('"', pos + 32));
+            }
+          }
+          if (Main.businessLink.isEmpty) {
+            pos = contents.indexOf('https://atilimmgmt');
+            if (pos != -1) {
+              Main.businessLink = contents.substring(pos, contents.indexOf('"', pos + 32));
+            }
+          }
+          if (Main.engineeringLink.isEmpty) {
+            pos = contents.indexOf('https://atilimengr');
+            if (pos != -1) {
+              Main.engineeringLink = contents.substring(pos, contents.indexOf('"', pos + 32));
+            }
+          }
+          if (Main.healthSciencesLink.isEmpty) {
+            pos = contents.indexOf('https://atilimhlth');
+            if (pos != -1) {
+              Main.healthSciencesLink = contents.substring(pos, contents.indexOf('"', pos + 32));
+            }
+          }
+          if (Main.civilAviationLink.isEmpty) {
+            pos = contents.indexOf('https://atilimcav');
+            if (pos != -1) {
+              Main.civilAviationLink = contents.substring(pos, contents.indexOf('"', pos + 32));
+            }
           }
         }
       }
 
-      if (Main.artsNSciencesLink.isEmpty) {
-        pos = contents.indexOf('https://atilimartsci');
-        if (pos != -1) {
-          Main.artsNSciencesLink = contents.substring(pos, contents.indexOf('"', pos + 32));
-        }
-      }
-      if (Main.fineArtsLink.isEmpty) {
-        pos = contents.indexOf('https://atilimgstm');
-        if (pos != -1) {
-          Main.fineArtsLink = contents.substring(pos, contents.indexOf('"', pos + 32));
-        }
-      }
-      if (Main.lawLink.isEmpty) {
-        pos = contents.indexOf('https://atilimlaw');
-        if (pos != -1) {
-          Main.lawLink = contents.substring(pos, contents.indexOf('"', pos + 32));
-        }
-      }
-      if (Main.businessLink.isEmpty) {
-        pos = contents.indexOf('https://atilimmgmt');
-        if (pos != -1) {
-          Main.businessLink = contents.substring(pos, contents.indexOf('"', pos + 32));
-        }
-      }
-      if (Main.engineeringLink.isEmpty) {
-        pos = contents.indexOf('https://atilimengr');
-        if (pos != -1) {
-          Main.engineeringLink = contents.substring(pos, contents.indexOf('"', pos + 32));
-        }
-      }
-      if (Main.healthSciencesLink.isEmpty) {
-        pos = contents.indexOf('https://atilimhlth');
-        if (pos != -1) {
-          Main.healthSciencesLink = contents.substring(pos, contents.indexOf('"', pos + 32));
-        }
-      }
-      if (Main.civilAviationLink.isEmpty) {
-        pos = contents.indexOf('https://atilimcav');
-        if (pos != -1) {
-          Main.civilAviationLink = contents.substring(pos, contents.indexOf('"', pos + 32));
-        }
-      }
+      // print("found the following links: "
+      //     "${Main.artsNSciencesLink}\n${Main.fineArtsLink}\n${Main.businessLink}\n${Main.engineeringLink}\n${Main.civilAviationLink}\n${Main.healthSciencesLink}\n${Main.lawLink}");
+
+
+    } catch (e) {
+      Main.forceUpdate = false;
+      print("ERROR: $e");
     }
 
-    // print("found the following links: "
-    //     "${Main.artsNSciencesLink}\n${Main.fineArtsLink}\n${Main.businessLink}\n${Main.engineeringLink}\n${Main.civilAviationLink}\n${Main.healthSciencesLink}\n${Main.lawLink}");
+  }
+
+  if (Main.forceUpdate && getFacultyLink(Main.department).isEmpty) { // if no link was found, the app will crash, but now it will just not update:
+    Main.forceUpdate = false;
   }
 
   runApp(OKToast(

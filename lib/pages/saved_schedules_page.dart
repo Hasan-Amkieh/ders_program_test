@@ -11,6 +11,7 @@ import 'package:Atsched/pages/home_page.dart';
 import 'package:Atsched/widgets/timetable_canvas.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 // import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:oktoast/oktoast.dart';
@@ -399,7 +400,8 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
         print(e);
       }
     } else {
-      result = await ImageGallerySaver.saveImage(bytes, name: name);
+      result = (await ImageGallerySaver.saveImage(bytes, name: name)).toString();
+      // print("The result of the phone version is : $result");
     }
 
     return result;
@@ -525,14 +527,14 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                       int oldScheduleIndex = Main.currentScheduleIndex;
                       Main.currentScheduleIndex = scheduleIndex;
                       final image;
-                      if (Platform.isWindows) {
+                      if (Platform.isWindows) { // Windows
                         image = await controller.captureFromWidget(
                             MaterialApp(
                                 home: Scaffold(
                                   body: HomeState.currentState!.buildSchedulePage(),
                                 ),
                         ));
-                      } else {
+                      } else { // Phone
                         image = await controller.captureFromWidget(HomeState.currentState!.buildSchedulePage());
                       }
                       Main.currentScheduleIndex = oldScheduleIndex;
@@ -573,22 +575,22 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                       Navigator.pop(context);
                     },
                   ),
-                  // Platform.isWindows ? Container() : SizedBox(height: width * 0.03),
-                  // Platform.isWindows ? Container() : const Divider(height: 2.0, thickness: 2.0),
-                  // Platform.isWindows ? Container() : TextButton.icon(
-                  //   icon: const Icon(CupertinoIcons.link),
-                  //   label: Text(translateEng("Share Schedule by Link")),
-                  //   onPressed: () async {
-                  //     FlutterBranchSdk.disableTracking(true);
-                  //     HomeState.currentState!.initDeepLinkData(scheduleIndex);
-                  //     BranchResponse? response = await HomeState.currentState!.generateLink();
-                  //
-                  //     var time = DateTime.now().add(const Duration(days: 30));
-                  //     await Share.share("${response?.result}\nThis shared link expires on ${time.year}-${time.month}-${time.day}");
-                  //
-                  //     Navigator.pop(context);
-                  //   },
-                  // ),
+                  Platform.isWindows ? Container() : SizedBox(height: width * 0.03),
+                  Platform.isWindows ? Container() : const Divider(height: 2.0, thickness: 2.0),
+                  Platform.isWindows ? Container() : TextButton.icon(
+                    icon: const Icon(CupertinoIcons.link),
+                    label: Text(translateEng("Share Schedule by Link")),
+                    onPressed: () async {
+                      FlutterBranchSdk.disableTracking(true);
+                      HomeState.currentState!.initDeepLinkData(scheduleIndex);
+                      BranchResponse? response = await HomeState.currentState!.generateLink();
+
+                      var time = DateTime.now().add(const Duration(days: 30));
+                      await Share.share("${response?.result}\nThis shared link expires on ${time.year}-${time.month}-${time.day}");
+
+                      Navigator.pop(context);
+                    },
+                  ),
                 ],
               ),
               actions: [],
