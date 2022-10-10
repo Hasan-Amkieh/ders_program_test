@@ -233,9 +233,11 @@ String dayToString(int day) {
     case 4:
       return "Thursday";
     case 5:
-      return "Friday";
+      return "Friday"; // Sunday
     case 6:
       return "Saturday";
+    case 7:
+      return "Sunday";
   }
 
   return "";

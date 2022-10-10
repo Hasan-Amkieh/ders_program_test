@@ -968,9 +968,35 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
   Widget buildSchedulePage() {
 
-    double colWidth = (width) / 7; // 6 days and a col for the clock
+    bool isSatNeeded = false, isSunNeeded = false;
+
+    for (int subIndex = 0 ; subIndex < Main.schedules[Main.currentScheduleIndex].scheduleCourses.length ; subIndex++) {
+
+      for (int x = 0 ; x < Main.schedules[Main.currentScheduleIndex].scheduleCourses[subIndex].subject.days.length ; x++) {
+        for (int y = 0 ; y < Main.schedules[Main.currentScheduleIndex].scheduleCourses[subIndex].subject.days[x].length ; y++) {
+          if (!isSatNeeded || !isSunNeeded) {
+            if (Main.schedules[Main.currentScheduleIndex].scheduleCourses[subIndex].subject.days[x][y] == 6) {
+              isSatNeeded = true;
+            }
+            if (Main.schedules[Main.currentScheduleIndex].scheduleCourses[subIndex].subject.days[x][y] == 7) {
+              isSunNeeded = true;
+            }
+          } else {
+            break;
+          }
+        }
+        if (isSatNeeded && isSunNeeded) {
+          break;
+        }
+      }
+      if (isSatNeeded && isSunNeeded) {
+        break;
+      }
+    }
+
+    double colWidth = (width) / ( 6 + (isSatNeeded ? 1 : 0) + (isSunNeeded ? 1 : 0) ); // 5 days and a col for the clock
     double rowHeight = (height * 1) / 11; // 10 for the lock and one for the empty box // 91 percent because of the horizontal borders
-    
+
     Color emptyCellColor = Main.appTheme.emptyCellColor;
     Color horizontalBorderColor = Colors.black38; // bgnHours seperator
     Container emptyCell = Container(decoration: BoxDecoration(
@@ -1146,29 +1172,56 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
               ],
             ),
           ),
-          Container(
-            color: Main.appTheme.headerBackgroundColor,
-            child: Column( // Headers
-              children: [
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(
-                    child: Text(translateEng('Sat'), style: Main.appTheme.headerSchedulePageTextStyle)),
-                    height: rowHeight,
-                    width: colWidth),
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-              ],
-            ),
-          ),
+          isSatNeeded ? (
+              Container(
+                color: Main.appTheme.headerBackgroundColor,
+                child: Column( // Headers
+                  children: [
+                    Container(
+                        color: Main.appTheme.headerBackgroundColor,
+                        child: Center(
+                            child: Text(translateEng('Sat'), style: Main.appTheme.headerSchedulePageTextStyle)),
+                        height: rowHeight,
+                        width: colWidth),
+                    emptyCell,
+                    emptyCell,
+                    emptyCell,
+                    emptyCell,
+                    emptyCell,
+                    emptyCell,
+                    emptyCell,
+                    emptyCell,
+                    emptyCell,
+                    emptyCell,
+                  ],
+                ),
+              )
+          ) : Container(),
+          isSunNeeded ? (
+              Container(
+                color: Main.appTheme.headerBackgroundColor,
+                child: Column( // Headers
+                  children: [
+                    Container(
+                        color: Main.appTheme.headerBackgroundColor,
+                        child: Center(
+                            child: Text(translateEng('Sun'), style: Main.appTheme.headerSchedulePageTextStyle)),
+                        height: rowHeight,
+                        width: colWidth),
+                    emptyCell,
+                    emptyCell,
+                    emptyCell,
+                    emptyCell,
+                    emptyCell,
+                    emptyCell,
+                    emptyCell,
+                    emptyCell,
+                    emptyCell,
+                    emptyCell,
+                  ],
+                ),
+              )
+          ) : Container(),
         ],
       ),
     ];
@@ -1294,7 +1347,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                 )),
               width: isCol ? colWidth / colSize : colWidth,
               height: rowHeight * course.subject.hours[i],
-              left: colWidth * course.subject.days[i][j] +
+              left: colWidth * (course.subject.days[i][j] - ((course.subject.days[i][j] == 7 && !isSatNeeded) ? 1 : 0)) +
                   (isCol ? (drawingIndex * colWidth) / colSize : 0),
               top: rowHeight * course.subject.bgnPeriods[i][j] +
                   2 * (course.subject.bgnPeriods[i][j] - 1),

@@ -340,6 +340,8 @@ class CustomCoursePageState extends State<CustomCoursePage> {
         listDays.add([5]);
       } else if (widget.days[i] == ("Saturday")) {
         listDays.add([6]);
+      } else if (widget.days[i] == ("Sunday")) {
+        listDays.add([7]);
       }
 
       switch(widget.bgnHour[i]) {
@@ -454,6 +456,9 @@ class CustomCoursePageState extends State<CustomCoursePage> {
         case "Saturday":
           dayShort = "Sat";
           break;
+        case "Sunday":
+          dayShort = "Sun";
+          break;
       }
 
       endHour = (widget.hours[i]+int.parse(widget.bgnHour[i].toString().substring(0, widget.bgnHour[i].toString().indexOf(":")))).toString();
@@ -512,6 +517,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                           DropdownMenuItem<String>(value: "Thursday", child: Text(translateEng("Thursday"), style: Main.appTheme.headerStyle)),
                           DropdownMenuItem<String>(value: "Friday", child: Text(translateEng("Friday"), style: Main.appTheme.headerStyle)),
                           DropdownMenuItem<String>(value: "Saturday", child: Text(translateEng("Saturday"), style: Main.appTheme.headerStyle)),
+                          DropdownMenuItem<String>(value: "Sunday", child: Text(translateEng("Sunday"), style: Main.appTheme.headerStyle)),
                         ]),
                   ],
                 ),

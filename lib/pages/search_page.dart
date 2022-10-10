@@ -243,11 +243,11 @@ class SearchPageState extends State<SearchPage> {
 
                 String url = "";
 
-                var request = await HttpClient().getUrl(Uri.parse('https://www.atilim.edu.tr/get-lesson-ects/' + sub.getClassCodeWithoutSectionNumber()));
+                var request = await HttpClient().getUrl(Uri.parse('https://www.atilim.edu.tr/get-lesson-ects/' + sub.getClassCodeWithoutSectionNumber().replaceAll(" ", "")));
                 var response = await request.close();
                 await for (var contents in response.transform(const Utf8Decoder())) {
                   url = contents;
-                };
+                }
 
                 // print("Launching : ${url}");
                 if (await canLaunchUrl(Uri.parse(url))) {
