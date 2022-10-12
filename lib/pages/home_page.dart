@@ -570,65 +570,78 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
               Text(translateEng("Update Timeout (hours)"), style: TextStyle(color: Main.appTheme.titleTextColor)),
               Row(
                 children: [
-                  SizedBox(
-                    width: (Platform.isWindows ? 0.04 : 0.08) * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
-                    height: (Platform.isWindows ? 0.04 : 0.08) * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            offset: const Offset(0, 4),
-                            color: Colors.pink.withOpacity(0.3),
-                            blurRadius: 8.0,
-                            spreadRadius: 0.0,
-                          ),
-                        ],
-                      ),
-                      child: CounterButton(
-                        isIncrement: false,
-                        onPressed: () {
-                          setState(() {
-                            if (Main.hourUpdate == 24) return;
-                            Main.hourUpdate--;
-                          });
-                        },
-                      ),
-                    ),
+                  Slider(
+                    value: Main.days,
+                    onChanged: (newValue) {
+                      setState(() {
+                        print("New value: " + newValue.toString());
+                        Main.days = newValue;
+                      });
+                    },
+                    min: 1,
+                    max: 5,
+                    divisions: 4,
+                    label: "${(Main.days.toInt())} days",
                   ),
-                  SizedBox(
-                    width: width * 0.03,
-                    height: height * 0.03,
-                  ),
-                  Text("${Main.hourUpdate}", style: TextStyle(color: Main.appTheme.titleTextColor)),
-                  SizedBox(
-                    width: width * 0.03,
-                    height: height * 0.03,
-                  ),
-                  SizedBox(
-                    width: (Platform.isWindows ? 0.04 : 0.08) * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
-                    height: (Platform.isWindows ? 0.04 : 0.08) * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            offset: const Offset(0, 4),
-                            color: Colors.pink.withOpacity(0.3),
-                            blurRadius: 8.0,
-                            spreadRadius: 0.0,
-                          ),
-                        ],
-                      ),
-                      child: CounterButton(
-                        isIncrement: true,
-                        onPressed: () {
-                          setState(() {
-                            if (Main.hourUpdate == 48) return;
-                            Main.hourUpdate++;
-                          });
-                        },
-                      ),
-                    ),
-                  )
+                  // SizedBox(
+                  //   width: (Platform.isWindows ? 0.04 : 0.08) * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
+                  //   height: (Platform.isWindows ? 0.04 : 0.08) * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
+                  //   child: Container(
+                  //     decoration: BoxDecoration(
+                  //       boxShadow: [
+                  //         BoxShadow(
+                  //           offset: const Offset(0, 4),
+                  //           color: Colors.pink.withOpacity(0.3),
+                  //           blurRadius: 8.0,
+                  //           spreadRadius: 0.0,
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     child: CounterButton(
+                  //       isIncrement: false,
+                  //       onPressed: () {
+                  //         setState(() {
+                  //           if (Main.hourUpdate == 24) return;
+                  //           Main.hourUpdate--;
+                  //         });
+                  //       },
+                  //     ),
+                  //   ),
+                  // ),
+                  // SizedBox(
+                  //   width: width * 0.03,
+                  //   height: height * 0.03,
+                  // ),
+                  // Text("${Main.hourUpdate}", style: TextStyle(color: Main.appTheme.titleTextColor)),
+                  // SizedBox(
+                  //   width: width * 0.03,
+                  //   height: height * 0.03,
+                  // ),
+                  // SizedBox(
+                  //   width: (Platform.isWindows ? 0.04 : 0.08) * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
+                  //   height: (Platform.isWindows ? 0.04 : 0.08) * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
+                  //   child: Container(
+                  //     decoration: BoxDecoration(
+                  //       boxShadow: [
+                  //         BoxShadow(
+                  //           offset: const Offset(0, 4),
+                  //           color: Colors.pink.withOpacity(0.3),
+                  //           blurRadius: 8.0,
+                  //           spreadRadius: 0.0,
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     child: CounterButton(
+                  //       isIncrement: true,
+                  //       onPressed: () {
+                  //         setState(() {
+                  //           if (Main.hourUpdate == 48) return;
+                  //           Main.hourUpdate++;
+                  //         });
+                  //       },
+                  //     ),
+                  //   ),
+                  // )
                 ],
               ),
             ],
