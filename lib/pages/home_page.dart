@@ -333,6 +333,26 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
               SizedBox(height: height * 0.01),
               ListTile(
                 onTap: () {
+                  if (Main.isFacDataFilled) {
+                    Navigator.pushNamed(context, "/home/emptyclassrooms");
+                  } else {
+                    showToast(
+                      translateEng("The courses could not be loaded!"),
+                      duration: const Duration(milliseconds: 1500),
+                      position: ToastPosition.bottom,
+                      backgroundColor: Colors.blue.withOpacity(0.8),
+                      radius: 100.0,
+                      textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
+                    );
+                  }
+                },
+                title: Text(translateEng('Empty Classrooms'), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                subtitle: Text(translateEng('Find empty classrooms inside the university, a better place than the desperate library'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
+                leading: Icon(Icons.play_lesson, color: Main.appTheme.titleIconColor),
+              ),
+              SizedBox(height: height * 0.01),
+              ListTile(
+                onTap: () {
                   Navigator.pushNamed(context, "/home/favcourses");
                 },
                 title: Text(translateEng('Favourite Courses'), style: TextStyle(color: Main.appTheme.titleTextColor)),
@@ -574,7 +594,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                     value: Main.days,
                     onChanged: (newValue) {
                       setState(() {
-                        print("New value: " + newValue.toString());
+                        // print("New value: " + newValue.toString());
                         Main.days = newValue;
                       });
                     },

@@ -431,7 +431,7 @@ class EditCoursePageState extends State<EditCoursePage> {
                               width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.5 : 0.7),
                               height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.5 : 0.7),
                               child: CustomPaint(painter:
-                            TimetableCanvas(beginningPeriods: subject.bgnPeriods, days: subject.days, hours: subject.hours, isForSchedule: false))
+                            TimetableCanvas(beginningPeriods: subject.bgnPeriods, days: subject.days, hours: subject.hours, isForSchedule: false, isForClassrooms: false))
                           ) : Container(),
                         ],
                       ),

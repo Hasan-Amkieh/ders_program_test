@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io' show Platform;
 
+import 'package:Atsched/pages/empty_courses_page.dart';
 import 'package:Atsched/pages/windows_webview_unsupported_page.dart';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 
@@ -694,6 +695,7 @@ Future main() async {
         "/webpage": (context) => Platform.isWindows ? WebpageComputer() : WebpagePhone(),
         "/update": (context) => UpdatePage(),
         "/home/searchcourses": (contetx) => const SearchPage(),
+        "/home/emptyclassrooms": (contetx) => EmptyCoursesPage(),
         "/home/favcourses": (context) => FavCourses(),
         "/home/editcourses": (context) => EditCoursePage(),
         "/home/editcourses/addcourses": (context) => AddCoursesPage(),

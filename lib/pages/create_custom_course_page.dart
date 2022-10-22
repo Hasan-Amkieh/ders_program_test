@@ -665,7 +665,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                   width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.35 : 0.5),
                   height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.35 : 0.5),
                   child: CustomPaint(painter:
-                  TimetableCanvas(beginningPeriods: bgnPeriods, days: days, hours: widget.hours, isForSchedule: false)
+                  TimetableCanvas(beginningPeriods: bgnPeriods, days: days, hours: widget.hours, isForSchedule: false, isForClassrooms: false)
                   )
               )
             ],

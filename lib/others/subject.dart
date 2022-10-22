@@ -421,3 +421,14 @@ class SchedulerSubjectData { // used inside the schedule page: stores the chosen
 
 }
 
+class Classroom {
+
+  String classroom = "";
+  List<int> hours = [];
+  List<List<int>> bgnPeriods = [];
+  List<List<int>> days = [];
+
+  Classroom({required this.classroom, required this.days, required this.bgnPeriods, required this.hours});
+
+}
+

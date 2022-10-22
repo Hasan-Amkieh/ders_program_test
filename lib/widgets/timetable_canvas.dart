@@ -12,7 +12,8 @@ class TimetableCanvas extends CustomPainter {
   List<List<int>> days;
   List<int> hours;
   bool isForSchedule;
-  TimetableCanvas({required this.beginningPeriods, required this.days, required this.hours, required this.isForSchedule});
+  bool isForClassrooms;
+  TimetableCanvas({required this.beginningPeriods, required this.days, required this.hours, required this.isForSchedule, required this.isForClassrooms});
 
   static bool isSatNeeded = false;
   static bool isSunNeeded = false;
