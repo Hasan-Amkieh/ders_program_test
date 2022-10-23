@@ -65,6 +65,9 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
                     classrooms[searchI].days[0][a_] == Main.facultyData.subjects[subI].days[periodI][classroomI] &&
                     classrooms[searchI].bgnPeriods[0][a_] == Main.facultyData.subjects[subI].bgnPeriods[periodI][classroomI]) {
                   isFound = true;
+                  if (classrooms[searchI].hours[a_] < Main.facultyData.subjects[subI].hours[periodI]) {
+                    classrooms[searchI].hours[a_] = Main.facultyData.subjects[subI].hours[periodI];
+                  }
                 }
               }
               if (isFound) {
@@ -86,16 +89,20 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
             ));
           }
 
-          if (!isPeriodFound && atI != -1) { // not the issue, the issue is that no periods are being added from the other courses
+          if (atI != -1) {
+            if (!isPeriodFound) { // not the issue, the issue is that no periods are being added from the other courses
 
-            for (int i = 0 ; i < Main.facultyData.subjects[subI].days[periodI].length ; i++) {
-              classrooms[atI].days[0].add(Main.facultyData.subjects[subI].days[periodI][i]);
-            }
-            for (int i = 0 ; i < Main.facultyData.subjects[subI].bgnPeriods[periodI].length ; i++) {
-              classrooms[atI].bgnPeriods[0].add(Main.facultyData.subjects[subI].bgnPeriods[periodI][i]);
-            }
-            classrooms[atI].hours.add(Main.facultyData.subjects[subI].hours[periodI]);
+              classrooms[atI].days.add([]);
+              classrooms[atI].bgnPeriods.add([]);
+              for (int i = 0 ; i < Main.facultyData.subjects[subI].days[periodI].length ; i++) {
+                classrooms[atI].days[classrooms[atI].days.length - 1].add(Main.facultyData.subjects[subI].days[periodI][i]);
+              }
+              for (int i = 0 ; i < Main.facultyData.subjects[subI].bgnPeriods[periodI].length ; i++) {
+                classrooms[atI].bgnPeriods[classrooms[atI].days.length - 1].add(Main.facultyData.subjects[subI].bgnPeriods[periodI][i]);
+              }
+              classrooms[atI].hours.add(Main.facultyData.subjects[subI].hours[periodI]);
 
+            }
           }
 
         }
