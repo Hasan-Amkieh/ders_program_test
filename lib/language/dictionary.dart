@@ -221,6 +221,29 @@ String translateEng(String eng) {
 
 }
 
+int stringToDay(String str) {
+
+  switch(str) {
+    case "Monday":
+      return 1;
+    case "Tuesday":
+      return 2;
+    case "Wednesday":
+      return 3;
+    case "Thursday":
+      return 4;
+    case "Friday":
+      return 5; // Sunday
+    case "Saturday":
+      return 6;
+    case "Sunday":
+      return 7;
+  }
+
+  return -1;
+
+}
+
 String dayToString(int day) {
 
   switch(day) {
@@ -262,6 +285,64 @@ String dayToStringShort(int day) {
   }
 
   return "";
+
+}
+
+int stringToBgnPeriod(String str) {
+
+  switch(str) {
+    case "9:30":
+      return 1;
+    case "10:30":
+      return 2;
+    case "11:30":
+      return 3;
+    case "12:30":
+      return 4;
+    case "13:30":
+      return 5;
+    case "14:30":
+      return 6;
+    case "15:30":
+      return 7;
+    case "16:30":
+      return 8;
+    case "17:30":
+      return 9;
+    case "18:30":
+      return 10;
+  }
+
+  return -1;
+
+}
+
+int stringToEndPeriod(String str) {
+
+  switch(str) {
+    case "9:20":
+      return 1;
+    case "10:20":
+      return 2;
+    case "11:20":
+      return 3;
+    case "12:20":
+      return 4;
+    case "13:20":
+      return 5;
+    case "14:20":
+      return 6;
+    case "15:20":
+      return 7;
+    case "16:20":
+      return 8;
+    case "17:20":
+      return 9;
+    case "18:20":
+      return 10;
+  }
+
+  return -1;
 
 }
 

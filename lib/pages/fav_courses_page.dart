@@ -179,7 +179,7 @@ class FavCoursesState extends State<FavCourses> {
                             height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.4 : 0.7),
                             child: CustomPaint(painter:
                         TimetableCanvas(
-                            beginningPeriods: Main.favCourses[count].subject.bgnPeriods, days: Main.favCourses[count].subject.days, hours: Main.favCourses[count].subject.hours, isForSchedule: false, isForClassrooms: false))
+                            beginningPeriods: Main.favCourses[count].subject.bgnPeriods, days: Main.favCourses[count].subject.days, hours: Main.favCourses[count].subject.hours, isForSchedule: false, isForClassrooms: false, wantedPeriod: PeriodData.EMPTY))
                         ) : Container(),
                       ],
                     ),

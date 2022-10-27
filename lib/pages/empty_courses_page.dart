@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 
 import '../language/dictionary.dart';
-import '../language/teacherdictionary.dart';
 import '../main.dart';
 import '../others/subject.dart';
 import '../widgets/timetable_canvas.dart';
@@ -24,9 +23,7 @@ class EmptyCoursesPage extends StatefulWidget {
 class EmptyCoursesState extends State<EmptyCoursesPage> {
 
   String query = "";
-  List<Subject> subjects = Main.facultyData.subjects;
-  List<Subject> subjectsOfDep = Main.facultyData.subjects;
-  List<String> deps = [];
+  List<Classroom> classrooms_ = []; // to be changed according to the terms of the search
 
   List<String> days = ["Any", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
   String day = "Any";
@@ -35,7 +32,7 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
   List<String> endHrs = ["Any", "9:20", "10:20", "11:20", "12:20", "13:20", "14:20", "15:20", "16:20", "17:20", "18:20"];
   String bgnHr = "Any", endHr = "Any";
 
-  static List<Classroom> classrooms = [];
+  List<Classroom> classrooms = []; // not to be changed!
 
 
   @override
@@ -61,7 +58,7 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
               isClassroomFound = true;
               bool isFound = false;
               for (int a_ = 0 ; a_ < classrooms[searchI].days[0].length ; a_++) {
-                if (Main.facultyData.subjects[subI].bgnPeriods[periodI].length > classroomI && classrooms[searchI].bgnPeriods[0].length > a_ &&
+                if (Main.facultyData.subjects[subI].days[periodI].length > classroomI && Main.facultyData.subjects[subI].bgnPeriods[periodI].length > classroomI && classrooms[searchI].bgnPeriods[0].length > a_ &&
                     classrooms[searchI].days[0][a_] == Main.facultyData.subjects[subI].days[periodI][classroomI] &&
                     classrooms[searchI].bgnPeriods[0][a_] == Main.facultyData.subjects[subI].bgnPeriods[periodI][classroomI]) {
                   isFound = true;
@@ -111,6 +108,8 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
 
     }
 
+    classrooms_ = [...classrooms];
+
   }
 
   @override
@@ -157,6 +156,7 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
                         onChanged: (String? newValue) {
                           setState(() {
                             day = newValue!;
+                            search(query);
                           });
                         },
                       ),
@@ -184,6 +184,7 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
                                     if (int.parse(newBgnHr.substring(0, newBgnHr.indexOf(":"))) < int.parse(endHr.substring(0, endHr.indexOf(":")))) {
                                       setState(() {
                                         bgnHr = newValue!;
+                                        search(query);
                                       });
                                     } else {
                                       showToast(
@@ -198,6 +199,7 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
                                   } else if (newValue == "Any" || endHr == "Any") {
                                     setState(() {
                                       bgnHr = newValue!;
+                                      search(query);
                                     });
                                   }
                                 },
@@ -224,6 +226,7 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
                                     if (int.parse(newBgnHr.substring(0, newBgnHr.indexOf(":"))) > int.parse(bgnHr.substring(0, bgnHr.indexOf(":")))) {
                                       setState(() {
                                         endHr = newValue!;
+                                        search(query);
                                       });
                                     } else {
                                       showToast(
@@ -238,6 +241,7 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
                                   } else if (newValue == "Any" || bgnHr == "Any") {
                                     setState(() {
                                       endHr = newValue!;
+                                      search(query);
                                     });
                                   }
 
@@ -263,7 +267,7 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
                   child: ListView.builder(
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
-                    itemCount: classrooms.length,
+                    itemCount: classrooms_.length,
                     itemBuilder: (context, index) {
                       return buildClassrooms(index);
                     },
@@ -282,7 +286,14 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
 
     double width = (window.physicalSize / window.devicePixelRatio).width, height = (window.physicalSize / window.devicePixelRatio).height;
 
-    String classroom = classrooms[index].classroom;
+    String classroom = classrooms_[index].classroom;
+
+    PeriodData period;
+    if (day == "Any" || bgnHr == "Any" || endHr == "Any") {
+      period = PeriodData.EMPTY;
+    } else {
+      period = PeriodData(day: stringToDay(day), bgnPeriod: stringToBgnPeriod(bgnHr), hours: stringToEndPeriod(endHr) - stringToBgnPeriod(bgnHr));
+    }
 
     return ListTile(
       title: Text(classroom, style: TextStyle(color: Main.appTheme.titleTextColor)),
@@ -294,7 +305,8 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
           context: context,
           title: Column(
             children: [
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Expanded(
                   child: Center(child: Text(
                       classroom,
@@ -306,11 +318,55 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
               SizedBox(
                 height: height * 0.03,
               ),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 0.01 * width,
+                          height: 0.01 * width,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.green
+                          ),
+                        ),
+                        SizedBox(
+                          width: width * 0.01,
+                        ),
+                        Text(translateEng("Requested Time"), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                      ],
+                    ),
+                    SizedBox(
+                      width: width * 0.03,
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          width: 0.01 * width,
+                          height: 0.01 * width,
+                          decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.blue
+                          ),
+                        ),
+                        SizedBox(
+                          width: width * 0.01,
+                        ),
+                        Text(translateEng("Reserved"), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                      ],
+                    ),
+                ],
+              ),
+              SizedBox(
+                height: height * 0.03,
+              ),
               SizedBox(
                   width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.4 : 0.7),
                   height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.4 : 0.7),
                   child: CustomPaint(painter:
-                  TimetableCanvas(beginningPeriods: classrooms[index].bgnPeriods, days: classrooms[index].days, hours: classrooms[index].hours, isForSchedule: false, isForClassrooms: true))
+                  TimetableCanvas(beginningPeriods: classrooms_[index].bgnPeriods, days: classrooms_[index].days, hours: classrooms_[index].hours, isForSchedule: false, isForClassrooms: true,
+                      wantedPeriod: period))
               ),
             ],
           ),
@@ -328,61 +384,117 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
     query = query.toLowerCase();
     query = convertTurkishToEnglish(query);
 
-    final subjects = subjectsOfDep.where((subject) {
+    List<Classroom> classrooms_ = classrooms.where((classroom) {
 
-      if (/*searchByCourseName*/ true) {
-        String name = subject.customName;
+      String name = classroom.classroom;
 
-        name = name.toLowerCase();
-        name = convertTurkishToEnglish(name);
-        if (name.contains(query)) {
-          return true;
-        }
-      }
+      name = name.toLowerCase();
+      name = convertTurkishToEnglish(name);
 
-      bool isFound = false;
-      if (/*searchByTeacher*/ true) {
-        subject.teacherCodes.forEach((list) {
-          list.forEach((teacherCode) {
-            if (isFound) {
-              return ;
-            }
-            if (convertTurkishToEnglish(translateTeacher(teacherCode: teacherCode, subject: subject).toLowerCase()).contains(query)) {
-              isFound = true;
-              return ;
-            }
-          });
-        });
-        if (isFound) {
-          return true;
-        }
-      }
-
-      if (/*searchByClassroom*/ true) {
-        subject.classrooms.forEach((list) {
-          list.forEach((classroom) {
-            if (isFound) {
-              return ;
-            }
-            if (convertTurkishToEnglish(classroom.toLowerCase()).contains(query)) {
-              isFound = true;
-              return ;
-            }
-          });
-        });
-        if (isFound) {
-          return true;
-        }
-      }
-
-      return false;
+      return name.contains(query);
 
     }).toList();
 
+    classrooms_ = searchByTime(classrooms_);
+
     setState(() {
       this.query = query;
-      this.subjects = subjects;
+      this.classrooms_ = classrooms_;
     });
+
+  }
+
+  List<Classroom> searchByTime(List<Classroom> rooms) {
+
+    if ((day == "Any" && bgnHr == "Any" && endHr == "Any") || (bgnHr == "Any" || endHr == "Any")) {
+
+      return rooms;
+
+    } else {
+
+      int dayToSearch;
+      if (day != "Any") {
+        dayToSearch = stringToDay(day);
+      } else {
+        dayToSearch = -1;
+      }
+
+      int bgnHrToSearch, endHrToSearch;
+      if (bgnHr != "Any") {
+        bgnHrToSearch = stringToBgnPeriod(bgnHr);
+      } else {
+        bgnHrToSearch = -1;
+      }
+      if (endHr != "Any") {
+        endHrToSearch = stringToEndPeriod(endHr);
+      } else {
+        endHrToSearch = -1;
+      }
+
+      int hours1;
+      int bgnHour1;
+      int hours2;
+      int bgnHour2;
+
+      bool isEmpty = true; // by default, it is not empty, try to find if the period we need has one period that is empty at the same time
+      List<Classroom> rooms_ = rooms.where((classroom) {
+        isEmpty = true;
+
+        List<int> daysUsed = [];
+
+        for (int i = 0 ; i < classroom.days.length ; i++) {
+          for (int j = 0 ; j < classroom.days[i].length ; j++) {
+            if (!daysUsed.contains(classroom.days[i][j])) {
+              daysUsed.add(classroom.days[i][j]);
+            }
+          }
+        }
+
+        if (dayToSearch == -1) {
+          bool emptyDayFound = false;
+          for (int d = 1 ; d < 8 ; d++) {
+            if (!daysUsed.contains(d)) {
+              emptyDayFound = true;
+              break;
+            }
+          }
+          if (emptyDayFound) {
+            return true;
+          }
+        }
+
+        for (int i = 0 ; i < classroom.days.length ; i++) {
+          for (int j = 0 ; j < classroom.days[i].length ; j++) {
+            if (dayToSearch != -1) {
+              hours1 = endHrToSearch - bgnHrToSearch;
+              bgnHour1 = bgnHrToSearch;
+              hours2 = classroom.hours[i];
+              bgnHour2 = classroom.bgnPeriods[i][j];
+              if (
+                  (bgnHour1 >= bgnHour2 && bgnHour1 < (bgnHour2 + hours2)) ||
+                  ((bgnHour1 + hours1) > bgnHour2 && (bgnHour1 + hours1) < (bgnHour2 + hours2))
+                    || (bgnHour2 >= bgnHour1 && bgnHour2 < (bgnHour1 + hours1)) ||
+                      ((bgnHour2 + hours2) > bgnHour1 && (bgnHour2 + hours2) < (bgnHour1 + hours1))
+                ) {
+                if (dayToSearch == classroom.days[i][j]) {
+                  isEmpty = false;
+                  break;
+
+                }
+              }
+            }
+          }
+          if (!isEmpty) {
+            break;
+          }
+        }
+
+        return isEmpty;
+
+      }).toList();
+
+      return rooms_;
+    }
 
   }
 

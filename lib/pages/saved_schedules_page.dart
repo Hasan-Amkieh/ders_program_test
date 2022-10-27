@@ -241,7 +241,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                         width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.6 : 0.7),
                         height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.6 : 0.7),
                         child: CustomPaint(painter:
-                        TimetableCanvas(beginningPeriods: beginningPeriods, days: days, hours: hours, isForSchedule: true, isForClassrooms: false)
+                        TimetableCanvas(beginningPeriods: beginningPeriods, days: days, hours: hours, isForSchedule: true, isForClassrooms: false, wantedPeriod: PeriodData.EMPTY)
                         ),
                       ),
                     ],
@@ -270,7 +270,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                             width: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.6 : 0.7),
                             height: (MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.6 : 0.7),
                             child: CustomPaint(painter:
-                            TimetableCanvas(beginningPeriods: beginningPeriods, days: days, hours: hours, isForSchedule: true, isForClassrooms: false)
+                            TimetableCanvas(beginningPeriods: beginningPeriods, days: days, hours: hours, isForSchedule: true, isForClassrooms: false, wantedPeriod: PeriodData.EMPTY)
                             ),
                           )
                         ],

@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:Atsched/main.dart';
+import 'package:Atsched/others/subject.dart';
 import 'package:Atsched/others/university.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +14,9 @@ class TimetableCanvas extends CustomPainter {
   List<int> hours;
   bool isForSchedule;
   bool isForClassrooms;
-  TimetableCanvas({required this.beginningPeriods, required this.days, required this.hours, required this.isForSchedule, required this.isForClassrooms});
+  PeriodData wantedPeriod;
+
+  TimetableCanvas({required this.beginningPeriods, required this.days, required this.hours, required this.isForSchedule, required this.isForClassrooms, required this.wantedPeriod});
 
   static bool isSatNeeded = false;
   static bool isSunNeeded = false;
@@ -122,7 +125,7 @@ class TimetableCanvas extends CustomPainter {
     ..style = PaintingStyle.fill;
 
     Paint periodPaintCol = Paint()
-      ..color = Colors.red
+      ..color = isForClassrooms ? Colors.blue : Colors.red
       ..style = PaintingStyle.fill;
 
     double dx, dy;
@@ -152,6 +155,14 @@ class TimetableCanvas extends CustomPainter {
           canvas.drawRect(rect, isCol ? periodPaintCol : periodPaint);
         }
       }
+    }
+
+    if (isForClassrooms && wantedPeriod.day != -1 && wantedPeriod.bgnPeriod != -1 && wantedPeriod.hours != -1) {
+      dx = (wantedPeriod.day - ((isSunNeeded && !isSatNeeded) ? 1 : 0)) * colWidth + (wantedPeriod.day == 1 ? 1 : 0);
+      dy = (wantedPeriod.bgnPeriod) * rowHeight + 1; // (beginningPeriods[i][j] == 1 ? 1 : 0)
+
+      rect = Offset(dx, dy) & ui.Size(colWidth * 1, rowHeight * wantedPeriod.hours);
+      canvas.drawRect(rect, Paint()..color=Colors.green..style=PaintingStyle.fill);
     }
 
   }

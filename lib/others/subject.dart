@@ -395,6 +395,8 @@ class PeriodData {
 
   PeriodData({required this.day, required this.bgnPeriod, required this.hours});
 
+  static PeriodData EMPTY = PeriodData(day: -1, bgnPeriod: -1, hours: -1);
+
 }
 
 class CollisionData {
