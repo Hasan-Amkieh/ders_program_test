@@ -441,7 +441,7 @@ class EditCoursePageState extends State<EditCoursePage> {
 
                   } else if (mode == 1) { // edit
 
-                    Main.courseToEdit = subject;
+                    Main.courseToEdit = subject.clone();
                     Main.isEditingCourse = true;
                     Navigator.pushNamed(context, "/home/editcourses/editcourseinfo").then((value) {
 

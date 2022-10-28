@@ -69,8 +69,6 @@ class Main {
     "Bilkent"
   ];
 
-  static double days = 2;
-
   // NOTE: Default values are inside the function readSettings:
   static bool forceUpdate = false;
   static int hourUpdate = 24; // if the time has passed for these hours since the last update, then make an update
@@ -81,6 +79,8 @@ class Main {
   static ThemeMode theme = ThemeMode.dark;
   static bool isThereNewerVersion = false;
   static bool isFacChange = false;
+
+  static double days = 2;
 
   static String newFaculty = "";
 
@@ -186,6 +186,8 @@ class Main {
     }
 
     appTheme = AppTheme(); // this will set the styles depending on the current theme
+
+    days = hourUpdate.toDouble() / 24.0;
 
   }
 

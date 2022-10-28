@@ -83,6 +83,20 @@ class Subject { // represents a class
 
   }
 
+  Subject clone() {
+
+    return Subject(classCode: classCode,
+        departments: [...departments],
+        teacherCodes: [...teacherCodes],
+        hours: [...hours],
+        bgnPeriods: [...bgnPeriods],
+        days: [...days],
+        classrooms: [...classrooms],
+        customName: customName
+    );
+
+  }
+
   void translateTeachers() {
 
     _teachersTranslated = "";
