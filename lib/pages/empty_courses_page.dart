@@ -2,7 +2,6 @@ import 'dart:io' show Platform;
 import 'dart:ui';
 
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 
@@ -146,6 +145,11 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
                   ),
                   Row(
                     children: [
+                      Platform.isWindows ?
+                      Row(children: [Text(translateEng("Classrooms Found:  ${classrooms_.length}"), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                        SizedBox(
+                          width: width * 0.03,
+                        ) ],) : Container(),
                       DropdownButton<String>(
                         dropdownColor: Main.appTheme.scaffoldBackgroundColor,
                         value: day,
@@ -324,8 +328,8 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
                     Row(
                       children: [
                         Container(
-                          width: 0.01 * width,
-                          height: 0.01 * width,
+                          width: (Platform.isWindows ? 0.01 : 0.04) * width,
+                          height: (Platform.isWindows ? 0.01 : 0.04) * width,
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
                             color: Colors.green
@@ -343,8 +347,8 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
                     Row(
                       children: [
                         Container(
-                          width: 0.01 * width,
-                          height: 0.01 * width,
+                          width: (Platform.isWindows ? 0.01 : 0.04) * width,
+                          height: (Platform.isWindows ? 0.01 : 0.04) * width,
                           decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                               color: Colors.blue
@@ -465,7 +469,7 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
 
         for (int i = 0 ; i < classroom.days.length ; i++) {
           for (int j = 0 ; j < classroom.days[i].length ; j++) {
-            if (dayToSearch != -1) {
+            if (dayToSearch != -1 && classroom.bgnPeriods[i].length > j) {
               hours1 = endHrToSearch - bgnHrToSearch;
               bgnHour1 = bgnHrToSearch;
               hours2 = classroom.hours[i];

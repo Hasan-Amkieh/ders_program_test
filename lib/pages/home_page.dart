@@ -458,8 +458,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                 value: Main.uni,
                 items: Main.unis.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem(
-                    value: value,
-                    child: TextButton.icon(onPressed: null, icon: Image.asset("lib/icons/" + value + ".png"),
+                    value: value, // Image.asset("lib/icons/atacs.png", width: IconTheme.of(context).size!, height: IconTheme.of(context).size!)
+                    child: TextButton.icon(onPressed: null, icon: Image.asset("lib/icons/" + value.toLowerCase() + ".png"),
                         label: Text(translateEng(value), style: TextStyle(color: Main.appTheme.titleTextColor))
                     ),
                   );
@@ -587,7 +587,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(translateEng("Update Timeout (hours)"), style: TextStyle(color: Main.appTheme.titleTextColor)),
+              Expanded(child: Text(translateEng("Update Timeout (hours)"), style: TextStyle(color: Main.appTheme.titleTextColor))),
               Row(
                 children: [
                   Slider(
@@ -1073,11 +1073,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
     hoursWidgets.add(SizedBox(width: colWidth, height: rowHeight));
     neededHours.forEach((hr) {
       hoursWidgets.add(Container(
-          padding: EdgeInsets.symmetric(horizontal: colWidth / 4),
-          decoration: BoxDecoration(
-              border: BorderDirectional(bottom: BorderSide(color: horizontalBorderColor, width: 2))
-          ),
-          // color: Main.appTheme.headerBackgroundColor,
+          //padding: EdgeInsets.symmetric(horizontal: colWidth / (Platform.isWindows ? 4 : 6.5)),
+          color: Main.appTheme.headerBackgroundColor,
           child: Center(child: Text(hr.toString() + ':' + University.getBgnMinutes().toString(), style: Main.appTheme.headerSchedulePageTextStyle)),
           height: rowHeight
       ));
