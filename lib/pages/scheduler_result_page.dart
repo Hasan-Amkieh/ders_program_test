@@ -304,7 +304,7 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
                         TextButton(
                           child: Text(translateEng("SAVE")),
                           onPressed: () {
-                            if (nameController.text.isNotEmpty) {
+                            if (nameController.text.isNotEmpty && nameController.text.replaceAll(RegExp('[^A-Za-z0-9\\s]'), '') == nameController.text) {
                               widget.schedules[currentScheduleIndex].scheduleName = nameController.text;
                               widget.isSaved[currentScheduleIndex] = true;
                               Main.schedules.add(widget.schedules[currentScheduleIndex]); // widget.schedules[currentScheduleIndex]
@@ -320,7 +320,7 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
                               );
                             } else {
                               showToast(
-                                translateEng("The name cannot be empty"),
+                                translateEng("The name cannot be empty and can only have numbers and characters"),
                                 duration: const Duration(milliseconds: 1500),
                                 position: ToastPosition.bottom,
                                 backgroundColor: Colors.red.withOpacity(0.8),

@@ -48,6 +48,8 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
 
         for (int classroomI = 0 ; classroomI < Main.facultyData.subjects[subI].classrooms[periodI].length ; classroomI++) {
 
+          print("${Main.facultyData.subjects[subI].days[periodI].length} ${Main.facultyData.subjects[subI].classrooms[periodI].length}");
+
           isClassroomFound = false;
           isPeriodFound = false;
           int atI = -1;

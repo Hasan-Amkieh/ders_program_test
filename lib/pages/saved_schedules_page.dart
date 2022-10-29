@@ -12,7 +12,7 @@ import 'package:Atsched/widgets/timetable_canvas.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
-// import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
+import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:path_provider/path_provider.dart';
@@ -471,7 +471,18 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                   child: Text(translateEng("CHANGE")),
                   onPressed: () {
                     setState(() {
-                      Main.schedules[scheduleIndex].scheduleName = nameController.text;
+                      if (nameController.text.replaceAll(RegExp('[^A-Za-z0-9\\s]'), '') == nameController.text && nameController.text.isNotEmpty) { // then the name is valid:
+                        Main.schedules[scheduleIndex].scheduleName = nameController.text;
+                      } else { // then the name has smth else than the numbers and alphabetical character
+                        showToast(
+                          translateEng("The name can only contain characters and numbers"),
+                          duration: const Duration(milliseconds: 2500),
+                          position: ToastPosition.bottom,
+                          backgroundColor: Colors.red.withOpacity(0.8),
+                          radius: 100.0,
+                          textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
+                        );
+                      }
                     });
                     Navigator.pop(context);
                   },
@@ -486,14 +497,6 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
             );
           }).then((value) {
             Navigator.pop(context);
-            showToast(
-              translateEng("The name was changed"),
-              duration: const Duration(milliseconds: 1500),
-              position: ToastPosition.bottom,
-              backgroundColor: Colors.blue.withOpacity(0.8),
-              radius: 100.0,
-              textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
-            );
           });
         }));
 

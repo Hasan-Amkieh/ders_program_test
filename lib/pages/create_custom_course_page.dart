@@ -245,7 +245,20 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                               width: width * 0.6,
                               child: Main.isEditingCourse ? Text(name, style: TextStyle(color: Main.appTheme.titleIconColor)) : TextFieldWidget(
                                   text: "",
-                                  onChanged: (str) { setState(() {widget.subject.customName = str;}); },
+                                  onChanged: (str) { setState(() {
+                                    if (str.replaceAll(RegExp('[^A-Za-z0-9\\s]'), '') == str) {
+                                      widget.subject.customName = str;
+                                    } else {
+                                      showToast(
+                                        translateEng("The name can only have characters and numbers"),
+                                        duration: const Duration(milliseconds: 2500),
+                                        position: ToastPosition.bottom,
+                                        backgroundColor: Colors.red.withOpacity(0.8),
+                                        radius: 100.0,
+                                        textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
+                                      );
+                                    }
+                                  }); },
                                   hintText: translateEng("e.g.   Basic English II")
                               )
                           ),
@@ -383,6 +396,11 @@ class CustomCoursePageState extends State<CustomCoursePage> {
   }
 
   bool checkIfReadyToConfirm() {
+
+    // Check if the name is valid:
+    if (widget.subject.customName.replaceAll(RegExp('[^A-Za-z0-9\\s]'), '') != widget.subject.customName) {
+      return false;
+    }
 
     if (isThereCol()) { // if there is a collision within the course, then you are not allowed to save the course!
 
