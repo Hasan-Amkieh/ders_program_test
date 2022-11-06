@@ -35,7 +35,7 @@ class Subject { // represents a class
   String customName;
 
   Subject({required this.classCode, required this.departments,
-    required this.teacherCodes, required hours, required List<List<int>> bgnPeriods,
+    required this.teacherCodes, required this.hours, required List<List<int>> bgnPeriods,
     required List<List<int>> days, required this.classrooms, required this.customName}) {
     // In each separate class, we can have multiple teachers with multiple classrooms
 
@@ -54,32 +54,35 @@ class Subject { // represents a class
 
     // NOTE: Zeroes should not be accepted and they cause errors inside the app, they have no meaning thus they should be removed
 
+    // EDIT, V1.4.0: These should not be edited, if the data from the source was malformed it is the uni's responsibility not the app's
 
-    for (int i = 0 ; i < days.length ; i++) {
-      for (int j = 0 ; j < days[i].length ; j++) {
-        if (days[i][j] == 0) {
-          days[i].removeAt(j);
-        }
-      }
-    }
-
-    for (int i = 0 ; i < bgnPeriods.length ; i++) {
-      for (int j = 0 ; j < bgnPeriods[i].length ; j++) {
-        if (bgnPeriods[i][j] == 0) {
-          bgnPeriods[i].removeAt(j);
-        }
-      }
-    }
+    // for (int i = 0 ; i < days.length ; i++) {
+    //   for (int j = 0 ; j < days[i].length ; j++) {
+    //     if (days[i][j] == 0) {
+    //       days[i].removeAt(j);
+    //     }
+    //   }
+    // }
+    //
+    // for (int i = 0 ; i < bgnPeriods.length ; i++) {
+    //   for (int j = 0 ; j < bgnPeriods[i].length ; j++) {
+    //     if (bgnPeriods[i][j] == 0) {
+    //       bgnPeriods[i].removeAt(j);
+    //     }
+    //   }
+    // }
 
     this.days = days;
     this.bgnPeriods = bgnPeriods;
 
-    this.hours = hours.where((element) {
-      if (element == 0) {
-        return false;
-      }
-      return true;
-    }).toList() as List<int>;
+    // V1.4.0: Malformed data is not the app's responsibility:
+
+    // this.hours = hours.where((element) {
+    //   if (element == 0) {
+    //     return false;
+    //   }
+    //   return true;
+    // }).toList() as List<int>;
 
   }
 
@@ -123,7 +126,7 @@ class Subject { // represents a class
   // This function is used to store all the info of the subject into a single string
   // example: Basics of C Programming II|CMPE 1 Reg.,MECE 1 Reg.|[B1007,B2032][1020]|[Sedar Water,Whatever Justdoit][Earth Fofo]|2,3|1,5|1,6
   // departments|classrooms|teacherCodes|hours|bgnPeriods|days
-  String toString() {
+  String toString() { // READ THIS HASAN : CONTINUE CHANGING THE BGNPRDS INTO HOURS
 
     String depSec = "", classroomSec = "", teacherSec = "", hrSec = "", periodSec = "", daySec = "", str = "";
     int index = 1, index_;

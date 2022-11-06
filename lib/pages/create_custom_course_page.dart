@@ -10,6 +10,7 @@ import 'package:oktoast/oktoast.dart';
 
 
 import '../main.dart';
+import '../others/university.dart';
 import '../widgets/counterbutton.dart';
 import '../widgets/timetable_canvas.dart';
 
@@ -122,7 +123,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
           // print("teachers: $teachersList / classrooms $classroomsList");
 
           widget.days.add(dayToString(widget.subject.days[i][j]));
-          widget.bgnHour.add(bgnPeriodToString(widget.subject.bgnPeriods[i][j]));
+          widget.bgnHour.add(University.addMinsToBgnPeriod(widget.subject.bgnPeriods[i][j]));
           widget.hours.add(widget.subject.hours[i]);
 
           periodIndex++;
@@ -226,7 +227,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
       body: SafeArea(
         child: RawScrollbar(
           trackVisibility: true,
-          thumbColor: Colors.redAccent,
+          thumbColor: Colors.blueGrey,
           radius: const Radius.circular(20),
           thickness: 5,
           child: SingleChildScrollView(
@@ -357,38 +358,8 @@ class CustomCoursePageState extends State<CustomCoursePage> {
         listDays.add([7]);
       }
 
-      switch(widget.bgnHour[i]) {
-        case "9:30":
-          listBgnHrs.add([1]);
-          break;
-        case "10:30":
-          listBgnHrs.add([2]);
-          break;
-        case "11:30":
-          listBgnHrs.add([3]);
-          break;
-        case "12:30":
-          listBgnHrs.add([4]);
-          break;
-        case "13:30":
-          listBgnHrs.add([5]);
-          break;
-        case "14:30":
-          listBgnHrs.add([6]);
-          break;
-        case "15:30":
-          listBgnHrs.add([7]);
-          break;
-        case "16:30":
-          listBgnHrs.add([8]);
-          break;
-        case "17:30":
-          listBgnHrs.add([9]);
-          break;
-        case "18:30":
-          listBgnHrs.add([10]);
-          break;
-      }
+      listBgnHrs.add([int.parse(widget.bgnHour[i].substring(0, widget.bgnHour[i].indexOf(":")))]);
+
     }
 
     return <List<List<int>>>[listDays, listBgnHrs];
@@ -398,7 +369,8 @@ class CustomCoursePageState extends State<CustomCoursePage> {
   bool checkIfReadyToConfirm() {
 
     // Check if the name is valid:
-    if (widget.subject.customName.replaceAll(RegExp('[^A-Za-z0-9\\s]'), '') != widget.subject.customName) {
+    if (widget.subject.customName.replaceAll(RegExp('[^A-Za-z0-9\\s\\-üÜğĞöÖçÇşŞ\\(\\)]'), '') != widget.subject.customName) {
+      // print("Invalid name!");
       return false;
     }
 

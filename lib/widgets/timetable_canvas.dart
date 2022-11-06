@@ -49,6 +49,8 @@ class TimetableCanvas extends CustomPainter {
       }
     }
 
+    int bgnHr = 8;
+
     List<List<int>> reservedPeriods = [];
 
     double actualWidth = (size.width - 0);
@@ -149,7 +151,7 @@ class TimetableCanvas extends CustomPainter {
           }
 
           dx = (days[i][j] - ((isSunNeeded && !isSatNeeded) ? 1 : 0)) * colWidth + (days[i][j] == 1 ? 1 : 0);
-          dy = (beginningPeriods[i][j] + l) * rowHeight + 1; // (beginningPeriods[i][j] == 1 ? 1 : 0)
+          dy = (beginningPeriods[i][j] - bgnHr + l) * rowHeight + 1; // (beginningPeriods[i][j] == 1 ? 1 : 0)
 
           rect = Offset(dx, dy) & ui.Size(colWidth * 1, rowHeight * 1);
           canvas.drawRect(rect, isCol ? periodPaintCol : periodPaint);
@@ -159,7 +161,7 @@ class TimetableCanvas extends CustomPainter {
 
     if (isForClassrooms && wantedPeriod.day != -1 && wantedPeriod.bgnPeriod != -1 && wantedPeriod.hours != -1) {
       dx = (wantedPeriod.day - ((isSunNeeded && !isSatNeeded) ? 1 : 0)) * colWidth + (wantedPeriod.day == 1 ? 1 : 0);
-      dy = (wantedPeriod.bgnPeriod) * rowHeight + 1; // (beginningPeriods[i][j] == 1 ? 1 : 0)
+      dy = (wantedPeriod.bgnPeriod - bgnHr) * rowHeight + 1; // (beginningPeriods[i][j] == 1 ? 1 : 0)
 
       rect = Offset(dx, dy) & ui.Size(colWidth * 1, rowHeight * wantedPeriod.hours);
       canvas.drawRect(rect, Paint()..color=Colors.green..style=PaintingStyle.fill);

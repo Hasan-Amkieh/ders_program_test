@@ -1,6 +1,7 @@
 import 'dart:io' show Platform;
 import 'dart:ui';
 
+import 'package:Atsched/others/university.dart';
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
@@ -48,7 +49,7 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
 
         for (int classroomI = 0 ; classroomI < Main.facultyData.subjects[subI].classrooms[periodI].length ; classroomI++) {
 
-          print("${Main.facultyData.subjects[subI].days[periodI].length} ${Main.facultyData.subjects[subI].classrooms[periodI].length}");
+          // print("${Main.facultyData.subjects[subI].days[periodI].length} ${Main.facultyData.subjects[subI].classrooms[periodI].length}");
 
           isClassroomFound = false;
           isPeriodFound = false;
@@ -298,7 +299,7 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
     if (day == "Any" || bgnHr == "Any" || endHr == "Any") {
       period = PeriodData.EMPTY;
     } else {
-      period = PeriodData(day: stringToDay(day), bgnPeriod: stringToBgnPeriod(bgnHr), hours: stringToEndPeriod(endHr) - stringToBgnPeriod(bgnHr));
+      period = PeriodData(day: stringToDay(day), bgnPeriod: University.stringToBgnPeriod(bgnHr), hours: University.stringToBgnPeriod(endHr) - University.stringToBgnPeriod(bgnHr));
     }
 
     return ListTile(
@@ -427,12 +428,12 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
 
       int bgnHrToSearch, endHrToSearch;
       if (bgnHr != "Any") {
-        bgnHrToSearch = stringToBgnPeriod(bgnHr);
+        bgnHrToSearch = University.stringToBgnPeriod(bgnHr);
       } else {
         bgnHrToSearch = -1;
       }
       if (endHr != "Any") {
-        endHrToSearch = stringToEndPeriod(endHr);
+        endHrToSearch = University.stringToBgnPeriod(endHr);
       } else {
         endHrToSearch = -1;
       }

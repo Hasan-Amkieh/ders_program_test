@@ -11,7 +11,6 @@ import 'package:Atsched/others/subject.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import 'package:Atsched/others/departments.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 // import 'package:flutter_branch_sdk/flutter_branch_sdk.dart'; // Deep Links:
@@ -26,6 +25,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../main.dart';
 import '../others/appthemes.dart';
 import '../widgets/counterbutton.dart';
+import '../widgets/emptycontainer.dart';
 
 class Home extends StatefulWidget {
 
@@ -111,9 +111,12 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                     return DropdownButton<String>(
                       dropdownColor: Main.appTheme.scaffoldBackgroundColor,
                       value: Main.department,
-                      items: faculties[Main.faculty]?.keys.map<DropdownMenuItem<String>>((String value) {
+                      items: University.getFacultyDeps(Main.faculty).keys.map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem(value: value, child: Row(children: [
-                          Text(translateEng(value) + "  ", style: TextStyle(color: Main.appTheme.titleTextColor)), Text(translateEng(faculties[Main.faculty]![value] as String), style: TextStyle(fontSize: 10, color: Main.appTheme.titleTextColor))
+                          Text(translateEng(value) + "  ",
+                              style: TextStyle(color: Main.appTheme.titleTextColor)),
+                          Text(translateEng(University.getFacultyDeps(Main.faculty)[value] as String),
+                              style: TextStyle(fontSize: 10, color: Main.appTheme.titleTextColor))
                         ],),);
                       }).toList(),
                       onChanged: (String? newValue) {
@@ -233,7 +236,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                           onPressed: () {
                             Main.forceUpdate = true;
                             Main.faculty = Main.newFaculty;
-                            Main.department = faculties[Main.faculty]?.keys.elementAt(0) as String;
+                            Main.department = University.getFacultyDeps(Main.faculty).keys.elementAt(0);
                             Main.isFacChange = true;
                             Main.save();
                             Navigator.of(context).pop(true);
@@ -472,14 +475,14 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
               )
             ],
           ),
-          Row(
+          University.areFacsSupported() ? Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(translateEng("Faculty"), style: TextStyle(color: Main.appTheme.titleTextColor)),
               DropdownButton<String>(
                 dropdownColor: Main.appTheme.scaffoldBackgroundColor,
                 value: Main.faculty,
-                items: faculties.keys.map<DropdownMenuItem<String>>((String value) {
+                items: University.getFaculties().map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem(value: value, child: Text(translateEng(value), style: TextStyle(color: Main.appTheme.titleTextColor)));
                 }).toList(),
                 onChanged: (String? newValue) {
@@ -499,7 +502,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                             TextButton(onPressed: () {
                               Main.forceUpdate = true;
                               Main.faculty = newValue!;
-                              Main.department = faculties[Main.faculty]?.keys.elementAt(0) as String;
+                              Main.department = University.getFacultyDeps(Main.faculty).keys.elementAt(0);
                               Main.isFacChange = true;
                               Main.restart();
                             },
@@ -518,17 +521,19 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                 },
               )
             ],
-          ),
-          Row(
+          ) : EmptyContainer(),
+          University.areDepsSupported() ? Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(translateEng("Department"), style: TextStyle(color: Main.appTheme.titleTextColor)),
               DropdownButton<String>(
                 dropdownColor: Main.appTheme.scaffoldBackgroundColor,
                 value: Main.department,
-                items: faculties[Main.faculty]?.keys.map<DropdownMenuItem<String>>((String value) {
+                items: University.getFacultyDeps(Main.faculty).keys.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem(value: value, child: Row(children: [
-                    Text(translateEng(value) + "  ", style: TextStyle(color: Main.appTheme.titleTextColor)), Text(translateEng(faculties[Main.faculty]![value] as String), style: TextStyle(fontSize: 10, color: Main.appTheme.titleTextColor))
+                    Text(translateEng(value) + "  ", style: TextStyle(color: Main.appTheme.titleTextColor)),
+                    Text(translateEng(University.getFacultyDeps(Main.faculty)[value]!),
+                        style: TextStyle(fontSize: 10, color: Main.appTheme.titleTextColor))
                   ],),);
                 }).toList(),
                 onChanged: (String? newValue) {
@@ -538,7 +543,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                 },
               )
             ],
-          ),
+          ) : EmptyContainer(),
           SizedBox(
             height: height * 0.04,
           ),
@@ -964,7 +969,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
   }
 
   String courseBeingHovered = "";
-  bool isHovered = false;
+  bool isHovered = false; // only for Computer Versions
 
   Widget buildSchedulePage() {
 
@@ -994,8 +999,37 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
       }
     }
 
+    int bgnHour = 9, endHour = 16;
+
+    List<int> neededHours = []; // 15 and 16 were deleted, now it depends on the courses we have
+
+    Main.schedules[Main.currentScheduleIndex].scheduleCourses.forEach((crs) {
+
+      for (int i = 0 ; i < crs.subject.days.length ; i++) {
+
+        for (int j = 0 ; j < crs.subject.days[i].length ; j++) {
+
+          if (bgnHour > crs.subject.bgnPeriods[i][j]) { // first convert the hours
+            bgnHour = crs.subject.bgnPeriods[i][j];
+          }
+
+          if (endHour < (crs.subject.bgnPeriods[i][j] + crs.subject.hours[i])) {
+            print("The end hour has been changed into ${crs.subject.bgnPeriods[i][j] + crs.subject.hours[i]}");
+            endHour = crs.subject.bgnPeriods[i][j] + crs.subject.hours[i];
+          }
+
+        }
+
+      }
+
+    });
+
+    for (int i = bgnHour ; i <= endHour ; i++) { // equivalent to bgnHour:1:endHour in MATLAB
+      neededHours.add(i);
+    }
+
     double colWidth = (width) / ( 6 + (isSatNeeded ? 1 : 0) + (isSunNeeded ? 1 : 0) ); // 5 days and a col for the clock
-    double rowHeight = (height * 1) / 11; // 10 for the lock and one for the empty box // 91 percent because of the horizontal borders
+    double rowHeight = (height * 1) / (neededHours.length + 1); // some for the clock and one for the empty box // 91 percent because of the horizontal borders
 
     Color emptyCellColor = Main.appTheme.emptyCellColor;
     Color horizontalBorderColor = Colors.black38; // bgnHours seperator
@@ -1004,199 +1038,80 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         border: Border.symmetric(
             horizontal: BorderSide(color: horizontalBorderColor, width: 1)
         )),
-        child: SizedBox(width: colWidth, height: rowHeight,));
+        child: SizedBox(width: colWidth, height: rowHeight,)
+    );
 
     List<Widget> hoursWidgets = [];
-
-    // TODO: TEST: THIS IS HOW it should be made, look into all the courses and get the hours into this list:
-    List<int> neededHours = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
-    // TEST;
 
     hoursWidgets.add(SizedBox(width: colWidth, height: rowHeight));
     neededHours.forEach((hr) {
       hoursWidgets.add(Container(
-          //padding: EdgeInsets.symmetric(horizontal: colWidth / (Platform.isWindows ? 4 : 6.5)),
+          //padding: EdgeInsets.symmetric(horizontal: colWidth / (Platform.isWindows ? 4 : 6.5)), // This screwed up the phone version
           color: Main.appTheme.headerBackgroundColor,
           child: Center(child: Text(hr.toString() + ':' + University.getBgnMinutes().toString(), style: Main.appTheme.headerSchedulePageTextStyle)),
           height: rowHeight
       ));
     });
 
+    List<Widget> colsList = [
+      Container(
+        color: Main.appTheme.headerBackgroundColor, // Main.appTheme.headerBackgroundColor.withGreen(50)
+        child: Column(
+          children: hoursWidgets,
+        ),
+      ),
+      Container(
+        color: Main.appTheme.headerBackgroundColor,
+        child: Column( // Headers
+          children: prepareDay("Mon", rowHeight, colWidth, neededHours.length, emptyCell),
+        ),
+      ),
+      Container(
+        color: Main.appTheme.headerBackgroundColor,
+        child: Column( // Headers
+          children: prepareDay("Tue", rowHeight, colWidth, neededHours.length, emptyCell),
+        ),
+      ),
+      Container(
+        color: Main.appTheme.headerBackgroundColor,
+        child: Column( // Headers
+          children: prepareDay("Wed", rowHeight, colWidth, neededHours.length, emptyCell),
+        ),
+      ),
+      Container(
+        color: Main.appTheme.headerBackgroundColor,
+        child: Column( // Headers
+          children: prepareDay("Thur", rowHeight, colWidth, neededHours.length, emptyCell),
+        ),
+      ),
+      Container(
+        color: Main.appTheme.headerBackgroundColor,
+        child: Column( // Headers
+          children: prepareDay("Fri", rowHeight, colWidth, neededHours.length, emptyCell),
+        ),
+      ),
+      isSatNeeded ? (
+          Container(
+            color: Main.appTheme.headerBackgroundColor,
+            child: Column( // Headers
+              children: prepareDay("Sat", rowHeight, colWidth, neededHours.length, emptyCell),
+            ),
+          )
+      ) : Container(),
+      isSunNeeded ? (
+          Container(
+            color: Main.appTheme.headerBackgroundColor,
+            child: Column( // Headers
+              children: prepareDay("Sun", rowHeight, colWidth, neededHours.length, emptyCell),
+            ),
+          )
+      ) : Container(),
+    ];
+
     List<Widget> coursesList = [
       Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            color: Main.appTheme.headerBackgroundColor, // Main.appTheme.headerBackgroundColor.withGreen(50)
-            child: Column(
-              children: hoursWidgets,
-            ),
-          ),
-          Container(
-            color: Main.appTheme.headerBackgroundColor,
-            child: Column( // Headers
-              children: [
-                Container(
-                  color: Main.appTheme.headerBackgroundColor,
-                  child: Center(
-                    child: Text(translateEng('Mon'), style: Main.appTheme.headerSchedulePageTextStyle)),
-                  height: rowHeight,
-                  width: colWidth,),
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-              ],
-            ),
-          ),
-          Container(
-            color: Main.appTheme.headerBackgroundColor,
-            child: Column( // Headers
-              children: [
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(
-                    child: Text(translateEng('Tue'), style: Main.appTheme.headerSchedulePageTextStyle,)),
-                    height: rowHeight,
-                    width: colWidth),
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-              ],
-            ),
-          ),
-          Container(
-            color: Main.appTheme.headerBackgroundColor,
-            child: Column( // Headers
-              children: [
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(
-                    child: Text(translateEng('Wed'), style: Main.appTheme.headerSchedulePageTextStyle,)),
-                    height: rowHeight,
-                    width: colWidth),
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-              ],
-            ),
-          ),
-          Container(
-            color: Main.appTheme.headerBackgroundColor,
-            child: Column( // Headers
-              children: [
-                SizedBox(
-                    child: Center(
-                    child: Text(translateEng('Thur'), style: Main.appTheme.headerSchedulePageTextStyle)),
-                    height: rowHeight,
-                    width: colWidth),
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-              ],
-            ),
-          ),
-          Container(
-            color: Main.appTheme.headerBackgroundColor,
-            child: Column( // Headers
-              children: [
-                Container(
-                  color: Main.appTheme.headerBackgroundColor,
-                    child: Center(
-                    child: Text(translateEng('Fri'), style: Main.appTheme.headerSchedulePageTextStyle)),
-                    height: rowHeight,
-                    width: colWidth),
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-              ],
-            ),
-          ),
-          isSatNeeded ? (
-              Container(
-                color: Main.appTheme.headerBackgroundColor,
-                child: Column( // Headers
-                  children: [
-                    Container(
-                        color: Main.appTheme.headerBackgroundColor,
-                        child: Center(
-                            child: Text(translateEng('Sat'), style: Main.appTheme.headerSchedulePageTextStyle)),
-                        height: rowHeight,
-                        width: colWidth),
-                    emptyCell,
-                    emptyCell,
-                    emptyCell,
-                    emptyCell,
-                    emptyCell,
-                    emptyCell,
-                    emptyCell,
-                    emptyCell,
-                    emptyCell,
-                    emptyCell,
-                  ],
-                ),
-              )
-          ) : Container(),
-          isSunNeeded ? (
-              Container(
-                color: Main.appTheme.headerBackgroundColor,
-                child: Column( // Headers
-                  children: [
-                    Container(
-                        color: Main.appTheme.headerBackgroundColor,
-                        child: Center(
-                            child: Text(translateEng('Sun'), style: Main.appTheme.headerSchedulePageTextStyle)),
-                        height: rowHeight,
-                        width: colWidth),
-                    emptyCell,
-                    emptyCell,
-                    emptyCell,
-                    emptyCell,
-                    emptyCell,
-                    emptyCell,
-                    emptyCell,
-                    emptyCell,
-                    emptyCell,
-                    emptyCell,
-                  ],
-                ),
-              )
-          ) : Container(),
-        ],
+        children: colsList,
       ),
     ];
 
@@ -1323,8 +1238,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
               height: rowHeight * course.subject.hours[i],
               left: colWidth * (course.subject.days[i][j] - ((course.subject.days[i][j] == 7 && !isSatNeeded) ? 1 : 0)) +
                   (isCol ? (drawingIndex * colWidth) / colSize : 0),
-              top: rowHeight * course.subject.bgnPeriods[i][j] +
-                  2 * (course.subject.bgnPeriods[i][j] - 1),
+              top: rowHeight * (course.subject.bgnPeriods[i][j] - bgnHour + 1) +
+                  2 * (course.subject.bgnPeriods[i][j] - bgnHour),
             ),
           );
         }
@@ -1344,6 +1259,28 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           ),
         ]
     );
+
+  }
+
+  static List<Widget> prepareDay(String day, double rowHeight, double colWidth, int neededRows, Widget emptyCell) {
+
+    List<Widget> list = [
+      Container(
+          color: Main.appTheme.headerBackgroundColor,
+          child: Center(
+              child: Text(translateEng(day), style: Main.appTheme.headerSchedulePageTextStyle)),
+          height: rowHeight,
+          width: colWidth
+      )
+    ];
+
+    for (int i = 0 ; i < neededRows ; i++) {
+      list.add(emptyCell);
+    }
+
+    list;
+
+    return list;
 
   }
 

@@ -471,7 +471,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                   child: Text(translateEng("CHANGE")),
                   onPressed: () {
                     setState(() {
-                      if (nameController.text.replaceAll(RegExp('[^A-Za-z0-9\\s]'), '') == nameController.text && nameController.text.isNotEmpty) { // then the name is valid:
+                      if (nameController.text.replaceAll(RegExp('[^A-Za-z0-9\\s\\-üÜğĞöÖçÇşŞ\\(\\)]'), '') == nameController.text && nameController.text.isNotEmpty) { // then the name is valid:
                         Main.schedules[scheduleIndex].scheduleName = nameController.text;
                       } else { // then the name has smth else than the numbers and alphabetical character
                         showToast(

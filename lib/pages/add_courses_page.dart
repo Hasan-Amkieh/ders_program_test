@@ -1,14 +1,15 @@
 import "dart:io" show Platform;
 import 'dart:ui';
 
+import 'package:Atsched/others/university.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 
 import '../language/dictionary.dart';
 import '../main.dart';
-import '../others/departments.dart';
 import '../others/subject.dart';
+import '../widgets/emptycontainer.dart';
 import '../widgets/searchwidget.dart';
 
 class AddCoursesPage extends StatefulWidget {
@@ -29,7 +30,7 @@ class AddCoursesPageState extends State<AddCoursesPage> {
   static const Duration duration = Duration(milliseconds: 300);
   String depToSearch = translateEng("All");
   String lastDep = translateEng("All");
-  List<String> deps = faculties[Main.faculty]!.keys.toList();
+  List<String> deps = University.getFacultyDeps(Main.faculty).keys.toList();
 
   static bool isForScheduler = false;
 
@@ -104,24 +105,26 @@ class AddCoursesPageState extends State<AddCoursesPage> {
           padding: EdgeInsets.symmetric(vertical: height * 0.02, horizontal: width * 0.05),
           child: Column(
             children: [
-              isForScheduler ? Container() : Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(translateEng("Show courses only for"), style: TextStyle(color: Main.appTheme.titleTextColor)),
-                  DropdownButton<String>(
-                    dropdownColor: Main.appTheme.scaffoldBackgroundColor,
-                    value: depToSearch,
-                    items: deps.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem(value: value, child: Text(value, style: TextStyle(color: Main.appTheme.titleTextColor))
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        depToSearch = newValue!;
-                      });
-                    },
-                  )
-                ],
+              isForScheduler ? Container() : (
+                University.areDepsSupported() ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(translateEng("Show courses only for"), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                    DropdownButton<String>(
+                      dropdownColor: Main.appTheme.scaffoldBackgroundColor,
+                      value: depToSearch,
+                      items: deps.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem(value: value, child: Text(value, style: TextStyle(color: Main.appTheme.titleTextColor))
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          depToSearch = newValue!;
+                        });
+                      },
+                    )
+                  ],
+                ) : EmptyContainer()
               ),
 
               SizedBox(

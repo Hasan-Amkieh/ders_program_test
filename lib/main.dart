@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io' show Platform;
 
+import 'package:Atsched/others/university.dart';
 import 'package:Atsched/pages/empty_courses_page.dart';
 import 'package:Atsched/pages/windows_webview_unsupported_page.dart';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
@@ -34,7 +35,6 @@ import 'package:restart_app/restart_app.dart';
 import 'package:new_version/new_version.dart';
 
 import 'others/appthemes.dart';
-import 'others/departments.dart';
 
 /* NOTES about the project:
 
@@ -682,7 +682,7 @@ Future main() async {
 
   }
 
-  if (Main.forceUpdate && getFacultyLink(Main.department).isEmpty) { // if no link was found, the app will crash, but now it will just not update:
+  if (Main.forceUpdate && University.getFacultyLink(Main.department).isEmpty) { // if no link was found, the app will crash, but now it will just not update:
     Main.forceUpdate = false;
   }
 

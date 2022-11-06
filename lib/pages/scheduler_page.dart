@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'dart:io' show Platform;
 
+import 'package:Atsched/others/university.dart';
+import 'package:Atsched/widgets/emptycontainer.dart';
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:Atsched/language/dictionary.dart';
 import 'package:Atsched/others/subject.dart';
@@ -181,7 +183,7 @@ class SchedulerPageState extends State<SchedulerPage> {
                       },
                     ),
                     Visibility(
-                      visible: subjects.length >= 2,
+                      visible: subjects.length >= 2 && checkIfAllHaveSections(),
                       child: TextButton.icon(
                         icon: const Icon(Icons.search),
                         label: Text(translateEng("Find all possible schedules")),
@@ -446,6 +448,43 @@ class SchedulerPageState extends State<SchedulerPage> {
 
   }
 
+  bool checkIfAllHaveSections() {
+
+    for (int i = 0 ; i < areSectionsShown.length ; i++) {
+
+      bool isOneTrue = false;
+
+      for (int j = 0 ; j < areSectionsShown[i].value.values.length ; j++) {
+
+        if (areSectionsShown[i].value.values.toList()[j]) {
+
+          isOneTrue = true;
+          break;
+
+        }
+
+      }
+
+      if (!isOneTrue) {
+
+        showToast(
+          translateEng("Choose a section for ${areSectionsShown[i].key}"),
+          duration: const Duration(milliseconds: 4000),
+          position: ToastPosition.bottom,
+          backgroundColor: Colors.red,
+          radius: 100.0,
+          textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
+        );
+
+        return false;
+      }
+
+    }
+
+    return true;
+
+  }
+
   Column buildSectionList(int index, double width, double height) {
 
     List<Widget> actions = [];
@@ -492,8 +531,8 @@ class SchedulerPageState extends State<SchedulerPage> {
         for (int i = 0 ; i < secToSubject[sec]!.days.length ; i++) {
           for (int j = 0 ; j < secToSubject[sec]!.days[i].length ; j++) {
             timeStr += "${dayToStringShort(secToSubject[sec]!.days[i][j])}. " +
-                "${bgnPeriodToStringHoursOnly(secToSubject[sec]!.bgnPeriods[i][j])}:30 - " +
-                "${bgnPeriodToStringHoursOnly(secToSubject[sec]!.bgnPeriods[i][j] + secToSubject[sec]!.hours[i])}:20" +
+                "${secToSubject[sec]!.bgnPeriods[i][j]}:" + University.getBgnMinutes().toString() + " - " +
+                "${secToSubject[sec]!.bgnPeriods[i][j] + secToSubject[sec]!.hours[i]}:" + University.getEndMinutes().toString() +
                 " | ";
           }
         }
@@ -563,25 +602,25 @@ class SchedulerPageState extends State<SchedulerPage> {
                   ) : Container(),
                   SizedBox(height: height * 0.02),
                   secToSubject[sec]!.departments.toString().replaceAll(RegExp("[\\[.*?\\]]"), "").trim().isNotEmpty ? Column(children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          translateEng("Departments"),
-                          style: TextStyle(color: Main.appTheme.titleTextColor),
-                        ),
-                        SizedBox(
-                          width: width * 0.02,
-                        ),
-                        Expanded(
-                          child: RichText(
-                            text: TextSpan(
-                              children: depsList,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                   University.areDepsSupported() ?  Row(
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                     children: [
+                       Text(
+                         translateEng("Departments"),
+                         style: TextStyle(color: Main.appTheme.titleTextColor),
+                       ),
+                       SizedBox(
+                         width: width * 0.02,
+                       ),
+                       Expanded(
+                         child: RichText(
+                           text: TextSpan(
+                             children: depsList,
+                           ),
+                         ),
+                       ),
+                     ],
+                   ) : EmptyContainer(),
                     SizedBox(height: height * 0.02),
                   ]) : Container(),
                   SizedBox(height: height * 0.02),

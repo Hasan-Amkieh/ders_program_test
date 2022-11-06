@@ -8,7 +8,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:Atsched/main.dart';
 import 'package:Atsched/others/subject.dart';
 
-import 'others/departments.dart';
+import 'others/university.dart';
 
 //import 'package:Atsched/others/spring_schedules.dart';
 
@@ -345,7 +345,7 @@ class WebpagePhoneState extends State<WebpagePhone> {
                 },
                 initialUrlRequest: URLRequest(
                     url: Uri.parse(
-                        getFacultyLink(Main.department))),
+                        University.getFacultyLink(Main.department))),
                 initialOptions: InAppWebViewGroupOptions(
                   crossPlatform: InAppWebViewOptions(
                       useShouldInterceptAjaxRequest: true),
@@ -632,7 +632,34 @@ class WebpagePhoneState extends State<WebpagePhone> {
                   }
                 });
 
-                // TODO: then fill it inside this class
+                // Translate the bgnHrs into the corresponding clock hours, they are originally 9:30 - 1 / 10:30 - 2 and so on
+                for (int i = 0 ; i < beginningHr.length ; i++) {
+                  for (int j = 0 ; j < beginningHr[i].length ; j++) {
+                    beginningHr[i][j] = beginningHr[i][j] + 8;
+                    if (beginningHr[i][j] >= 24) {
+                      beginningHr[i][j] = beginningHr[i][j] - 24;
+                    }
+                  }
+                }
+
+                // If the day is not between 1 - 7 then that period should be deleted:
+
+                for (int i = 0 ; i < day.length ; i++) {
+                  for (int j = 0 ; j < day[i].length ; j++) {
+                    if (day[i][j] < 1 || day[i][j] > 7) {
+                      // print("A day out of the range is found at : ${names[subjectIndex]}");
+                      day.removeAt(i);
+                      if (beginningHr.length > i) {
+                        beginningHr.removeAt(i);
+                      }
+                      if (hrs.length > i) {
+                        hrs.removeAt(i);
+                      }
+                      break;
+                    }
+                  }
+                }
+
                 subjects.add(Subject(customName: names[subjectIndex], hours: hrs, bgnPeriods: beginningHr, classCode: subjectId.key,
                     classrooms: classrooms, days: day, departments: classes, teacherCodes: teacherCodes));
 

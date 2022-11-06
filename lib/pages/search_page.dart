@@ -2,10 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:Atsched/others/university.dart';
+import 'package:Atsched/widgets/emptycontainer.dart';
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:Atsched/language/dictionary.dart';
 import 'package:Atsched/language/teacherdictionary.dart';
-import 'package:Atsched/others/departments.dart';
 import 'package:Atsched/others/subject.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,7 @@ class SearchPageState extends State<SearchPage> {
   @protected
   @mustCallSuper
   void initState() {
-    deps.addAll(faculties[Main.faculty]!.keys);
+    deps.addAll(University.getFacultyDeps(Main.faculty).keys);
     deps.add(depToSearch);
   }
 
@@ -76,7 +77,7 @@ class SearchPageState extends State<SearchPage> {
           padding: EdgeInsets.all((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.03),
           child: Column(
             children: [
-              Row(
+              University.areDepsSupported() ? Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(translateEng("Only search courses for this department"), style: TextStyle(color: Main.appTheme.titleTextColor)),
@@ -94,7 +95,7 @@ class SearchPageState extends State<SearchPage> {
                     },
                   )
                 ],
-              ),
+              ) : EmptyContainer(),
               Container(
                 margin: const EdgeInsets.fromLTRB(0, 16, 0, 0),
                 child: Row(

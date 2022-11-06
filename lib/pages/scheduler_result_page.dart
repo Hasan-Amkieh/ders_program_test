@@ -11,6 +11,8 @@ import '../language/dictionary.dart';
 import '../main.dart';
 import '../others/appthemes.dart';
 import '../others/subject.dart';
+import '../others/university.dart';
+import 'home_page.dart';
 
 class SchedulerResultPage extends StatefulWidget {
 
@@ -304,7 +306,7 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
                         TextButton(
                           child: Text(translateEng("SAVE")),
                           onPressed: () {
-                            if (nameController.text.isNotEmpty && nameController.text.replaceAll(RegExp('[^A-Za-z0-9\\s]'), '') == nameController.text) {
+                            if (nameController.text.isNotEmpty && nameController.text.replaceAll(RegExp('[^A-Za-z0-9\\s\\-üÜğĞöÖçÇşŞ\\(\\)]'), '') == nameController.text) {
                               widget.schedules[currentScheduleIndex].scheduleName = nameController.text;
                               widget.isSaved[currentScheduleIndex] = true;
                               Main.schedules.add(widget.schedules[currentScheduleIndex]); // widget.schedules[currentScheduleIndex]
@@ -414,8 +416,63 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
 
   Widget buildSchedule(int scheduleIndex) {
 
-    double colWidth = (width) / 7; // 6 days and a col for the clock
-    double rowHeight = (height * 1) / 11; // 10 for the lock and one for the empty box // 91 percent because of the horizontal borders
+    bool isSatNeeded = false, isSunNeeded = false;
+
+    for (int subIndex = 0 ; subIndex < Main.schedules[Main.currentScheduleIndex].scheduleCourses.length ; subIndex++) {
+
+      for (int x = 0 ; x < Main.schedules[Main.currentScheduleIndex].scheduleCourses[subIndex].subject.days.length ; x++) {
+        for (int y = 0 ; y < Main.schedules[Main.currentScheduleIndex].scheduleCourses[subIndex].subject.days[x].length ; y++) {
+          if (!isSatNeeded || !isSunNeeded) {
+            if (Main.schedules[Main.currentScheduleIndex].scheduleCourses[subIndex].subject.days[x][y] == 6) {
+              isSatNeeded = true;
+            }
+            if (Main.schedules[Main.currentScheduleIndex].scheduleCourses[subIndex].subject.days[x][y] == 7) {
+              isSunNeeded = true;
+            }
+          } else {
+            break;
+          }
+        }
+        if (isSatNeeded && isSunNeeded) {
+          break;
+        }
+      }
+      if (isSatNeeded && isSunNeeded) {
+        break;
+      }
+    }
+
+    int bgnHour = 9, endHour = 16;
+
+    List<int> neededHours = []; // 15 and 16 were deleted, now it depends on the courses we have
+
+    widget.schedules[scheduleIndex].scheduleCourses.forEach((crs) {
+
+      for (int i = 0 ; i < crs.subject.days.length ; i++) {
+
+        for (int j = 0 ; j < crs.subject.days[i].length ; j++) {
+
+          if (bgnHour > crs.subject.bgnPeriods[i][j]) { // first convert the hours
+            bgnHour = crs.subject.bgnPeriods[i][j];
+          }
+
+          if (endHour < (crs.subject.bgnPeriods[i][j] + crs.subject.hours[i])) {
+            print("The end hour has been changed into ${crs.subject.bgnPeriods[i][j] + crs.subject.hours[i]}");
+            endHour = crs.subject.bgnPeriods[i][j] + crs.subject.hours[i];
+          }
+
+        }
+
+      }
+
+    });
+
+    for (int i = bgnHour ; i <= endHour ; i++) { // equivalent to bgnHour:1:endHour in MATLAB
+      neededHours.add(i);
+    }
+
+    double colWidth = (width) / ( 6 + (isSatNeeded ? 1 : 0) + (isSunNeeded ? 1 : 0) ); // 5 days and a col for the clock
+    double rowHeight = (height * 1) / (neededHours.length + 1); // some for the clock and one for the empty box // 91 percent because of the horizontal borders
 
     Color emptyCellColor = Main.appTheme.emptyCellColor;
     Color horizontalBorderColor = Colors.black38; // bgnHours seperator
@@ -426,196 +483,77 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
         )),
         child: SizedBox(width: colWidth, height: rowHeight,));
 
+    List<Widget> hoursWidgets = [];
+
+    hoursWidgets.add(SizedBox(width: colWidth, height: rowHeight));
+    neededHours.forEach((hr) {
+      hoursWidgets.add(Container(
+        //padding: EdgeInsets.symmetric(horizontal: colWidth / (Platform.isWindows ? 4 : 6.5)), // This screwed up the phone version
+          color: Main.appTheme.headerBackgroundColor,
+          child: Center(child: Text(hr.toString() + ':' + University.getBgnMinutes().toString(), style: Main.appTheme.headerSchedulePageTextStyle)),
+          height: rowHeight
+      ));
+    });
+
+    List<Widget> colsList = [
+      Container(
+        color: Main.appTheme.headerBackgroundColor, // Main.appTheme.headerBackgroundColor.withGreen(50)
+        child: Column(
+          children: hoursWidgets,
+        ),
+      ),
+      Container(
+        color: Main.appTheme.headerBackgroundColor,
+        child: Column( // Headers
+          children: HomeState.prepareDay("Mon", rowHeight, colWidth, neededHours.length, emptyCell),
+        ),
+      ),
+      Container(
+        color: Main.appTheme.headerBackgroundColor,
+        child: Column( // Headers
+          children: HomeState.prepareDay("Tue", rowHeight, colWidth, neededHours.length, emptyCell),
+        ),
+      ),
+      Container(
+        color: Main.appTheme.headerBackgroundColor,
+        child: Column( // Headers
+          children: HomeState.prepareDay("Wed", rowHeight, colWidth, neededHours.length, emptyCell),
+        ),
+      ),
+      Container(
+        color: Main.appTheme.headerBackgroundColor,
+        child: Column( // Headers
+          children: HomeState.prepareDay("Thur", rowHeight, colWidth, neededHours.length, emptyCell),
+        ),
+      ),
+      Container(
+        color: Main.appTheme.headerBackgroundColor,
+        child: Column( // Headers
+          children: HomeState.prepareDay("Fri", rowHeight, colWidth, neededHours.length, emptyCell),
+        ),
+      ),
+      isSatNeeded ? (
+          Container(
+            color: Main.appTheme.headerBackgroundColor,
+            child: Column( // Headers
+              children: HomeState.prepareDay("Sat", rowHeight, colWidth, neededHours.length, emptyCell),
+            ),
+          )
+      ) : Container(),
+      isSunNeeded ? (
+          Container(
+            color: Main.appTheme.headerBackgroundColor,
+            child: Column( // Headers
+              children: HomeState.prepareDay("Sun", rowHeight, colWidth, neededHours.length, emptyCell),
+            ),
+          )
+      ) : Container(),
+    ];
+
     List<Widget> coursesList = [
       Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            color: Main.appTheme.headerBackgroundColor,
-            child: Column( // Headers
-              children: [
-                SizedBox(width: colWidth, height: rowHeight),
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(child: Text('9:30', style: Main.appTheme.headerSchedulePageTextStyle)),
-                    height: rowHeight),
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(child: Text('10:30', style: Main.appTheme.headerSchedulePageTextStyle)),
-                    height: rowHeight),
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(child: Text('11:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
-                    height: rowHeight),
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(child: Text('12:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
-                    height: rowHeight),
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(child: Text('13:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
-                    height: rowHeight),
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(child: Text('14:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
-                    height: rowHeight),
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(child: Text('15:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
-                    height: rowHeight),
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(child: Text('16:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
-                    height: rowHeight),
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(child: Text('17:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
-                    height: rowHeight),
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(child: Text('18:30', style: Main.appTheme.headerSchedulePageTextStyle,)),
-                    height: rowHeight + height * 0.04),
-              ],
-            ),
-          ),
-          Container(
-            color: Main.appTheme.headerBackgroundColor,
-            child: Column( // Headers
-              children: [
-                Container(
-                  color: Main.appTheme.headerBackgroundColor,
-                  child: Center(
-                      child: Text(translateEng('Mon'), style: Main.appTheme.headerSchedulePageTextStyle)),
-                  height: rowHeight,
-                  width: colWidth,),
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-              ],
-            ),
-          ),
-          Container(
-            color: Main.appTheme.headerBackgroundColor,
-            child: Column( // Headers
-              children: [
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(
-                        child: Text(translateEng('Tue'), style: Main.appTheme.headerSchedulePageTextStyle,)),
-                    height: rowHeight,
-                    width: colWidth),
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-              ],
-            ),
-          ),
-          Container(
-            color: Main.appTheme.headerBackgroundColor,
-            child: Column( // Headers
-              children: [
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(
-                        child: Text(translateEng('Wed'), style: Main.appTheme.headerSchedulePageTextStyle,)),
-                    height: rowHeight,
-                    width: colWidth),
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-              ],
-            ),
-          ),
-          Container(
-            color: Main.appTheme.headerBackgroundColor,
-            child: Column( // Headers
-              children: [
-                Container(
-                    child: Center(
-                        child: Text(translateEng('Thur'), style: Main.appTheme.headerSchedulePageTextStyle)),
-                    height: rowHeight,
-                    width: colWidth),
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-              ],
-            ),
-          ),
-          Container(
-            color: Main.appTheme.headerBackgroundColor,
-            child: Column( // Headers
-              children: [
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(
-                        child: Text(translateEng('Fri'), style: Main.appTheme.headerSchedulePageTextStyle)),
-                    height: rowHeight,
-                    width: colWidth),
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-              ],
-            ),
-          ),
-          Container(
-            color: Main.appTheme.headerBackgroundColor,
-            child: Column( // Headers
-              children: [
-                Container(
-                    color: Main.appTheme.headerBackgroundColor,
-                    child: Center(
-                        child: Text(translateEng('Sat'), style: Main.appTheme.headerSchedulePageTextStyle)),
-                    height: rowHeight,
-                    width: colWidth),
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-                emptyCell,
-              ],
-            ),
-          ),
-        ],
+        children: colsList,
       ),
     ];
 
@@ -719,10 +657,10 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
                 )),
               width: isCol ? colWidth / colSize : colWidth,
               height: rowHeight * course.subject.hours[i],
-              left: colWidth * course.subject.days[i][j] +
+              left: colWidth * (course.subject.days[i][j] - ((course.subject.days[i][j] == 7 && !isSatNeeded) ? 1 : 0)) +
                   (isCol ? (drawingIndex * colWidth) / colSize : 0),
-              top: rowHeight * course.subject.bgnPeriods[i][j] +
-                  2 * (course.subject.bgnPeriods[i][j] - 1),
+              top: rowHeight * (course.subject.bgnPeriods[i][j] - bgnHour + 1) +
+                  2 * (course.subject.bgnPeriods[i][j] - bgnHour),
             ),
           );
         }

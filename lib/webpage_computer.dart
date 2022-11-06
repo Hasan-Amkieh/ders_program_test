@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:Atsched/others/university.dart';
 import 'package:Atsched/pages/loading_update_page.dart';
 import 'package:flutter/material.dart';
 import 'package:Atsched/main.dart';
@@ -11,8 +12,6 @@ import 'package:Atsched/others/subject.dart';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-
-import 'others/departments.dart';
 
 //import 'package:ders_program_test/others/spring_schedules.dart';
 
@@ -129,7 +128,7 @@ function setupHook(xhr) {
 	setup();
 }
       """)
-    ..launch(getFacultyLink(Main.department));
+    ..launch(University.getFacultyLink(Main.department));
 
     timer = Timer.periodic(const Duration(seconds: 1), (Timer t) async {
       try {
@@ -590,7 +589,36 @@ function setupHook(xhr) {
                   }
                 });
 
-                // TODO: then fill it inside this class
+                // Translate the bgnHrs into the corresponding clock hours, they are originally 9:30 - 1 / 10:30 - 2 and so on
+                for (int i = 0 ; i < beginningHr.length ; i++) {
+                  for (int j = 0 ; j < beginningHr[i].length ; j++) {
+                    beginningHr[i][j] = beginningHr[i][j] + 8;
+                    if (beginningHr[i][j] >= 24) {
+                      beginningHr[i][j] = beginningHr[i][j] - 24;
+                    }
+                  }
+                }
+
+                // If the day is not between 1 - 7 then that period should be deleted:
+
+                for (int i = 0 ; i < day.length ; i++) {
+                  for (int j = 0 ; j < day[i].length ; j++) {
+                    if (day[i][j] < 1 || day[i][j] > 7) {
+                      // print("A day out of the range is found at : ${names[subjectIndex]}");
+                      day.removeAt(i);
+                      if (beginningHr.length > i) {
+                        beginningHr.removeAt(i);
+                      }
+                      if (hrs.length > i) {
+                        hrs.removeAt(i);
+                      }
+                      break;
+                    }
+                  }
+                }
+
+                // print("${names[subjectIndex]} has the hrs $hrs");
+
                 subjects.add(Subject(customName: names[subjectIndex], hours: hrs, bgnPeriods: beginningHr, classCode: subjectId.key,
                     classrooms: classrooms, days: day, departments: classes, teacherCodes: teacherCodes));
 

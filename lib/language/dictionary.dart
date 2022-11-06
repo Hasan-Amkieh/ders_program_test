@@ -256,7 +256,7 @@ String dayToString(int day) {
     case 4:
       return "Thursday";
     case 5:
-      return "Friday"; // Sunday
+      return "Friday";
     case 6:
       return "Saturday";
     case 7:
@@ -282,122 +282,8 @@ String dayToStringShort(int day) {
       return "Fri";
     case 6:
       return "Sat";
-  }
-
-  return "";
-
-}
-
-int stringToBgnPeriod(String str) {
-
-  switch(str) {
-    case "9:30":
-      return 1;
-    case "10:30":
-      return 2;
-    case "11:30":
-      return 3;
-    case "12:30":
-      return 4;
-    case "13:30":
-      return 5;
-    case "14:30":
-      return 6;
-    case "15:30":
-      return 7;
-    case "16:30":
-      return 8;
-    case "17:30":
-      return 9;
-    case "18:30":
-      return 10;
-  }
-
-  return -1;
-
-}
-
-int stringToEndPeriod(String str) {
-
-  switch(str) {
-    case "9:20":
-      return 1;
-    case "10:20":
-      return 2;
-    case "11:20":
-      return 3;
-    case "12:20":
-      return 4;
-    case "13:20":
-      return 5;
-    case "14:20":
-      return 6;
-    case "15:20":
-      return 7;
-    case "16:20":
-      return 8;
-    case "17:20":
-      return 9;
-    case "18:20":
-      return 10;
-  }
-
-  return -1;
-
-}
-
-String bgnPeriodToString(int bgnPeriod) {
-
-  switch(bgnPeriod) {
-    case 1:
-      return "9:30";
-    case 2:
-      return "10:30";
-    case 3:
-      return "11:30";
-    case 4:
-      return "12:30";
-    case 5:
-      return "13:30";
-    case 6:
-      return "14:30";
     case 7:
-      return "15:30";
-    case 8:
-      return "16:30";
-    case 9:
-      return "17:30";
-    case 10:
-      return "18:30";
-  }
-
-  return "";
-
-}
-
-String bgnPeriodToStringHoursOnly(int bgnPeriod) {
-
-  switch(bgnPeriod) {
-    case 1:
-      return "9";
-    case 2:
-      return "10";
-    case 3:
-      return "11";
-    case 4:
-      return "12";
-    case 5:
-      return "13";
-    case 6:
-      return "14";
-    case 7:
-      return "15";
-    case 8:
-      return "16";
-    case 9:
-      return "17";
-    case 10:
-      return "18";
+      return "Sun";
   }
 
   return "";
