@@ -64,7 +64,7 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
                     classrooms[searchI].days[0][a_] == Main.facultyData.subjects[subI].days[periodI][classroomI] &&
                     classrooms[searchI].bgnPeriods[0][a_] == Main.facultyData.subjects[subI].bgnPeriods[periodI][classroomI]) {
                   isFound = true;
-                  if (classrooms[searchI].hours[a_] < Main.facultyData.subjects[subI].hours[periodI]) {
+                  if (classrooms[searchI].hours.length > a_ && classrooms[searchI].hours[a_] < Main.facultyData.subjects[subI].hours[periodI]) {
                     classrooms[searchI].hours[a_] = Main.facultyData.subjects[subI].hours[periodI];
                   }
                 }

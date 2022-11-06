@@ -217,7 +217,7 @@ function setupHook(xhr) {
                             if (isTimeDiff) {
                               break;
                             }
-                            if (Main.facultyDataOld!.subjects[i].hours[k] == Main.facultyData.subjects[j].hours[k]) {
+                            if (Main.facultyData.subjects[j].hours.length > k && Main.facultyDataOld!.subjects[i].hours[k] == Main.facultyData.subjects[j].hours[k]) {
                               for (int l = 0; l < Main.facultyDataOld!.subjects[i].days[k].length; l++) {
                                 if (Main.facultyDataOld!.subjects[i].days.length != Main.facultyData.subjects[j].days.length || Main.facultyDataOld!.subjects[i].days[k].length != Main.facultyData.subjects[j].days[k].length) {
                                   isTimeDiff = true;
