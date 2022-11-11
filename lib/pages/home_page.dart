@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 import "dart:io" show Platform;
 
 // import 'dart:async'; // Deep Links:
@@ -26,6 +27,7 @@ import '../main.dart';
 import '../others/appthemes.dart';
 import '../widgets/counterbutton.dart';
 import '../widgets/emptycontainer.dart';
+import 'loading_update_page.dart';
 
 class Home extends StatefulWidget {
 
@@ -67,6 +69,14 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
   void initState() {
 
     super.initState();
+
+    if (Platform.isWindows) {
+
+      final _changeWindowName = LoadingUpdateState.nativeApiLib?.lookup<NativeFunction<Void Function()>>('changeWindowName');
+      Function changeWindowName = _changeWindowName!.asFunction<void Function()>();
+      changeWindowName();
+
+    }
 
     // print("Semester name is : ${Main.facultyData.semesterName}");
 

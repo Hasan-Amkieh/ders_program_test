@@ -45,6 +45,8 @@ class SearchPageState extends State<SearchPage> {
     deps.add(depToSearch);
   }
 
+  static TextEditingController txtController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
 
@@ -163,9 +165,11 @@ class SearchPageState extends State<SearchPage> {
                 ),
               ),
               TextFormField(
+                controller: txtController,
                 style: TextStyle(color: Main.appTheme.titleTextColor),
                 cursorColor: Main.appTheme.titleTextColor,
                 decoration: InputDecoration(
+                  icon: Icon(Icons.search, color: txtController.text.isNotEmpty ? Colors.blue : Main.appTheme.titleTextColor),
                   hintStyle: TextStyle(color: Main.appTheme.hintTextColor),
                   hintText: (searchByCourseName ? (translateEng("Course Code") + ", ") : "") + (searchByTeacher ? (translateEng("Teacher Name") + translateEng(" or ")) : "") + (searchByClassroom ? translateEng("classroom") : ""),
                   labelStyle: TextStyle(color: Main.appTheme.titleTextColor),

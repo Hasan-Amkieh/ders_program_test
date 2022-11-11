@@ -37,7 +37,7 @@ class LoadingUpdateState extends State<LoadingUpdate> {
 
   DateTime lastChanged = DateTime.now();
 
-  static DynamicLibrary? nativeApiLib;
+  static DynamicLibrary? nativeApiLib = Platform.isWindows ? DynamicLibrary.open('api.dll') : null;
 
   @override
   void initState() {
@@ -47,10 +47,6 @@ class LoadingUpdateState extends State<LoadingUpdate> {
     super.initState();
 
     LoadingUpdate.currWidget = this;
-
-    if (Platform.isWindows) {
-      nativeApiLib = DynamicLibrary.open('api.dll');
-    }
 
   }
 

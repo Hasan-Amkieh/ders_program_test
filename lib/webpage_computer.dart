@@ -37,6 +37,10 @@ class WebpageComputerState extends State<WebpageComputer> {
 
     super.initState();
 
+    final _changeWindowName = LoadingUpdateState.nativeApiLib?.lookup<NativeFunction<Void Function()>>('changeWindowName');
+    Function changeWindowName = _changeWindowName!.asFunction<void Function()>();
+    changeWindowName();
+
     currentState = this;
     currWidget = this;
 
@@ -52,20 +56,20 @@ class WebpageComputerState extends State<WebpageComputer> {
 
     final webview = await WebviewWindow.create(
       configuration: CreateConfiguration(
-          windowHeight: 10,
-          windowWidth: 10,
-          title: "Timetable Webpage",
-          titleBarTopPadding: Platform.isMacOS ? 20 : 0,
-          userDataFolderWindows: await _getWebViewPath(),
+        windowHeight: 10,
+        windowWidth: 10,
+        title: "Timetable Webpage",
+        titleBarTopPadding: Platform.isMacOS ? 20 : 0,
+        userDataFolderWindows: await _getWebViewPath(),
         titleBarHeight: 0,
-    ),
+      ),
     );
     state = 2;
     webview
       ..registerJavaScriptMessageHandler("test", (name, body) {
         // debugPrint('on javaScipt message: $name $body');
       })
-    ..setApplicationNameForUserAgent(" WebviewExample/1.0.0")
+      ..setApplicationNameForUserAgent(" WebviewExample/1.0.0")
       ..setPromptHandler((prompt, defaultText) {
         if (prompt == "test") {
           return "Hello World!";
@@ -74,7 +78,7 @@ class WebpageComputerState extends State<WebpageComputer> {
         }
         return "";
       })
-    ..addScriptToExecuteOnDocumentCreated("""
+      ..addScriptToExecuteOnDocumentCreated("""
   const mixinContext = {
     platform: 'Desktop',
     conversation_id: 'conversationId',
@@ -113,11 +117,9 @@ function setupHook(xhr) {
 			return r;
 		}
 	}
-
 	function setter(str) {
 		console.log('set responseText: %s', str);
 	}
-
 	function setup() {
 		Object.defineProperty(xhr, 'responseText', {
 			get: getter,
@@ -128,7 +130,7 @@ function setupHook(xhr) {
 	setup();
 }
       """)
-    ..launch(University.getFacultyLink(Main.department));
+      ..launch(University.getFacultyLink(Main.department));
 
     timer = Timer.periodic(const Duration(seconds: 1), (Timer t) async {
       try {

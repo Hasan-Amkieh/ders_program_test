@@ -6,6 +6,7 @@ import 'dart:io' show Platform;
 import 'package:Atsched/others/university.dart';
 import 'package:Atsched/pages/empty_courses_page.dart';
 import 'package:Atsched/pages/windows_webview_unsupported_page.dart';
+import 'package:Atsched/webpage_computer.dart';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 
 import 'dart:core';
@@ -23,7 +24,6 @@ import 'package:Atsched/pages/scheduler_page.dart';
 import 'package:Atsched/pages/scheduler_result_page.dart';
 import 'package:Atsched/pages/search_page.dart';
 import 'package:Atsched/pages/update_page.dart';
-import 'package:Atsched/webpage_computer.dart';
 import 'package:flutter/material.dart';
 import 'package:Atsched/webpage_phone.dart';
 import 'package:Atsched/pages/home_page.dart';
