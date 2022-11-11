@@ -257,6 +257,15 @@ class SearchPageState extends State<SearchPage> {
                 // print("Launching : ${url}");
                 if (await canLaunchUrl(Uri.parse(url))) {
                   launchUrl(Uri.parse(url));
+                } else {
+                  showToast(
+                    translateEng("The syllabus could not be found"),
+                    duration: const Duration(milliseconds: 1500),
+                    position: ToastPosition.bottom,
+                    backgroundColor: Colors.red.withOpacity(0.8),
+                    radius: 100.0,
+                    textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
+                  );
                 }
               }),
             ],

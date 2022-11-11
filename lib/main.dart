@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:Atsched/others/university.dart';
+import 'package:Atsched/pages/choose_settings_page.dart';
 import 'package:Atsched/pages/empty_courses_page.dart';
 import 'package:Atsched/pages/windows_webview_unsupported_page.dart';
 import 'package:Atsched/webpage_computer.dart';
@@ -61,6 +62,8 @@ class Main {
   static late PackageInfo packageInfo;
 
   static String appDocDir = "";
+
+  static bool firstTime = false;
 
   static String semesterName = "";
 
@@ -183,6 +186,7 @@ class Main {
       }
     } catch(err) {
       print("The settings file was not opened bcs: $err");
+      Main.firstTime = true;
     }
 
     appTheme = AppTheme(); // this will set the styles depending on the current theme
@@ -689,8 +693,15 @@ Future main() async {
   runApp(OKToast(
     child: MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: isSupported ? (!goToUpdatePage ? (forceToHomePage ? "/home" : (Main.isInternetOn ? (Main.forceUpdate ? "/webpage" : "/home") : "/nointernet")) : "/update") : "/webviewunsupported",
+      initialRoute: Main.firstTime ? "/choosesettings" :
+      (isSupported ?
+      (!goToUpdatePage ?
+      (forceToHomePage ?
+      "/home" : (Main.isInternetOn ?
+      (Main.forceUpdate ? "/webpage" : "/home") : "/nointernet")) : "/update") : "/webviewunsupported"),
+
       routes: {
+        "/choosesettings" : (context) => ChooseSettingsPage(),
         "/nointernet" : (context) => NoInternetPage(),
         "/home" : (context) => Home(),
         "/webviewunsupported" : (context) => WebviewUnsupported(),

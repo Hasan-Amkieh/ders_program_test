@@ -114,6 +114,8 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
 
   }
 
+  static TextEditingController txtController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
 
@@ -135,9 +137,11 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
                   SizedBox(
                     width: width * 0.25,
                     child: TextFormField(
+                      controller: txtController,
                       style: TextStyle(color: Main.appTheme.titleTextColor),
                       cursorColor: Main.appTheme.titleTextColor,
                       decoration: InputDecoration(
+                        icon: Icon(Icons.search, color: txtController.text.isNotEmpty ? Colors.blue : Main.appTheme.titleTextColor),
                         hintStyle: TextStyle(color: Main.appTheme.hintTextColor),
                         hintText: ("E.g B1029, L3032"),
                         labelStyle: TextStyle(color: Main.appTheme.titleTextColor),
