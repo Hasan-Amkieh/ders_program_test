@@ -28,8 +28,6 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
   List<String> days = ["Any", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
   String day = "Any";
 
-  List<String> bgnHrs = ["Any", "9:30", "10:30", "11:30", "12:30", "13:30", "14:30", "15:30", "16:30", "17:30", "18:30"];
-  List<String> endHrs = ["Any", "9:20", "10:20", "11:20", "12:20", "13:20", "14:20", "15:20", "16:20", "17:20", "18:20"];
   String bgnHr = "Any", endHr = "Any";
 
   List<Classroom> classrooms = []; // not to be changed!
@@ -176,90 +174,119 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
                       ),
                       Column(
                         children: [
-                          Row(
-                            children: [
-                              Text(translateEng("From"), style: TextStyle(color: Main.appTheme.titleIconColor)),
-                              SizedBox(
-                                width: 0.01 * width,
-                              ),
-                              DropdownButton<String>(
-                                dropdownColor: Main.appTheme.scaffoldBackgroundColor,
-                                value: bgnHr,
-                                items: bgnHrs.map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem(value: value, child: Text(translateEng(value), style: TextStyle(color: Main.appTheme.titleTextColor))
+                          TextButton(
+                            child: Text((bgnHr == "Any" || endHr == "Any") ? translateEng("Choose Period") : (bgnHr + " - " + endHr)),
+                            onPressed: () {
+                              showTimePicker(
+                                hourLabelText: translateEng("Start Hour"),
+                                minuteLabelText: translateEng("End Hour"),
+                                helpText: translateEng("Choose Period"),
+                                context: context,
+                                initialTime: (bgnHr == "Any" || endHr == "Any") ?
+                                TimeOfDay(hour: TimeOfDay.now().hour, minute: TimeOfDay.now().hour + 1) :
+                                TimeOfDay(hour: int.parse(bgnHr.substring(0, bgnHr.indexOf(":"))), minute: int.parse(endHr.substring(0, endHr.indexOf(":")))),
+                                initialEntryMode: TimePickerEntryMode.input,
+                                builder: (context, child) {
+                                  return Theme(
+                                      data: ThemeData.dark(),
+                                      child: MediaQuery(
+                                        data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), // it is not working, idk why
+                                        child: child!,
+                                      ),
                                   );
-                                }).toList(),
-                                onChanged: (String? newValue) {
-                                  String newBgnHr = newValue ?? "Any";
-                                  if (newValue != "Any" && endHr != "Any") {
-                                    if (int.parse(newBgnHr.substring(0, newBgnHr.indexOf(":"))) < int.parse(endHr.substring(0, endHr.indexOf(":")))) {
-                                      setState(() {
-                                        bgnHr = newValue!;
-                                        search(query);
-                                      });
-                                    } else {
-                                      showToast(
-                                        translateEng("Beginning Hour cannot exceed " + endHr.toString()),
-                                        duration: const Duration(milliseconds: 1500),
-                                        position: ToastPosition.bottom,
-                                        backgroundColor: Colors.blue.withOpacity(0.8),
-                                        radius: 100.0,
-                                        textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
-                                      );
-                                    }
-                                  } else if (newValue == "Any" || endHr == "Any") {
-                                    setState(() {
-                                      bgnHr = newValue!;
-                                      search(query);
-                                    });
-                                  }
                                 },
-                              ),
-                            ],
+                              ).then((value) {
+                                setState(() {
+                                  bgnHr = value!.hour.toString() + ":" + University.getBgnMinutes().toString();
+                                  endHr = value.minute.toString() + ":" + University.getEndMinutes().toString();
+                                });
+                              });
+                            },
                           ),
-                          Row(
-                            children: [
-                              Text(translateEng("Until"), style: TextStyle(color: Main.appTheme.titleIconColor)),
-                              SizedBox(
-                                width: 0.01 * width,
-                              ),
-                              DropdownButton<String>(
-                                dropdownColor: Main.appTheme.scaffoldBackgroundColor,
-                                value: endHr,
-                                items: endHrs.map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem(value: value, child: Text(translateEng(value), style: TextStyle(color: Main.appTheme.titleTextColor))
-                                  );
-                                }).toList(),
-                                onChanged: (String? newValue) {
-
-                                  String newBgnHr = newValue ?? "Any";
-                                  if (newValue != "Any" && bgnHr != "Any") {
-                                    if (int.parse(newBgnHr.substring(0, newBgnHr.indexOf(":"))) > int.parse(bgnHr.substring(0, bgnHr.indexOf(":")))) {
-                                      setState(() {
-                                        endHr = newValue!;
-                                        search(query);
-                                      });
-                                    } else {
-                                      showToast(
-                                        translateEng("Ending Hour cannot precede " + bgnHr.toString()),
-                                        duration: const Duration(milliseconds: 1500),
-                                        position: ToastPosition.bottom,
-                                        backgroundColor: Colors.blue.withOpacity(0.8),
-                                        radius: 100.0,
-                                        textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
-                                      );
-                                    }
-                                  } else if (newValue == "Any" || bgnHr == "Any") {
-                                    setState(() {
-                                      endHr = newValue!;
-                                      search(query);
-                                    });
-                                  }
-
-                                },
-                              ),
-                            ],
-                          ),
+                          // Row(
+                          //   children: [
+                          //     Text(translateEng("From"), style: TextStyle(color: Main.appTheme.titleIconColor)),
+                          //     SizedBox(
+                          //       width: 0.01 * width,
+                          //     ),
+                          //     DropdownButton<String>(
+                          //       dropdownColor: Main.appTheme.scaffoldBackgroundColor,
+                          //       value: bgnHr,
+                          //       items: bgnHrs.map<DropdownMenuItem<String>>((String value) {
+                          //         return DropdownMenuItem(value: value, child: Text(translateEng(value), style: TextStyle(color: Main.appTheme.titleTextColor))
+                          //         );
+                          //       }).toList(),
+                          //       onChanged: (String? newValue) {
+                          //         String newBgnHr = newValue ?? "Any";
+                          //         if (newValue != "Any" && endHr != "Any") {
+                          //           if (int.parse(newBgnHr.substring(0, newBgnHr.indexOf(":"))) < int.parse(endHr.substring(0, endHr.indexOf(":")))) {
+                          //             setState(() {
+                          //               bgnHr = newValue!;
+                          //               search(query);
+                          //             });
+                          //           } else {
+                          //             showToast(
+                          //               translateEng("Beginning Hour cannot exceed " + endHr.toString()),
+                          //               duration: const Duration(milliseconds: 1500),
+                          //               position: ToastPosition.bottom,
+                          //               backgroundColor: Colors.blue.withOpacity(0.8),
+                          //               radius: 100.0,
+                          //               textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
+                          //             );
+                          //           }
+                          //         } else if (newValue == "Any" || endHr == "Any") {
+                          //           setState(() {
+                          //             bgnHr = newValue!;
+                          //             search(query);
+                          //           });
+                          //         }
+                          //       },
+                          //     ),
+                          //   ],
+                          // ),
+                          // Row(
+                          //   children: [
+                          //     Text(translateEng("Until"), style: TextStyle(color: Main.appTheme.titleIconColor)),
+                          //     SizedBox(
+                          //       width: 0.01 * width,
+                          //     ),
+                          //     DropdownButton<String>(
+                          //       dropdownColor: Main.appTheme.scaffoldBackgroundColor,
+                          //       value: endHr,
+                          //       items: endHrs.map<DropdownMenuItem<String>>((String value) {
+                          //         return DropdownMenuItem(value: value, child: Text(translateEng(value), style: TextStyle(color: Main.appTheme.titleTextColor))
+                          //         );
+                          //       }).toList(),
+                          //       onChanged: (String? newValue) {
+                          //
+                          //         String newBgnHr = newValue ?? "Any";
+                          //         if (newValue != "Any" && bgnHr != "Any") {
+                          //           if (int.parse(newBgnHr.substring(0, newBgnHr.indexOf(":"))) > int.parse(bgnHr.substring(0, bgnHr.indexOf(":")))) {
+                          //             setState(() {
+                          //               endHr = newValue!;
+                          //               search(query);
+                          //             });
+                          //           } else {
+                          //             showToast(
+                          //               translateEng("Ending Hour cannot precede " + bgnHr.toString()),
+                          //               duration: const Duration(milliseconds: 1500),
+                          //               position: ToastPosition.bottom,
+                          //               backgroundColor: Colors.blue.withOpacity(0.8),
+                          //               radius: 100.0,
+                          //               textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
+                          //             );
+                          //           }
+                          //         } else if (newValue == "Any" || bgnHr == "Any") {
+                          //           setState(() {
+                          //             endHr = newValue!;
+                          //             search(query);
+                          //           });
+                          //         }
+                          //
+                          //       },
+                          //     ),
+                          //   ],
+                          // ),
                         ],
                       ),
                     ],
