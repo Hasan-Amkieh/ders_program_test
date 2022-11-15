@@ -1,4 +1,6 @@
 
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 
 import '../main.dart';
@@ -99,11 +101,11 @@ class University {
     switch (Main.uni) {
 
       case "Atilim":
-        return Image.asset("lib/icons/atilim_bg.jpeg");
+        return Image.asset("lib/icons/atilim_" + (Platform.isWindows ? "landscape" : "portrait") + "_bg.jpeg");
       case "Bilkent":
-        return Image.asset("lib/icons/bilkent_bg.jpg");
+        return Image.asset("lib/icons/bilkent_" + (Platform.isWindows ? "landscape" : "portrait") + "_bg.jpg");
       default:
-        return Image.asset("lib/icons/atilim_bg.jpeg");
+        return Image.asset("lib/icons/atilim_landscape_bg.jpeg");
 
     }
 

@@ -30,6 +30,8 @@ class ChooseSettingsState extends State<ChooseSettingsPage> with SingleTickerPro
     controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
     animation = CurvedAnimation(parent: controller, curve: Curves.ease);
 
+    controller.animateTo(1.0);
+
   }
 
   late AnimationController controller;

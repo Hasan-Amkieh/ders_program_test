@@ -8,6 +8,11 @@ import 'package:Atsched/others/university.dart';
 import 'package:Atsched/pages/choose_settings_page.dart';
 import 'package:Atsched/pages/empty_courses_page.dart';
 import 'package:Atsched/pages/windows_webview_unsupported_page.dart';
+import 'package:Atsched/scrapers/atilim_scraper_computer.dart';
+import 'package:Atsched/scrapers/atilim_scraper_phone.dart';
+import 'package:Atsched/scrapers/bilkent_scraper_computer.dart';
+import 'package:Atsched/scrapers/bilkent_scraper_phone.dart';
+import 'package:Atsched/scrapers/scraper.dart';
 import 'package:Atsched/wp_computer.dart';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 
@@ -76,6 +81,7 @@ class Main {
   ];
 
   static late Classifier classifier;
+  static late Scraper scraper;
 
   // NOTE: Default values are inside the function readSettings:
   static bool forceUpdate = false;
@@ -699,9 +705,11 @@ Future main() async {
 
     case "Atilim":
       Main.classifier = AtilimClassifier.instance;
+      Main.scraper = Platform.isWindows ? AtilimScraperComputer.instance : AtilimScraperPhone.instance;
       break;
     case "Bilkent":
       Main.classifier = BilkentClassifier.instance;
+      Main.scraper = Platform.isWindows ? BilkentScraperComputer.instance : BilkentScraperPhone.instance;
       break;
 
   }
