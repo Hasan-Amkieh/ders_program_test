@@ -57,6 +57,9 @@ dependencies:
   flutter_window_close: ^0.2.2
   msix: ^3.6.3
   ffi: ^2.0.1
+  from_to_time_picker: ^1.1.1
+  interval_time_picker: 1.1.0+4
+
 
 msix_config:
   display_name: Atsched

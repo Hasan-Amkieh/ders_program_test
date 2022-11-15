@@ -54,8 +54,8 @@ class ChooseSettingsState extends State<ChooseSettingsPage> {
                   Color.fromRGBO(60, 64, 72, 1.0),
             ]),
           ),
-          width: width,
-          height: height,
+          // width: width, // unnecessary
+          // height: height, // unnecessary
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

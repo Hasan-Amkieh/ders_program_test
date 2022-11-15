@@ -2,9 +2,9 @@ import 'dart:io' show Platform;
 import 'dart:ui';
 
 import 'package:Atsched/others/university.dart';
+import 'package:Atsched/widgets/emptycontainer.dart';
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:flutter/material.dart';
-import 'package:oktoast/oktoast.dart';
 
 import '../language/dictionary.dart';
 import '../main.dart';
@@ -154,12 +154,24 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
                       Row(children: [Text(translateEng("Classrooms Found:  ${classrooms_.length}"), style: TextStyle(color: Main.appTheme.titleTextColor)),
                         SizedBox(
                           width: width * 0.03,
-                        ) ],) : Container(),
+                        ) ],) : EmptyContainer(),
+                      Visibility(
+                        visible: day == "Any",
+                        child: const Icon(Icons.warning, color: Colors.red),
+                      ),
+                      day == "Any" ? SizedBox(
+                        width: width * 0.01,
+                      ) : EmptyContainer(),
                       DropdownButton<String>(
                         dropdownColor: Main.appTheme.scaffoldBackgroundColor,
                         value: day,
                         items: days.map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem(value: value, child: Text(translateEng(value), style: TextStyle(color: Main.appTheme.titleTextColor))
+                          return DropdownMenuItem(
+                              value: value, child: Text(translateEng(value),
+                              style: value == day ? TextStyle(color: day == "Any" ? Colors.red : Main.appTheme.titleTextColor,
+                                  fontWeight: day == "Any" ? FontWeight.bold : FontWeight.normal) :
+                              TextStyle(color: Main.appTheme.titleTextColor),
+                          ),
                           );
                         }).toList(),
                         onChanged: (String? newValue) {
@@ -170,124 +182,43 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
                         },
                       ),
                       SizedBox(
-                        width: width * 0.04,
+                        width: width * 0.02,
                       ),
-                      Column(
-                        children: [
-                          TextButton(
-                            child: Text((bgnHr == "Any" || endHr == "Any") ? translateEng("Choose Period") : (bgnHr + " - " + endHr)),
-                            onPressed: () {
-                              showTimePicker(
-                                hourLabelText: translateEng("Start Hour"),
-                                minuteLabelText: translateEng("End Hour"),
-                                helpText: translateEng("Choose Period"),
-                                context: context,
-                                initialTime: (bgnHr == "Any" || endHr == "Any") ?
-                                TimeOfDay(hour: TimeOfDay.now().hour, minute: TimeOfDay.now().hour + 1) :
-                                TimeOfDay(hour: int.parse(bgnHr.substring(0, bgnHr.indexOf(":"))), minute: int.parse(endHr.substring(0, endHr.indexOf(":")))),
-                                initialEntryMode: TimePickerEntryMode.input,
-                                builder: (context, child) {
-                                  return Theme(
-                                      data: ThemeData.dark(),
-                                      child: MediaQuery(
-                                        data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), // it is not working, idk why
-                                        child: child!,
-                                      ),
-                                  );
-                                },
-                              ).then((value) {
-                                setState(() {
-                                  bgnHr = value!.hour.toString() + ":" + University.getBgnMinutes().toString();
-                                  endHr = value.minute.toString() + ":" + University.getEndMinutes().toString();
-                                });
-                              });
+                      (bgnHr == "Any" || endHr == "Any") ? const Icon(Icons.warning, color: Colors.red) : EmptyContainer(),
+                      (bgnHr == "Any" || endHr == "Any") ? SizedBox(
+                        width: width * 0.005,
+                      ) : EmptyContainer(),
+                      TextButton(
+                        child: Text(
+                          (bgnHr == "Any" || endHr == "Any") ? translateEng("Choose Period") : (bgnHr + " - " + endHr),
+                          style: TextStyle(color: (bgnHr == "Any" || endHr == "Any") ? Colors.red : Colors.blue)),
+                        onPressed: () {
+                          showTimePicker(
+                            hourLabelText: translateEng("Start Hour"),
+                            minuteLabelText: translateEng("End Hour"),
+                            helpText: translateEng("Choose Period"),
+                            context: context,
+                            initialTime: (bgnHr == "Any" || endHr == "Any") ?
+                            TimeOfDay(hour: TimeOfDay.now().hour, minute: TimeOfDay.now().hour + 1) :
+                            TimeOfDay(hour: int.parse(bgnHr.substring(0, bgnHr.indexOf(":"))), minute: int.parse(endHr.substring(0, endHr.indexOf(":")))),
+                            initialEntryMode: TimePickerEntryMode.input,
+                            builder: (context, child) {
+                              return Theme(
+                                data: ThemeData.dark(),
+                                child: MediaQuery(
+                                  data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), // it is not working, idk why
+                                  child: (child! as TimePickerDialog),
+                                ),
+                              );
                             },
-                          ),
-                          // Row(
-                          //   children: [
-                          //     Text(translateEng("From"), style: TextStyle(color: Main.appTheme.titleIconColor)),
-                          //     SizedBox(
-                          //       width: 0.01 * width,
-                          //     ),
-                          //     DropdownButton<String>(
-                          //       dropdownColor: Main.appTheme.scaffoldBackgroundColor,
-                          //       value: bgnHr,
-                          //       items: bgnHrs.map<DropdownMenuItem<String>>((String value) {
-                          //         return DropdownMenuItem(value: value, child: Text(translateEng(value), style: TextStyle(color: Main.appTheme.titleTextColor))
-                          //         );
-                          //       }).toList(),
-                          //       onChanged: (String? newValue) {
-                          //         String newBgnHr = newValue ?? "Any";
-                          //         if (newValue != "Any" && endHr != "Any") {
-                          //           if (int.parse(newBgnHr.substring(0, newBgnHr.indexOf(":"))) < int.parse(endHr.substring(0, endHr.indexOf(":")))) {
-                          //             setState(() {
-                          //               bgnHr = newValue!;
-                          //               search(query);
-                          //             });
-                          //           } else {
-                          //             showToast(
-                          //               translateEng("Beginning Hour cannot exceed " + endHr.toString()),
-                          //               duration: const Duration(milliseconds: 1500),
-                          //               position: ToastPosition.bottom,
-                          //               backgroundColor: Colors.blue.withOpacity(0.8),
-                          //               radius: 100.0,
-                          //               textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
-                          //             );
-                          //           }
-                          //         } else if (newValue == "Any" || endHr == "Any") {
-                          //           setState(() {
-                          //             bgnHr = newValue!;
-                          //             search(query);
-                          //           });
-                          //         }
-                          //       },
-                          //     ),
-                          //   ],
-                          // ),
-                          // Row(
-                          //   children: [
-                          //     Text(translateEng("Until"), style: TextStyle(color: Main.appTheme.titleIconColor)),
-                          //     SizedBox(
-                          //       width: 0.01 * width,
-                          //     ),
-                          //     DropdownButton<String>(
-                          //       dropdownColor: Main.appTheme.scaffoldBackgroundColor,
-                          //       value: endHr,
-                          //       items: endHrs.map<DropdownMenuItem<String>>((String value) {
-                          //         return DropdownMenuItem(value: value, child: Text(translateEng(value), style: TextStyle(color: Main.appTheme.titleTextColor))
-                          //         );
-                          //       }).toList(),
-                          //       onChanged: (String? newValue) {
-                          //
-                          //         String newBgnHr = newValue ?? "Any";
-                          //         if (newValue != "Any" && bgnHr != "Any") {
-                          //           if (int.parse(newBgnHr.substring(0, newBgnHr.indexOf(":"))) > int.parse(bgnHr.substring(0, bgnHr.indexOf(":")))) {
-                          //             setState(() {
-                          //               endHr = newValue!;
-                          //               search(query);
-                          //             });
-                          //           } else {
-                          //             showToast(
-                          //               translateEng("Ending Hour cannot precede " + bgnHr.toString()),
-                          //               duration: const Duration(milliseconds: 1500),
-                          //               position: ToastPosition.bottom,
-                          //               backgroundColor: Colors.blue.withOpacity(0.8),
-                          //               radius: 100.0,
-                          //               textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
-                          //             );
-                          //           }
-                          //         } else if (newValue == "Any" || bgnHr == "Any") {
-                          //           setState(() {
-                          //             endHr = newValue!;
-                          //             search(query);
-                          //           });
-                          //         }
-                          //
-                          //       },
-                          //     ),
-                          //   ],
-                          // ),
-                        ],
+                          ).then((value) {
+                            setState(() {
+                              bgnHr = value!.hour.toString() + ":" + University.getBgnMinutes().toString();
+                              endHr = value.minute.toString() + ":" + University.getEndMinutes().toString();
+                            });
+                          });
+
+                        },
                       ),
                     ],
                   ),

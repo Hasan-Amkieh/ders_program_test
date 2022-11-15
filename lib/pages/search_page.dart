@@ -267,7 +267,19 @@ class SearchPageState extends State<SearchPage> {
                     textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
                   );
                 }
-              }),
+              }, onLongPress: () {
+
+                showToast(
+                  sub.getClassCodeWithoutSectionNumber() + " " + translateEng("Syllabus"),
+                  duration: const Duration(milliseconds: 1000),
+                  position: ToastPosition.bottom,
+                  backgroundColor: Colors.blue.withOpacity(0.8),
+                  radius: 100.0,
+                  textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
+                );
+
+              },
+              ),
             ],
           ),
         ],
