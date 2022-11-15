@@ -1,12 +1,12 @@
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:Atsched/webpage_phone.dart';
+import 'package:Atsched/wp_phone.dart';
 import 'package:restart_app/restart_app.dart';
 
 import '../language/dictionary.dart';
 import '../main.dart';
-import '../webpage_computer.dart';
+import '../wp_computer.dart';
 
 import 'dart:ffi';
 import 'package:ffi/ffi.dart';
@@ -52,11 +52,11 @@ class LoadingUpdateState extends State<LoadingUpdate> {
 
   void checkState () {
 
-    if(currentState != (Platform.isWindows ? WebpageComputerState.state : WebpagePhoneState.state)) {
+    if(currentState != (Platform.isWindows ? WPComputerState.state : WPPhoneState.state)) {
       setState(() {});
     }
 
-    if (DateTime.now().difference(lastChanged).inSeconds >= 20 && !(Platform.isWindows ? WebpageComputerState.doNotRestart : WebpagePhoneState.doNotRestart)) { // then restart the whole reload process:
+    if (DateTime.now().difference(lastChanged).inSeconds >= 20 && !(Platform.isWindows ? WPComputerState.doNotRestart : WPPhoneState.doNotRestart)) { // then restart the whole reload process:
 
       if (Main.isAttemptedBefore) {
         if (Main.facultyDataOld != null) {
@@ -75,7 +75,7 @@ class LoadingUpdateState extends State<LoadingUpdate> {
 
     }
 
-    if ((Platform.isWindows ? WebpageComputerState.state : WebpagePhoneState.state) != 4) {
+    if ((Platform.isWindows ? WPComputerState.state : WPPhoneState.state) != 4) {
       Future.delayed(const Duration(milliseconds: 300), () => checkState());
     } else {
       endLoading();
@@ -87,9 +87,9 @@ class LoadingUpdateState extends State<LoadingUpdate> {
     ModalRoute.of(context)?.popped.then((value) {
       // print("Loading page is popped!");
       if (Platform.isWindows) {
-        WebpageComputerState.currWidget!.finish();
+        WPComputerState.currWidget!.finish();
       } else {
-        WebpagePhoneState.currWidget!.finish();
+        WPPhoneState.currWidget!.finish();
       }
     });
     Navigator.pop(context);
@@ -98,7 +98,7 @@ class LoadingUpdateState extends State<LoadingUpdate> {
 
   @override
   Widget build(BuildContext context) {
-    currentState = Platform.isWindows ? WebpageComputerState.state : WebpagePhoneState.state;
+    currentState = Platform.isWindows ? WPComputerState.state : WPPhoneState.state;
     lastChanged = DateTime.now();
     Widget loadingWidget;
     switch (currentState) {
@@ -143,7 +143,7 @@ class LoadingUpdateState extends State<LoadingUpdate> {
             visible: !Platform.isWindows,
             child: Container(
               margin: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * 0.2, 0, MediaQuery.of(context).size.width * 0.2, 0),
-              child: TextButton.icon(onPressed: (Platform.isWindows ? WebpageComputerState.doNotRestart : WebpagePhoneState.doNotRestart) ? null : () => Restart.restartApp(),
+              child: TextButton.icon(onPressed: (Platform.isWindows ? WPComputerState.doNotRestart : WPPhoneState.doNotRestart) ? null : () => Restart.restartApp(),
                   icon: const Icon(Icons.restart_alt, color: Colors.white,), label: Text(translateEng("RESTART UPDATE"), textAlign: TextAlign.center, style: txtStyle), style: ButtonStyle(overlayColor: MaterialStateProperty.resolveWith((states) {
                     return Colors.blue.shade300;
                   }))),

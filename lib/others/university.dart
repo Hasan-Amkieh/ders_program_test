@@ -1,4 +1,6 @@
 
+import 'package:flutter/material.dart';
+
 import '../main.dart';
 
 class University {
@@ -88,6 +90,21 @@ class University {
         return 20;
       default:
         return 20;
+    }
+
+  }
+
+  static Image getImageBg() {
+
+    switch (Main.uni) {
+
+      case "Atilim":
+        return Image.asset("lib/icons/atilim_bg.jpeg");
+      case "Bilkent":
+        return Image.asset("lib/icons/bilkent_bg.jpg");
+      default:
+        return Image.asset("lib/icons/atilim_bg.jpeg");
+
     }
 
   }

@@ -20,121 +20,157 @@ class ChooseSettingsPage extends StatefulWidget {
 
 }
 
-class ChooseSettingsState extends State<ChooseSettingsPage> {
+class ChooseSettingsState extends State<ChooseSettingsPage> with SingleTickerProviderStateMixin { // (with) This fixed the error of the compilation of the
 
   @override
   void initState() {
 
     super.initState();
 
+    controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    animation = CurvedAnimation(parent: controller, curve: Curves.ease);
+
   }
+
+  late AnimationController controller;
+  late Animation<double> animation;
 
   @override
   Widget build(BuildContext context) {
 
-    double width = (window.physicalSize / window.devicePixelRatio).width;
-    double height = (window.physicalSize / window.devicePixelRatio).height;
-
-    ;
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.arrow_forward_rounded),
-        onPressed: () {
-          Navigator.popAndPushNamed(context, "/webpage");
-        },
-      ),
       backgroundColor: Main.appTheme.navigationBarColor,
+
       body: SafeArea(
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-                colors: [
-                  Color.fromRGBO(80, 86, 107, 1.0),
-                  Color.fromRGBO(60, 64, 72, 1.0),
-            ]),
-          ),
-          // width: width, // unnecessary
-          // height: height, // unnecessary
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset("lib/icons/" + Main.uni.toLowerCase() + ".png", width: width * 0.20, height: height * 0.20),
-              DropdownButton<String>(
-                dropdownColor: Main.appTheme.scaffoldBackgroundColor,
-                value: Main.uni,
-                items: Main.unis.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem(
-                    value: value, // Image.asset("lib/icons/atacs.png", width: IconTheme.of(context).size!, height: IconTheme.of(context).size!)
-                    child: Text(translateEng(value), style: TextStyle(color: Main.appTheme.titleTextColor)),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    Main.uni = newValue!;
-                  });
-                },
-              ),
-              SizedBox(
-                height: height * 0.01,
-              ),
-              University.areFacsSupported() ? DropdownButton<String>(
-                dropdownColor: Main.appTheme.scaffoldBackgroundColor,
-                value: Main.faculty,
-                items: University.getFaculties().map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem(value: value, child: Text(translateEng(value), style: TextStyle(color: Main.appTheme.titleTextColor)));
-                }).toList(),
-                onChanged: (String? newValue) {
-                  if (newValue == Main.faculty) {
-                    return;
-                  }
-                  setState(() {
-                    Main.faculty = newValue!;
-                    Main.department = University.getFacultyDeps(Main.faculty).keys.elementAt(0);
-                  });
-                },
-              ) : EmptyContainer(),
-              SizedBox(
-                height: height * 0.01,
-              ),
-              University.areDepsSupported() ? DropdownButton<String>(
-                dropdownColor: Main.appTheme.scaffoldBackgroundColor,
-                value: Main.department,
-                items: University.getFacultyDeps(Main.faculty).keys.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem(value: value, child: Row(children: [
-                    Text(translateEng(value) + "  ", style: TextStyle(color: Main.appTheme.titleTextColor)),
-                    Text(translateEng(University.getFacultyDeps(Main.faculty)[value]!),
-                        style: TextStyle(fontSize: 10, color: Main.appTheme.titleTextColor))
-                  ],),);
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    Main.department = newValue!;
-                  });
-                },
-              ) : EmptyContainer(),
-              SizedBox(
-                height: height * 0.01,
-              ),
-              DropdownButton<String>(
-                dropdownColor: Main.appTheme.scaffoldBackgroundColor,
-                value: Main.language,
-                items: langs.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem(
-                    value: value,
-                    child: TextButton.icon(onPressed: null, icon: Image.asset("lib/icons/" + value + ".png"),
-                        label: Text(translateEng(value), style: TextStyle(color: Main.appTheme.titleTextColor))
+        child: Stack(
+          children: [
+            FadeTransition(
+              opacity: animation,
+              child: Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: University.getImageBg().image,
+                      fit: BoxFit.fill,
                     ),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    Main.language = newValue!;
-                  });
-                },
+                  ),
+                  width: width,
+                  height: height,
+                ),
               ),
-            ],
-          ),
+            ),
+            Center(
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: width * 0.025,
+                  vertical: width * 0.025,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade900,
+                  borderRadius: BorderRadius.all(Radius.circular(width * 0.02)),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset("lib/icons/" + Main.uni.toLowerCase() + ".png", width: width * 0.20, height: height * 0.20),
+                    DropdownButton<String>(
+                      dropdownColor: Main.appTheme.scaffoldBackgroundColor,
+                      value: Main.uni,
+                      items: Main.unis.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem(
+                          value: value, // Image.asset("lib/icons/atacs.png", width: IconTheme.of(context).size!, height: IconTheme.of(context).size!)
+                          child: Text(translateEng(value), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        controller.animateTo(0.0).then((value) { // first let the picture disappear, then show the new pic and let it fade in!
+                          setState(() {
+                            Main.uni = newValue!;
+                            controller.animateTo(1.0);
+                          });
+                        });
+                      },
+                    ),
+                    SizedBox(
+                      height: height * 0.01,
+                    ),
+                    University.areFacsSupported() ? DropdownButton<String>(
+                      dropdownColor: Main.appTheme.scaffoldBackgroundColor,
+                      value: Main.faculty,
+                      items: University.getFaculties().map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem(value: value, child: Text(translateEng(value), style: TextStyle(color: Main.appTheme.titleTextColor)));
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        if (newValue == Main.faculty) {
+                          return;
+                        }
+                        setState(() {
+                          Main.faculty = newValue!;
+                          Main.department = University.getFacultyDeps(Main.faculty).keys.elementAt(0);
+                        });
+                      },
+                    ) : EmptyContainer(),
+                    SizedBox(
+                      height: height * 0.01,
+                    ),
+                    University.areDepsSupported() ? DropdownButton<String>(
+                      dropdownColor: Main.appTheme.scaffoldBackgroundColor,
+                      value: Main.department,
+                      items: University.getFacultyDeps(Main.faculty).keys.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem(value: value, child: Row(children: [
+                          Text(translateEng(value) + "  ", style: TextStyle(color: Main.appTheme.titleTextColor)),
+                          Text(translateEng(University.getFacultyDeps(Main.faculty)[value]!),
+                              style: TextStyle(fontSize: 10, color: Main.appTheme.titleTextColor))
+                        ],),);
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          Main.department = newValue!;
+                        });
+                      },
+                    ) : EmptyContainer(),
+                    SizedBox(
+                      height: height * 0.01,
+                    ),
+                    DropdownButton<String>(
+                      dropdownColor: Main.appTheme.scaffoldBackgroundColor,
+                      value: Main.language,
+                      items: langs.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem(
+                          value: value,
+                          child: TextButton.icon(onPressed: null, icon: Image.asset("lib/icons/" + value + ".png"),
+                              label: Text(translateEng(value), style: TextStyle(color: Main.appTheme.titleTextColor))
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          Main.language = newValue!;
+                        });
+                      },
+                    ),
+                    SizedBox(height: height * 0.05),
+                    TextButton(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(translateEng("Continue")),
+                            Icon(Icons.arrow_right, color: Colors.blue),
+                          ],
+                        ),
+                        onPressed: () {
+                          Navigator.popAndPushNamed(context, "/webpage");
+                        }
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

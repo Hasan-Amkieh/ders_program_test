@@ -12,23 +12,23 @@ import 'others/university.dart';
 
 //import 'package:Atsched/others/spring_schedules.dart';
 
-class WebpagePhone extends StatefulWidget {
+class WPPhone extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return WebpagePhoneState();
+    return WPPhoneState();
   }
 
 }
 
-class WebpagePhoneState extends State<WebpagePhone> {
+class WPPhoneState extends State<WPPhone> {
   InAppWebViewController? webView;
 
   static int state = 0;
 
   static bool doNotRestart = false;
 
-  static WebpagePhoneState? currentState;
+  static WPPhoneState? currentState;
   late InAppWebViewController controller;
 
   @override
@@ -372,7 +372,7 @@ class WebpagePhoneState extends State<WebpagePhone> {
     );
   }
 
-  static WebpagePhoneState? currWidget;
+  static WPPhoneState? currWidget;
 
   void finish() {
 

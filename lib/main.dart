@@ -8,7 +8,7 @@ import 'package:Atsched/others/university.dart';
 import 'package:Atsched/pages/choose_settings_page.dart';
 import 'package:Atsched/pages/empty_courses_page.dart';
 import 'package:Atsched/pages/windows_webview_unsupported_page.dart';
-import 'package:Atsched/webpage_computer.dart';
+import 'package:Atsched/wp_computer.dart';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 
 import 'dart:core';
@@ -27,7 +27,7 @@ import 'package:Atsched/pages/scheduler_result_page.dart';
 import 'package:Atsched/pages/search_page.dart';
 import 'package:Atsched/pages/update_page.dart';
 import 'package:flutter/material.dart';
-import 'package:Atsched/webpage_phone.dart';
+import 'package:Atsched/wp_phone.dart';
 import 'package:Atsched/pages/home_page.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -79,7 +79,7 @@ class Main {
 
   // NOTE: Default values are inside the function readSettings:
   static bool forceUpdate = false;
-  static int hourUpdate = 24; // if the time has passed for these hours since the last update, then make an update
+  static int hourUpdate = 48; // if the time has passed for these hours since the last update, then make an update
   static String faculty = "Engineering";
   static String department = "AE";
   static String language = "English"; // currently, there is only
@@ -721,7 +721,7 @@ Future main() async {
         "/nointernet" : (context) => NoInternetPage(),
         "/home" : (context) => Home(),
         "/webviewunsupported" : (context) => WebviewUnsupported(),
-        "/webpage": (context) => Platform.isWindows ? WebpageComputer() : WebpagePhone(),
+        "/webpage": (context) => Platform.isWindows ? WPComputer() : WPPhone(),
         "/update": (context) => UpdatePage(),
         "/home/searchcourses": (contetx) => const SearchPage(),
         "/home/emptyclassrooms": (contetx) => EmptyCoursesPage(),

@@ -15,22 +15,22 @@ import 'package:path_provider/path_provider.dart';
 
 //import 'package:ders_program_test/others/spring_schedules.dart';
 
-class WebpageComputer extends StatefulWidget {
+class WPComputer extends StatefulWidget { // WP stands for Webpage
 
   @override
   State<StatefulWidget> createState() {
-    return WebpageComputerState();
+    return WPComputerState();
   }
 
 }
 
-class WebpageComputerState extends State<WebpageComputer> {
+class WPComputerState extends State<WPComputer> {
 
   static int state = 0;
 
   static bool doNotRestart = false;
 
-  static WebpageComputerState? currentState;
+  static WPComputerState? currentState;
 
   @override
   void initState() {
@@ -330,7 +330,7 @@ function setupHook(xhr) {
     return LoadingUpdate();
   }
 
-  static WebpageComputerState? currWidget;
+  static WPComputerState? currWidget;
 
   void finish() {
 
