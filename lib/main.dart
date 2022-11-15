@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io' show Platform;
 
+import 'package:Atsched/classifiers/atilim_classifier.dart';
 import 'package:Atsched/others/university.dart';
 import 'package:Atsched/pages/choose_settings_page.dart';
 import 'package:Atsched/pages/empty_courses_page.dart';
@@ -35,6 +36,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:restart_app/restart_app.dart';
 import 'package:new_version/new_version.dart';
 
+import 'classifiers/bilkent_classifier.dart';
+import 'classifiers/classifier.dart';
 import 'others/appthemes.dart';
 
 /* NOTES about the project:
@@ -71,6 +74,8 @@ class Main {
     "Atilim",
     "Bilkent"
   ];
+
+  static late Classifier classifier;
 
   // NOTE: Default values are inside the function readSettings:
   static bool forceUpdate = false;
@@ -688,6 +693,17 @@ Future main() async {
 
   if (Main.forceUpdate && University.getFacultyLink(Main.department).isEmpty) { // if no link was found, the app will crash, but now it will just not update:
     Main.forceUpdate = false;
+  }
+
+  switch(Main.uni) {
+
+    case "Atilim":
+      Main.classifier = AtilimClassifier.instance;
+      break;
+    case "Bilkent":
+      Main.classifier = BilkentClassifier.instance;
+      break;
+
   }
 
   runApp(OKToast(
