@@ -27,7 +27,6 @@ class AtilimClassifier extends Classifier {
             //FacultySemester facultyData = FacultySemester(facName: Main.faculty, lastUpdate: DateTime.now());
 
             List<String> names = [];
-            var classesInSemester = [];
             List<MapEntry<String, String>> subjectIds = [];
             List<Subject> subjects = [];
 
@@ -48,8 +47,6 @@ class AtilimClassifier extends Classifier {
               classCodeWithSec = timetableStr.substring(lastFound, timetableStr.indexOf('"', lastFound));
 
               names.add(name);
-
-              classesInSemester.add(classCodeWithSec);
 
               lastFound = timetableStr.lastIndexOf('"id":"', lastFound) + 6;
               subjectIds.add(MapEntry(classCodeWithSec, timetableStr.substring(lastFound, timetableStr.indexOf('"', lastFound))));

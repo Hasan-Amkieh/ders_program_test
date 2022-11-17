@@ -41,6 +41,8 @@ class WPPhoneState extends State<WPPhone> {
 
   Future<void> getTimetableLinks() async {
 
+    facLink = await University.getFacultyLink(Main.department);
+
     var request = await HttpClient().getUrl(Uri.parse('https://www.atilim.edu.tr/en/dersprogrami'));
     // sends the request
     var response = await request.close();
@@ -132,6 +134,7 @@ class WPPhoneState extends State<WPPhone> {
 
   }
 
+  String facLink = "";
   String semesterName = "";
 
   @override
@@ -146,7 +149,7 @@ class WPPhoneState extends State<WPPhone> {
                 onAjaxReadyStateChange: (controller, request) => Main.scraper.getTimetableData(controller, request),
                 initialUrlRequest: URLRequest(
                     url: Uri.parse(
-                        University.getFacultyLink(Main.department))),
+                        facLink)),
                 initialOptions: InAppWebViewGroupOptions(
                   crossPlatform: InAppWebViewOptions(
                       useShouldInterceptAjaxRequest: true),

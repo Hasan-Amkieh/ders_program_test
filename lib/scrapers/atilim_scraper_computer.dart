@@ -101,7 +101,7 @@ function setupHook(xhr) {
 	setup();
 }
       """)
-      ..launch(University.getFacultyLink(Main.department));
+      ..launch(await University.getFacultyLink(Main.department));
 
     timer = Timer.periodic(const Duration(seconds: 1), (Timer t) async {
       try {
@@ -126,7 +126,7 @@ function setupHook(xhr) {
             WPComputerState.state = 3;
             // print("Timetable Retrieved!\nLength of the response: ${timetableData.length}");
             //dataClassification(request.responseText);
-            ReceivePort rPort = ReceivePort();
+            ReceivePort rPort = ReceivePort(); // TODO:
             SendPort? sPort;
             Isolate? isolate;
 

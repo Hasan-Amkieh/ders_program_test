@@ -1,6 +1,6 @@
 
 import 'dart:ui';
-import 'dart:io'show Platform;
+import 'dart:io' show Platform;
 
 import 'package:Atsched/widgets/emptycontainer.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +30,7 @@ class ChooseSettingsState extends State<ChooseSettingsPage> with SingleTickerPro
     controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
     animation = CurvedAnimation(parent: controller, curve: Curves.ease);
 
-    controller.animateTo(1.0);
+    controller.animateTo(1.0); // automatically the bg img opacity is set 0.0 thus transparent
 
   }
 
@@ -165,6 +165,7 @@ class ChooseSettingsState extends State<ChooseSettingsPage> with SingleTickerPro
                           ],
                         ),
                         onPressed: () {
+                          Main.assignScrapersNClassifiers();
                           Navigator.popAndPushNamed(context, "/webpage");
                         }
                     ),

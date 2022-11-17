@@ -223,6 +223,12 @@ class SearchPageState extends State<SearchPage> {
           if (j >= classroomsList.length) {
             j--;
           }
+          if (i >= classroomsList.length) {
+            i--;
+            if (i < 0) {
+              break;
+            }
+          }
         }
       }
     }

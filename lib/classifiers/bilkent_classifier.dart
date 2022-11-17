@@ -19,294 +19,122 @@ class BilkentClassifier extends Classifier {
 
           if (msg[0] == "timetableData") {
 
-            String timetableStr = msg[1];
+            Map timetableData = msg[1];
 
             //print("Starting classification:\n");
             sPort.send(["setDoNotRestart"]); // doNotRestart = true;
 
             //FacultySemester facultyData = FacultySemester(facName: Main.faculty, lastUpdate: DateTime.now());
 
-            List<String> names = [];
-            var classesInSemester = [];
-            List<MapEntry<String, String>> subjectIds = [];
             List<Subject> subjects = [];
 
-            int classCodesEnd, classCodesBegin;
-            classCodesEnd = timetableStr.indexOf(
-                '{"id":"picture_url","name":"Fotoğraf"},{"id":"timeoff","type":"object","name":"Zaman Tablosu"},{"id":"contract_weight","type":"float","name":"Öğretmen Sözleşmesi İçin Uzunluk Değeri"}]', 0);
-            classCodesBegin = timetableStr.indexOf("data_rows", classCodesEnd) + 9;
-            classCodesEnd = timetableStr.indexOf("data_columns", classCodesBegin);
+            // List<String> classes; // in other words, departments
+            List<List<String>> teacherCodes = [];
+            List<List<String>> classrooms = [];
+            List<int> hrs = [];
+            List<List<int>> beginningHr = [], day = [];
 
-            int lastFound = classCodesBegin;
-            String name = "", classCodeWithSec;
-            while (lastFound < classCodesEnd) {
+            String courseCode, courseName;
 
-              lastFound = timetableStr.indexOf('name":"', lastFound) + 7;
-              name = timetableStr.substring(lastFound, timetableStr.indexOf('"', lastFound));
+            // Omit the faculty, it is unnecessary
+            timetableData.values.toList().forEach((groupOfSubs) { //
 
-              lastFound = timetableStr.indexOf('short":"', lastFound) + 8;
-              classCodeWithSec = timetableStr.substring(lastFound, timetableStr.indexOf('"', lastFound));
+              for (int i = 0 ; i < (groupOfSubs as Map).length ; i++) {
 
-              names.add(name);
+                courseCode = groupOfSubs.keys.toList()[i]; // the course code does have the section number
 
-              classesInSemester.add(classCodeWithSec);
+                courseName = groupOfSubs.values.toList()[i]["name"];
+                Map<String, dynamic> // Map<String, Map<String, dynamic /*could be map or str*/>>
+                secsInfo = groupOfSubs.values.toList()[i]["sections"];
 
-              lastFound = timetableStr.lastIndexOf('"id":"', lastFound) + 6;
-              subjectIds.add(MapEntry(classCodeWithSec, timetableStr.substring(lastFound, timetableStr.indexOf('"', lastFound))));
-              lastFound = timetableStr.indexOf('short":"', lastFound) + 8; // so we dont loop forever
+                int countSecs = 0;
+                for (int j = 1 ; countSecs < secsInfo.length ; j++) { // j is the section number
+                  // Has two keys, instructor and schedule
 
-            }
-
-            // TODO: Instead of searching of all the file, cut the string part that you need and use it instead of using the whole file (better performance)
-
-            //print("Resolving all ids with subjectid!");
-                { // for each subjectId, we have this:
-              List<String> lessonIds; // lessonId is used to find the time for the class
-              List<String> classIds, classes;
-              List<List<String>> teacherCodesIds, teacherCodes;
-              List<List<String>> classroomsIds, classrooms;
-              List<int> hrs;
-              List<List<int>> beginningHr, day;
-              lastFound = classCodesBegin;
-              int periodIndex, i;
-              int continueAfter; // it is the index number that was used to find the subjectId
-              int subjectIndex = 0;
-
-              subjectIds.forEach((subjectId) {
-                lessonIds = [];
-                classIds = []; classes = [];
-                teacherCodesIds = []; teacherCodes = [];
-                classroomsIds = []; classrooms = [];
-                hrs = [];
-                beginningHr = [];
-                day = []; // 1 for mon. / 2 for tue. / till 6 for sat.
-                continueAfter = classCodesBegin;
-                periodIndex = 0;
-                String str, str_;
-
-                while (true) { // looping each period because there could multiple periods for a subjectid
-
-                  teacherCodesIds.add([]);
-                  classroomsIds.add([]);
-                  lastFound = continueAfter = timetableStr.indexOf('"subjectid":"${subjectId.value}"', continueAfter)
-                      + '"subjectid":"${subjectId.value}"'.length;
-                  if (continueAfter - '"subjectid":"${subjectId.value}"'.length == -1) {
-                    break;
-                  }
-
-                  i = timetableStr.lastIndexOf('"id":"', lastFound) + 6;
-                  lessonIds.add(timetableStr.substring(i, timetableStr.indexOf('"', i)));
-
-                  lastFound = timetableStr.indexOf('teacherids":[', lastFound) + 13;
-                  str = timetableStr.substring(lastFound, timetableStr.indexOf(']', lastFound));
-                  if (str.isEmpty) {
-                    teacherCodesIds.elementAt(periodIndex).add("");
+                  if (secsInfo["$j"] == null) {
+                    continue;
                   } else {
-                    int start, end = -1;
-                    while (true) { // loop for each teacherCode
-                      start = str.indexOf('"', end + 1) + 1;
-                      if (start == 0) {
-                        break;
-                      }
-                      end = str.indexOf('"', start);
-                      teacherCodesIds.elementAt(periodIndex).add(str.substring(start, end));
-                    }
+                    countSecs++;
                   }
 
-                  lastFound = timetableStr.indexOf('classids":[', lastFound) + 11;
-                  str = timetableStr.substring(lastFound, timetableStr.indexOf(']', lastFound));
-                  if (str.isEmpty) {
-                    classIds.add("");
-                  } else {
-                    int start, end = -1;
-                    while (true) { // loop for each teacherCode
-                      start = str.indexOf('"', end + 1) + 1;
-                      if (start == 0) {
-                        break;
-                      }
-                      end = str.indexOf('"', start);
-                      str_ = str.substring(start, end);
-                      if (!classIds.contains(str_)) {
-                        classIds.add(str_);
-                      }
-                    }
-                  }
+                  day = []; beginningHr = []; hrs = []; classrooms = [];
 
-                  lastFound = timetableStr.indexOf('durationperiods":', lastFound) + 17;
-                  hrs.add(int.parse(timetableStr.substring(lastFound, timetableStr.indexOf(',', lastFound))));
+                  teacherCodes = [[secsInfo["$j"]!["instructor"]]];
+                  (secsInfo["$j"]!["schedule"] as Map<String, dynamic>).forEach((key, value) { // Looping through each period of a course section
+                    // the key is the box number and the value is the classroom
+                    // the box number starts counting from 0, the days are from mon. till sunday
+                    // the hours are from 8:30 till 21:30
+                    // examples: 0 means mon. 8:30 - 9:20 / 7 means mon. 9:30 - 10:20
+                    // use the reminder of 7 to get the day number 0 - 6 = 1 - 7
+                    // use the division on 7 and grounding the result to get the bgnHr 0 - 13 = 8 - 21
+                    // the hours are by default 1 hour
 
-                  // lastFound = timetableStr.indexOf('classroomidss":[[', lastFound) + 17;
-                  // str = timetableStr.substring(lastFound, timetableStr.indexOf(']]', lastFound) );
-                  // if (str.isEmpty) {
-                  //   classroomsIds.elementAt(periodIndex).add("");
-                  // } else {
-                  //   int start, end = -1;
-                  //   while (true) { // loop for each teacherCode
-                  //     start = str.indexOf('"', end + 1) + 1;
-                  //     if (start == 0) {
-                  //       break;
-                  //     }
-                  //     end = str.indexOf('"', start);
-                  //     classroomsIds.elementAt(periodIndex).add(str.substring(start, end));
-                  //   }
-                  // }
+                    day.add([(int.parse(key) % 7) + 1]);
+                    beginningHr.add([(int.parse(key) / 7).floor() + 8]);
+                    hrs.add(1); // it is always for 1 hr
 
-                  periodIndex++;
+                    classrooms.add([value]);
 
-                }
+                  });
 
-                // lessons:
-                int searchStart = timetableStr.indexOf("lessonid"), searchStart_;
-                int listIndex = 0;
-                int classroomsIndex = 0;
-                lessonIds.forEach((lessonId) {
+                  // If one of the periods is on the same day and the bgnHr diff. is 1 and the classroom is the same
+                  // then combine them into one period, otherwise leave them unchanged:
 
-                  searchStart_ = searchStart;
-                  day.add([]);
-                  beginningHr.add([]);
-                  while (true) { // because we might have the same lessonid with different days and begging hours
-                    lastFound = timetableStr.indexOf('lessonid":"$lessonId"', searchStart_) + 'lessonid":"$lessonId"'.length;
-                    searchStart_ = lastFound;
-                    str = timetableStr.substring(timetableStr.indexOf('period":"', lastFound) + 9, timetableStr.indexOf('","days"', lastFound));
-                    if (str.isNotEmpty) {
-                      beginningHr[listIndex].add(int.parse(str));
-                    }
-                    lastFound = timetableStr.indexOf('days":"', lastFound) + 7;
-                    day[listIndex].add(timetableStr.substring(lastFound, timetableStr.indexOf('"', lastFound)).indexOf('1') + 1);
+                  for (int pIndex1 = 0 ; pIndex1 < day.length ; pIndex1++) {
+                    for (int pIndex1_ = 0 ; pIndex1_ < day[pIndex1].length ; pIndex1_++) {
+                      for (int pIndex2 = 0 ; pIndex2 < day.length ; pIndex2++) {
+                        for (int pIndex2_ = 0 ; pIndex2_ < day[pIndex2].length ; pIndex2_++) {
+                          if (pIndex1 != pIndex2) {
+                            if (day[pIndex1][pIndex1_] == day[pIndex2][pIndex2_]) { // if the day is the same
+                              if ((beginningHr[pIndex1][pIndex1_] - beginningHr[pIndex2][pIndex2_]).abs() == 1 &&
+                                  classrooms[pIndex1][pIndex1_] == classrooms[pIndex2][pIndex2_]) {
 
-                    // classrooms:
-                    lastFound = timetableStr.indexOf('classroomids":[', lastFound) + 15;
-                    str = timetableStr.substring(lastFound, timetableStr.indexOf(']', lastFound) );
-                    if (str.isEmpty) {
-                      classroomsIds.elementAt(periodIndex).add("");
-                    } else {
-                      int start, end = -1;
-                      while (true) { // loop for each classroom id
-                        start = str.indexOf('"', end + 1) + 1;
-                        if (start == 0) {
-                          break;
+                                hrs[pIndex1] = hrs[pIndex1] + 1;
+                                if (beginningHr[pIndex1][pIndex1_] > beginningHr[pIndex2][pIndex2_]) {
+                                  beginningHr[pIndex1][pIndex1_] = beginningHr[pIndex2][pIndex2_];
+                                }
+
+                                day[pIndex2].removeAt(pIndex2_);
+                                beginningHr[pIndex2].removeAt(pIndex2_);
+                                hrs.removeAt(pIndex2);
+                                classrooms[pIndex2].removeAt(pIndex2_);
+                                // teacherCodes[pIndex2].removeAt(pIndex2_);
+
+                                if (pIndex2_ - 1 < day[pIndex2].length) {
+                                  pIndex2_--;
+                                  if (pIndex2_ < 0) {
+                                    pIndex2_ = 0;
+                                  }
+                                }
+
+                                if (day[pIndex2].isEmpty) {
+                                  day.removeAt(pIndex2);
+                                  beginningHr.removeAt(pIndex2);
+                                  classrooms.removeAt(pIndex2);
+                                  // teacherCodes.removeAt(pIndex2);
+                                  pIndex2--;
+                                  break;
+                                }
+
+                              }
+                            }
+                          }
                         }
-                        end = str.indexOf('"', start);
-                        if (classroomsIds.length <= classroomsIndex) {
-                          classroomsIds.add([]);
-                        }
-                        classroomsIds.elementAt(classroomsIndex).add(str.substring(start, end));
-                        // Test:
-                        // if (subjectId.key.trim() == "MATH151- 01-") {
-                        //   print("Classroom id found: ${str.substring(start, end)} of index $classroomsIndex");
-                        // }
-                        // Test;
                       }
-                      classroomsIndex++;
-                    }
-                    // classrooms;
-
-                    if (!timetableStr.contains('lessonid":"$lessonId"', searchStart_)) {
-                      break;
-                    }
-
-                  }
-                  listIndex++;
-
-                });
-
-                // This will only enhance the performance of the engineering loading page,
-                // TODO: apply the rest for the other faculties:
-                // AE 1 is only for the first semester...
-                //searchStart = faculty == "Engineering" ? (timetableStr.indexOf('"name":"AE 1 ","short":"AE 1 ","teacherid":""') - 57) : 0;
-                searchStart = 0;
-
-                // departments (classIds):
-                classIds.forEach((element) {
-                  if (element.isNotEmpty) {
-                    lastFound = searchStart_ = timetableStr.indexOf('"id":"$element","name":"', searchStart) + 16 +
-                        element.length;
-                    str = timetableStr.substring(
-                        lastFound, timetableStr.indexOf('"', lastFound));
-                    classes.add(str);
-                  }
-                });
-
-                // TODO: This only works for eng and civ aviation facs, make it for all the facs too:
-                //searchStart = timetableStr.indexOf('"id":"teachers","name":"Öğretim Elemanları","item_name":"Öğretim Elemanı"');
-                searchStart = 0;
-
-                // teacherCodes:
-                periodIndex = 0;
-                teacherCodesIds.forEach((element1) {
-                  if (element1.isNotEmpty) {
-                    teacherCodes.add([]);
-                    element1.forEach((element2) {
-                      if (element2.isNotEmpty) {
-                        lastFound = timetableStr.indexOf('"id":"$element2","short":"', searchStart) +
-                            17 + element2.length;
-                        str = timetableStr.substring(lastFound, timetableStr.indexOf('"', lastFound));
-                        teacherCodes.elementAt(periodIndex).add(str);
-
-                      }
-                    });
-                    periodIndex++;
-                  }
-                });
-                //print("$teacherCodesIds");
-                //print("$teacherCodes");
-
-                // classrooms:
-                searchStart = timetableStr.indexOf('id":"buildings","name":"Binalar","item_name":"Bina","icon"'); // the icon file could change which could break the whole thing!
-                periodIndex = 0;
-                classroomsIds.forEach((element1) {
-                  if (element1.isNotEmpty){
-                    classrooms.add([]);
-                    element1.forEach((element2) {
-                      if (element2.isNotEmpty) {
-                        lastFound = timetableStr.indexOf('"id":"$element2', searchStart) + 6 + element2.length;
-                        lastFound = timetableStr.indexOf('short":"', lastFound) + 8; // find the short, not the name
-                        classrooms.elementAt(periodIndex).add(timetableStr.substring(lastFound, timetableStr.indexOf('"', lastFound)));
-                      }
-                    });
-                    periodIndex++;
-                  }
-                });
-
-                // Translate the bgnHrs into the corresponding clock hours, they are originally 9:30 - 1 / 10:30 - 2 and so on
-                for (int i = 0 ; i < beginningHr.length ; i++) {
-                  for (int j = 0 ; j < beginningHr[i].length ; j++) {
-                    beginningHr[i][j] = beginningHr[i][j] + 8;
-                    if (beginningHr[i][j] >= 24) {
-                      beginningHr[i][j] = beginningHr[i][j] - 24;
                     }
                   }
+
+                  // Then add the subject:
+                  subjects.add(Subject(classCode: courseCode.replaceAll(" ", "") + "-$j", customName: courseName, departments: [],
+                      teacherCodes: teacherCodes, days: day, bgnPeriods: beginningHr,
+                      hours: hrs, classrooms: classrooms));
+
                 }
 
-                // If the day is not between 1 - 7 then that period should be deleted:
+              }
 
-                for (int i = 0 ; i < day.length ; i++) {
-                  for (int j = 0 ; j < day[i].length ; j++) {
-                    if (day[i][j] < 1 || day[i][j] > 7) {
-                      // print("A day out of the range is found at : ${names[subjectIndex]}");
-                      day.removeAt(i);
-                      if (beginningHr.length > i) {
-                        beginningHr.removeAt(i);
-                      }
-                      if (hrs.length > i) {
-                        hrs.removeAt(i);
-                      }
-                      break;
-                    }
-                  }
-                }
+            });
 
-                // print("${names[subjectIndex]} has the hrs $hrs");
-
-                subjects.add(Subject(customName: names[subjectIndex], hours: hrs, bgnPeriods: beginningHr, classCode: subjectId.key,
-                    classrooms: classrooms, days: day, departments: classes, teacherCodes: teacherCodes));
-
-                subjectIndex++;
-
-              });
-            } // end for each subject
-
-            //facultyData.subjects = subjects;
             // TO SEE THE RESULTS ONLY /
             //facultyData.subjects.forEach((element) {print("${element.classCode} : $element");});
             sPort.send(["facultyData", subjects]); // Main.facultyData = facultyData;
@@ -318,8 +146,8 @@ class BilkentClassifier extends Classifier {
         } else {
           print("ERROR, the received message is not a list!");
         }
-      } catch(error) {
-        print("ERROR: an error was found inside the data classification function: \n${error.toString()}");
+      } catch(error, stacktrace) {
+        print("ERROR: an error was found inside the data classification function: \n${error.toString()}\nStacktrace: " + stacktrace.toString());
         sPort.send(["error", error]);
       }
 
