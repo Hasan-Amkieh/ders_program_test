@@ -42,7 +42,7 @@ class FavCoursesState extends State<FavCourses> {
                 TextEditingController notesController = TextEditingController(text: Main.favCourses.elementAt(count).note);
 
               return ListTile(
-                title: Text(Main.favCourses[count].subject.classCode, style: TextStyle(color: Main.appTheme.titleTextColor)),
+                title: Text(Main.favCourses[count].subject.courseCode, style: TextStyle(color: Main.appTheme.titleTextColor)),
                 trailing: IconButton(
                     tooltip: translateEng("Notes"),
                     icon: const Icon(CupertinoIcons.chat_bubble_text_fill, color: Colors.blue), onPressed: () {
@@ -192,7 +192,7 @@ class FavCoursesState extends State<FavCourses> {
                             Subject sub = Main.favCourses.elementAt(count).subject;
                             bool doesExist = false;
                             for (Course sub_ in Main.schedules[Main.currentScheduleIndex].scheduleCourses) {
-                              if (sub_.subject.classCode == sub.classCode) {
+                              if (sub_.subject.courseCode == sub.courseCode) {
                                 doesExist = true;
                               }
                             }

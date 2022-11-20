@@ -81,7 +81,7 @@ class AtilimScraperPhone extends Scraper {
                 if (Main.facultyDataOld != null) {
                   for (int i = 0 ; i < Main.facultyDataOld!.subjects.length ; i++) {
                     for (int j = 0 ; j < Main.facultyData.subjects.length ; j++) {
-                      if (Main.facultyDataOld!.subjects[i].classCode == Main.facultyData.subjects[j].classCode) { // if the course is the same:
+                      if (Main.facultyDataOld!.subjects[i].courseCode == Main.facultyData.subjects[j].courseCode) { // if the course is the same:
                         bool isTimeDiff = false;
                         bool isClassroomDiff = false;
                         for (int k = 0 ; k < Main.facultyDataOld!.subjects[i].days.length ; k++) { // loop through the period: Main.facultyDataOld.subjects[i].days[k]
@@ -122,7 +122,7 @@ class AtilimScraperPhone extends Scraper {
 
                         if (isTimeDiff || isClassroomDiff) {
                           // copy everything instead of copying the reference:
-                          Main.newCourses.add(Subject(classCode: Main.facultyData.subjects[j].classCode, departments: Main.facultyData.subjects[j].departments,
+                          Main.newCourses.add(Subject(courseCode: Main.facultyData.subjects[j].courseCode, departments: Main.facultyData.subjects[j].departments,
                               teacherCodes: Main.facultyData.subjects[j].teacherCodes, hours: Main.facultyData.subjects[j].hours, bgnPeriods: Main.facultyData.subjects[j].bgnPeriods,
                               days: Main.facultyData.subjects[j].days, classrooms: Main.facultyData.subjects[j].classrooms, customName: Main.facultyData.subjects[j].customName));
                           Main.newCoursesChanges.add([isTimeDiff, isClassroomDiff]);

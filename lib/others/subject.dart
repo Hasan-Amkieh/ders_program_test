@@ -16,7 +16,7 @@ class FacultySemester {
 
 class Subject { // represents a class
 
-  String classCode; // PHYS102(1) // Use this Main.classcodes to get the full name
+  String courseCode; // PHYS102(1) // Use this Main.courseCodes to get the full name
   List<String> departments; // CMPE 1 Reg.
   List<List<String>> classrooms;
   List<List<String>> teacherCodes;
@@ -34,7 +34,7 @@ class Subject { // represents a class
   // Represents the name of the course
   String customName;
 
-  Subject({required this.classCode, required this.departments,
+  Subject({required this.courseCode, required this.departments,
     required this.teacherCodes, required this.hours, required List<List<int>> bgnPeriods,
     required List<List<int>> days, required this.classrooms, required this.customName}) {
     // In each separate class, we can have multiple teachers with multiple classrooms
@@ -88,7 +88,7 @@ class Subject { // represents a class
 
   Subject clone() {
 
-    return Subject(classCode: classCode,
+    return Subject(courseCode: courseCode,
         departments: [...departments],
         teacherCodes: [...teacherCodes],
         hours: [...hours],
@@ -118,7 +118,7 @@ class Subject { // represents a class
 
   bool isEqual(Subject subjectToComp) {
 
-    return classCode == subjectToComp.classCode;
+    return courseCode == subjectToComp.courseCode;
 
   }
 
@@ -201,9 +201,9 @@ class Subject { // represents a class
     return toReturn;
   }
 
-  static Subject fromStringWithClassCode(String str) {
+  static Subject fromStringWithCourseCode(String str) {
 
-    String classCode = "", name = "";
+    String courseCode = "", name = "";
     List<String> departments = [];
     List<List<String>> teacherCodes = [], classrooms = [];
     List<List<int>> bgnPeriods = [], days = [];
@@ -216,7 +216,7 @@ class Subject { // represents a class
     }
     // print("str_ is $str_");
 
-    classCode = str_[0];
+    courseCode = str_[0];
     name = str_[1];
     departments = str_[2].split(',');
 
@@ -278,29 +278,29 @@ class Subject { // represents a class
       days.add(tempList);
     }
 
-    return Subject(customName: name, classCode: classCode, departments: departments, teacherCodes: teacherCodes,
+    return Subject(customName: name, courseCode: courseCode, departments: departments, teacherCodes: teacherCodes,
         hours: hours, bgnPeriods: bgnPeriods, days: days, classrooms: classrooms);
   }
 
-  // static Subject fromStringWithoutClassCode(String str) {
-  //   Subject subject = Subject(classCode: classCode, departments: , teacherCodes: ,
+  // static Subject fromStringWithoutcourseCode(String str) {
+  //   Subject subject = Subject(courseCode: courseCode, departments: , teacherCodes: ,
   //       hours: , bgnPeriods: , days: , classrooms: );
   //   return subject;
   // }
 
-  static List<String> convertToListWithClassCodes(List<Course> courses) {
+  static List<String> convertToListWithcourseCodes(List<Course> courses) {
 
     List<String> subjects = [];
 
     for (int i = 0 ; i < courses.length ; i++) {
-      subjects.add(courses[i].subject.classCode + "|" + courses[i].subject.toString());
+      subjects.add(courses[i].subject.courseCode + "|" + courses[i].subject.toString());
     }
 
     return subjects;
 
   }
 
-  static List<String> convertToListWithoutClassCodes(List<Course> courses) {
+  static List<String> convertToListWithoutCourseCodes(List<Course> courses) {
 
     List<String> subjects = [];
 
@@ -314,17 +314,17 @@ class Subject { // represents a class
 
   int getSection() { // Get the section number of the class
 
-    // if (!classCode.contains('(')) {
+    // if (!courseCode.contains('(')) {
     //   return 0;
     // }
     //
-    // return int.parse(classCode.substring(classCode.indexOf('(') + 1));
+    // return int.parse(courseCode.substring(courseCode.indexOf('(') + 1));
 
-    if (classCode.contains('(')) { // MATH151(1) / MATH151-01 / MATH151- 01
-      //print("Found the sec number : ${int.parse(classCode.substring(classCode.indexOf('(') + 1, classCode.indexOf(')')))}");
-      return int.parse(classCode.substring(classCode.indexOf('(') + 1, classCode.indexOf(')')));
-    } else if (classCode.contains('-')) {
-      String str = classCode.substring(classCode.indexOf('-') + 1).trim();
+    if (courseCode.contains('(')) { // MATH151(1) / MATH151-01 / MATH151- 01
+      //print("Found the sec number : ${int.parse(courseCode.substring(courseCode.indexOf('(') + 1, courseCode.indexOf(')')))}");
+      return int.parse(courseCode.substring(courseCode.indexOf('(') + 1, courseCode.indexOf(')')));
+    } else if (courseCode.contains('-')) {
+      String str = courseCode.substring(courseCode.indexOf('-') + 1).trim();
       if (str.contains("0") && int.tryParse(str.substring(str.indexOf("0") + 1, str.indexOf("0") + 2)) != null) { // check if the zero has a number a number after it:
         str = str.substring(str.indexOf("0") + 1);
 
@@ -332,7 +332,7 @@ class Subject { // represents a class
       if (str.contains("-")) {
         str = str.substring(0, str.indexOf("-"));
       }
-      //print("RETURNING section ${int.parse(str)} for subject ${classCode}");
+      //print("RETURNING section ${int.parse(str)} for subject ${courseCode}");
       // print("Trying to parse $str into a section number");
       if (str.isEmpty) {
         return 0;
@@ -346,17 +346,17 @@ class Subject { // represents a class
 
   }
 
-  String getClassCodeWithoutSectionNumber() {
+  String getCourseCodeWithoutSectionNumber() {
 
-    if (classCode.contains('(')) { // MATH151(1) / MATH151-01 / MATH151- 01
-      return classCode.substring(0, classCode.indexOf("("));
-    } else if (classCode.contains('-') && classCode.contains("0")) {
-      return classCode.substring(0, classCode.indexOf("-"));
-    } else if (classCode.contains(' 0')) {
-      return classCode.substring(0, classCode.indexOf(" 0"));
+    if (courseCode.contains('(')) { // MATH151(1) / MATH151-01 / MATH151- 01
+      return courseCode.substring(0, courseCode.indexOf("("));
+    } else if (courseCode.contains('-') && courseCode.contains("0")) {
+      return courseCode.substring(0, courseCode.indexOf("-"));
+    } else if (courseCode.contains(' 0')) {
+      return courseCode.substring(0, courseCode.indexOf(" 0"));
     }
 
-    return classCode;
+    return courseCode;
 
   }
 

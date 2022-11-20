@@ -125,7 +125,8 @@ class BilkentClassifier extends Classifier {
                   }
 
                   // Then add the subject:
-                  subjects.add(Subject(classCode: courseCode.replaceAll(" ", "") + "-$j", customName: courseName, departments: [],
+                  subjects.add(Subject(courseCode: courseCode.replaceAll(" ", "") + "-" + (j < 10 ? "0" : "") + "$j",
+                      customName: courseName, departments: [],
                       teacherCodes: teacherCodes, days: day, bgnPeriods: beginningHr,
                       hours: hrs, classrooms: classrooms));
 
@@ -136,7 +137,7 @@ class BilkentClassifier extends Classifier {
             });
 
             // TO SEE THE RESULTS ONLY /
-            //facultyData.subjects.forEach((element) {print("${element.classCode} : $element");});
+            //facultyData.subjects.forEach((element) {print("${element.courseCode} : $element");});
             sPort.send(["facultyData", subjects]); // Main.facultyData = facultyData;
 
             sPort.send(["setState", 4]); // state = 4;

@@ -122,7 +122,7 @@ class Main {
   static bool isEditingCourse = false; // usde to edit the course info
   static Subject? courseToEdit; // It is used to edit the course info
   static Subject emptySubject = Subject(customName: "",
-      classCode: "",
+      courseCode: "",
       departments: <String>[],
       teacherCodes: <List<String>>[[]],
       hours: <int>[],
@@ -243,7 +243,7 @@ class Main {
 
       for (int j = 0 ; j < schedules[i].scheduleCourses.length ; j++) { // courses:
 
-        toWrite = toWrite + schedules[i].scheduleCourses[j].subject.classCode + "|" + schedules[i].scheduleCourses[j].subject.toString() + "\n";
+        toWrite = toWrite + schedules[i].scheduleCourses[j].subject.courseCode + "|" + schedules[i].scheduleCourses[j].subject.toString() + "\n";
 
       }
 
@@ -293,7 +293,7 @@ class Main {
           List<Course> courses_ = [];
           int index = 0;
           courses = courses.where((element) => element.trim().isNotEmpty).toList();
-          courses.forEach((course) { /*print("Doing $course");*/ courses_.add(Course(subject: Subject.fromStringWithClassCode(course), note: notes[index < notes.length ? index : 0])); index++; });
+          courses.forEach((course) { /*print("Doing $course");*/ courses_.add(Course(subject: Subject.fromStringWithCourseCode(course), note: notes[index < notes.length ? index : 0])); index++; });
 
           //courses_.forEach((element) {print(element.subject.toString());});
           Main.schedules.add(Schedule(scheduleName: scheduleName, scheduleCourses: courses_));
@@ -330,7 +330,7 @@ class Main {
         toWrite = toWrite + Main.facultyData.semesterName + "\n";
         toWrite = toWrite + Main.facultyData.lastUpdate.microsecondsSinceEpoch.toString() + "\n";
         for (int i = 0 ; i < Main.facultyData.subjects.length ; i++) {
-          toWrite = toWrite + Main.facultyData.subjects[i].classCode + "|" + Main.facultyData.subjects[i].toString() + "\n";
+          toWrite = toWrite + Main.facultyData.subjects[i].courseCode + "|" + Main.facultyData.subjects[i].toString() + "\n";
         }
         //print("Writing the subjects: $toWrite");
         file.writeAsStringSync(toWrite);
@@ -372,7 +372,7 @@ class Main {
       lines = lines.where((element) => element.trim().isNotEmpty).toList();
       Main.isFacDataFilled = true;
       Main.facultyData = FacultySemester(facName: facultyName, lastUpdate: lastUpdated, semesterName: semesterName);
-      lines.forEach((course) { Main.facultyData.subjects.add(Subject.fromStringWithClassCode(course)); });
+      lines.forEach((course) { Main.facultyData.subjects.add(Subject.fromStringWithCourseCode(course)); });
 
     } else {
       // print("The faculty courses DID NOT exist!");
@@ -395,7 +395,7 @@ class Main {
 
       int index = 0;
       courses = courses.where((element) => element.trim().isNotEmpty).toList();
-      courses.forEach((course) { Main.favCourses.add(Course(subject: Subject.fromStringWithClassCode(course), note: notes[index])); index++; });
+      courses.forEach((course) { Main.favCourses.add(Course(subject: Subject.fromStringWithCourseCode(course), note: notes[index])); index++; });
 
     }
 
@@ -418,7 +418,7 @@ class Main {
     toWrite = toWrite + "////\n";
     for (int i = 0 ; i < Main.favCourses.length ; i++) {
 
-      toWrite = toWrite + Main.favCourses[i].subject.classCode + "|" + Main.facultyData.subjects[i].toString() + "\n";
+      toWrite = toWrite + Main.favCourses[i].subject.courseCode + "|" + Main.facultyData.subjects[i].toString() + "\n";
 
     }
 

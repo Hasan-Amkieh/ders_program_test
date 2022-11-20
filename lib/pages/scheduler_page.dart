@@ -55,7 +55,7 @@ class SchedulerPageState extends State<SchedulerPage> {
       for (Subject element in subjectsToAdd) {
         bool isDone = false;
         for (Subject sub_ in subjects) {
-          if (sub_.getClassCodeWithoutSectionNumber() == element.getClassCodeWithoutSectionNumber()) {
+          if (sub_.getCourseCodeWithoutSectionNumber() == element.getCourseCodeWithoutSectionNumber()) {
             isDone = true;
             break;
           }
@@ -68,7 +68,7 @@ class SchedulerPageState extends State<SchedulerPage> {
         //Map<int, Subject> secToSubject = {};
         for (Subject sub in Main.facultyData.subjects) {
           //print("Checking if ${sub.classCode} has sections or not!");
-          if (sub.getClassCodeWithoutSectionNumber() == element.classCode && sub.getClassCodeWithoutSectionNumber() != sub.classCode) { // if sub has sections:
+          if (sub.getCourseCodeWithoutSectionNumber() == element.courseCode && sub.getCourseCodeWithoutSectionNumber() != sub.courseCode) { // if sub has sections:
             // print("${sub.classCode} has a section of ${sub.getSection()}!");
             if (sub.getSection() > maxSection) {
               maxSection = sub.getSection();
@@ -76,7 +76,7 @@ class SchedulerPageState extends State<SchedulerPage> {
             bool isFound = false;
             int secIndex = 0;
             for (int j = 0 ; j < subjectsSections.length ; j++) { // sample: [{"CMPE114" : [{1:subjectOfSec1}, {2:subjectOfSec2}]}] and so on...
-              if (subjectsSections[j].key == sub.getClassCodeWithoutSectionNumber()) {
+              if (subjectsSections[j].key == sub.getCourseCodeWithoutSectionNumber()) {
                 isFound = true;
                 secIndex = j;
                 break;
@@ -84,8 +84,8 @@ class SchedulerPageState extends State<SchedulerPage> {
             }
             if (!isFound) {
               //print("*** adding ${sub.getClassCodeWithoutSectionNumber()} ***");
-              subjectsSections.add(MapEntry(sub.getClassCodeWithoutSectionNumber(), []));
-              areSectionsShown.add(MapEntry(sub.getClassCodeWithoutSectionNumber(), <int, bool>{}));
+              subjectsSections.add(MapEntry(sub.getCourseCodeWithoutSectionNumber(), []));
+              areSectionsShown.add(MapEntry(sub.getCourseCodeWithoutSectionNumber(), <int, bool>{}));
               // The var secIndex has to be reset bcs now there is a new element!
               secIndex = areSectionsShown.length - 1;
             }
@@ -94,18 +94,18 @@ class SchedulerPageState extends State<SchedulerPage> {
             // }
             // print("index of $secIndex");
 
-            if (sub.getClassCodeWithoutSectionNumber() == subjectsSections[secIndex ].key && subjectsSections[secIndex].value.length < maxSection && maxSection != 0) {
+            if (sub.getCourseCodeWithoutSectionNumber() == subjectsSections[secIndex ].key && subjectsSections[secIndex].value.length < maxSection && maxSection != 0) {
               subjectsSections[secIndex].value.add(MapEntry(sub.getSection(), sub));
               areSectionsShown[secIndex].value.addAll({sub.getSection() : sub.departments.toString().contains(Main.department)});
               // print("DOING SUBJECT: $sub OF CLASSCODE ${sub.classCode}");
               // print("Adding section ${sub.getSection()} for subject ${sub.getClassCodeWithoutSectionNumber()}");
             }
             //secToSubject.addEntries([MapEntry(sub.getSection(), sub)]);
-          } else if (sub.getClassCodeWithoutSectionNumber() == element.classCode) { // if the sub does not have sections:
+          } else if (sub.getCourseCodeWithoutSectionNumber() == element.courseCode) { // if the sub does not have sections:
 
             // print("*** adding ${sub.getClassCodeWithoutSectionNumber()} ***");
-            subjectsSections.add(MapEntry(sub.getClassCodeWithoutSectionNumber(), []));
-            areSectionsShown.add(MapEntry(sub.getClassCodeWithoutSectionNumber(), <int, bool>{}));
+            subjectsSections.add(MapEntry(sub.getCourseCodeWithoutSectionNumber(), []));
+            areSectionsShown.add(MapEntry(sub.getCourseCodeWithoutSectionNumber(), <int, bool>{}));
 
           }
         }
@@ -201,7 +201,7 @@ class SchedulerPageState extends State<SchedulerPage> {
                               }
                             }
                             // if no sections were chosen or this subject has no sections at all, then:
-                            if (sections.isNotEmpty || subjects[i].classCode == subjects[i].getClassCodeWithoutSectionNumber()) {
+                            if (sections.isNotEmpty || subjects[i].courseCode == subjects[i].getCourseCodeWithoutSectionNumber()) {
                               list.add(SchedulerSubjectData(allowCols: subjectsShown[i], sections: sections));
                             } else {
                               subIsEmpty = true;
@@ -243,7 +243,7 @@ class SchedulerPageState extends State<SchedulerPage> {
     bool areThereSecs = false;
     for (Subject sub in Main.facultyData.subjects) {
       // if the course is the same
-      if (sub.getClassCodeWithoutSectionNumber() == subjects[index].classCode && sub.getClassCodeWithoutSectionNumber() != sub.classCode) {
+      if (sub.getCourseCodeWithoutSectionNumber() == subjects[index].courseCode && sub.getCourseCodeWithoutSectionNumber() != sub.courseCode) {
         areThereSecs = true;
         break;
       }
@@ -255,7 +255,7 @@ class SchedulerPageState extends State<SchedulerPage> {
       int secIndex = -1;
       int ind = 0;
       for (MapEntry<String, List<MapEntry<int, Subject>>> element in subjectsSections) {
-        if (element.key == subjects[index].getClassCodeWithoutSectionNumber()) {
+        if (element.key == subjects[index].getCourseCodeWithoutSectionNumber()) {
           secIndex = ind;
           break;
         }
@@ -316,7 +316,7 @@ class SchedulerPageState extends State<SchedulerPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(child: Text(subjects[index].classCode, style: TextStyle(color: Main.appTheme.titleTextColor))),
+          Expanded(child: Text(subjects[index].courseCode, style: TextStyle(color: Main.appTheme.titleTextColor))),
         ],
       ),
       subtitle: Column(
@@ -333,7 +333,7 @@ class SchedulerPageState extends State<SchedulerPage> {
                 int ind_ = 0;
                 int secIndex = 0;
                 for (MapEntry<String, List<MapEntry<int, Subject>>> element in subjectsSections) {
-                  if (element.key == subjects[index].getClassCodeWithoutSectionNumber()) {
+                  if (element.key == subjects[index].getCourseCodeWithoutSectionNumber()) {
                     secIndex = ind_;
                     break;
                   }
@@ -398,8 +398,8 @@ class SchedulerPageState extends State<SchedulerPage> {
                     subjects.removeAt(index);
                     subjectsShown.removeAt(index);
                     for (Subject sub in Main.facultyData.subjects) {
-                      if (sub.getClassCodeWithoutSectionNumber() == subjectsSections[index].key) { // if it is the class we are looking for:
-                        if (sub.getClassCodeWithoutSectionNumber() != sub.classCode) { // if it has sections:
+                      if (sub.getCourseCodeWithoutSectionNumber() == subjectsSections[index].key) { // if it is the class we are looking for:
+                        if (sub.getCourseCodeWithoutSectionNumber() != sub.courseCode) { // if it has sections:
                           break;
                         }
                       }
@@ -494,7 +494,7 @@ class SchedulerPageState extends State<SchedulerPage> {
     Map<int, Subject> secToSubject = {};
 
     for (Subject sub in Main.facultyData.subjects) {
-      if (sub.getClassCodeWithoutSectionNumber() == subjects[index].classCode && sub.getClassCodeWithoutSectionNumber() != sub.classCode) {
+      if (sub.getCourseCodeWithoutSectionNumber() == subjects[index].courseCode && sub.getCourseCodeWithoutSectionNumber() != sub.courseCode) {
         if (sub.getSection() > maxSection) {
           maxSection = sub.getSection();
         }
@@ -519,7 +519,7 @@ class SchedulerPageState extends State<SchedulerPage> {
 
       int subIndex = -1;
       for (int k = 0 ; k < areSectionsShown.length ; k++) {
-        if (areSectionsShown[k].key == secToSubject[sec]!.getClassCodeWithoutSectionNumber()) {
+        if (areSectionsShown[k].key == secToSubject[sec]!.getCourseCodeWithoutSectionNumber()) {
           subIndex = k;
         }
       }

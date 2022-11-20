@@ -107,7 +107,7 @@ class SearchPageState extends State<SearchPage> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(translateEng("course name"), style: TextStyle(fontSize: 10, color: Main.appTheme.titleTextColor)),
+                        Text(translateEng("course name/code"), style: TextStyle(fontSize: 10, color: Main.appTheme.titleTextColor)),
                         Checkbox(value: searchByCourseName, onChanged: (newVal) {
                           setState(() {
                             if (!searchByClassroom && !searchByTeacher) {
@@ -236,7 +236,7 @@ class SearchPageState extends State<SearchPage> {
     classrooms = classroomsList.toString().replaceAll(RegExp("[\\[.*?\\]]"), "");
 
     return ListTile(
-      title: Text(sub.classCode, style: TextStyle(color: Main.appTheme.titleTextColor)),
+      title: Text(sub.courseCode, style: TextStyle(color: Main.appTheme.titleTextColor)),
       subtitle:
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -249,12 +249,12 @@ class SearchPageState extends State<SearchPage> {
           Row(
             children: [
               sub.hours.isEmpty ? const Icon(CupertinoIcons.time_solid, color: Colors.red) : Container(),
-              (sub.classCode.contains("lab") || sub.classCode.contains("Lab") || sub.classCode.contains("LAB") || sub.classCode.contains("/")) ?
+              (sub.courseCode.contains("lab") || sub.courseCode.contains("Lab") || sub.courseCode.contains("LAB") || sub.courseCode.contains("/")) ?
               Container() : TextButton(child: const Icon(Icons.info_outline, color: Colors.blue), onPressed: () async {
 
                 String url = "";
 
-                var request = await HttpClient().getUrl(Uri.parse('https://www.atilim.edu.tr/get-lesson-ects/' + sub.getClassCodeWithoutSectionNumber().replaceAll(" ", "")));
+                var request = await HttpClient().getUrl(Uri.parse('https://www.atilim.edu.tr/get-lesson-ects/' + sub.getCourseCodeWithoutSectionNumber().replaceAll(" ", "")));
                 var response = await request.close();
                 await for (var contents in response.transform(const Utf8Decoder())) {
                   url = contents;
@@ -276,7 +276,7 @@ class SearchPageState extends State<SearchPage> {
               }, onLongPress: () {
 
                 showToast(
-                  sub.getClassCodeWithoutSectionNumber() + " " + translateEng("Syllabus"),
+                  sub.getCourseCodeWithoutSectionNumber() + " " + translateEng("Syllabus"),
                   duration: const Duration(milliseconds: 1000),
                   position: ToastPosition.bottom,
                   backgroundColor: Colors.blue.withOpacity(0.8),
@@ -319,6 +319,13 @@ class SearchPageState extends State<SearchPage> {
           ));
         });
 
+        String cName = name; // for now it is only for Bilkent
+        switch (Main.uni) {
+          case "Bilkent": // An exception
+            cName = sub.courseCode + " " + name;
+            break;
+        }
+
         showAdaptiveActionSheet(
           bottomSheetColor: Main.appTheme.scaffoldBackgroundColor,
           context: context,
@@ -326,7 +333,7 @@ class SearchPageState extends State<SearchPage> {
             children: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Expanded(
-                  child: Center(child: Text(name, style: TextStyle(color: Main.appTheme.titleTextColor, fontSize: 16, fontWeight: FontWeight.bold))),
+                  child: Center(child: Text(cName, style: TextStyle(color: Main.appTheme.titleTextColor, fontSize: 16, fontWeight: FontWeight.bold))),
                 ),
               ]
               ),
@@ -393,7 +400,7 @@ class SearchPageState extends State<SearchPage> {
                 if (!isFound) {
                   Main.schedules[Main.currentScheduleIndex].scheduleCourses.add(Course(note: "", subject: sub));
                   showToast(
-                    sub.classCode + " " + translateEng("was added to the schedule"),
+                    sub.courseCode + " " + translateEng("was added to the schedule"),
                     duration: const Duration(milliseconds: 1500),
                     position: ToastPosition.bottom,
                     backgroundColor: Colors.blue.withOpacity(0.8),
@@ -402,7 +409,7 @@ class SearchPageState extends State<SearchPage> {
                   );
                 } else {
                   showToast(
-                    sub.classCode + " " + translateEng("is already in the schedule"),
+                    sub.courseCode + " " + translateEng("is already in the schedule"),
                     duration: const Duration(milliseconds: 1500),
                     position: ToastPosition.bottom,
                     backgroundColor: Colors.blue.withOpacity(0.8),
@@ -424,7 +431,7 @@ class SearchPageState extends State<SearchPage> {
                 if (!isFound) {
                   Main.favCourses.add(Course(note: "", subject: sub));
                   showToast(
-                    sub.classCode + " " + translateEng("was added to favourites"),
+                    sub.courseCode + " " + translateEng("was added to favourites"),
                     duration: const Duration(milliseconds: 1500),
                     position: ToastPosition.bottom,
                     backgroundColor: Colors.blue.withOpacity(0.8),
@@ -433,7 +440,7 @@ class SearchPageState extends State<SearchPage> {
                   );
                 } else {
                   showToast(
-                    sub.classCode + " " + translateEng("is already a favourite"),
+                    sub.courseCode + " " + translateEng("is already a favourite"),
                     duration: const Duration(milliseconds: 1500),
                     position: ToastPosition.bottom,
                     backgroundColor: Colors.blue.withOpacity(0.8),
@@ -467,6 +474,15 @@ class SearchPageState extends State<SearchPage> {
         if (name.contains(query)) {
           return true;
         }
+
+        name = subject.courseCode;
+
+        name = name.toLowerCase();
+        name = convertTurkishToEnglish(name);
+        if (name.contains(query)) {
+          return true;
+        }
+
       }
 
       bool isFound = false;

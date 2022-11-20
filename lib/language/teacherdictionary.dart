@@ -10,7 +10,7 @@ import '../others/subject.dart';
 String translateTeacher({required String teacherCode, required Subject subject}) { // class code is only used inside the general dictionary
 
   List<String> depsToSearch = subject.teacherCodes.toString().replaceAll(RegExp("[\\[.*?\\]]"), "").split(",");
-  String classCode = subject.getClassCodeWithoutSectionNumber();
+  String classCode = subject.getCourseCodeWithoutSectionNumber();
   bool doSearchByDeps = false;
 
   for (int i = 0 ; i < depsToSearch.length ; i++) {

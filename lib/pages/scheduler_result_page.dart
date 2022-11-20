@@ -82,7 +82,7 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
         // print("Doing search inside $chosenSections");
         for (int index = 0 ; index < chosenSections.length ; index++) { // translate the sections into their subjects:
           for (int i = 0 ; i < Main.facultyData.subjects.length ; i++) {
-            if (Main.facultyData.subjects[i].getClassCodeWithoutSectionNumber() == SchedulerResultPage.subjects[index].classCode) {
+            if (Main.facultyData.subjects[i].getCourseCodeWithoutSectionNumber() == SchedulerResultPage.subjects[index].courseCode) {
               if (Main.facultyData.subjects[i].getSection() == chosenSections[index] || chosenSections[index] == 0) {
                 // print("Adding ${Main.facultyData.subjects[i]}");
                 sub = Main.facultyData.subjects[i];
@@ -110,7 +110,7 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
           // check notToCollideSubjects, if a course inside the col var had a subject inside notToCollide subs then, make toAdd false and break
           for (int i = 0 ; i < col.subjects.length ; i++) {
             for (int j = 0 ; j < notToCollideSubjects.length ; j++) {
-              if (col.subjects[i].getClassCodeWithoutSectionNumber() == notToCollideSubjects[j].getClassCodeWithoutSectionNumber()) {
+              if (col.subjects[i].getCourseCodeWithoutSectionNumber() == notToCollideSubjects[j].getCourseCodeWithoutSectionNumber()) {
                 toAdd = false;
                 List<Subject> subs = [];
                 for (int ind_ = 0 ; ind_ < col.subjects.length ; ind_++) {
@@ -207,12 +207,12 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
 
       scheduleSols.forEach((sol) {
         subs = "";
-        sol.subs.forEach((sub_) {subs = subs + "  |  " + sub_.classCode;});
+        sol.subs.forEach((sub_) {subs = subs + "  |  " + sub_.courseCode;});
         subs = subs.substring(5) + "\n";
         txts.add(TextSpan(
           children: [
             TextSpan(
-              text: sol.sub.getClassCodeWithoutSectionNumber() + " Sec. ${sol.sub.getSection()}",
+              text: sol.sub.getCourseCodeWithoutSectionNumber() + " Sec. ${sol.sub.getSection()}",
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.red),
             ),
             TextSpan(
@@ -629,7 +629,7 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
                             .bodyText2,
                         children: [
                           TextSpan(
-                            text: course.subject.classCode,
+                            text: course.subject.courseCode,
                             style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 11.0),

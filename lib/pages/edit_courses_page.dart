@@ -287,10 +287,10 @@ class EditCoursePageState extends State<EditCoursePage> {
                   child: ListTile(
                     style: ListTileStyle.drawer,
                     contentPadding: EdgeInsets.fromLTRB(width * 0.02, 0, 0, 0),
-                    title: Text(subject.classCode, style: TextStyle(color: Main.appTheme.titleTextColor)),
+                    title: Text(subject.courseCode, style: TextStyle(color: Main.appTheme.titleTextColor)),
                     trailing: Container(
                       padding: EdgeInsets.zero,
-                      margin: EdgeInsets.only(right: 10.0),
+                      margin: const EdgeInsets.only(right: 10.0),
                       child: IconButton(
                         tooltip: translateEng("Notes"),
                         icon: const Icon(CupertinoIcons.chat_bubble_text_fill, color: Colors.blue), onPressed: () {
@@ -485,7 +485,7 @@ class EditCoursePageState extends State<EditCoursePage> {
 
                   } else { // remove
                     setState(() {
-                      String str = Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).subject.classCode;
+                      String str = Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).subject.courseCode;
                       Main.schedules[Main.currentScheduleIndex].scheduleCourses.removeAt(index);
                       showToast(
                         "'$str' " + translateEng("was removed"),

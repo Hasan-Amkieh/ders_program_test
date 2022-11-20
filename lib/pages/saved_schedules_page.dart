@@ -83,7 +83,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
 
       String courses = "";
       for (int i = 0 ; i < schedule.scheduleCourses.length ; i++) { // looping for each course
-        courses = courses + "  |  " + schedule.scheduleCourses[i].subject.classCode;
+        courses = courses + "  |  " + schedule.scheduleCourses[i].subject.courseCode;
 
         days.addAll(schedule.scheduleCourses[i].subject.days);
         beginningPeriods.addAll(schedule.scheduleCourses[i].subject.bgnPeriods);

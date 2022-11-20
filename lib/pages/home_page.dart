@@ -25,7 +25,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../main.dart';
 import '../others/appthemes.dart';
-import '../widgets/counterbutton.dart';
+// import '../widgets/counterbutton.dart';
 import '../widgets/emptycontainer.dart';
 import 'loading_update_page.dart';
 
@@ -84,7 +84,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
     for (int i = 0 ; i < Main.schedules.length ; i++) {
       for (int j = 0 ; j < Main.schedules[i].scheduleCourses.length ; j++) {
         for (int k = 0 ; k < Main.newCourses.length ; k++) {
-          if (Main.newCourses[k].classCode == Main.schedules[i].scheduleCourses[j].subject.classCode) { // if the subjects are the same:
+          if (Main.newCourses[k].courseCode == Main.schedules[i].scheduleCourses[j].subject.courseCode) { // if the subjects are the same:
             if (Main.newCoursesChanges[k][0]) { // if the time has changed:
               Main.schedules[i].scheduleCourses[j].subject.days = Main.newCourses[k].days;
               Main.schedules[i].scheduleCourses[j].subject.bgnPeriods = Main.newCourses[k].bgnPeriods;
@@ -119,6 +119,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                 child: StatefulBuilder(
                   builder: (context, setState) {
                     return DropdownButton<String>(
+                      underline: Container(),
                       dropdownColor: Main.appTheme.scaffoldBackgroundColor,
                       value: Main.department,
                       items: University.getFacultyDeps(Main.faculty).keys.map<DropdownMenuItem<String>>((String value) {
@@ -443,6 +444,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             children: [
               Text(translateEng("Language"), style: TextStyle(color: Main.appTheme.titleTextColor)),
               DropdownButton<String>(
+                underline: Container(),
                 dropdownColor: Main.appTheme.scaffoldBackgroundColor,
                 value: Main.language,
                 items: langs.map<DropdownMenuItem<String>>((String value) {
@@ -460,6 +462,9 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                 },
               )
             ],
+          ),
+          SizedBox(
+            height: height * 0.02,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -490,6 +495,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             children: [
               Text(translateEng("Faculty"), style: TextStyle(color: Main.appTheme.titleTextColor)),
               DropdownButton<String>(
+                underline: Container(),
                 dropdownColor: Main.appTheme.scaffoldBackgroundColor,
                 value: Main.faculty,
                 items: University.getFaculties().map<DropdownMenuItem<String>>((String value) {
@@ -537,6 +543,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             children: [
               Text(translateEng("Department"), style: TextStyle(color: Main.appTheme.titleTextColor)),
               DropdownButton<String>(
+                underline: Container(),
                 dropdownColor: Main.appTheme.scaffoldBackgroundColor,
                 value: Main.department,
                 items: University.getFacultyDeps(Main.faculty).keys.map<DropdownMenuItem<String>>((String value) {
@@ -555,7 +562,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             ],
           ) : EmptyContainer(),
           SizedBox(
-            height: height * 0.04,
+            height: height * 0.02,
           ),
           isInited ? (Main.facultyData.semesterName.isEmpty ? Container() : Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1203,7 +1210,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                             .bodyText2,
                         children: [
                           TextSpan(
-                            text: course.subject.classCode,
+                            text: course.subject.courseCode,
                             style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 11.0),
@@ -1222,7 +1229,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                 onHover: (isHovering) {
                   setState(() {
                     isHovered = isHovering;
-                    courseBeingHovered = course.subject.classCode;
+                    courseBeingHovered = course.subject.courseCode;
                   });
                 },
                 style: ButtonStyle(
@@ -1230,7 +1237,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                       isColOf3 ? EdgeInsets.symmetric(vertical: 0.01 * width, horizontal: 0.005 * width) : EdgeInsets.all(0.01 * width)
                   ),
                   backgroundColor: MaterialStateProperty.all(
-                      ((isHovered && course.subject.classCode == courseBeingHovered)) ?
+                      ((isHovered && course.subject.courseCode == courseBeingHovered)) ?
                       AppTheme.getColor(colorIndex)
                           .withBlue(AppTheme.getColor(colorIndex).blue + 15)
                           .withGreen(AppTheme.getColor(colorIndex).green + 15)
@@ -1465,7 +1472,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
     fac = faculty;this.scheduleName = scheduleName;
     List<Course> courses_ = [];
-    courses.forEach((course) { courses_.add(Course(subject: Subject.fromStringWithClassCode(course), note: "")); });
+    courses.forEach((course) { courses_.add(Course(subject: Subject.fromStringWithCourseCode(course), note: "")); });
 
     // print("Adding the schedule: ");
     // print("Courses are: ");
@@ -1531,7 +1538,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
       ..addCustomMetadata('number_of_courses', Main.schedules[shceduleIndex].scheduleCourses.length)
       ..addCustomMetadata('faculty', Main.faculty);
     for (int i = 0 ; i < Main.schedules[shceduleIndex].scheduleCourses.length ; i++) {
-      metadata.addCustomMetadata("course_${i+1}", Main.schedules[shceduleIndex].scheduleCourses[i].subject.classCode + "|"
+      metadata.addCustomMetadata("course_${i+1}", Main.schedules[shceduleIndex].scheduleCourses[i].subject.courseCode + "|"
           + Main.schedules[shceduleIndex].scheduleCourses[i].subject.toString());
     }
 

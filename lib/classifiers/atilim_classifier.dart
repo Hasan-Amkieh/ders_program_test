@@ -295,7 +295,7 @@ class AtilimClassifier extends Classifier {
 
                 // print("${names[subjectIndex]} has the hrs $hrs");
 
-                subjects.add(Subject(customName: names[subjectIndex], hours: hrs, bgnPeriods: beginningHr, classCode: subjectId.key,
+                subjects.add(Subject(customName: names[subjectIndex], hours: hrs, bgnPeriods: beginningHr, courseCode: subjectId.key,
                     classrooms: classrooms, days: day, departments: classes, teacherCodes: teacherCodes));
 
                 subjectIndex++;
@@ -305,7 +305,7 @@ class AtilimClassifier extends Classifier {
 
             //facultyData.subjects = subjects;
             // TO SEE THE RESULTS ONLY /
-            //facultyData.subjects.forEach((element) {print("${element.classCode} : $element");});
+            //facultyData.subjects.forEach((element) {print("${element.courseCode} : $element");});
             sPort.send(["facultyData", subjects]); // Main.facultyData = facultyData;
 
             sPort.send(["setState", 4]); // state = 4;

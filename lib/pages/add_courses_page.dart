@@ -56,13 +56,13 @@ class AddCoursesPageState extends State<AddCoursesPage> {
       for (Subject sub in subjects) {
         isAdded = false;
         for (Subject s in subjectsWithoutSecs) {
-          if (s.getClassCodeWithoutSectionNumber() == sub.getClassCodeWithoutSectionNumber()) {
+          if (s.getCourseCodeWithoutSectionNumber() == sub.getCourseCodeWithoutSectionNumber()) {
             isAdded = true;
             break;
           }
         }
         if (!isAdded) {
-          subjectsWithoutSecs.add(Subject(classCode: sub.getClassCodeWithoutSectionNumber(), customName: sub.getNameWithoutSection(), departments: sub.departments, teacherCodes: sub.teacherCodes, hours: sub.hours, bgnPeriods: sub.bgnPeriods, days: sub.days, classrooms: sub.classrooms));
+          subjectsWithoutSecs.add(Subject(courseCode: sub.getCourseCodeWithoutSectionNumber(), customName: sub.getNameWithoutSection(), departments: sub.departments, teacherCodes: sub.teacherCodes, hours: sub.hours, bgnPeriods: sub.bgnPeriods, days: sub.days, classrooms: sub.classrooms));
         }
       }
       subjectsOfDep = subjectsWithoutSecs;
@@ -166,7 +166,7 @@ class AddCoursesPageState extends State<AddCoursesPage> {
     //print("current schedule is: ${Main.schedules[Main.currentScheduleIndex].scheduleCourses}");
     if (!isForScheduler) {
       for (Course crs in Main.schedules[Main.currentScheduleIndex].scheduleCourses) {
-        if (crs.subject.classCode == subject.classCode) {
+        if (crs.subject.courseCode == subject.courseCode) {
           isInside = true;
           break;
         }
@@ -174,7 +174,7 @@ class AddCoursesPageState extends State<AddCoursesPage> {
     }
     if (!isInside) {
       for (Subject sub in Main.coursesToAdd) {
-        if (sub.classCode == subject.classCode) {
+        if (sub.courseCode == subject.courseCode) {
           isInside = true;
           break;
         }
@@ -182,7 +182,7 @@ class AddCoursesPageState extends State<AddCoursesPage> {
     }
 
     return ListTile(
-      title: Text(subject.classCode, style: TextStyle(color: Main.appTheme.titleTextColor)),
+      title: Text(subject.courseCode, style: TextStyle(color: Main.appTheme.titleTextColor)),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -208,8 +208,8 @@ class AddCoursesPageState extends State<AddCoursesPage> {
             });
           }
           showToast(
-            translateEng(isInside ? "${subject.classCode} " + translateEng("is already in the schedule")
-                : "${subject.classCode} " + translateEng("was added to the schedule")),
+            translateEng(isInside ? "${subject.courseCode} " + translateEng("is already in the schedule")
+                : "${subject.courseCode} " + translateEng("was added to the schedule")),
             duration: const Duration(milliseconds: 1500),
             position: ToastPosition.bottom,
             backgroundColor: Colors.blue.withOpacity(0.8),

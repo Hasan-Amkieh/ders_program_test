@@ -17,7 +17,7 @@ import '../widgets/timetable_canvas.dart';
 class CustomCoursePage extends StatefulWidget {
 
   Subject subject = Subject(customName: "",
-      classCode: "",
+      courseCode: "",
       departments: <String>[],
       teacherCodes: <List<String>>[[]],
       hours: <int>[],
@@ -172,16 +172,16 @@ class CustomCoursePageState extends State<CustomCoursePage> {
             if (!Main.isEditingCourse) {
               // print("Checking the course code!");
               bool isUsed = false;
-              String str = widget.subject.classCode.toLowerCase();
+              String str = widget.subject.courseCode.toLowerCase();
               Main.schedules[Main.currentScheduleIndex].scheduleCourses.forEach((sub) {
-                if (str == sub.subject.classCode.toLowerCase()) {
+                if (str == sub.subject.courseCode.toLowerCase()) {
                   isUsed = true;
                   return ;
                 }
               });
               if (isUsed) {
                 showToast(
-                  translateEng("The course code ") + "${widget.subject.classCode} " + translateEng("is already used"),
+                  translateEng("The course code ") + "${widget.subject.courseCode} " + translateEng("is already used"),
                   duration: const Duration(milliseconds: 1500),
                   position: ToastPosition.bottom,
                   backgroundColor: Colors.blue.withOpacity(0.8),
@@ -272,8 +272,8 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                           Text(translateEng("Course Code"), style: TextStyle(color: Main.appTheme.titleIconColor)),
                           SizedBox(
                               width: width * 0.6,
-                              child: Main.isEditingCourse ? Text(widget.subject.classCode, style: TextStyle(color: Main.appTheme.titleIconColor)) :
-                              TextFieldWidget(text: "", onChanged: (str) { setState(() {widget.subject.classCode = str;}); }, hintText: "e.g.   ENG102")
+                              child: Main.isEditingCourse ? Text(widget.subject.courseCode, style: TextStyle(color: Main.appTheme.titleIconColor)) :
+                              TextFieldWidget(text: "", onChanged: (str) { setState(() {widget.subject.courseCode = str;}); }, hintText: "e.g.   ENG102")
                           ),
                         ],
                       ),
@@ -403,7 +403,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
     if (widget.subject.customName.isEmpty) {
       return false;
     }
-    if (widget.subject.classCode.isEmpty) {
+    if (widget.subject.courseCode.isEmpty) {
       return false;
     }
 
