@@ -431,10 +431,12 @@ class Main {
     switch(Main.uni) {
 
       case "Atilim":
+        print("Atilim classifier is set!");
         Main.classifier = AtilimClassifier.instance;
         Main.scraper = Platform.isWindows ? AtilimScraperComputer.instance : AtilimScraperPhone.instance;
         break;
       case "Bilkent":
+        print("Bilkent classifier is set!");
         Main.classifier = BilkentClassifier.instance;
         Main.scraper = Platform.isWindows ? BilkentScraperComputer.instance : BilkentScraperPhone.instance;
         break;

@@ -25,6 +25,8 @@ class AtilimScraperComputer extends Scraper {
   @override
   void getTimetableData(controller, request) async { // controller and request pars are only for the phone version
 
+    print("Calling Atilim Scraper");
+
     final webview = await WebviewWindow.create(
       configuration: CreateConfiguration(
         windowHeight: 10,

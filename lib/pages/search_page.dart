@@ -84,6 +84,7 @@ class SearchPageState extends State<SearchPage> {
                 children: [
                   Text(translateEng("Only search courses for this department"), style: TextStyle(color: Main.appTheme.titleTextColor)),
                   DropdownButton<String>(
+                    underline: EmptyContainer(),
                     dropdownColor: Main.appTheme.scaffoldBackgroundColor,
                     value: depToSearch,
                     items: deps.map<DropdownMenuItem<String>>((String value) {
@@ -252,16 +253,11 @@ class SearchPageState extends State<SearchPage> {
               (sub.courseCode.contains("lab") || sub.courseCode.contains("Lab") || sub.courseCode.contains("LAB") || sub.courseCode.contains("/")) ?
               Container() : TextButton(child: const Icon(Icons.info_outline, color: Colors.blue), onPressed: () async {
 
-                String url = "";
+                String url = await University.getSubjectSyllabusLink(sub);
 
-                var request = await HttpClient().getUrl(Uri.parse('https://www.atilim.edu.tr/get-lesson-ects/' + sub.getCourseCodeWithoutSectionNumber().replaceAll(" ", "")));
-                var response = await request.close();
-                await for (var contents in response.transform(const Utf8Decoder())) {
-                  url = contents;
-                }
 
                 // print("Launching : ${url}");
-                if (await canLaunchUrl(Uri.parse(url))) {
+                if (url.isNotEmpty && await canLaunchUrl(Uri.parse(url))) {
                   launchUrl(Uri.parse(url));
                 } else {
                   showToast(

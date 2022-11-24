@@ -111,6 +111,7 @@ class AddCoursesPageState extends State<AddCoursesPage> {
                   children: [
                     Text(translateEng("Show courses only for"), style: TextStyle(color: Main.appTheme.titleTextColor)),
                     DropdownButton<String>(
+                      underline: EmptyContainer(),
                       dropdownColor: Main.appTheme.scaffoldBackgroundColor,
                       value: depToSearch,
                       items: deps.map<DropdownMenuItem<String>>((String value) {
@@ -240,7 +241,7 @@ class AddCoursesPageState extends State<AddCoursesPage> {
       query = query.toLowerCase();
       name = name.toLowerCase();
 
-      return name.contains(query);
+      return name.contains(query) || subject.courseCode.toLowerCase().contains(query);
 
     }).toList();
 

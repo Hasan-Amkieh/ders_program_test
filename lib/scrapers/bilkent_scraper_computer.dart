@@ -34,22 +34,20 @@ class BilkentScraperComputer extends Scraper {
         await for (var contents in response.transform(const Utf8Decoder())) {
           int pos;
 
-          if (Main.semesterName.isEmpty) {
-            pos = contents.indexOf('"year":"');
-            if (pos != -1) {
+          pos = contents.indexOf('"year":"');
+          if (pos != -1) {
 
-              Main.semesterName = contents.substring(pos + 8, contents.indexOf('"', pos + 8));
+            Main.semesterName = contents.substring(pos + 8, contents.indexOf('"', pos + 8));
 
-              pos = contents.indexOf('"name":"');
-              Main.semesterName = Main.semesterName + " " + contents.substring(pos + 8, contents.indexOf('"', pos + 8));
+            pos = contents.indexOf('"name":"');
+            Main.semesterName = Main.semesterName + " " + contents.substring(pos + 8, contents.indexOf('"', pos + 8));
 
-              // for example: 20221 / means the for the Fall (last digit of 1) and for 2022 - 2023
-              pos = contents.indexOf('"code":"');
-              University.variables.addEntries([MapEntry("code", contents.substring(pos + 8, contents.indexOf('"', pos + 8)))]);
+            // for example: 20221 / means the for the Fall (last digit of 1) and for 2022 - 2023
+            pos = contents.indexOf('"code":"');
+            University.variables.addEntries([MapEntry("code", contents.substring(pos + 8, contents.indexOf('"', pos + 8)))]);
 
-              break; // We got all the information we need, get out:
+            break; // We got all the information we need, get out:
 
-            }
           }
         }
       }

@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:io' show HttpClient, Platform;
 
+import 'package:Atsched/others/subject.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart';
@@ -30,6 +31,32 @@ class University {
         return false;
 
     }
+
+  }
+
+  static Future<String> getSubjectSyllabusLink(Subject sub) async {
+
+    switch (Main.uni) {
+
+      case "Atilim":
+        var request = await HttpClient().getUrl(Uri.parse('https://www.atilim.edu.tr/get-lesson-ects/' + sub.getCourseCodeWithoutSectionNumber().replaceAll(" ", "")));
+        var response = await request.close();
+        await for (var contents in response.transform(const Utf8Decoder())) {
+          return contents;
+        }
+
+        break;
+
+      case "Bilkent": // ARCH/301 / from ARCH301
+        String str = sub.getCourseCodeWithoutSectionNumber();
+        return ('https://stars.bilkent.edu.tr/syllabus/view/' +
+            str.substring(0, str.indexOf(RegExp("[1-9]"))) + "/" + str.substring(str.indexOf(RegExp("[1-9]"))) + "/");
+
+        break;
+
+    }
+
+    return "";
 
   }
 
