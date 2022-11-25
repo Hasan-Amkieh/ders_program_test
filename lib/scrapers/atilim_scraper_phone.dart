@@ -14,8 +14,9 @@ class AtilimScraperPhone extends Scraper {
   @override
   Future<AjaxRequestAction> getTimetableData(controller, request) async {
 
+
     {
-      //print("Received this file: ${request.url.toString()}");
+      print("Received this file: ${request?.url.toString()}");
       if (request!.url
           .toString()
           .contains("__func=regularttGetData") &&

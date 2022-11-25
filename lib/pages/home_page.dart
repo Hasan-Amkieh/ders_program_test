@@ -6,6 +6,7 @@ import "dart:io" show Platform;
 import 'dart:io';
 
 import 'package:Atsched/others/university.dart';
+import 'package:Atsched/widgets/choice_box.dart';
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:Atsched/language/dictionary.dart';
 import 'package:Atsched/others/subject.dart';
@@ -312,10 +313,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
     Widget? servicesPage;
     if (pageIndex == 1) {
 
-      servicesPage = Container(
-          padding: EdgeInsets.symmetric(horizontal: 0.02 * width, vertical: 0.05 * width),
-          child: ListView(
-            children: [
+      /*[
               ListTile(
                 onTap: () {
                   Navigator.pushNamed(context, "/home/editcourses");
@@ -410,7 +408,122 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                 subtitle: Text(translateEng('You can save schedules and set them back again'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
                 leading: Icon(CupertinoIcons.calendar_today, color: Main.appTheme.titleIconColor),
               ),
-            ],
+            ]*/
+
+      List<Icon> icons = [
+        Icon(Icons.edit, color: Main.appTheme.titleIconColor),
+        Icon(Icons.search, color: Main.appTheme.titleIconColor),
+        Icon(Icons.play_lesson, color: Main.appTheme.titleIconColor),
+        Icon(CupertinoIcons.calendar_badge_plus, color: Main.appTheme.titleIconColor),
+        Icon(Icons.star, color: Main.appTheme.titleIconColor),
+        Icon(CupertinoIcons.calendar_today, color: Main.appTheme.titleIconColor)
+      ];
+
+      List<Text> topics = [
+        Text(translateEng('Edit Courses'), style: TextStyle(color: Main.appTheme.titleTextColor)),
+        Text(translateEng('Search for Courses'), style: TextStyle(color: Main.appTheme.titleTextColor)),
+        Text(translateEng('Empty Classrooms'), style: TextStyle(color: Main.appTheme.titleTextColor)),
+        Text(translateEng('Scheduler'), style: TextStyle(color: Main.appTheme.titleTextColor)),
+        Text(translateEng('Favourite Courses'), style: TextStyle(color: Main.appTheme.titleTextColor)),
+        Text(translateEng('Saved Schedules'), style: TextStyle(color: Main.appTheme.titleTextColor)),
+      ];
+
+      List<Widget> descrips = [
+        Text(translateEng('Add and edit the courses on the current schedule'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
+        Text(translateEng('Search for courses using its name, classroom number, teacher or department'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
+        Text(translateEng('Find empty classrooms inside the university, a better place than the desperate library'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
+        Text(translateEng('Choose the courses with the sections you prefer, then choose your appropriate schedule'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
+        EmptyContainer(),
+        Text(translateEng('You can save schedules and set them back again'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
+      ];
+
+      List<int> counts = [ // TODO: Don't forget doing this part:
+        Main.schedules[Main.currentScheduleIndex].scheduleCourses.length,
+        0,
+        0,
+        -1, // -1 means there is no count on the scheduler
+        0,
+        Main.schedules.length,
+      ];
+
+      List<Null Function()> onTaps = [
+            () {
+          Navigator.pushNamed(context, "/home/editcourses");
+        },
+            () {
+          if (Main.isFacDataFilled) {
+            Navigator.pushNamed(context, "/home/searchcourses");
+          } else {
+            showToast(
+              translateEng("The courses could not be loaded!"),
+              duration: const Duration(milliseconds: 1500),
+              position: ToastPosition.bottom,
+              backgroundColor: Colors.blue.withOpacity(0.8),
+              radius: 100.0,
+              textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
+            );
+          }
+        },
+            () {
+          if (Main.isFacDataFilled) {
+            Navigator.pushNamed(context, "/home/emptyclassrooms");
+          } else {
+            showToast(
+              translateEng("The courses could not be loaded!"),
+              duration: const Duration(milliseconds: 1500),
+              position: ToastPosition.bottom,
+              backgroundColor: Colors.blue.withOpacity(0.8),
+              radius: 100.0,
+              textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
+            );
+          }
+        },
+        () {
+          if (Main.isFacDataFilled) {
+            Navigator.pushNamed(context, "/home/scheduler");
+          } else {
+            showToast(
+              translateEng("The courses could not be loaded!"),
+              duration: const Duration(milliseconds: 1500),
+              position: ToastPosition.bottom,
+              backgroundColor: Colors.blue.withOpacity(0.8),
+              radius: 100.0,
+              textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
+            );
+          }
+        },
+        () {
+          Navigator.pushNamed(context, "/home/favcourses");
+        },
+            () {
+          Navigator.pushNamed(context, "/home/savedschedules");
+        },
+      ];
+
+      List<Widget> children = [];
+      List<Widget> widgets_ = [];
+
+      for (int i = 0 ; i < icons.length ;) { // each row has 4/2 widgets
+        widgets_ = [];
+        for (int j = 0 ; j < (Platform.isWindows ? 4 : 2) ; j++, i++) { // take 4/2 widgets and fill them into the row
+          if (i >= icons.length) {
+            while (widgets_.length < 4) {
+              widgets_.add(SizedBox(width: width * ((Platform.isWindows ? 0.18 : 0.35) + 0.01)));
+            }
+            break;
+          }
+          widgets_.add(ChoiceBox(icon: icons[i], mainText: topics[i], description: descrips[i], number: counts[i], onTap: onTaps[i]));
+        }
+        children.add(Row(children: widgets_, mainAxisAlignment: MainAxisAlignment.spaceBetween));
+        children.add(SizedBox(height: height * 0.03,));
+      }
+
+      servicesPage = Container(
+          padding: EdgeInsets.symmetric(horizontal: 0.02 * width, vertical: 0.05 * width),
+          child: SingleChildScrollView(
+            child: Column(
+              children: children,
+            ),
           )
       );
     }

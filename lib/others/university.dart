@@ -90,7 +90,7 @@ class University {
           "Fine Arts",
           "Arts and Sciences",
           "Civil Aviation",
-          "Law",
+          // "Law", // It is the university's fault, they stopped supporting the Law faculky inside the edupage website
           "Health Sciences"
         ];
       case "Bilkent":
