@@ -1,7 +1,10 @@
 // NOTE: minimum version of android is 4.4 for the application to run,
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show Platform;
+
+import 'package:intl/intl.dart';
 
 import 'package:Atsched/classifiers/atilim_classifier.dart';
 import 'package:Atsched/others/university.dart';
@@ -40,6 +43,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:restart_app/restart_app.dart';
 import 'package:new_version/new_version.dart';
+import 'package:worker_manager/worker_manager.dart';
 
 import 'classifiers/bilkent_classifier.dart';
 import 'classifiers/classifier.dart';
@@ -82,6 +86,10 @@ class Main {
 
   static late Classifier classifier;
   static late Scraper scraper;
+
+  static int classroomsCountForCurHr = 0;
+
+  static List<Classroom> classrooms = [];
 
   // NOTE: Default values are inside the function readSettings:
   static bool forceUpdate = false;
@@ -445,6 +453,205 @@ class Main {
 
   }
 
+  static List updateClassroomsCount(List<Subject> subjects, List<Classroom> classrooms_, TypeSendPort sPort) {
+
+    List<Classroom> classrooms = classrooms_;
+
+    if (classrooms_.isEmpty) {
+      bool isClassroomFound = false;
+      bool isPeriodFound = false;
+
+      for (int subI = 0 ; subI < subjects.length ; subI++) {
+
+        for (int periodI = 0 ; periodI < subjects[subI].days.length ; periodI++) {
+
+          for (int classroomI = 0 ; classroomI < subjects[subI].classrooms[periodI].length ; classroomI++) {
+
+            // print("${subjects[subI].days[periodI].length} ${subjects[subI].classrooms[periodI].length}");
+
+            isClassroomFound = false;
+            isPeriodFound = false;
+            int atI = -1;
+            for (int searchI = 0 ; searchI < classrooms.length ; searchI++) {
+              atI = searchI;
+              if (subjects[subI].classrooms[periodI][classroomI] == classrooms[searchI].classroom) {
+                isClassroomFound = true;
+                bool isFound = false;
+                for (int a_ = 0 ; a_ < classrooms[searchI].days[0].length ; a_++) {
+                  if (subjects[subI].days[periodI].length > classroomI && subjects[subI].bgnPeriods[periodI].length > classroomI && classrooms[searchI].bgnPeriods[0].length > a_ &&
+                      classrooms[searchI].days[0][a_] == subjects[subI].days[periodI][classroomI] &&
+                      classrooms[searchI].bgnPeriods[0][a_] == subjects[subI].bgnPeriods[periodI][classroomI]) {
+                    isFound = true;
+                    if (classrooms[searchI].hours.length > a_ && classrooms[searchI].hours[a_] < subjects[subI].hours[periodI]) {
+                      classrooms[searchI].hours[a_] = subjects[subI].hours[periodI];
+                    }
+                  }
+                }
+                if (isFound) {
+                  isPeriodFound = true;
+                  break;
+                }
+              }
+              if (isClassroomFound) {
+                break;
+              }
+            }
+
+            if (!isClassroomFound) {
+              classrooms.add(Classroom(
+                classroom: subjects[subI].classrooms[periodI][classroomI],
+                days: [subjects[subI].days[periodI]],
+                bgnPeriods: [subjects[subI].bgnPeriods[periodI]],
+                hours: [subjects[subI].hours[periodI]],
+              ));
+            }
+
+            if (atI != -1) {
+              if (!isPeriodFound) { // not the issue, the issue is that no periods are being added from the other courses
+
+                classrooms[atI].days.add([]);
+                classrooms[atI].bgnPeriods.add([]);
+                for (int i = 0 ; i < subjects[subI].days[periodI].length ; i++) {
+                  classrooms[atI].days[classrooms[atI].days.length - 1].add(subjects[subI].days[periodI][i]);
+                }
+                for (int i = 0 ; i < subjects[subI].bgnPeriods[periodI].length ; i++) {
+                  classrooms[atI].bgnPeriods[classrooms[atI].days.length - 1].add(subjects[subI].bgnPeriods[periodI][i]);
+                }
+                classrooms[atI].hours.add(subjects[subI].hours[periodI]);
+
+              }
+            }
+
+          }
+
+        }
+
+      }
+    }
+
+    int classroomsCount = 0;
+
+    // Then, find all the classrooms that, perform the search:
+    String day = DateFormat('EEEE').format(DateTime.now());
+    String bgnHr = "", endHr = "";
+    if (DateTime.now().minute < 20) {
+      bgnHr = (DateTime.now().hour - 1).toString() + ":" + University.getBgnMinutes().toString();
+      endHr = (DateTime.now().hour).toString() + ":" + University.getEndMinutes().toString();
+    } else {
+      bgnHr = DateTime.now().hour.toString() + ":" + University.getBgnMinutes().toString();
+      endHr = (DateTime.now().hour + 1).toString() + ":" + University.getEndMinutes().toString();
+    }
+
+    int dayToSearch;
+    if (day != "Any") {
+      dayToSearch = stringToDay(day);
+    } else {
+      dayToSearch = -1;
+    }
+
+    int bgnHrToSearch, endHrToSearch;
+    if (bgnHr != "Any") {
+      bgnHrToSearch = University.stringToBgnPeriod(bgnHr);
+    } else {
+      bgnHrToSearch = -1;
+    }
+    if (endHr != "Any") {
+      endHrToSearch = University.stringToBgnPeriod(endHr);
+    } else {
+      endHrToSearch = -1;
+    }
+
+    int hours1;
+    int bgnHour1;
+    int hours2;
+    int bgnHour2;
+
+    bool isEmpty = true; // by default, it is not empty, try to find if the period we need has one period that is empty at the same time
+    classrooms.forEach((classroom) {
+      isEmpty = true;
+
+      List<int> daysUsed = [];
+
+      for (int i = 0 ; i < classroom.days.length ; i++) {
+        for (int j = 0 ; j < classroom.days[i].length ; j++) {
+          if (!daysUsed.contains(classroom.days[i][j])) {
+            daysUsed.add(classroom.days[i][j]);
+          }
+        }
+      }
+
+      if (dayToSearch == -1) {
+        bool emptyDayFound = false;
+        for (int d = 1 ; d < 8 ; d++) {
+          if (!daysUsed.contains(d)) {
+            emptyDayFound = true;
+            break;
+          }
+        }
+        if (emptyDayFound) {
+          classroomsCount++;
+          return ;
+        }
+      }
+
+      for (int i = 0 ; i < classroom.days.length ; i++) {
+        for (int j = 0 ; j < classroom.days[i].length ; j++) {
+          if (dayToSearch != -1 && classroom.bgnPeriods[i].length > j) {
+            hours1 = endHrToSearch - bgnHrToSearch;
+            bgnHour1 = bgnHrToSearch;
+            hours2 = classroom.hours[i];
+            bgnHour2 = classroom.bgnPeriods[i][j];
+            if (
+            (bgnHour1 >= bgnHour2 && bgnHour1 < (bgnHour2 + hours2)) ||
+                ((bgnHour1 + hours1) > bgnHour2 && (bgnHour1 + hours1) < (bgnHour2 + hours2))
+                || (bgnHour2 >= bgnHour1 && bgnHour2 < (bgnHour1 + hours1)) ||
+                ((bgnHour2 + hours2) > bgnHour1 && (bgnHour2 + hours2) < (bgnHour1 + hours1))
+            ) {
+              if (dayToSearch == classroom.days[i][j]) {
+                isEmpty = false;
+                break;
+
+              }
+            }
+          }
+        }
+        if (!isEmpty) {
+          break;
+        }
+      }
+
+      if (isEmpty) {
+        classroomsCount++;
+      }
+
+      return ;
+
+    });
+
+    return [classroomsCount, [...classrooms]];
+
+  }
+
+  static void scheduleClassroomsCounter() {
+
+    Executor().execute(arg1: Main.facultyData.subjects, arg2: Main.classrooms, fun2: Main.updateClassroomsCount).then((result) {
+      Main.classroomsCountForCurHr = result[0];
+      Main.classrooms = result[1];
+
+      int mins = 0;
+      if (DateTime.now().minute < 20) {
+        mins = DateTime.now().minute;
+      } else {
+        mins = 60 - DateTime.now().minute + 20;
+      }
+
+      print("Classrooms count to be refreshed after $mins minutes!");
+      Timer(Duration(minutes: mins), scheduleClassroomsCounter);
+
+    });
+
+  }
+
 }
 
 Future main() async {
@@ -463,7 +670,7 @@ Future main() async {
 
   bool isSupported = true;
 
-  { // to save some memory:
+  { // for storing the files into that directory:
     Directory dir = Directory(Main.appDocDir + Main.filePrefix + "Atsched");
     if (!dir.existsSync()) {
       dir.createSync();
@@ -617,6 +824,12 @@ Future main() async {
   }
 
   Main.assignScrapersNClassifiers();
+
+  await Executor().warmUp(log: false, isolatesCount: 3); // might be increased later!
+
+  if (Main.facultyData.subjects.isNotEmpty) {
+    Main.scheduleClassroomsCounter();
+  }
 
   runApp(OKToast(
     child: MaterialApp(

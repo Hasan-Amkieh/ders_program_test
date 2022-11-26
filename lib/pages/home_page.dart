@@ -287,11 +287,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
     width = (window.physicalSize / window.devicePixelRatio).width;
     height = (window.physicalSize / window.devicePixelRatio).height;
-    // if (MediaQuery.of(context).orientation == Orientation.landscape) { // it screwed the other pages, only apply for the counter button inside here!
-    //   double x = height;
-    //   height = width;
-    //   width = x;
-    // }
 
     var isPortrait = MediaQuery
         .of(context)
@@ -312,103 +307,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
     Widget? servicesPage;
     if (pageIndex == 1) {
-
-      /*[
-              ListTile(
-                onTap: () {
-                  Navigator.pushNamed(context, "/home/editcourses");
-                },
-                title: Text(translateEng('Edit Courses'), style: TextStyle(color: Main.appTheme.titleTextColor)),
-                subtitle: Text(translateEng('Add and edit the courses on the current schedule'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
-                leading: Icon(Icons.edit, color: Main.appTheme.titleIconColor),
-              ),
-              SizedBox(height: height * 0.01),
-              ListTile(
-                onTap: () {
-                  if (Main.isFacDataFilled) {
-                    Navigator.pushNamed(context, "/home/searchcourses");
-                  } else {
-                    showToast(
-                      translateEng("The courses could not be loaded!"),
-                      duration: const Duration(milliseconds: 1500),
-                      position: ToastPosition.bottom,
-                      backgroundColor: Colors.blue.withOpacity(0.8),
-                      radius: 100.0,
-                      textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
-                    );
-                  }
-                },
-                title: Text(translateEng('Search for Courses'), style: TextStyle(color: Main.appTheme.titleTextColor)),
-                subtitle: Text(translateEng('Search for courses using its name, classroom number, teacher or department'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
-                leading: Icon(Icons.search, color: Main.appTheme.titleIconColor),
-              ),
-              SizedBox(height: height * 0.01),
-              ListTile(
-                onTap: () {
-                  if (Main.isFacDataFilled) {
-                    Navigator.pushNamed(context, "/home/emptyclassrooms");
-                  } else {
-                    showToast(
-                      translateEng("The courses could not be loaded!"),
-                      duration: const Duration(milliseconds: 1500),
-                      position: ToastPosition.bottom,
-                      backgroundColor: Colors.blue.withOpacity(0.8),
-                      radius: 100.0,
-                      textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
-                    );
-                  }
-                },
-                title: Text(translateEng('Empty Classrooms'), style: TextStyle(color: Main.appTheme.titleTextColor)),
-                subtitle: Text(translateEng('Find empty classrooms inside the university, a better place than the desperate library'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
-                leading: Icon(Icons.play_lesson, color: Main.appTheme.titleIconColor),
-              ),
-              SizedBox(height: height * 0.01),
-              ListTile(
-                onTap: () {
-                  Navigator.pushNamed(context, "/home/favcourses");
-                },
-                title: Text(translateEng('Favourite Courses'), style: TextStyle(color: Main.appTheme.titleTextColor)),
-                leading: Icon(Icons.star, color: Main.appTheme.titleIconColor),
-              ),
-              SizedBox(height: height * 0.01),
-              ListTile(
-                onTap: () {
-                  if (Main.isFacDataFilled) {
-                    Navigator.pushNamed(context, "/home/scheduler");
-                  } else {
-                    showToast(
-                      translateEng("The courses could not be loaded!"),
-                      duration: const Duration(milliseconds: 1500),
-                      position: ToastPosition.bottom,
-                      backgroundColor: Colors.blue.withOpacity(0.8),
-                      radius: 100.0,
-                      textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
-                    );
-                  }
-                },
-                title: Text(translateEng('Scheduler'), style: TextStyle(color: Main.appTheme.titleTextColor)),
-                subtitle: Text(translateEng('Choose the courses with the sections you prefer, then choose your appropriate schedule'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
-                leading: Icon(CupertinoIcons.calendar_badge_plus, color: Main.appTheme.titleIconColor),
-              ),
-              // SizedBox(height: height * 0.01),
-              // ListTile(
-              //   onTap: () {
-              //     ;
-              //   },
-              //   title: Text(translateEng('Department Plans'), style: TextStyle(color: Main.appTheme.titleTextColor)),
-              //   subtitle: Text(translateEng('These plans are provided by the university'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
-              //   leading: Icon(CupertinoIcons.square_arrow_right, color: Main.appTheme.titleIconColor),
-              // ),
-              SizedBox(height: height * 0.01),
-              ListTile(
-                onTap: () {
-                  Navigator.pushNamed(context, "/home/savedschedules");
-                },
-                title: Text(translateEng('Saved Schedules'), style: TextStyle(color: Main.appTheme.titleTextColor)),
-                subtitle: Text(translateEng('You can save schedules and set them back again'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
-                leading: Icon(CupertinoIcons.calendar_today, color: Main.appTheme.titleIconColor),
-              ),
-            ]*/
 
       List<Icon> icons = [
         Icon(Icons.edit, color: Main.appTheme.titleIconColor),
@@ -439,20 +337,24 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
       List<int> counts = [ // TODO: Don't forget doing this part:
         Main.schedules[Main.currentScheduleIndex].scheduleCourses.length,
-        0,
-        0,
+        Main.facultyData.subjects.length,
+        Main.classroomsCountForCurHr,
         -1, // -1 means there is no count on the scheduler
-        0,
+        Main.favCourses.length,
         Main.schedules.length,
       ];
 
       List<Null Function()> onTaps = [
             () {
-          Navigator.pushNamed(context, "/home/editcourses");
+          Navigator.pushNamed(context, "/home/editcourses").then((value) { // bcs the count numbers might have changed, thus refresh
+            setState(() {});
+          });
         },
             () {
           if (Main.isFacDataFilled) {
-            Navigator.pushNamed(context, "/home/searchcourses");
+            Navigator.pushNamed(context, "/home/searchcourses").then((value) {
+              setState(() {});
+            });
           } else {
             showToast(
               translateEng("The courses could not be loaded!"),
@@ -466,7 +368,9 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         },
             () {
           if (Main.isFacDataFilled) {
-            Navigator.pushNamed(context, "/home/emptyclassrooms");
+            Navigator.pushNamed(context, "/home/emptyclassrooms").then((value) {
+              setState(() {});
+            });
           } else {
             showToast(
               translateEng("The courses could not be loaded!"),
@@ -480,7 +384,9 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         },
         () {
           if (Main.isFacDataFilled) {
-            Navigator.pushNamed(context, "/home/scheduler");
+            Navigator.pushNamed(context, "/home/scheduler").then((value) {
+              setState(() {});
+            });
           } else {
             showToast(
               translateEng("The courses could not be loaded!"),
@@ -493,10 +399,14 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           }
         },
         () {
-          Navigator.pushNamed(context, "/home/favcourses");
+          Navigator.pushNamed(context, "/home/favcourses").then((value) {
+            setState(() {});
+          });
         },
             () {
-          Navigator.pushNamed(context, "/home/savedschedules");
+          Navigator.pushNamed(context, "/home/savedschedules").then((value) {
+            setState(() {});
+          });
         },
       ];
 
@@ -508,11 +418,12 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         for (int j = 0 ; j < (Platform.isWindows ? 4 : 2) ; j++, i++) { // take 4/2 widgets and fill them into the row
           if (i >= icons.length) {
             while (widgets_.length < 4) {
-              widgets_.add(SizedBox(width: width * ((Platform.isWindows ? 0.18 : 0.35) + 0.01)));
+              widgets_.add(ChoiceBox(icon: icons[icons.length-1], mainText: topics[icons.length-1],
+                  description: descrips[icons.length-1], number: counts[icons.length-1], onTap: onTaps[icons.length-1], isVisible: false));
             }
             break;
           }
-          widgets_.add(ChoiceBox(icon: icons[i], mainText: topics[i], description: descrips[i], number: counts[i], onTap: onTaps[i]));
+          widgets_.add(ChoiceBox(icon: icons[i], mainText: topics[i], description: descrips[i], number: counts[i], onTap: onTaps[i], isVisible: true));
         }
         children.add(Row(children: widgets_, mainAxisAlignment: MainAxisAlignment.spaceBetween));
         children.add(SizedBox(height: height * 0.03,));
