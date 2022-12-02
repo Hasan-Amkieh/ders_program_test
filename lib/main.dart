@@ -827,10 +827,6 @@ Future main() async {
 
   await Executor().warmUp(log: false, isolatesCount: 3); // might be increased later!
 
-  if (Main.facultyData.subjects.isNotEmpty) {
-    Main.scheduleClassroomsCounter();
-  }
-
   runApp(OKToast(
     child: MaterialApp(
       debugShowCheckedModeBanner: false,

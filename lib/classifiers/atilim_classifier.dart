@@ -30,9 +30,9 @@ class AtilimClassifier extends Classifier {
             List<MapEntry<String, String>> subjectIds = [];
             List<Subject> subjects = [];
 
-            int classCodesEnd, classCodesBegin;
+            int classCodesEnd = 0, classCodesBegin;
             classCodesEnd = timetableStr.indexOf(
-                '{"id":"picture_url","name":"Fotoğraf"},{"id":"timeoff","type":"object","name":"Zaman Tablosu"},{"id":"contract_weight","type":"float","name":"Öğretmen Sözleşmesi İçin Uzunluk Değeri"}]', 0);
+                '{id: picture_url, name: Fotoğraf}, {id: timeoff, type: object, name: Zaman Tablosu}, {id: contract_weight, type: float, name: Öğretmen Sözleşmesi İçin Uzunluk Değeri}]', 0);
             classCodesBegin = timetableStr.indexOf("data_rows", classCodesEnd) + 9;
             classCodesEnd = timetableStr.indexOf("data_columns", classCodesBegin);
 
@@ -40,17 +40,17 @@ class AtilimClassifier extends Classifier {
             String name = "", classCodeWithSec;
             while (lastFound < classCodesEnd) {
 
-              lastFound = timetableStr.indexOf('name":"', lastFound) + 7;
-              name = timetableStr.substring(lastFound, timetableStr.indexOf('"', lastFound));
+              lastFound = timetableStr.indexOf('name: ', lastFound) + 6;
+              name = timetableStr.substring(lastFound, timetableStr.indexOf(',', lastFound));
 
-              lastFound = timetableStr.indexOf('short":"', lastFound) + 8;
-              classCodeWithSec = timetableStr.substring(lastFound, timetableStr.indexOf('"', lastFound));
+              lastFound = timetableStr.indexOf('short: ', lastFound) + 7;
+              classCodeWithSec = timetableStr.substring(lastFound, timetableStr.indexOf(',', lastFound));
 
               names.add(name);
 
-              lastFound = timetableStr.lastIndexOf('"id":"', lastFound) + 6;
-              subjectIds.add(MapEntry(classCodeWithSec, timetableStr.substring(lastFound, timetableStr.indexOf('"', lastFound))));
-              lastFound = timetableStr.indexOf('short":"', lastFound) + 8; // so we dont loop forever
+              lastFound = timetableStr.lastIndexOf('id: ', lastFound) + 4;
+              subjectIds.add(MapEntry(classCodeWithSec, timetableStr.substring(lastFound, timetableStr.indexOf(',', lastFound))));
+              lastFound = timetableStr.indexOf('short: ', lastFound) + 8; // so we dont loop forever
 
             }
 
@@ -85,51 +85,59 @@ class AtilimClassifier extends Classifier {
 
                   teacherCodesIds.add([]);
                   classroomsIds.add([]);
-                  lastFound = continueAfter = timetableStr.indexOf('"subjectid":"${subjectId.value}"', continueAfter)
-                      + '"subjectid":"${subjectId.value}"'.length;
-                  if (continueAfter - '"subjectid":"${subjectId.value}"'.length == -1) {
+                  lastFound = continueAfter = timetableStr.indexOf('subjectid: ${subjectId.value}', continueAfter)
+                      + 'subjectid: ${subjectId.value}'.length;
+                  if (continueAfter - 'subjectid: ${subjectId.value}'.length == -1) {
                     break;
                   }
 
-                  i = timetableStr.lastIndexOf('"id":"', lastFound) + 6;
-                  lessonIds.add(timetableStr.substring(i, timetableStr.indexOf('"', i)));
+                  i = timetableStr.lastIndexOf('{id: ', lastFound) + 5;
+                  lessonIds.add(timetableStr.substring(i, timetableStr.indexOf(',', i)));
 
-                  lastFound = timetableStr.indexOf('teacherids":[', lastFound) + 13;
-                  str = timetableStr.substring(lastFound, timetableStr.indexOf(']', lastFound));
+                  lastFound = timetableStr.indexOf('teacherids: [', lastFound) + 13;
+                  str = timetableStr.substring(lastFound, timetableStr.indexOf(']', lastFound) + 1);
                   if (str.isEmpty) {
                     teacherCodesIds.elementAt(periodIndex).add("");
                   } else {
-                    int start, end = -1;
+                    int start = 0;
                     while (true) { // loop for each teacherCode
-                      start = str.indexOf('"', end + 1) + 1;
-                      if (start == 0) {
+                      if (!str.contains(',', start + 1)) {
+                        teacherCodesIds.elementAt(periodIndex).add(str.substring(start, str.indexOf(']', start)));
                         break;
                       }
-                      end = str.indexOf('"', start);
-                      teacherCodesIds.elementAt(periodIndex).add(str.substring(start, end));
+                      teacherCodesIds.elementAt(periodIndex).add(str.substring(start, str.indexOf(',', start)));
+                      start = str.indexOf(',', start) + 2; // bcs after the comma there is a space
                     }
                   }
 
-                  lastFound = timetableStr.indexOf('classids":[', lastFound) + 11;
-                  str = timetableStr.substring(lastFound, timetableStr.indexOf(']', lastFound));
+                  lastFound = timetableStr.indexOf('classids: [', lastFound) + 11;
+                  str = timetableStr.substring(lastFound, timetableStr.indexOf(']', lastFound) + 1);
                   if (str.isEmpty) {
                     classIds.add("");
                   } else {
-                    int start, end = -1;
-                    while (true) { // loop for each teacherCode
-                      start = str.indexOf('"', end + 1) + 1;
-                      if (start == 0) {
+                    int start = 0;
+                    while (true) { // loop for each classid
+                      /*if (!str.contains(',', start + 1)) {
+                        teacherCodesIds.elementAt(periodIndex).add(str.substring(start, str.indexOf(']', start)));
                         break;
                       }
-                      end = str.indexOf('"', start);
-                      str_ = str.substring(start, end);
+                      teacherCodesIds.elementAt(periodIndex).add(str.substring(start, str.indexOf(',', start)));
+                      start = str.indexOf(',', start) + 2; // bcs after the comma there is a space*/
+                      if (!str.contains(',', start + 1)) {
+                        if (!classIds.contains(str.substring(start, str.indexOf(']', start)))) {
+                          classIds.add(str.substring(start, str.indexOf(']', start)));
+                        }
+                        break;
+                      }
+                      str_ = str.substring(start, str.indexOf(',', start));
                       if (!classIds.contains(str_)) {
                         classIds.add(str_);
                       }
+                      start = str.indexOf(',', start) + 2;
                     }
                   }
 
-                  lastFound = timetableStr.indexOf('durationperiods":', lastFound) + 17;
+                  lastFound = timetableStr.indexOf('durationperiods: ', lastFound) + 17;
                   hrs.add(int.parse(timetableStr.substring(lastFound, timetableStr.indexOf(',', lastFound))));
 
                   // lastFound = timetableStr.indexOf('classroomidss":[[', lastFound) + 17;
@@ -162,43 +170,38 @@ class AtilimClassifier extends Classifier {
                   day.add([]);
                   beginningHr.add([]);
                   while (true) { // because we might have the same lessonid with different days and begging hours
-                    lastFound = timetableStr.indexOf('lessonid":"$lessonId"', searchStart_) + 'lessonid":"$lessonId"'.length;
+                    lastFound = timetableStr.indexOf('lessonid: $lessonId,', searchStart_) + 'lessonid: $lessonId,'.length;
                     searchStart_ = lastFound;
-                    str = timetableStr.substring(timetableStr.indexOf('period":"', lastFound) + 9, timetableStr.indexOf('","days"', lastFound));
+                    str = timetableStr.substring(timetableStr.indexOf('period: ', lastFound) + 8, timetableStr.indexOf(', days', lastFound));
                     if (str.isNotEmpty) {
                       beginningHr[listIndex].add(int.parse(str));
                     }
-                    lastFound = timetableStr.indexOf('days":"', lastFound) + 7;
-                    day[listIndex].add(timetableStr.substring(lastFound, timetableStr.indexOf('"', lastFound)).indexOf('1') + 1);
+                    lastFound = timetableStr.indexOf('days: ', lastFound) + 6;
+                    day[listIndex].add(timetableStr.substring(lastFound, timetableStr.indexOf(RegExp("[\\,\\]]"), lastFound)).indexOf('1') + 1);
 
                     // classrooms:
-                    lastFound = timetableStr.indexOf('classroomids":[', lastFound) + 15;
-                    str = timetableStr.substring(lastFound, timetableStr.indexOf(']', lastFound) );
+                    lastFound = timetableStr.indexOf('classroomids: [', lastFound) + 15;
+                    str = timetableStr.substring(lastFound, timetableStr.indexOf(']', lastFound) + 1);
                     if (str.isEmpty) {
                       classroomsIds.elementAt(periodIndex).add("");
                     } else {
-                      int start, end = -1;
+                      int start = 0;
                       while (true) { // loop for each classroom id
-                        start = str.indexOf('"', end + 1) + 1;
-                        if (start == 0) {
-                          break;
-                        }
-                        end = str.indexOf('"', start);
                         if (classroomsIds.length <= classroomsIndex) {
                           classroomsIds.add([]);
                         }
-                        classroomsIds.elementAt(classroomsIndex).add(str.substring(start, end));
-                        // Test:
-                        // if (subjectId.key.trim() == "MATH151- 01-") {
-                        //   print("Classroom id found: ${str.substring(start, end)} of index $classroomsIndex");
-                        // }
-                        // Test;
+                        if (!str.contains(',', start + 1)) {
+                          classroomsIds.elementAt(classroomsIndex).add(str.substring(start, str.indexOf(']', start)));
+                          break;
+                        }
+                        classroomsIds.elementAt(classroomsIndex).add(str.substring(start, str.indexOf(',', start)));
+                        start = str.indexOf(',', start) + 2; // bcs after the comma there is a space
                       }
                       classroomsIndex++;
                     }
                     // classrooms;
 
-                    if (!timetableStr.contains('lessonid":"$lessonId"', searchStart_)) {
+                    if (!timetableStr.contains('lessonid: $lessonId,', searchStart_)) {
                       break;
                     }
 
@@ -216,10 +219,10 @@ class AtilimClassifier extends Classifier {
                 // departments (classIds):
                 classIds.forEach((element) {
                   if (element.isNotEmpty) {
-                    lastFound = searchStart_ = timetableStr.indexOf('"id":"$element","name":"', searchStart) + 16 +
+                    lastFound = searchStart_ = timetableStr.indexOf('id: $element, name:', searchStart) + 11 +
                         element.length;
                     str = timetableStr.substring(
-                        lastFound, timetableStr.indexOf('"', lastFound));
+                        lastFound, timetableStr.indexOf(RegExp("[\\,\\]]"), lastFound));
                     classes.add(str);
                   }
                 });
@@ -235,9 +238,9 @@ class AtilimClassifier extends Classifier {
                     teacherCodes.add([]);
                     element1.forEach((element2) {
                       if (element2.isNotEmpty) {
-                        lastFound = timetableStr.indexOf('"id":"$element2","short":"', searchStart) +
-                            17 + element2.length;
-                        str = timetableStr.substring(lastFound, timetableStr.indexOf('"', lastFound));
+                        lastFound = timetableStr.indexOf('id: $element2, short: ', searchStart) +
+                            13 + element2.length;
+                        str = timetableStr.substring(lastFound, timetableStr.indexOf(RegExp("[\\,\\]]"), lastFound));
                         teacherCodes.elementAt(periodIndex).add(str);
 
                       }
@@ -249,16 +252,16 @@ class AtilimClassifier extends Classifier {
                 //print("$teacherCodes");
 
                 // classrooms:
-                searchStart = timetableStr.indexOf('id":"buildings","name":"Binalar","item_name":"Bina","icon"'); // the icon file could change which could break the whole thing!
+                searchStart = timetableStr.indexOf('id: buildings, name: Binalar, item_name: Bina, icon'); // the icon file could change which could break the whole thing!
                 periodIndex = 0;
                 classroomsIds.forEach((element1) {
                   if (element1.isNotEmpty){
                     classrooms.add([]);
                     element1.forEach((element2) {
                       if (element2.isNotEmpty) {
-                        lastFound = timetableStr.indexOf('"id":"$element2', searchStart) + 6 + element2.length;
-                        lastFound = timetableStr.indexOf('short":"', lastFound) + 8; // find the short, not the name
-                        classrooms.elementAt(periodIndex).add(timetableStr.substring(lastFound, timetableStr.indexOf('"', lastFound)));
+                        lastFound = timetableStr.indexOf('id: $element2', searchStart) + 4 + element2.length;
+                        lastFound = timetableStr.indexOf('short: ', lastFound) + 7; // find the short, not the name
+                        classrooms.elementAt(periodIndex).add(timetableStr.substring(lastFound, timetableStr.indexOf(RegExp("[\\,\\]]"), lastFound)));
                       }
                     });
                     periodIndex++;
@@ -315,8 +318,8 @@ class AtilimClassifier extends Classifier {
         } else {
           print("ERROR, the received message is not a list!");
         }
-      } catch(error) {
-        print("ERROR: an error was found inside the data classification function: \n${error.toString()}");
+      } catch(error, stacktrace) {
+        print("ERROR: an error was found inside the data classification function: \n${error.toString()}\n${stacktrace.toString()}");
         sPort.send(["error", error]);
       }
 

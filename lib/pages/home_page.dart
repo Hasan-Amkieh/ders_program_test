@@ -160,6 +160,16 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
       checkScheduleAddition();
     }
 
+    bool isFacInited = true;
+    try {
+      Main.facultyData.semesterName;
+    } catch(err) {
+      isFacInited = false;
+    }
+    if (isFacInited && Main.facultyData.subjects.isNotEmpty) {
+      Main.scheduleClassroomsCounter();
+    }
+
   }
 
   void checkScheduleAddition() {

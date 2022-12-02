@@ -1,13 +1,16 @@
 
 import 'dart:async';
-import 'dart:io' show HttpClient, Platform;
+import 'dart:ffi';
+import 'dart:io' show Platform;
 import 'dart:isolate';
 
-import 'package:dio/dio.dart';
+import 'package:path/path.dart' as p;
 
 import 'package:Atsched/scrapers/scraper.dart';
 import 'package:Atsched/wp_computer.dart';
+import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../main.dart';
 import '../others/subject.dart';
@@ -16,64 +19,116 @@ import '../pages/loading_update_page.dart';
 
 class AtilimScraperComputer extends Scraper {
 
-  String timetableData = "";
-
-  static final Dio _dio = Dio();
+  late Timer timer;
+  late String timetableData;
 
   @override
   void getTimetableData(controller, request) async { // controller and request pars are only for the phone version
 
-    await University.getFacultyLink(Main.department);
+    print("Calling Atilim Scraper");
 
-    try {
-
-      // sends the request
-
-      String str = (await University.getFacultyLink(Main.department));
-      int tdNum = int.parse(str.substring(str.indexOf('num=') + 4, str.indexOf('&', str.indexOf('num=') + 4)));
-      String domain = str.substring(0, str.indexOf('/timetable'));
-
-      var headers = {
-        'authority': domain.substring(8), // https://
-        'origin': domain,
-        'referer': domain,
-        'cookie' : "PHPSESSID=3c6a20fde6e9fdae72ad787719a257b1"
-      };
-      // print("headers are : $headers");
-
-      var response = await _dio.post(domain + "/timetable/server/regulartt.js?__func=regularttGetData", options: Options(contentType: "application/json",headers: headers),
-          data: '{"__args" : [null,"$tdNum"],"__gsh" : "00000000"}',
-      );
-
-      // print("The status code is : ${response.statusCode}");
-      // print("Response: ${response.data.toString()}");
-      // transforms and prints the response
-      if (response.statusCode == 200) {
-        timetableData = response.data.toString();
-        print("The new length of the timetable is : ${timetableData.length}");
-      }
-      _dio.close();
-
-      // print("found the following links: "
-      //     "${Main.artsNSciencesLink}\n${Main.fineArtsLink}\n${Main.businessLink}\n${Main.engineeringLink}\n${Main.civilAviationLink}\n${Main.healthSciencesLink}\n${Main.lawLink}");
-
-
-    } catch (e) {
-      print("ERROR: $e");
+    final webview = await WebviewWindow.create(
+      configuration: CreateConfiguration(
+        windowHeight: 10,
+        windowWidth: 10,
+        title: "Timetable Webpage",
+        titleBarTopPadding: Platform.isMacOS ? 20 : 0,
+        userDataFolderWindows: await _getWebViewPath(),
+        titleBarHeight: 0,
+      ),
+    );
+    WPComputerState.state = 2;
+    webview
+      ..registerJavaScriptMessageHandler("test", (name, body) {
+        // debugPrint('on javaScipt message: $name $body');
+      })
+      ..setApplicationNameForUserAgent(" WebviewExample/1.0.0")
+      ..setPromptHandler((prompt, defaultText) {
+        if (prompt == "test") {
+          return "Hello World!";
+        } else if (prompt == "init") {
+          return "initial prompt";
+        }
+        return "";
+      })
+      ..addScriptToExecuteOnDocumentCreated("""
+  const mixinContext = {
+    platform: 'Desktop',
+    conversation_id: 'conversationId',
+    immersive: false,
+    app_version: '1.0.0',
+    appearance: 'dark',
+  }
+  window.MixinContext = {
+    getContext: function() {
+      return JSON.stringify(mixinContext)
     }
+  }
+""")
+      ..addScriptToExecuteOnDocumentCreated("""
+var rawOpen = XMLHttpRequest.prototype.open;
+XMLHttpRequest.prototype.open = function() {
+	if (!this._hooked) {
+		this._hooked = true;
+		setupHook(this);
+	}
+	rawOpen.apply(this, arguments);
+}
+var ret;
+function setupHook(xhr) {
+	function getter() {
+		console.log('get responseText');
+		delete xhr.responseText;
+		var r;
+		if (xhr.responseURL.includes("regularttGetData")) {
+			ret = xhr.responseText;
+			setup();
+			return ret;
+		} else {
+			r = xhr.responseText;
+			setup();
+			return r;
+		}
+	}
+	function setter(str) {
+		console.log('set responseText: %s', str);
+	}
+	function setup() {
+		Object.defineProperty(xhr, 'responseText', {
+			get: getter,
+			set: setter,
+			configurable: true
+		});
+	}
+	setup();
+}
+      """)
+      ..launch(await University.getFacultyLink(Main.department));
 
-    // debugPrint(timetableData, wrapWidth: 1024);
-    {
-      {
+    timer = Timer.periodic(const Duration(seconds: 1), (Timer t) async {
+      try {
+
+        // print("EXECUTING the CPP code: ");
+        final _hideWebView = LoadingUpdateState.nativeApiLib?.lookup<NativeFunction<Void Function()>>('hideWebView');
+        Function hideWebView = _hideWebView!.asFunction<void Function()>();
+        hideWebView();
+
+      } catch (e) {
+        print("An error happened while executing the CPP code: $e");
+      }
+      try {
+        timetableData = await webview.evaluateJavaScript("ret") ?? "";
+        timetableData = timetableData.replaceAll('\\"', '"');
         // print("timetable DATA: $timetableData\n\n\n");
-        if (timetableData.length > 1000) { // then it is a success
+        if (timetableData.length > 1000) { // then it is a success and stop the timer
+          timer.cancel();
           // print("The timetable has been received!\nSuccess!!!");
+          webview.close();
           if (timetableData.isNotEmpty) { // ROOT:
-            print("Pre classification");
             WPComputerState.state = 3;
             // print("Timetable Retrieved!\nLength of the response: ${timetableData.length}");
             //dataClassification(request.responseText);
-            ReceivePort rPort = ReceivePort();
+            ReceivePort rPort = ReceivePort(); // TODO:
             SendPort? sPort;
             Isolate? isolate;
 
@@ -211,7 +266,6 @@ class AtilimScraperComputer extends Scraper {
             });
 
             isolate = (await Isolate.spawn(Main.classifier.classifyData, rPort.sendPort));
-            print("Isolate spawned!");
           }
           else { // if the response is empty then smth is wrong, restart!
             if (Main.isAttemptedBefore) {
@@ -229,11 +283,19 @@ class AtilimScraperComputer extends Scraper {
             }
           }
         }
-      }  {
-        // debugPrint('evaluateJavaScript error: $e\n');
+      } catch (e) {
+        debugPrint('evaluateJavaScript error: $e\n');
       }
-    }
+    });
 
+  }
+
+  Future<String> _getWebViewPath() async {
+    final document = await getApplicationDocumentsDirectory();
+    return p.join(
+      document.path,
+      'desktop_webview_window',
+    );
   }
 
   AtilimScraperComputer._privateConstructor();
