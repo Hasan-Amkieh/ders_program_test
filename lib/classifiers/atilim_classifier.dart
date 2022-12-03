@@ -10,6 +10,8 @@ class AtilimClassifier extends Classifier {
   @override
   void classifyData(SendPort sPort) {
 
+    print("Classification has begun!");
+
     ReceivePort rPort = ReceivePort();
 
     rPort.listen((msg) {
@@ -19,6 +21,7 @@ class AtilimClassifier extends Classifier {
 
           if (msg[0] == "timetableData") {
 
+            print("Timetable data received!");
             String timetableStr = msg[1];
 
             //print("Starting classification:\n");
@@ -312,6 +315,7 @@ class AtilimClassifier extends Classifier {
             sPort.send(["facultyData", subjects]); // Main.facultyData = facultyData;
 
             sPort.send(["setState", 4]); // state = 4;
+            print("Classification is done!");
 
           }
 

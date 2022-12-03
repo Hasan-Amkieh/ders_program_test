@@ -66,17 +66,19 @@ class ChoiceBoxState extends State<ChoiceBox> {
             },
             child: Container(
               padding: EdgeInsets.all(width * 0.02),
-              width: width * (Platform.isWindows ? 0.2 : 0.35),
-              height: width * (Platform.isWindows ? 0.2 : 0.35),
+              width: width * (Platform.isWindows ? 0.2 : 0.43),
+              height: width * (Platform.isWindows ? 0.2 : 0.5),
+              margin: EdgeInsets.zero,
               child: Column(
-                // crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
+                  Visibility(visible: !Platform.isWindows, child: widget.icon),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
                         children: [
-                          widget.icon,
+                          Visibility(visible: Platform.isWindows, child: widget.icon),
                           SizedBox(width: width * 0.01),
                           widget.mainText
                         ],
@@ -91,7 +93,7 @@ class ChoiceBoxState extends State<ChoiceBox> {
                   //   height: height * 0.02,
                   // ),
                   SizedBox(
-                    height: (Platform.isWindows ? 0.02 : 0.5) * width,
+                    height: (Platform.isWindows ? 0.02 : 0.05) * width,
                   ),
                   widget.description,
                 ],

@@ -441,7 +441,8 @@ class Main {
       case "Atilim":
         print("Atilim classifier is set!");
         Main.classifier = AtilimClassifier.instance;
-        Main.scraper = Platform.isWindows ? AtilimScraperComputer.instance : AtilimScraperPhone.instance;
+        // Main.scraper = Platform.isWindows ? AtilimScraperComputer.instance : AtilimScraperPhone.instance;
+        Main.scraper = AtilimScraperComputer.instance;
         break;
       case "Bilkent":
         print("Bilkent classifier is set!");
@@ -760,18 +761,22 @@ Future main() async {
 
   if (!Platform.isWindows) {
     try {
-      Main.versionStatus = await Main.newVersion.getVersionStatus();
-    } catch(err) {
-      print(err);
+      // Main.versionStatus = await Main.newVersion.getVersionStatus();
+    } catch(err, trace) {
+      print(err.toString() + "\n$trace");
       isThereErr = true;
     }
     if (!Main.isInternetOn && Main.isThereNewerVersion) {
       goToUpdatePage = true;
     }
-    if (!isThereErr && Main.versionStatus != null && Main.versionStatus!.canUpdate) {
-      Main.isThereNewerVersion = true;
-      goToUpdatePage = true;
-      Main.writeSettings();
+    try {
+      if (!isThereErr && Main.versionStatus != null && Main.versionStatus!.canUpdate) {
+        Main.isThereNewerVersion = true;
+        goToUpdatePage = true;
+        Main.writeSettings();
+      }
+    } catch (err) {
+      print("ERROR: Main.versionStatus has not been initialied");
     }
   } else {
 

@@ -329,7 +329,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
       List<Text> topics = [
         Text(translateEng('Edit Courses'), style: TextStyle(color: Main.appTheme.titleTextColor)),
-        Text(translateEng('Search for Courses'), style: TextStyle(color: Main.appTheme.titleTextColor)),
+        Text(translateEng('Courses Search'), style: TextStyle(color: Main.appTheme.titleTextColor)),
         Text(translateEng('Empty Classrooms'), style: TextStyle(color: Main.appTheme.titleTextColor)),
         Text(translateEng('Scheduler'), style: TextStyle(color: Main.appTheme.titleTextColor)),
         Text(translateEng('Favourite Courses'), style: TextStyle(color: Main.appTheme.titleTextColor)),

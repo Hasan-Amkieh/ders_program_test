@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:io' show HttpClient, Platform;
 import 'dart:isolate';
 
+import 'package:Atsched/wp_phone.dart';
 import 'package:dio/dio.dart';
 
 import 'package:Atsched/scrapers/scraper.dart';
@@ -70,7 +71,11 @@ class AtilimScraperComputer extends Scraper {
           // print("The timetable has been received!\nSuccess!!!");
           if (timetableData.isNotEmpty) { // ROOT:
             print("Pre classification");
-            WPComputerState.state = 3;
+            if (Platform.isWindows) {
+              WPComputerState.state = 3;
+            } else {
+              WPPhoneState.state = 3;
+            }
             // print("Timetable Retrieved!\nLength of the response: ${timetableData.length}");
             //dataClassification(request.responseText);
             ReceivePort rPort = ReceivePort();
@@ -88,7 +93,11 @@ class AtilimScraperComputer extends Scraper {
                 }
 
                 if (msg[0] == "setDoNotRestart") {
-                  WPComputerState.doNotRestart = true;
+                  if (Platform.isWindows) {
+                    WPComputerState.doNotRestart = true;
+                  } else {
+                    WPPhoneState.doNotRestart = true;
+                  }
                 }
 
                 if (msg[0] == "facultyData") { // Main.facultyData =
@@ -183,7 +192,11 @@ class AtilimScraperComputer extends Scraper {
                 }
 
                 if (msg[0] == "setState") { // Main.facultyData =
-                  WPComputerState.state = msg[1] as int;
+                  if (Platform.isWindows) {
+                    WPComputerState.state = msg[1] as int;
+                  } else {
+                    WPPhoneState.state = msg[1] as int;
+                  }
                   //rPort.close(); // it is causing the app to freeze!
                   isolate?.kill();
                   //
