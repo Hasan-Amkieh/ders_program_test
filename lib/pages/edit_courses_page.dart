@@ -199,6 +199,8 @@ class EditCoursePageState extends State<EditCoursePage> {
                                   Main.schedules[Main.currentScheduleIndex].scheduleCourses.addAll(crses);
                                   Main.coursesToAdd.clear();
                                 });
+                              } else {
+                                setState(() {}); // Refresh anyways bcs we dont know if a course inside the schedule was deleted or not
                               }
                             });
                           } else {

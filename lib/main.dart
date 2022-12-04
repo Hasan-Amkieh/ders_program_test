@@ -12,7 +12,6 @@ import 'package:Atsched/pages/choose_settings_page.dart';
 import 'package:Atsched/pages/empty_courses_page.dart';
 import 'package:Atsched/pages/windows_webview_unsupported_page.dart';
 import 'package:Atsched/scrapers/atilim_scraper_computer.dart';
-import 'package:Atsched/scrapers/atilim_scraper_phone.dart';
 import 'package:Atsched/scrapers/bilkent_scraper_computer.dart';
 import 'package:Atsched/scrapers/bilkent_scraper_phone.dart';
 import 'package:Atsched/scrapers/scraper.dart';
@@ -40,7 +39,7 @@ import 'package:Atsched/pages/home_page.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
+// import 'package:permission_handler/permission_handler.dart';
 import 'package:restart_app/restart_app.dart';
 import 'package:new_version/new_version.dart';
 import 'package:worker_manager/worker_manager.dart';
@@ -660,13 +659,13 @@ Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Main.appDocDir = (await getApplicationDocumentsDirectory()).path;
   if (!Platform.isWindows) {
-    await [Permission.storage].request().then((value_) {
-      if (!value_.toString().contains(".granted")) {
-        Main.restart();
-      } else {
-        //print("The premission of storage was granted!");
-      }
-    });
+    // await [Permission.storage].request().then((value_) {
+    //   if (!value_.toString().contains(".granted")) {
+    //     Main.restart();
+    //   } else {
+    //     //print("The premission of storage was granted!");
+    //   }
+    // });
   }
 
   bool isSupported = true;

@@ -71,6 +71,8 @@ class AddCoursesPageState extends State<AddCoursesPage> {
 
     deps.add(depToSearch);
 
+    iconSize = Icon(Icons.info_outline, color: Colors.blue).size ?? ((window.physicalSize / window.devicePixelRatio).width) * 0.025;
+
   }
 
   @override
@@ -93,6 +95,9 @@ class AddCoursesPageState extends State<AddCoursesPage> {
       subjectsOfDep = Main.facultyData.subjects;
       search(query); // Because the subjects list are now reset
     }
+
+    subCountAddedCrs = 0;
+    subCountCrs = 0;
 
     return Scaffold(
       appBar: PreferredSize(
@@ -158,16 +163,22 @@ class AddCoursesPageState extends State<AddCoursesPage> {
 
   }
 
+  int subCountCrs = 0;
+  int subCountAddedCrs = 0;
+
   ListTile buildTile(context, index) {
 
     Subject subject = isForScheduler ? subjectsWithoutSecs[index] : subjects[index];
     String name = subject.customName;
     bool isInside = false;
+    int subIndexForCrs = -1;
+    int subIndexForAddedCrs = -1;
 
     //print("current schedule is: ${Main.schedules[Main.currentScheduleIndex].scheduleCourses}");
     if (!isForScheduler) {
       for (Course crs in Main.schedules[Main.currentScheduleIndex].scheduleCourses) {
         if (crs.subject.courseCode == subject.courseCode) {
+          subIndexForCrs = subCountCrs++;
           isInside = true;
           break;
         }
@@ -176,6 +187,7 @@ class AddCoursesPageState extends State<AddCoursesPage> {
     if (!isInside) {
       for (Subject sub in Main.coursesToAdd) {
         if (sub.courseCode == subject.courseCode) {
+          subIndexForAddedCrs = subCountAddedCrs++;
           isInside = true;
           break;
         }
@@ -187,16 +199,45 @@ class AddCoursesPageState extends State<AddCoursesPage> {
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          isForScheduler ? Container() : Text(
-            name,
-            style: TextStyle(color: Main.appTheme.titleTextColor),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              isForScheduler ? EmptyContainer() : Expanded(
+                child: Text(
+                  name,
+                  style: TextStyle(color: Main.appTheme.titleTextColor),
+                ),
+              ),
+              Visibility(
+                visible: isInside,
+                child: TextButton(
+                  child: const Icon(Icons.highlight_remove_outlined, color: Colors.red),
+                  style: ButtonStyle(
+                    fixedSize: MaterialStateProperty.all(Size(iconSize, iconSize)),
+                    padding: MaterialStateProperty.all(EdgeInsets.zero),
+                    overlayColor: MaterialStateProperty.all(Colors.red.withOpacity(0.15)),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      setState(() {
+                        if (subIndexForCrs != -1) {
+                          Main.schedules[Main.currentScheduleIndex].scheduleCourses.removeAt(subIndexForCrs);
+                        } else {
+                          Main.coursesToAdd.removeAt(subIndexForAddedCrs);
+                        }
+                      });
+                    });
+                  },
+                ),
+              ),
+            ],
           ),
-          (isInside || subject.days.isEmpty) ? SizedBox(height: height * 0.01) : Container(),
+          (isInside || subject.days.isEmpty) ? SizedBox(height: height * 0.01) : EmptyContainer(),
           Row(
             children: [
-              isInside ? const Icon(CupertinoIcons.add_circled_solid, color: Colors.blue) : Container(),
-              (subject.days.isEmpty && isInside) ? SizedBox(width: width * 0.02) : Container(),
-              subject.days.isEmpty ? const Icon(CupertinoIcons.time_solid, color: Colors.red) : Container(),
+              isInside ? const Icon(CupertinoIcons.add_circled_solid, color: Colors.blue) : EmptyContainer(),
+              (subject.days.isEmpty && isInside) ? SizedBox(width: width * 0.02) : EmptyContainer(),
+              subject.days.isEmpty ? const Icon(CupertinoIcons.time_solid, color: Colors.red) : EmptyContainer(),
             ],
           ),
         ],
@@ -231,6 +272,8 @@ class AddCoursesPageState extends State<AddCoursesPage> {
     );
 
   }
+
+  static double iconSize = 0.0;
 
   void search(String query) {
 

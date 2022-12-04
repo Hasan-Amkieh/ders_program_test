@@ -12,10 +12,10 @@ import 'package:Atsched/widgets/timetable_canvas.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
-import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -383,8 +383,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
 
   Future saveScreenshot(Uint8List bytes) async {
 
-    //await [Permission.storage].request().then((value_) {print("Permission response: $value_");});
-    // no need to ask for permission since we already asked for it when the app started!
+    await [Permission.storage].request().then((value_) {print("Permission response: $value_");});
 
     final time = DateTime.now().toIso8601String().replaceAll('.', '-').replaceAll(':', '-');
     final name = 'screenshot_of_${Main.schedules[Main.currentScheduleIndex].scheduleName}_$time';

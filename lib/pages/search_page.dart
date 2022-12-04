@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
@@ -36,13 +35,19 @@ class SearchPageState extends State<SearchPage> {
   List<String> deps = [];
   String depToSearch = translateEng("All");
   String lastDep = translateEng("All");
-  bool searchByCourseName = true, searchByTeacher = false, searchByClassroom = false;
+
+  static bool searchByCourseName = true, searchByTeacher = false, searchByClassroom = false;
 
   @protected
   @mustCallSuper
   void initState() {
     deps.addAll(University.getFacultyDeps(Main.faculty).keys);
     deps.add(depToSearch);
+
+    query = txtController.text;
+    search(query);
+
+    iconSize = Icon(Icons.info_outline, color: Colors.blue).size ?? ((window.physicalSize / window.devicePixelRatio).width) * 0.025;
   }
 
   static TextEditingController txtController = TextEditingController();
@@ -206,6 +211,8 @@ class SearchPageState extends State<SearchPage> {
 
   }
 
+  static double iconSize = 0.0;
+
   ListTile buildSubject(Subject sub) {
 
     double width = (window.physicalSize / window.devicePixelRatio).width, height = (window.physicalSize / window.devicePixelRatio).height;
@@ -249,9 +256,30 @@ class SearchPageState extends State<SearchPage> {
           ),
           Row(
             children: [
-              sub.hours.isEmpty ? const Icon(CupertinoIcons.time_solid, color: Colors.red) : Container(),
+              sub.hours.isEmpty ? TextButton(
+                child: const Icon(Icons.access_time_rounded, color: Colors.red),
+                style: ButtonStyle(
+                  overlayColor: MaterialStateProperty.all(Colors.red.withOpacity(0.15)),
+                    padding: MaterialStateProperty.all(EdgeInsets.zero), fixedSize: MaterialStateProperty.all(
+                    Size(iconSize, iconSize))),
+                onPressed: () {
+                  showToast(
+                    sub.getCourseCodeWithoutSectionNumber() + " " + translateEng("has no time data"),
+                    duration: const Duration(milliseconds: 2000),
+                    position: ToastPosition.bottom,
+                    backgroundColor: Colors.red.withOpacity(0.8),
+                    radius: 100.0,
+                    textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
+                  );
+                },
+              ) : Container(),
               (sub.courseCode.contains("lab") || sub.courseCode.contains("Lab") || sub.courseCode.contains("LAB") || sub.courseCode.contains("/")) ?
-              Container() : TextButton(child: const Icon(Icons.info_outline, color: Colors.blue), onPressed: () async {
+              Container() : TextButton(
+                child: const Icon(Icons.info_outline, color: Colors.blue),
+                style: ButtonStyle(
+                    padding: MaterialStateProperty.all(EdgeInsets.zero), fixedSize: MaterialStateProperty.all(
+                    Size(iconSize, iconSize))),
+                onPressed: () async {
 
                 String url = await University.getSubjectSyllabusLink(sub);
 
@@ -273,7 +301,7 @@ class SearchPageState extends State<SearchPage> {
 
                 showToast(
                   sub.getCourseCodeWithoutSectionNumber() + " " + translateEng("Syllabus"),
-                  duration: const Duration(milliseconds: 1000),
+                  duration: const Duration(milliseconds: 2000),
                   position: ToastPosition.bottom,
                   backgroundColor: Colors.blue.withOpacity(0.8),
                   radius: 100.0,
