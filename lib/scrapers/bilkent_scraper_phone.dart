@@ -5,9 +5,9 @@ import 'package:Atsched/scrapers/scraper.dart';
 class BilkentScraperPhone extends Scraper {
 
   @override
-  getTimetableData(controller, request) {
+  getTimetableData() {
 
-    BilkentScraperComputer.instance.getTimetableData(null, null);
+    BilkentScraperComputer.instance.getTimetableData();
 
   }
 

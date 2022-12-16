@@ -15,7 +15,7 @@ import '../wp_computer.dart';
 class BilkentScraperComputer extends Scraper {
 
   @override
-  getTimetableData(controller, request) async {
+  getTimetableData() async {
 
     print("Calling Bilkent Scraper!!!");
 

@@ -107,7 +107,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
     currentState = this;
 
-    if (Main.isFacChange) {
+    if (Main.isFacChange && University.areFacsSupported() && University.areDepsSupported()) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialog(context: context, builder: (context) => AlertDialog(
           backgroundColor: Main.appTheme.scaffoldBackgroundColor,
@@ -250,42 +250,81 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         return await showDialog(
             context: context,
             builder: (context) {
-              if (Main.newFaculty.isNotEmpty) { // then it is a faculty change
-                return AlertDialog(
-                    title: const Text('Do you want to change the faculty?\nNext time you open Atsched the faculty will change'),
-                    actions: [
-                      ElevatedButton(
-                          onPressed: () {
-                            Main.forceUpdate = true;
-                            Main.faculty = Main.newFaculty;
-                            Main.department = University.getFacultyDeps(Main.faculty).keys.elementAt(0);
-                            Main.isFacChange = true;
-                            Main.save();
-                            Navigator.of(context).pop(true);
-                          },
-                          child: const Text('Yes')),
-                      ElevatedButton(
-                          onPressed: () { Main.newFaculty = ""; Navigator.of(context).pop(false); },
-                          child: const Text('No')),
-                    ]
-                );
+              if (Main.isUniChange) {
+                if (Main.newUni.isNotEmpty) { // then it is a uni change:
+                  return AlertDialog(
+                      title: const Text('Do you want to change the university?\nThis will delete all your schedules'),
+                      actions: [
+                        ElevatedButton(
+                            onPressed: () {
+                              Main.forceUpdate = true;
+                              Main.uni = Main.newUni;
+                              Main.faculty = University.getFaculties().isNotEmpty ? University.getFaculties()[0] : "";
+                              Main.department = University.getFacultyDeps(Main.faculty).keys.isNotEmpty ? University.getFacultyDeps(Main.faculty).keys.elementAt(0) : "";
+                              Main.isFacChange = true;
+                              Main.save();
+                              Navigator.of(context).pop(true);
+                            },
+                            child: const Text('Yes')),
+                        ElevatedButton(
+                            onPressed: () { Main.newUni = ""; Navigator.of(context).pop(false); },
+                            child: const Text('No')),
+                      ]
+                  );
+                }
+              } else { // then it is a faculty change:
+                if (Main.newFaculty.isNotEmpty) { // then it is a faculty change
+                  return AlertDialog(
+                      title: const Text('Do you want to change the faculty?\nNext time you open Atsched the faculty will change'),
+                      actions: [
+                        ElevatedButton(
+                            onPressed: () {
+                              Main.forceUpdate = true;
+                              Main.faculty = Main.newFaculty;
+                              Main.department = University.getFacultyDeps(Main.faculty).keys.elementAt(0);
+                              Main.isFacChange = true;
+                              Main.save();
+                              Navigator.of(context).pop(true);
+                            },
+                            child: const Text('Yes')),
+                        ElevatedButton(
+                            onPressed: () { Main.newFaculty = ""; Navigator.of(context).pop(false); },
+                            child: const Text('No')),
+                      ]
+                  );
+                }
+                else {
+                  return AlertDialog(
+                      title: Text('Do you really want to quit?' + (Main.forceUpdate ? "\nNext time you open Atsched the update will start" : "")),
+                      actions: [
+                        ElevatedButton(
+                            onPressed: () {
+                              Main.save();
+                              Navigator.of(context).pop(true);
+                            },
+                            child: const Text('Yes')),
+                        ElevatedButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: const Text('No')),
+                      ]
+                  );
+                }
               }
-              else {
-                return AlertDialog(
-                    title: Text('Do you really want to quit?' + (Main.forceUpdate ? "\nNext time you open Atsched the update will start" : "")),
-                    actions: [
-                      ElevatedButton(
-                          onPressed: () {
-                            Main.save();
-                            Navigator.of(context).pop(true);
-                          },
-                          child: const Text('Yes')),
-                      ElevatedButton(
-                          onPressed: () => Navigator.of(context).pop(false),
-                          child: const Text('No')),
-                    ]
-                );
-              }
+
+              return AlertDialog(
+                  title: Text('Do you really want to quit?' + (Main.forceUpdate ? "\nNext time you open Atsched the update will start" : "")),
+                  actions: [
+                    ElevatedButton(
+                        onPressed: () {
+                          Main.save();
+                          Navigator.of(context).pop(true);
+                        },
+                        child: const Text('Yes')),
+                    ElevatedButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: const Text('No')),
+                  ]
+              );
             });
       });
     }
@@ -517,8 +556,39 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                   );
                 }).toList(),
                 onChanged: (String? newValue) {
+                  if (newValue == Main.uni) {
+                    return;
+                  }
                   setState(() {
-                    Main.uni = newValue!;
+                    if (Platform.isWindows) {
+                      Main.newUni = newValue!;
+                      Main.isUniChange = true;
+                      // print("The uni is changing:");
+                      FlutterWindowClose.closeWindow();
+                    } else {
+                      showDialog(context: context, builder: (context) {
+                        return AlertDialog(
+                          backgroundColor: Main.appTheme.scaffoldBackgroundColor,
+                          title: Text(translateEng("Restarting the application"), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                          actions: [
+                            TextButton(onPressed: () {
+                              Main.forceUpdate = true;
+                              Main.faculty = newValue!;
+                              Main.department = University.getFacultyDeps(Main.faculty).keys.elementAt(0);
+                              Main.isFacChange = true;
+                              Main.restart();
+                            },
+                              child: Text(translateEng("RESTART")),
+                            ),
+                            TextButton(onPressed: () {
+                              Navigator.pop(context);
+                            },
+                              child: Text(translateEng("CANCEL")),
+                            )
+                          ],
+                        );
+                      });
+                    }
                   });
                 },
               )
@@ -542,6 +612,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                   setState(() {
                     if (Platform.isWindows) {
                       Main.newFaculty = newValue!;
+                      Main.isUniChange = false;
                       FlutterWindowClose.closeWindow();
                     } else {
                       showDialog(context: context, builder: (context) {

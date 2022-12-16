@@ -22,7 +22,7 @@ class AtilimScraperComputer extends Scraper {
   static final Dio _dio = Dio();
 
   @override
-  void getTimetableData(controller, request) async { // controller and request pars are only for the phone version
+  void getTimetableData() async { // controller and request pars are only for the phone version
 
     await University.getFacultyLink(Main.department);
 

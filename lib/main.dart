@@ -16,7 +16,6 @@ import 'package:Atsched/scrapers/bilkent_scraper_computer.dart';
 import 'package:Atsched/scrapers/bilkent_scraper_phone.dart';
 import 'package:Atsched/scrapers/scraper.dart';
 import 'package:Atsched/wp_computer.dart';
-import 'package:desktop_webview_window/desktop_webview_window.dart';
 
 import 'dart:core';
 import 'dart:io';
@@ -104,6 +103,8 @@ class Main {
   static double days = 2;
 
   static String newFaculty = "";
+  static String newUni = "";
+  static bool isUniChange = false;
 
   static String artsNSciencesLink = "";
   static String fineArtsLink = "";
@@ -668,8 +669,6 @@ Future main() async {
     // });
   }
 
-  bool isSupported = true;
-
   { // for storing the files into that directory:
     Directory dir = Directory(Main.appDocDir + Main.filePrefix + "Atsched");
     if (!dir.existsSync()) {
@@ -721,10 +720,6 @@ Future main() async {
             });
       });
     }*/
-
-  if (Platform.isWindows && !(await WebviewWindow.isWebviewAvailable())) { // if it is windows and the webview is not supported: then the application will stop and Webview2 Runtime has to be downloaded
-    isSupported = false;
-  }
 
   Main.readSchedules();
   Main.readSettings();
@@ -835,11 +830,10 @@ Future main() async {
     child: MaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: Main.firstTime ? "/choosesettings" :
-      (isSupported ?
       (!goToUpdatePage ?
       (forceToHomePage ?
       "/home" : (Main.isInternetOn ?
-      (Main.forceUpdate ? "/webpage" : "/home") : "/nointernet")) : "/update") : "/webviewunsupported"),
+      (Main.forceUpdate ? "/webpage" : "/home") : "/nointernet")) : "/update"),
 
       routes: {
         "/choosesettings" : (context) => ChooseSettingsPage(),

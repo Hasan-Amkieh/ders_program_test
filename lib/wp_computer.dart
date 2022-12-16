@@ -36,7 +36,7 @@ class WPComputerState extends State<WPComputer> {
     currWidget = this;
 
     state = 1;
-    Main.scraper.getTimetableData(null, null);
+    Main.scraper.getTimetableData();
 
   }
 

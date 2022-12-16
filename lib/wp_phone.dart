@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:Atsched/pages/loading_update_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:Atsched/main.dart';
 
 import 'others/university.dart';
@@ -20,14 +19,12 @@ class WPPhone extends StatefulWidget {
 }
 
 class WPPhoneState extends State<WPPhone> {
-  InAppWebViewController? webView;
 
   static int state = 0;
 
   static bool doNotRestart = false;
 
   static WPPhoneState? currentState;
-  late InAppWebViewController controller;
 
   @override
   void initState() {
@@ -38,7 +35,7 @@ class WPPhoneState extends State<WPPhone> {
     currWidget = this;
 
     state = 1;
-    Main.scraper.getTimetableData(null, null);
+    Main.scraper.getTimetableData();
 
   }
 

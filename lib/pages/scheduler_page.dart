@@ -30,10 +30,10 @@ class SchedulerPage extends StatefulWidget {
 
 class SchedulerPageState extends State<SchedulerPage> {
 
-  List<Subject> subjects = [], subjectsToAdd = [];
-  List<MapEntry<String, List<MapEntry<int, Subject>>>> subjectsSections = []; // sample: [{"CMPE114" : [{1:subjectOfSec1}, {2:subjectOfSec2}]}] and so on...
-  List<MapEntry<String, Map<int, bool>>> areSectionsShown = [];
-  List<bool> subjectsShown = [];
+  static List<Subject> subjects = [], subjectsToAdd = [];
+  static List<MapEntry<String, List<MapEntry<int, Subject>>>> subjectsSections = []; // sample: [{"CMPE114" : [{1:subjectOfSec1}, {2:subjectOfSec2}]}] and so on...
+  static List<MapEntry<String, Map<int, bool>>> areSectionsShown = [];
+  static List<bool> subjectsShown = [];
 
   @override
   void initState() {
