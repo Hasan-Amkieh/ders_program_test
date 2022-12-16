@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:Atsched/scrapers/scraper.dart';
+import 'package:Atsched/wp_phone.dart';
 
 import '../main.dart';
 import '../others/subject.dart';
@@ -59,7 +60,11 @@ class BilkentScraperComputer extends Scraper {
 
     print("The semester name is ${Main.semesterName} and the code ${University.variables["code"]}");
 
-    WPComputerState.state = 2;
+    if (Platform.isWindows) {
+      WPComputerState.state = 2;
+    } else {
+      WPPhoneState.state = 2;
+    }
 
     // STARTING RECEIVING THE DATA:
 
@@ -99,7 +104,11 @@ class BilkentScraperComputer extends Scraper {
     // the first str represents the Faculty, like "ADA", architectural drawing
     // the dynamic key has a map of keys, each key is a section, the value of each section key has a map of properties of that section of that subject
 
-    WPComputerState.state = 3;
+    if (Platform.isWindows) {
+      WPComputerState.state = 3;
+    } else {
+      WPPhoneState.state = 3;
+    }
 
     ReceivePort rPort = ReceivePort();
     SendPort? sPort;
@@ -116,7 +125,11 @@ class BilkentScraperComputer extends Scraper {
         }
 
         if (msg[0] == "setDoNotRestart") {
-          WPComputerState.doNotRestart = true;
+          if (Platform.isWindows) {
+            WPComputerState.doNotRestart = true;
+          } else {
+            WPPhoneState.doNotRestart = true;
+          }
         }
 
         if (msg[0] == "facultyData") { // Main.facultyData =
@@ -211,7 +224,11 @@ class BilkentScraperComputer extends Scraper {
         }
 
         if (msg[0] == "setState") { // Main.facultyData =
-          WPComputerState.state = msg[1] as int;
+          if (Platform.isWindows) {
+            WPComputerState.state = msg[1] as int;
+          } else {
+            WPPhoneState.state = msg[1] as int;
+          }
           //rPort.close(); // it is causing the app to freeze!
           isolate?.kill();
         }
