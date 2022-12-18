@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:ffi';
-import "dart:io" show Platform;
 
 // import 'dart:async'; // Deep Links:
 import 'dart:io';
@@ -20,6 +19,7 @@ import 'package:flutter_window_close/flutter_window_close.dart';
 import 'package:lottie/lottie.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:restart_app/restart_app.dart';
 // import 'package:path_provider/path_provider.dart'; // Deep Links:
 
 import 'package:url_launcher/url_launcher.dart';
@@ -262,7 +262,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                               Main.faculty = University.getFaculties().isNotEmpty ? University.getFaculties()[0] : "";
                               Main.department = University.getFacultyDeps(Main.faculty).keys.isNotEmpty ? University.getFacultyDeps(Main.faculty).keys.elementAt(0) : "";
                               Main.isFacChange = true;
-                              Main.save();
+                              Main.writeSettings();
                               Navigator.of(context).pop(true);
                             },
                             child: const Text('Yes')),
@@ -563,20 +563,25 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                     if (Platform.isWindows) {
                       Main.newUni = newValue!;
                       Main.isUniChange = true;
-                      // print("The uni is changing:");
                       FlutterWindowClose.closeWindow();
                     } else {
                       showDialog(context: context, builder: (context) {
                         return AlertDialog(
                           backgroundColor: Main.appTheme.scaffoldBackgroundColor,
-                          title: Text(translateEng("Restarting the application"), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                          title: Text(translateEng("Do you want to change the university?\n\nThis will delete all your schedules"),
+                          style: TextStyle(color: Main.appTheme.titleTextColor)
+                          ),
                           actions: [
                             TextButton(onPressed: () {
                               Main.forceUpdate = true;
-                              Main.faculty = newValue!;
-                              Main.department = University.getFacultyDeps(Main.faculty).keys.elementAt(0);
+                              Main.faculty = University.getFaculties().isNotEmpty ? University.getFaculties()[0] : "";
+                              Main.department = University.getFacultyDeps(Main.faculty).keys.isNotEmpty ? University.getFacultyDeps(Main.faculty).keys.elementAt(0) : "";
                               Main.isFacChange = true;
-                              Main.restart();
+                              Main.uni = newValue!;
+                              Main.isUniChange = true;
+
+                              Main.writeSettings();
+                              Restart.restartApp().then((value) { ; });
                             },
                               child: Text(translateEng("RESTART")),
                             ),
@@ -692,10 +697,12 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                Main.isFacDataFilled ? (translateEng("Last Updated") + "    ${day}  ${hours}") : translateEng("Unknown"),
+                Main.isFacDataFilled ? (translateEng("Last Updated") + "    ${day} at ${hours}") : translateEng("Unknown"),
                 style: TextStyle(color: Colors.red.shade500, fontWeight: FontWeight.bold),
               ),
-              TextButton(onPressed: () {
+              TextButton.icon(
+                icon: const Icon(Icons.update),
+                  onPressed: () {
                 setState(() {
                   Main.forceUpdate = true;
                   if (Platform.isWindows) {
@@ -705,7 +712,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                     Main.restart();
                   }
                 });
-              }, child: Text(translateEng("Update now"))),
+              }, label: Text(translateEng("Update now"))),
             ],
           ),
           SizedBox(
