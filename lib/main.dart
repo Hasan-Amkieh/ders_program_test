@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show Platform;
 
+import 'package:Atsched/pages/schedule_notification_page.dart';
 import 'package:intl/intl.dart';
 
 import 'package:Atsched/classifiers/atilim_classifier.dart';
@@ -850,6 +851,7 @@ Future main() async {
         "/home/editcourses/createcustomcourse": (context) => CustomCoursePage(),
         "/home/editcourses/editcourseinfo": (context) { CustomCoursePage page = CustomCoursePage(); page.subject = Main.courseToEdit ?? Main.emptySubject; return page; },
         "/home/savedschedules" : (context) => SavedSchedulePage(),
+        "/home/savedschedules/schedulenotifications" : (context) => ScheduleNotificationPage(),
         "/home/personalinfo" : (context) => PersonalInfo(),
         "/home/scheduler" : (context) => SchedulerPage(),
         "/home/scheduler/schedulerresult" : (context) => SchedulerResultPage(),

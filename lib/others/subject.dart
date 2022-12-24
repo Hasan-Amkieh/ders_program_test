@@ -386,11 +386,12 @@ class Course { // This class is used inside the favourite and schedule courses, 
 class Notification {
 
   Subject subjectChanged;
-  String typeOfChange; // classroom / teacher / time&date
+  String typeOfChange; // classroom / teacher / time
   String oldDate;
   String newData;
+  DateTime time;
 
-  Notification({required this.subjectChanged, required this.typeOfChange, required this.oldDate, required this.newData, });
+  Notification({required this.subjectChanged, required this.typeOfChange, required this.oldDate, required this.newData, required this.time});
 
 }
 
@@ -400,7 +401,18 @@ class Schedule {
   List<Course> scheduleCourses;
   List<Notification> changes = []; // The changes wont be passed along the Branch link share
 
-  Schedule({required this.scheduleName, required this.scheduleCourses});
+  Schedule({required this.scheduleName, required this.scheduleCourses}) {
+
+    // TEST:
+
+    changes.add(Notification(
+        subjectChanged: Subject(courseCode: "CMPE341", teacherCodes: [], hours: [], classrooms: [], days: [], departments: [], bgnPeriods: [], customName: ''),
+        typeOfChange: "classroom", oldDate: "B1004", newData: "B2001", time: DateTime.now())
+    );
+
+    // TEST;
+
+  }
 
 }
 

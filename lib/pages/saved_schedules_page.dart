@@ -43,6 +43,8 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
 
   }
 
+  static int schedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
 
@@ -112,6 +114,24 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                IconButton(
+                  icon: Icon(Icons.track_changes, color: Main.schedules[scheduleIndex].changes.isEmpty ? Colors.grey.shade700 : Colors.red.shade700),
+                  onPressed: () {
+                    if (Main.schedules[scheduleIndex].changes.isNotEmpty) {
+                      schedIndex = scheduleIndex;
+                      Navigator.of(context).pushNamed("/home/savedschedules/schedulenotifications").then((value) => setState(() {}));
+                    } else {
+                      showToast(
+                        translateEng("There are no changes in your schedule"),
+                        duration: const Duration(milliseconds: 1500),
+                        position: ToastPosition.bottom,
+                        backgroundColor: Colors.blue.withOpacity(0.8),
+                        radius: 100.0,
+                        textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
+                      );
+                    }
+                  },
+                ),
                 IconButton(
                   icon: const Icon(CupertinoIcons.ellipsis_vertical, color: Colors.blue),
                   onPressed: () {
@@ -518,7 +538,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                     children: [
                       Icon(Icons.share, color: Main.appTheme.titleTextColor),
                       SizedBox(width: width * (Platform.isWindows ? 0.01 : 0.03)),
-                      Text(translateEng("By Screenshot of the Schedule"), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                      Text(translateEng(Platform.isWindows ? "Links are not supported on Windows" : "By a screenshot or a link"), style: TextStyle(color: Main.appTheme.titleTextColor)),
                     ],
                   ),
                   SizedBox(height: width * 0.03),

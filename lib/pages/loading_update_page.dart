@@ -9,7 +9,6 @@ import '../main.dart';
 import '../wp_computer.dart';
 
 import 'dart:ffi';
-import 'package:ffi/ffi.dart';
 
 List<String> msgs = [translateEng("CONNECTING TO THE INTERNET"), // state 0
 translateEng("CONNECTING TO THE SERVER"), // 1
@@ -135,15 +134,15 @@ class LoadingUpdateState extends State<LoadingUpdate> {
         children: [
           loadingWidget,
           SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-          Text(msg, style: txtStyle, textAlign: TextAlign.center,),
+          Text(msg, style: txtStyle, textAlign: TextAlign.center),
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.2,
           ),
           Visibility(
-            visible: !Platform.isWindows,
+            visible: !Platform.isWindows && !WPPhoneState.doNotRestart,
             child: Container(
               margin: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * 0.2, 0, MediaQuery.of(context).size.width * 0.2, 0),
-              child: TextButton.icon(onPressed: (Platform.isWindows ? WPComputerState.doNotRestart : WPPhoneState.doNotRestart) ? null : () => Restart.restartApp(),
+              child: TextButton.icon(onPressed: () => Restart.restartApp(),
                   icon: const Icon(Icons.restart_alt, color: Colors.white,), label: Text(translateEng("RESTART UPDATE"), textAlign: TextAlign.center, style: txtStyle), style: ButtonStyle(overlayColor: MaterialStateProperty.resolveWith((states) {
                     return Colors.blue.shade300;
                   }))),

@@ -4,7 +4,9 @@ import 'dart:io' show HttpClient, Platform;
 
 import 'package:Atsched/others/subject.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../language/dictionary.dart';
 import '../main.dart';
 
 class University {
@@ -57,6 +59,52 @@ class University {
     }
 
     return "";
+
+  }
+
+  static List<Widget> getLinksPageWidgets(double width, double iconWidth) {
+
+    switch (Main.uni) {
+
+      case "Atilim":
+
+        return [
+          Container(
+            padding: EdgeInsets.fromLTRB(0, 0.03 * width, 0, 0),
+            child: ListTile(
+              leading: Image.asset("lib/icons/atacs.png", width: iconWidth, height: iconWidth),
+              title: Text('Atacs', style: TextStyle(color: Main.appTheme.titleTextColor)),
+              onTap: () async {
+                const url = 'https://atacs.atilim.edu.tr/Anasayfa/Student';
+                if (await canLaunchUrl(Uri.parse(url))) {
+                  await launchUrl(Uri.parse(url));
+                } else {
+                  throw 'Could not launch $url';
+                }
+              },
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+            child: ListTile(
+              leading: Icon(Icons.schedule, color: Main.appTheme.titleTextColor),
+              title: Text(translateEng("School's Schedules"), style: TextStyle(color: Main.appTheme.titleTextColor)),
+              onTap: () async {
+                const url = 'https://www.atilim.edu.tr/en/dersprogrami';
+                if (await canLaunchUrl(Uri.parse(url))) {
+                  await launchUrl(Uri.parse(url));
+                } else {
+                  throw 'Could not launch $url';
+                }
+              },
+            ),
+          ),
+        ];
+
+      default:
+        return [];
+
+    }
 
   }
 
