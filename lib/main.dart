@@ -215,23 +215,28 @@ class Main {
 
   }
 
-  static void writeSchedules() {
+  static void deleteSchedules() async {
 
-    // first delete all the schedules, then write all the schedules again:
-
-    Directory dir = Directory(Main.appDocDir);
-
-    // List directory contents, recursing into sub-directories,
-    // but not following symbolic links.
-    List<FileSystemEntity> files = dir.listSync();
+    Directory dir = Directory(Main.appDocDir + Main.filePrefix + "Atsched");
+    List<FileSystemEntity> files = await (dir.list()).toList();
+    // print("Deleting scheds of dir ${files}");
 
     for (int i = 0 ; i < files.length ; i++) {
 
       if (files[i].toString().contains("schedule_")) {
-        files[i].deleteSync();
+        // print("Deleting schedule: ${files[i].toString()}");
+        await files[i].delete();
       }
 
     }
+
+  }
+
+  static void writeSchedules() {
+
+    // first delete all the schedules, then write all the schedules again:
+
+    deleteSchedules();
 
     for (int i = 0 ; i < schedules.length ; i++) {
 

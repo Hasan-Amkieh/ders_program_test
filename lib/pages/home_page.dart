@@ -272,6 +272,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                               Main.faculty = University.getFaculties().isNotEmpty ? University.getFaculties()[0] : "";
                               Main.department = University.getFacultyDeps(Main.faculty).keys.isNotEmpty ? University.getFacultyDeps(Main.faculty).keys.elementAt(0) : "";
                               Main.isFacChange = true;
+                              Main.deleteSchedules();
                               Main.writeSettings();
                               Navigator.of(context).pop(true);
                             },
@@ -589,6 +590,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                               Main.isFacChange = true;
                               Main.uni = newValue!;
                               Main.isUniChange = true;
+
+                              Main.deleteSchedules();
 
                               Main.writeSettings();
                               Restart.restartApp().then((value) { ; });
