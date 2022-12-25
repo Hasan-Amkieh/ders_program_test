@@ -62,7 +62,7 @@ class ScheduleNotificationPageState extends State {
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
                               text: TextSpan(
-                                text: "The ${Main.schedules[SavedSchedulePageState.schedIndex].changes[index].typeOfChange} has changed from ${Main.schedules[SavedSchedulePageState.schedIndex].changes[index].oldDate} into ${Main.schedules[SavedSchedulePageState.schedIndex].changes[index].newData} inside the course ${Main.schedules[SavedSchedulePageState.schedIndex].changes[index].subjectChanged.courseCode}",
+                                text: "The ${Main.schedules[SavedSchedulePageState.schedIndex].changes[index].typeOfChange} has changed from ${Main.schedules[SavedSchedulePageState.schedIndex].changes[index].oldData} into ${Main.schedules[SavedSchedulePageState.schedIndex].changes[index].newData} inside the course ${Main.schedules[SavedSchedulePageState.schedIndex].changes[index].courseCode}",
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: Main.appTheme.titleTextColor,

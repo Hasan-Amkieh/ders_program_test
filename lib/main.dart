@@ -256,6 +256,20 @@ class Main {
 
       }
 
+      toWrite = toWrite + "////\n";
+
+      String oldData = "", newData = "";
+      for (int j = 0 ; j < schedules[i].changes.length ; j++) { // notations (changes):
+
+        oldData = schedules[i].changes[j].oldData;
+        newData = schedules[i].changes[j].newData;
+
+        toWrite = toWrite + schedules[i].changes[j].courseCode + "|" +
+            schedules[i].changes[j].typeOfChange + "|" + oldData + "|" +
+            newData + "|" + schedules[i].changes[j].time.microsecondsSinceEpoch.toString() + "\n";
+
+      }
+
       // print("The schedule ${Main.schedules[i].scheduleName} is written with the content of: \n\n$toWrite\n\n\n");
 
       file.writeAsStringSync(toWrite);
@@ -304,8 +318,20 @@ class Main {
           courses = courses.where((element) => element.trim().isNotEmpty).toList();
           courses.forEach((course) { /*print("Doing $course");*/ courses_.add(Course(subject: Subject.fromStringWithCourseCode(course), note: notes[index < notes.length ? index : 0])); index++; });
 
+          List<String> notations = content.split("////\n").elementAt(2).split("\n");
+          List<Change> changes = [];
+
+          // print("Found notations: $notations");
+          notations.forEach((element) {
+            if (element.trim().isNotEmpty) {
+              List<String> content = element.split("|");
+              changes.add(Change(courseCode: content.elementAt(0), typeOfChange: content.elementAt(1),
+                  oldData: content.elementAt(2), newData: content.elementAt(3), time: DateTime.fromMicrosecondsSinceEpoch(int.parse(content.elementAt(4)))));
+            }
+          });
+
           //courses_.forEach((element) {print(element.subject.toString());});
-          Main.schedules.add(Schedule(scheduleName: scheduleName, scheduleCourses: courses_));
+          Main.schedules.add(Schedule(scheduleName: scheduleName, scheduleCourses: courses_, changes: changes));
 
         }
 

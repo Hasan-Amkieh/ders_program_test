@@ -9,6 +9,7 @@ import 'package:Atsched/language/dictionary.dart';
 import 'package:Atsched/others/subject.dart';
 import 'package:Atsched/pages/home_page.dart';
 import 'package:Atsched/widgets/timetable_canvas.dart';
+import 'package:badges/badges.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
@@ -115,7 +116,10 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 IconButton(
-                  icon: Icon(Icons.track_changes, color: Main.schedules[scheduleIndex].changes.isEmpty ? Colors.grey.shade700 : Colors.red.shade700),
+                  icon: Main.schedules[Main.currentScheduleIndex].changes.isNotEmpty ? Badge(
+                      badgeContent: Text(Main.schedules[Main.currentScheduleIndex].changes.length.toString()),
+                      child: Icon(Icons.track_changes, color: Main.schedules[scheduleIndex].changes.isEmpty ? Colors.grey.shade700 : Colors.red.shade700)
+                  ) : Icon(Icons.track_changes, color: Main.schedules[scheduleIndex].changes.isEmpty ? Colors.grey.shade700 : Colors.red.shade700),
                   onPressed: () {
                     if (Main.schedules[scheduleIndex].changes.isNotEmpty) {
                       schedIndex = scheduleIndex;
@@ -505,6 +509,10 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                         }
                       }
                       if (nameController.text.replaceAll(RegExp('[^A-Za-z0-9\\s\\-üÜğĞöÖçÇşŞ\\(\\)]'), '') == nameController.text && !isFound && nameController.text.isNotEmpty) { // then the name is valid:
+                        var file = File(Main.appDocDir + Main.filePrefix + "Atsched" + Main.filePrefix + "schedule_${Main.schedules[scheduleIndex].scheduleName}.txt");
+                        if (file.existsSync()) {
+                          file.deleteSync();
+                        }
                         Main.schedules[scheduleIndex].scheduleName = nameController.text;
                       } else { // then the name has smth else than the numbers and alphabetical character
                         showToast(

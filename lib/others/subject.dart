@@ -383,15 +383,16 @@ class Course { // This class is used inside the favourite and schedule courses, 
 
 }
 
-class Notification {
+class Change {
 
-  Subject subjectChanged;
-  String typeOfChange; // classroom / teacher / time
-  String oldDate;
+  String courseCode;
+  String typeOfChange; // classroom / time // if it is time, then write it in this form:
+  // 1-70-230-23 / The first digit is for the day, the second and third is for the bgnPeriod and ...
+  String oldData;
   String newData;
   DateTime time;
 
-  Notification({required this.subjectChanged, required this.typeOfChange, required this.oldDate, required this.newData, required this.time});
+  Change({required this.courseCode, required this.typeOfChange, required this.oldData, required this.newData, required this.time});
 
 }
 
@@ -399,16 +400,16 @@ class Schedule {
 
   String scheduleName;
   List<Course> scheduleCourses;
-  List<Notification> changes = []; // The changes wont be passed along the Branch link share
+  List<Change> changes = []; // The changes wont be passed along the Branch link share
 
-  Schedule({required this.scheduleName, required this.scheduleCourses}) {
+  Schedule({required this.scheduleName, required this.scheduleCourses , changes }) {
 
+    changes ??= [];
     // TEST:
-
-    changes.add(Notification(
-        subjectChanged: Subject(courseCode: "CMPE341", teacherCodes: [], hours: [], classrooms: [], days: [], departments: [], bgnPeriods: [], customName: ''),
-        typeOfChange: "classroom", oldDate: "B1004", newData: "B2001", time: DateTime.now())
-    );
+    // changes.add(Change(
+    //     courseCode: "CMPE225", typeOfChange: "classroom", oldData: "B1004", newData: "B2001", time: DateTime.now())
+    // );
+    this.changes = [...changes];
 
     // TEST;
 

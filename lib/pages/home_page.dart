@@ -87,11 +87,21 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         for (int k = 0 ; k < Main.newCourses.length ; k++) {
           if (Main.newCourses[k].courseCode == Main.schedules[i].scheduleCourses[j].subject.courseCode) { // if the subjects are the same:
             if (Main.newCoursesChanges[k][0]) { // if the time has changed:
+
+              Main.schedules[i].changes.add(Change(courseCode: Main.schedules[i].scheduleCourses[j].subject.courseCode, typeOfChange: "time",
+                  oldData: Main.schedules[i].scheduleCourses[j].subject.days.toString() + "," + Main.schedules[i].scheduleCourses[j].subject.bgnPeriods.toString() + "," + Main.schedules[i].scheduleCourses[j].subject.hours.toString(),
+                  newData: Main.newCourses[k].days.toString() + "," + Main.newCourses[k].bgnPeriods.toString() + "," + Main.newCourses[k].hours.toString(),
+                  time: DateTime.now()));
+
               Main.schedules[i].scheduleCourses[j].subject.days = Main.newCourses[k].days;
               Main.schedules[i].scheduleCourses[j].subject.bgnPeriods = Main.newCourses[k].bgnPeriods;
               Main.schedules[i].scheduleCourses[j].subject.hours = Main.newCourses[k].hours;
             }
             if (Main.newCoursesChanges[k][1]) { // if the classrooms have changed:
+              Main.schedules[i].changes.add(Change(courseCode: Main.schedules[i].scheduleCourses[j].subject.courseCode, typeOfChange: "classroom",
+                  oldData: Main.newCourses[k].classrooms.toString(),
+                  newData: Main.schedules[i].scheduleCourses[j].subject.classrooms.toString(),
+                  time: DateTime.now()));
               Main.schedules[i].scheduleCourses[j].subject.classrooms = Main.newCourses[k].classrooms;
             }
           }

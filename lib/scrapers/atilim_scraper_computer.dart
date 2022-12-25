@@ -59,8 +59,8 @@ class AtilimScraperComputer extends Scraper {
       //     "${Main.artsNSciencesLink}\n${Main.fineArtsLink}\n${Main.businessLink}\n${Main.engineeringLink}\n${Main.civilAviationLink}\n${Main.healthSciencesLink}\n${Main.lawLink}");
 
 
-    } catch (e) {
-      print("ERROR: $e");
+    } catch (e, stacktrace) {
+      print("ERROR: $e\n$stacktrace");
     }
 
     // debugPrint(timetableData, wrapWidth: 1024);
@@ -224,7 +224,7 @@ class AtilimScraperComputer extends Scraper {
             });
 
             isolate = (await Isolate.spawn(Main.classifier.classifyData, rPort.sendPort));
-            print("Isolate spawned!");
+            // print("Isolate spawned!");
           }
           else { // if the response is empty then smth is wrong, restart!
             if (Main.isAttemptedBefore) {

@@ -301,6 +301,12 @@ class AtilimClassifier extends Classifier {
 
                 // print("${names[subjectIndex]} has the hrs $hrs");
 
+                // TEST:
+                // if (subjectId.key.contains("MATH151")) {
+                //   print("Changing ${subjectId.key}");
+                //   hrs[hrs.length - 1] = hrs[hrs.length - 1] + 1;
+                // }
+                // TEST;
                 subjects.add(Subject(customName: names[subjectIndex], hours: hrs, bgnPeriods: beginningHr, courseCode: subjectId.key,
                     classrooms: classrooms, days: day, departments: classes, teacherCodes: teacherCodes));
 
