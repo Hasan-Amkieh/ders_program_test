@@ -544,68 +544,21 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(translateEng("Class Length (hours)"), style: Main.appTheme.headerStyle),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: (Platform.isWindows ? 0.04 : 0.08) * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
-                          height: (Platform.isWindows ? 0.04 : 0.08) * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  offset: const Offset(0, 4),
-                                  color: Colors.pink.withOpacity(0.2),
-                                  blurRadius: 10.0,
-                                  spreadRadius: 0.0,
-                                ),
-                              ],
-                            ),
-                            child: CounterButton(
-                              isIncrement: false,
-                              onPressed: () {
-                                setState(() {
-                                  if (widget.hours[i] == 1) return;
-                                  widget.hours[i] = widget.hours[i] - 1;
-                                });
-                              },
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: width * 0.03,
-                          height: width * 0.03,
-                        ),
-                        Text("${widget.hours[i]}", style: Main.appTheme.headerStyle),
-                        SizedBox(
-                          width: width * 0.03,
-                          height: width * 0.03,
-                        ),
-                        SizedBox(
-                          width: (Platform.isWindows ? 0.04 : 0.08) * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
-                          height: (Platform.isWindows ? 0.04 : 0.08) * (MediaQuery.of(context).orientation == Orientation.portrait ? width : height),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  offset: const Offset(0, 4),
-                                  color: Colors.pink.withOpacity(0.2),
-                                  blurRadius: 10.0,
-                                  spreadRadius: 0.0,
-                                ),
-                              ],
-                            ),
-                            child: CounterButton(
-                              isIncrement: true,
-                              onPressed: () {
-                                setState(() {
-                                  if (widget.hours[i] == (widget.getMaxHr(widget.bgnHour[i]))) return;
-                                  widget.hours[i] = widget.hours[i] + 1;
-                                });
-                              },
-                            ),
-                          ),
-                        )
-                      ],
+                    SizedBox(
+                      width: width * 0.25,
+                      child: Slider(
+                        value: widget.hours[i].toDouble(),
+                        onChanged: (newValue) {
+                          setState(() {
+                            // print("New value: " + newValue.toString());
+                            widget.hours[i] = newValue.toInt();
+                          });
+                        },
+                        min: 1,
+                        max: 12,
+                        divisions: 12,
+                        label: "${(widget.hours[i].toInt())} hours",
+                      ),
                     ),
                   ],
                 ),

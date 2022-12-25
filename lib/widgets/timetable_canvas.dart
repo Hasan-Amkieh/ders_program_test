@@ -21,7 +21,7 @@ class TimetableCanvas extends CustomPainter {
   static bool isSatNeeded = false;
   static bool isSunNeeded = false;
 
-  static List<int> neededHrs = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+  static List<int> neededHrs = [];
 
   static const List<String> days_ = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 
@@ -49,13 +49,40 @@ class TimetableCanvas extends CustomPainter {
       }
     }
 
-    int bgnHr = 8;
+    int bgnHr = 9, endHr = 10; // make it the smallest!
+
+    for (int i = 0 ; i < days.length ; i++) {
+
+      for (int j = 0 ; j < days[i].length ; j++) {
+
+        if (bgnHr > beginningPeriods[i][j]) { // first convert the hours
+          bgnHr = beginningPeriods[i][j];
+        }
+
+        if (endHr < (beginningPeriods[i][j] + hours[i])) {
+          print("The bgn hour has been changed into $bgnHr");
+          print("The end hour has been changed into ${beginningPeriods[i][j] + hours[i]}");
+          endHr = beginningPeriods[i][j] + hours[i];
+        }
+
+      }
+
+    }
+
+    neededHrs.clear();
+    for (int i = bgnHr ; i <= endHr ; i++) { // equivalent to bgnHour:1:endHour in MATLAB
+      neededHrs.add(i);
+    }
+    print("$neededHrs");
+
 
     List<List<int>> reservedPeriods = [];
 
     double actualWidth = (size.width - 0);
     double actualHeight = (size.height - 4);
-    double colWidth = (actualWidth / (6 + (isSunNeeded ? 1 : 0) + (isSatNeeded ? 1 : 0))).floorToDouble(), rowHeight = (actualHeight ~/ 11).floorToDouble();
+
+    double colWidth = (actualWidth / (6 + (isSunNeeded ? 1 : 0) + (isSatNeeded ? 1 : 0))).floorToDouble();
+    double rowHeight = (actualHeight ~/ (neededHrs.length + 1)).floorToDouble();
 
     // print("Divisions: ${6 + (isSunNeeded ? 1 : 0) + (isSatNeeded ? 1 : 0)}");
 
@@ -80,7 +107,7 @@ class TimetableCanvas extends CustomPainter {
 
 
     // rows:
-    for (int i = 1 ; i < 11 ; i++) {
+    for (int i = 1 ; i < (neededHrs.length+1) ; i++) {
       canvas.drawLine(Offset(0, rowHeight * i), Offset(size.width, rowHeight * i), innerBarrierLinesPaint);
     }
 
@@ -151,7 +178,7 @@ class TimetableCanvas extends CustomPainter {
           }
 
           dx = (days[i][j] - ((isSunNeeded && !isSatNeeded) ? 1 : 0)) * colWidth + (days[i][j] == 1 ? 1 : 0);
-          dy = (beginningPeriods[i][j] - bgnHr + l) * rowHeight + 1; // (beginningPeriods[i][j] == 1 ? 1 : 0)
+          dy = (beginningPeriods[i][j] - bgnHr + l + 1) * rowHeight + 1; // (beginningPeriods[i][j] == 1 ? 1 : 0)
 
           rect = Offset(dx, dy) & ui.Size(colWidth * 1, rowHeight * 1);
           canvas.drawRect(rect, isCol ? periodPaintCol : periodPaint);
