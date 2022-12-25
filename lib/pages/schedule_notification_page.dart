@@ -33,12 +33,17 @@ class ScheduleNotificationPageState extends State {
         child: ListView.separated(
           itemCount: Main.schedules[SavedSchedulePageState.schedIndex].changes.length,
           itemBuilder: (context, index) {
+            var time = Main.schedules[SavedSchedulePageState.schedIndex].changes[index].time;
             return Container(
-              margin: const EdgeInsets.only(left: 10),
+              margin: const EdgeInsets.fromLTRB(10, 10, 0, 0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   IconButton(
+                    splashColor: Colors.red.withOpacity(0.5),
+                    color: Colors.red,
+                    highlightColor: Colors.red.withOpacity(0.25),
+                    splashRadius: IconTheme.of(context).size! + 5,
                     icon: Icon(Icons.delete_outline, color: Colors.red.shade700),
                     onPressed: () {
                       setState(() {
@@ -52,7 +57,7 @@ class ScheduleNotificationPageState extends State {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container( // message:
+                          Container(
                             child: RichText(
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
@@ -66,14 +71,13 @@ class ScheduleNotificationPageState extends State {
                               ),
                             ),
                           ),
-                          // time and date:
                           Container(
                             margin: EdgeInsets.only(top: 5),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  Main.schedules[SavedSchedulePageState.schedIndex].changes[index].time.toIso8601String(),
+                                  "${time.year}-${time.month}-${time.day} ${time.hour}:${time.minute}",
                                   style: TextStyle(fontSize: Platform.isWindows ? 14 : 10, color: Main.appTheme.subtitleTextColor),
                                 )
                               ],

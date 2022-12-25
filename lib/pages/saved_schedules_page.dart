@@ -364,7 +364,14 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                   TextButton(
                     child: Text(translateEng("CREATE")),
                     onPressed: () {
-                      if (nameController.text.trim().isNotEmpty) {
+                      bool isFound = false;
+                      for (int i = 0 ; i < Main.schedules.length ; i++) {
+                        if (Main.schedules[i].scheduleName.compareTo(nameController.text) == 0) {
+                          isFound = true;
+                          break;
+                        }
+                      }
+                      if (nameController.text.replaceAll(RegExp('[^A-Za-z0-9\\s\\-üÜğĞöÖçÇşŞ\\(\\)]'), '') == nameController.text && !isFound && nameController.text.trim().isNotEmpty) {
                         setState(() {
                           Main.schedules.add(Schedule(scheduleName: nameController.text, scheduleCourses: []));
                           Main.currentScheduleIndex = Main.schedules.length - 1;
@@ -372,7 +379,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                         Navigator.pop(context);
                       } else {
                         showToast(
-                          translateEng("The name cannot be empty"),
+                          translateEng("The name can't contain special characters, can't be empty and unique"),
                           duration: const Duration(milliseconds: 1500),
                           position: ToastPosition.bottom,
                           backgroundColor: Colors.red.withOpacity(0.8),
@@ -490,7 +497,14 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                   child: Text(translateEng("CHANGE")),
                   onPressed: () {
                     setState(() {
-                      if (nameController.text.replaceAll(RegExp('[^A-Za-z0-9\\s\\-üÜğĞöÖçÇşŞ\\(\\)]'), '') == nameController.text && nameController.text.isNotEmpty) { // then the name is valid:
+                      bool isFound = false;
+                      for (int i = 0 ; i < Main.schedules.length ; i++) {
+                        if (Main.schedules[i].scheduleName.compareTo(nameController.text) == 0) {
+                          isFound = true;
+                          break;
+                        }
+                      }
+                      if (nameController.text.replaceAll(RegExp('[^A-Za-z0-9\\s\\-üÜğĞöÖçÇşŞ\\(\\)]'), '') == nameController.text && !isFound && nameController.text.isNotEmpty) { // then the name is valid:
                         Main.schedules[scheduleIndex].scheduleName = nameController.text;
                       } else { // then the name has smth else than the numbers and alphabetical character
                         showToast(
@@ -652,6 +666,12 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
             Text(translateEng("Delete"), style: const TextStyle(color: Colors.red))]),
           onPressed: () {
             setState(() {
+              // Delete it from the Documents folder first, if it exists:
+              // Main.schedules[scheduleIndex].scheduleName
+              var file = File(Main.appDocDir + Main.filePrefix + "Atsched" + Main.filePrefix + "schedule_${Main.schedules[scheduleIndex].scheduleName}.txt");
+              if (file.existsSync()) {
+                file.deleteSync();
+              }
               Main.schedules.removeAt(scheduleIndex);
               if (scheduleIndex <= Main.currentScheduleIndex) { // otherwise, if it is greater than the current schedule, then do nothing
                 Main.currentScheduleIndex = Main.schedules.length - 1;
