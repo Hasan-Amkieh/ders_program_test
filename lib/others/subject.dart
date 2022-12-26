@@ -86,6 +86,48 @@ class Subject { // represents a class
 
   }
 
+  static List extractPeriodInfo(List<String> info) {
+
+    List<int> hours_ = [];
+    List<List<int>> days_ = [], bgnPeriods_ = [];
+
+    List<int> tempList = [];
+    var list = info[0].replaceAll(" ", "").split('],[');
+    list = list.where((element) => element.trim().isNotEmpty).toList();
+    for (int i = 0 ; i < list.length ; i++) { // delete '[' and ']'
+      list[i] = list[i].replaceAll('[', '').replaceAll(']', '');
+      tempList = [];
+      list[i].split(',').forEach((element) { if (element.isNotEmpty) {
+        tempList.add(int.parse(element));
+      } });
+      days_.add(tempList);
+    }
+
+    list = info[1].replaceAll(" ", "").split('],[');// ["[5, 1, 5]"]
+    for (int i = 0 ; i < list.length ; i++) { // delete '[' and ']' // aa|aa||||3, 2|[1], [4]|[1], [2]
+      list[i] = list[i].replaceAll('[', '').replaceAll(']', '');
+      tempList = [];
+      list[i].split(',').forEach((element) {
+        if (element.trim().isNotEmpty) {
+          tempList.add(int.parse(element));
+        }
+      });
+      // print("temp list: $tempList");
+      bgnPeriods_.add(tempList);
+    }
+
+    // hours:
+    if (info[2].trim().isNotEmpty) {
+      list = info[2].split(',');
+      for (int i = 0; i < list.length; i++) {
+        hours_.add(int.parse(list[i]));
+      }
+    }
+
+    return [days_, bgnPeriods_, hours_];
+
+  }
+
   Subject clone() {
 
     return Subject(courseCode: courseCode,

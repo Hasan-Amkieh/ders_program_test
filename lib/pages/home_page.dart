@@ -89,8 +89,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             if (Main.newCoursesChanges[k][0]) { // if the time has changed:
 
               Main.schedules[i].changes.add(Change(courseCode: Main.schedules[i].scheduleCourses[j].subject.courseCode, typeOfChange: "time",
-                  oldData: Main.schedules[i].scheduleCourses[j].subject.days.toString() + "," + Main.schedules[i].scheduleCourses[j].subject.bgnPeriods.toString() + "," + Main.schedules[i].scheduleCourses[j].subject.hours.toString(),
-                  newData: Main.newCourses[k].days.toString() + "," + Main.newCourses[k].bgnPeriods.toString() + "," + Main.newCourses[k].hours.toString(),
+                  oldData: Main.schedules[i].scheduleCourses[j].subject.days.toString() + " | " + Main.schedules[i].scheduleCourses[j].subject.bgnPeriods.toString() + " | " + Main.schedules[i].scheduleCourses[j].subject.hours.toString(),
+                  newData: Main.newCourses[k].days.toString() + " | " + Main.newCourses[k].bgnPeriods.toString() + " | " + Main.newCourses[k].hours.toString(),
                   time: DateTime.now()));
 
               Main.schedules[i].scheduleCourses[j].subject.days = Main.newCourses[k].days;
