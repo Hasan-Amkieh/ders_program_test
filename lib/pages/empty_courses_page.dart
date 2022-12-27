@@ -119,6 +119,7 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
 
     double width = (window.physicalSize / window.devicePixelRatio).width, height = (window.physicalSize / window.devicePixelRatio).height;
 
+    ScrollController scrollController = ScrollController();
     return Scaffold(
       backgroundColor: Main.appTheme.scaffoldBackgroundColor,
       appBar: PreferredSize(
@@ -226,6 +227,7 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
               ),
               Expanded(
                 child: RawScrollbar(
+                  controller: scrollController,
                   crossAxisMargin: 0.0,
                   trackVisibility: true,
                   thumbVisibility: true,
@@ -233,13 +235,17 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
                   // trackColor: Colors.redAccent.shade700,
                   trackBorderColor: Colors.white,
                   radius: const Radius.circular(20),
-                  child: ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: classrooms_.length,
-                    itemBuilder: (context, index) {
-                      return buildClassrooms(index);
-                    },
+                  child: ScrollConfiguration(
+                    behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                    child: ListView.builder(
+                      controller: scrollController,
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemCount: classrooms_.length,
+                      itemBuilder: (context, index) {
+                        return buildClassrooms(index);
+                      },
+                    ),
                   ),
                 ),
               ),

@@ -120,6 +120,7 @@ class SchedulerPageState extends State<SchedulerPage> {
       }
     }
 
+    ScrollController scrollController = ScrollController();
     return Scaffold(
       backgroundColor: Main.appTheme.scaffoldBackgroundColor,
       appBar: PreferredSize(
@@ -133,6 +134,7 @@ class SchedulerPageState extends State<SchedulerPage> {
             children: [
               Expanded(
                 child: RawScrollbar(
+                  controller: scrollController,
                   crossAxisMargin: 0.0,
                   trackVisibility: true,
                   thumbVisibility: true,
@@ -140,11 +142,15 @@ class SchedulerPageState extends State<SchedulerPage> {
                   // trackColor: Colors.redAccent.shade700,
                   trackBorderColor: Colors.white,
                   radius: const Radius.circular(20),
-                  child: ListView.builder( // GFCheckbox
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    itemCount: subjects.length,
-                    itemBuilder: (context, index) => buildSubject(index, width, height),
+                  child: ScrollConfiguration(
+                    behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                    child: ListView.builder( // GFCheckbox
+                      controller: scrollController,
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      itemCount: subjects.length,
+                      itemBuilder: (context, index) => buildSubject(index, width, height),
+                    ),
                   ),
                 ),
               ),

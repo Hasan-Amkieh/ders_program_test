@@ -685,6 +685,13 @@ class Main {
 
   }
 
+  static bool isNumeric(String s) {
+    if(s == null) {
+      return false;
+    }
+    return double.parse(s, (e) => 0.0) != 0.0;
+  }
+
 }
 
 Future main() async {

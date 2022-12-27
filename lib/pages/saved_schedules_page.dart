@@ -310,10 +310,12 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
 
     }
 
+    ScrollController scrollController = ScrollController();
     tiles.add(Expanded(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 10),
         child: RawScrollbar(
+          controller: scrollController,
           crossAxisMargin: 0.0,
           trackVisibility: true,
           thumbVisibility: true,
@@ -321,9 +323,13 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
           // trackColor: Colors.redAccent.shade700,
           trackBorderColor: Colors.white,
           radius: const Radius.circular(20),
-          child: SingleChildScrollView(
-            child: Column(
-              children: scheduleTiles,
+          child: ScrollConfiguration(
+            behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+            child: SingleChildScrollView(
+              controller: scrollController,
+              child: Column(
+                children: scheduleTiles,
+              ),
             ),
           ),
         ),

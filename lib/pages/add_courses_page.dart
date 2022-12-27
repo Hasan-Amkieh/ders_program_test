@@ -99,6 +99,8 @@ class AddCoursesPageState extends State<AddCoursesPage> {
     subCountAddedCrs = 0;
     subCountCrs = 0;
 
+    var scrollController = ScrollController();
+    
     return Scaffold(
       appBar: PreferredSize(
           preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.05 : 0.1)),
@@ -140,6 +142,7 @@ class AddCoursesPageState extends State<AddCoursesPage> {
 
               Expanded(
                   child: RawScrollbar(
+                    controller: scrollController,
                     crossAxisMargin: 0.0,
                     trackVisibility: true,
                     thumbVisibility: true,
@@ -147,12 +150,16 @@ class AddCoursesPageState extends State<AddCoursesPage> {
                     // trackColor: Colors.redAccent.shade700,
                     trackBorderColor: Colors.white,
                     radius: const Radius.circular(20),
-                    child: ListView.builder(
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        itemCount: isForScheduler ? subjectsWithoutSecs.length : subjects.length, itemBuilder: (context, index) {
-                      return buildTile(context, index);
-                    }),
+                    child: ScrollConfiguration(
+                      behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                      child: ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          controller: scrollController,
+                          shrinkWrap: true,
+                          itemCount: isForScheduler ? subjectsWithoutSecs.length : subjects.length, itemBuilder: (context, index) {
+                        return buildTile(context, index);
+                      }),
+                    ),
                   )
               ),
             ],

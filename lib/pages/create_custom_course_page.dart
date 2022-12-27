@@ -418,7 +418,6 @@ class CustomCoursePageState extends State<CustomCoursePage> {
 
   }
 
-
   Widget buildPeriods(double width, double height) {
 
     List<Widget> tiles = [];
@@ -452,6 +451,25 @@ class CustomCoursePageState extends State<CustomCoursePage> {
       }
 
       endHour = (widget.hours[i]+int.parse(widget.bgnHour[i].toString().substring(0, widget.bgnHour[i].toString().indexOf(":")))).toString();
+
+      var hoursController = TextEditingController(text: widget.hours[i].toString());
+      hoursController.addListener(() {
+        if (!Main.isNumeric(hoursController.text)) {
+          setState(() {
+            hoursController.text = widget.hours[i].toString();
+            showToast(
+              translateEng("Only numbers are allowed"),
+              duration: const Duration(milliseconds: 1500),
+              position: ToastPosition.bottom,
+              backgroundColor: Colors.red.withOpacity(0.8),
+              radius: 100.0,
+              textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
+            );
+          });
+        } else {
+          widget.hours[i] = int.parse(hoursController.text);
+        }
+      });
 
       tiles.add(ExpansionTile(
         backgroundColor: Main.appTheme.periodBackgroundColor,
@@ -546,7 +564,45 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                     Text(translateEng("Class Length (hours)"), style: Main.appTheme.headerStyle),
                     SizedBox(
                       width: width * 0.25,
-                      child: Slider(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                              child: Icon(Icons.remove), // negative
+                            onPressed: () {
+                              setState(() {
+                                if (widget.hours[i] != 1) {
+                                  widget.hours[i] = widget.hours[i] - 1;
+                                }
+                              });
+                            },
+                          ),
+                          SizedBox(
+                            width: width * 0.025,
+                            height: width * 0.025,
+                            child: TextField(
+                              textAlign: TextAlign.center,
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.all(width * 0.005),
+                                border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(width * 0.005))),
+                              ),
+                              style: TextStyle(color: Main.appTheme.titleTextColor),
+                              controller: hoursController,
+                            ),
+                          ),
+                          TextButton(
+                            child: Icon(Icons.add), // plus
+                            onPressed: () {
+                              setState(() {
+                                if (widget.hours[i] != 12) {
+                                  widget.hours[i] = widget.hours[i] + 1;
+                                }
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      /*Slider(
                         value: widget.hours[i].toDouble(),
                         onChanged: (newValue) {
                           setState(() {
@@ -558,7 +614,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                         max: 12,
                         divisions: 12,
                         label: "${(widget.hours[i].toInt())} hours",
-                      ),
+                      )*/
                     ),
                   ],
                 ),
@@ -615,19 +671,24 @@ class CustomCoursePageState extends State<CustomCoursePage> {
           ),
         )
     );
+    var scrollController = ScrollController();
 
     return RawScrollbar(
+      controller: scrollController,
       crossAxisMargin: 0.0,
       trackVisibility: true,
       thumbVisibility: true,
       thumbColor: Colors.blueGrey,
-      // trackColor: Colors.redAccent.shade700,
       trackBorderColor: Colors.white,
       radius: const Radius.circular(20),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: tiles,
+      child: ScrollConfiguration(
+        behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+        child: SingleChildScrollView(
+          controller: scrollController,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: tiles,
+          ),
         ),
       ),
     );

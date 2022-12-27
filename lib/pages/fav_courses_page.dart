@@ -61,7 +61,7 @@ class FavCoursesState extends State<FavCourses> {
                             minLines: null,
                             maxLines: null,
                             expands: true,
-                            scrollController: ScrollController(),
+                            // scrollController: ScrollController(), // unnecessary
                             decoration: InputDecoration(
                               labelText: "Notes",
                               labelStyle: TextStyle(color: Main.appTheme.titleTextColor),

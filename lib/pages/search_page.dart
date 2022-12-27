@@ -74,6 +74,7 @@ class SearchPageState extends State<SearchPage> {
     }
     //print("The query: $query");
 
+    ScrollController scrollController = ScrollController();
     return Scaffold(
       backgroundColor: Main.appTheme.scaffoldBackgroundColor,
       appBar: PreferredSize(
@@ -186,6 +187,7 @@ class SearchPageState extends State<SearchPage> {
               SizedBox(height: height * 0.03),
               Expanded(
                 child: RawScrollbar(
+                  controller: scrollController,
                   crossAxisMargin: 0.0,
                   trackVisibility: true,
                   thumbVisibility: true,
@@ -193,13 +195,17 @@ class SearchPageState extends State<SearchPage> {
                   // trackColor: Colors.redAccent.shade700,
                   trackBorderColor: Colors.white,
                   radius: const Radius.circular(20),
-                  child: ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: subjects.length,
-                    itemBuilder: (context, index) {
-                      return buildSubject(subjects[index]);
-                    },
+                  child: ScrollConfiguration(
+                    behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                    child: ListView.builder(
+                      controller: scrollController,
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemCount: subjects.length,
+                      itemBuilder: (context, index) {
+                        return buildSubject(subjects[index]);
+                      },
+                    ),
                   ),
                 ),
               )
