@@ -708,6 +708,8 @@ Future main() async {
     // });
   }
 
+  // print("Elapsed time: ${DateTime.now().microsecondsSinceEpoch}");
+
   { // for storing the files into that directory:
     Directory dir = Directory(Main.appDocDir + Main.filePrefix + "Atsched");
     if (!dir.existsSync()) {
@@ -855,7 +857,7 @@ Future main() async {
     //     "${Main.artsNSciencesLink}\n${Main.fineArtsLink}\n${Main.businessLink}\n${Main.engineeringLink}\n${Main.civilAviationLink}\n${Main.healthSciencesLink}\n${Main.lawLink}");
   }
 
-  if (Main.forceUpdate) { // if no link was found, the app will crash, but now it will just not update:
+  if (Main.forceUpdate) { // if no link was found, then Atsched will just open up, but it will not update:
     if (University.areFacsSupported() && (await University.getFacultyLink(Main.department)).isEmpty) {
       Main.forceUpdate = false;
     }

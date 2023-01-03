@@ -81,32 +81,38 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
     // print("Semester name is : ${Main.facultyData.semesterName}");
 
-    // check the newCourses list with all the courses inside all the schedules:
-    for (int i = 0 ; i < Main.schedules.length ; i++) {
-      for (int j = 0 ; j < Main.schedules[i].scheduleCourses.length ; j++) {
-        for (int k = 0 ; k < Main.newCourses.length ; k++) {
-          if (Main.newCourses[k].courseCode == Main.schedules[i].scheduleCourses[j].subject.courseCode) { // if the subjects are the same:
-            if (Main.newCoursesChanges[k][0]) { // if the time has changed:
+    try {
+      if (Main.facultyData.semesterName == Main.facultyDataOld!.semesterName) { // both semesters have to be the same to compare the courses
+        // check the newCourses list with all the courses inside all the schedules:
+        for (int i = 0 ; i < Main.schedules.length ; i++) {
+          for (int j = 0 ; j < Main.schedules[i].scheduleCourses.length ; j++) {
+            for (int k = 0 ; k < Main.newCourses.length ; k++) {
+              if (Main.newCourses[k].courseCode == Main.schedules[i].scheduleCourses[j].subject.courseCode) { // if the subjects are the same:
+                if (Main.newCoursesChanges[k][0]) { // if the time has changed:
 
-              Main.schedules[i].changes.add(Change(courseCode: Main.schedules[i].scheduleCourses[j].subject.courseCode, typeOfChange: "time",
-                  oldData: Main.schedules[i].scheduleCourses[j].subject.days.toString() + " | " + Main.schedules[i].scheduleCourses[j].subject.bgnPeriods.toString() + " | " + Main.schedules[i].scheduleCourses[j].subject.hours.toString(),
-                  newData: Main.newCourses[k].days.toString() + " | " + Main.newCourses[k].bgnPeriods.toString() + " | " + Main.newCourses[k].hours.toString(),
-                  time: DateTime.now()));
+                  Main.schedules[i].changes.add(Change(courseCode: Main.schedules[i].scheduleCourses[j].subject.courseCode, typeOfChange: "time",
+                      oldData: Main.schedules[i].scheduleCourses[j].subject.days.toString() + " | " + Main.schedules[i].scheduleCourses[j].subject.bgnPeriods.toString() + " | " + Main.schedules[i].scheduleCourses[j].subject.hours.toString(),
+                      newData: Main.newCourses[k].days.toString() + " | " + Main.newCourses[k].bgnPeriods.toString() + " | " + Main.newCourses[k].hours.toString(),
+                      time: DateTime.now()));
 
-              Main.schedules[i].scheduleCourses[j].subject.days = Main.newCourses[k].days;
-              Main.schedules[i].scheduleCourses[j].subject.bgnPeriods = Main.newCourses[k].bgnPeriods;
-              Main.schedules[i].scheduleCourses[j].subject.hours = Main.newCourses[k].hours;
-            }
-            if (Main.newCoursesChanges[k][1]) { // if the classrooms have changed:
-              Main.schedules[i].changes.add(Change(courseCode: Main.schedules[i].scheduleCourses[j].subject.courseCode, typeOfChange: "classroom",
-                  oldData: Main.newCourses[k].classrooms.toString(),
-                  newData: Main.schedules[i].scheduleCourses[j].subject.classrooms.toString(),
-                  time: DateTime.now()));
-              Main.schedules[i].scheduleCourses[j].subject.classrooms = Main.newCourses[k].classrooms;
+                  Main.schedules[i].scheduleCourses[j].subject.days = Main.newCourses[k].days;
+                  Main.schedules[i].scheduleCourses[j].subject.bgnPeriods = Main.newCourses[k].bgnPeriods;
+                  Main.schedules[i].scheduleCourses[j].subject.hours = Main.newCourses[k].hours;
+                }
+                if (Main.newCoursesChanges[k][1]) { // if the classrooms have changed:
+                  Main.schedules[i].changes.add(Change(courseCode: Main.schedules[i].scheduleCourses[j].subject.courseCode, typeOfChange: "classroom",
+                      oldData: Main.newCourses[k].classrooms.toString(),
+                      newData: Main.schedules[i].scheduleCourses[j].subject.classrooms.toString(),
+                      time: DateTime.now()));
+                  Main.schedules[i].scheduleCourses[j].subject.classrooms = Main.newCourses[k].classrooms;
+                }
+              }
             }
           }
         }
       }
+    } catch(e, stacktrace) {
+      print("Error: $e\n$stacktrace");
     }
 
     Main.forceUpdate = false;
@@ -395,7 +401,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         Text(translateEng('You can save schedules and set them back again'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
       ];
 
-      List<int> counts = [ // TODO: Don't forget doing this part:
+      List<int> counts = [
         Main.schedules[Main.currentScheduleIndex].scheduleCourses.length,
         Main.facultyData.subjects.length,
         Main.classroomsCountForCurHr,
@@ -1153,27 +1159,34 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         border: Border.symmetric(
             horizontal: BorderSide(color: horizontalBorderColor, width: 1)
         )),
+        margin: EdgeInsets.zero,
+        padding: EdgeInsets.zero,
         child: SizedBox(width: colWidth, height: rowHeight,)
     );
 
     List<Widget> hoursWidgets = [];
 
     hoursWidgets.add(SizedBox(width: colWidth, height: rowHeight));
+    int cnt = 0;
     neededHours.forEach((hr) {
       hoursWidgets.add(Container(
-          //padding: EdgeInsets.symmetric(horizontal: colWidth / (Platform.isWindows ? 4 : 6.5)), // This screwed up the phone version
+          padding: EdgeInsets.fromLTRB(0, cnt * 1 /*1 is the width of the line seperator*/, 0, 0),
+          // margin: EdgeInsets.zero,
           color: Main.appTheme.headerBackgroundColor,
-          child: Center(child: Text(hr.toString() + ':' + University.getBgnMinutes().toString(), style: Main.appTheme.headerSchedulePageTextStyle)),
+          child: Center(child: Text(hr.toString() + ':' + University.getBgnMinutes().toString(), textAlign: TextAlign.center, style: Main.appTheme.headerSchedulePageTextStyle)),
           height: rowHeight
       ));
+      cnt++;
     });
 
     List<Widget> colsList = [
       Container(
         color: Main.appTheme.headerBackgroundColor, // Main.appTheme.headerBackgroundColor.withGreen(50)
         child: Column(
+          // crossAxisAlignment: CrossAxisAlignment.center,
           children: hoursWidgets,
         ),
+        height: rowHeight * (1 + neededHours.length),
       ),
       Container(
         color: Main.appTheme.headerBackgroundColor,
@@ -1225,7 +1238,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
     List<Widget> coursesList = [
       Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: colsList,
       ),
     ];
@@ -1382,6 +1394,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
     List<Widget> list = [
       Container(
           color: Main.appTheme.headerBackgroundColor,
+          margin: EdgeInsets.zero,
+          padding: EdgeInsets.zero,
           child: Center(
               child: Text(translateEng(day), style: Main.appTheme.headerSchedulePageTextStyle)),
           height: rowHeight,
@@ -1392,8 +1406,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
     for (int i = 0 ; i < neededRows ; i++) {
       list.add(emptyCell);
     }
-
-    list;
 
     return list;
 

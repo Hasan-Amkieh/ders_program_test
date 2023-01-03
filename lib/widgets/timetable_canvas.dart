@@ -86,8 +86,8 @@ class TimetableCanvas extends CustomPainter {
 
     // print("Divisions: ${6 + (isSunNeeded ? 1 : 0) + (isSatNeeded ? 1 : 0)}");
 
-    double periodOffset = isForSchedule ? 0.2 : 0.05;
-    double dayOffset = isForSchedule ? 0.35 : 0.25;
+    // double periodOffset = isForSchedule ? 0.2 : 0.05;
+    // double dayOffset = isForSchedule ? 0.35 : 0.25;
 
     Paint outerBarrierLinesPaint = Paint()
     ..color = Colors.blueAccent.shade200
@@ -125,7 +125,7 @@ class TimetableCanvas extends CustomPainter {
         textDirection: TextDirection.ltr
     )
       ..layout(maxWidth: size.width - 12.0 - 12.0);
-    textPainter.paint(canvas, Offset(colWidth * (1 + dayOffset), rowHeight * 0.25));
+    textPainter.paint(canvas, Offset(colWidth * 1 + (colWidth / 2 - textPainter.width / 2), rowHeight / 2 - textPainter.height / 2));
 
     List<String> days__ = [];
     days__.addAll(days_);
@@ -137,16 +137,17 @@ class TimetableCanvas extends CustomPainter {
     for (int i = 2 ; i < (6 + (isSatNeeded ? 1 : 0) + (isSunNeeded ? 1 : 0)) ; i++) {
       textPainter.text = TextSpan(text: translateEng(days__[i - 1]), style: style);
       textPainter.layout(maxWidth: size.width - 12.0 - 12.0);
-      textPainter.paint(canvas, Offset(colWidth * (i + dayOffset), rowHeight * 0.25));
+      textPainter.paint(canvas, Offset(colWidth * i + (colWidth / 2 - textPainter.width / 2), rowHeight / 2 - textPainter.height / 2));
     }
 
     // clock:
 
     // neededHrs
     for (int i = 0 ; i < neededHrs.length ; i++) {
-      textPainter.text = TextSpan(text: neededHrs[i].toString() + ":" + University.getBgnMinutes().toString(), style: style);
+      textPainter.text = TextSpan(text: (neededHrs[i] < 10 ? "0" : "") + neededHrs[i].toString() + ":" + University.getBgnMinutes().toString(), style: style);
       textPainter.layout(maxWidth: size.width - 12.0 - 12.0);
-      textPainter.paint(canvas, Offset(colWidth * periodOffset, rowHeight * (i + 1.25)));
+      // TODO: Replace 10 with the text size
+      textPainter.paint(canvas, Offset((colWidth / 2 - textPainter.width / 2), (rowHeight / 2 - textPainter.height / 2) + (rowHeight) * (i + 1)));
     }
 
     Paint periodPaint = Paint()

@@ -68,7 +68,10 @@ class SchedulerPageState extends State<SchedulerPage> {
         //Map<int, Subject> secToSubject = {};
         for (Subject sub in Main.facultyData.subjects) {
           //print("Checking if ${sub.classCode} has sections or not!");
-          if (sub.getCourseCodeWithoutSectionNumber() == element.courseCode && sub.getCourseCodeWithoutSectionNumber() != sub.courseCode) { // if sub has sections:
+          if (sub.getCourseCodeWithoutSectionNumber() == element.courseCode && sub.getCourseCodeWithoutSectionNumber() != sub.courseCode) {
+            if (sub.getCourseCodeWithoutSectionNumber().contains("CE490")) {
+              print("CE490 filter");
+            }// if sub has sections:
             // print("${sub.classCode} has a section of ${sub.getSection()}!");
             if (sub.getSection() > maxSection) {
               maxSection = sub.getSection();
@@ -101,8 +104,10 @@ class SchedulerPageState extends State<SchedulerPage> {
               // print("Adding section ${sub.getSection()} for subject ${sub.getClassCodeWithoutSectionNumber()}");
             }
             //secToSubject.addEntries([MapEntry(sub.getSection(), sub)]);
-          } else if (sub.getCourseCodeWithoutSectionNumber() == element.courseCode) { // if the sub does not have sections:
+          } else if (sub.getCourseCodeWithoutSectionNumber() == element.courseCode && sub.days.isNotEmpty) { // if the sub does not have sections:
 
+            // print(sub.getSection());
+            // // TODO: Here a course with no section number is added:
             // print("*** adding ${sub.getClassCodeWithoutSectionNumber()} ***");
             subjectsSections.add(MapEntry(sub.getCourseCodeWithoutSectionNumber(), []));
             areSectionsShown.add(MapEntry(sub.getCourseCodeWithoutSectionNumber(), <int, bool>{}));
@@ -286,6 +291,8 @@ class SchedulerPageState extends State<SchedulerPage> {
         }
       }
       isAll = numOfFalse == 0;
+
+      // print("The sections that were found are: $sections");
 
       if (isAll) {
         sectionsStr = translateEng("All");
@@ -508,11 +515,14 @@ class SchedulerPageState extends State<SchedulerPage> {
       }
     }
 
+    print(secToSubject);
+
     // print("Sections are " + secToSubject.toString());
 
     for (int sec = 1 ; sec <= maxSection ; sec++) {
 
       if (!secToSubject.containsKey(sec)) {
+        // print("Could not find the section number $sec");
         continue;
       }
       // print("doing section $sec of length ${secToSubject}");
@@ -547,12 +557,9 @@ class SchedulerPageState extends State<SchedulerPage> {
         }
       }
 
-      // TODO: Make the current department highlighted!
-      // // TODO: And make it by default chosen if there deps list is not empty, if it is empty then choose it
-
       //print("The length of shown vars is : ${areSectionsShown[subIndex].value.length}");
       if (!areSectionsShown[subIndex].value.containsKey(sec)) {
-        // print("STOP HERE of index $subIndex of ${areSectionsShown[subIndex]}");
+        print("STOP HERE of index $subIndex of ${areSectionsShown[subIndex]}");
         continue;
       }
 
@@ -567,6 +574,7 @@ class SchedulerPageState extends State<SchedulerPage> {
         ));
       });
 
+      print("Adding the section $sec");
       actions.add(
         Container(
           margin: EdgeInsets.fromLTRB(0, 0, 0, height * 0.03),

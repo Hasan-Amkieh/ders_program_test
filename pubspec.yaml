@@ -60,7 +60,7 @@ dependencies:
   # cannot be upgraded, as the newer versions depend on flutter test of a newer version that collides with atsched
   worker_manager: 4.4.6
   dio: ^4.0.6
-  flutter_local_notifications: ^13.0.0 # Might delete it or keep
+  #flutter_local_notifications: ^13.0.0 # Might delete it or keep
   badges: ^2.0.3
 
 msix_config:

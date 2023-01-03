@@ -390,9 +390,9 @@ class Subject { // represents a class
 
   String getCourseCodeWithoutSectionNumber() {
 
-    if (courseCode.contains('(')) { // MATH151(1) / MATH151-01 / MATH151- 01
+    if (courseCode.contains('(')) { // MATH151(1) / MATH151-01 / MATH151- 01 / MATH151- 01-
       return courseCode.substring(0, courseCode.indexOf("("));
-    } else if (courseCode.contains('-') && courseCode.contains("0")) {
+    } else if (courseCode.contains('-')) {
       return courseCode.substring(0, courseCode.indexOf("-"));
     } else if (courseCode.contains(' 0')) {
       return courseCode.substring(0, courseCode.indexOf(" 0"));
