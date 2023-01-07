@@ -201,10 +201,12 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         // print("Extra Schedule was found with the content of: $content");
         List<String> lines = content.split("\n");
         String scheduleName = lines[0];
-        String faculty = lines[1];
+        String uni = lines[1];
+        String faculty = lines[2];
         lines.removeAt(0); // schedule name
+        lines.removeAt(0); // uni
         lines.removeAt(0); // faculty
-        confirmScheduleAddtion(scheduleName, lines, faculty);
+        confirmScheduleAddtion(scheduleName, lines, uni, faculty);
       }
     } catch(err) {
       print("The file was not opened bcs: $err");
@@ -220,6 +222,10 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
   void didChangeAppLifecycleState(AppLifecycleState state) {
 
     // print("The state of the app has changed!");
+
+    if (HomeState.currentState != null) {
+      HomeState.currentState?.setState(() { checkScheduleAddition(); });
+    }
 
     switch (state) {
       case AppLifecycleState.detached:
@@ -300,7 +306,9 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                               Main.faculty = Main.newFaculty;
                               Main.department = University.getFacultyDeps(Main.faculty).keys.elementAt(0);
                               Main.isFacChange = true;
-                              Main.save();
+                              Main.writeSettings();
+                              Main.writeSchedules();
+                              Main.writeFavCourses();
                               Navigator.of(context).pop(true);
                             },
                             child: const Text('Yes')),
@@ -395,7 +403,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
       List<Widget> descrips = [
         Text(translateEng('Add and edit the courses on the current schedule'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
         Text(translateEng('Search for courses using its name, classroom number, teacher or department'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
-        Text(translateEng('Find empty classrooms inside the university, a better place than the desperate library'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
+        Text(translateEng('Find empty classrooms inside the university'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
         Text(translateEng('Choose the courses with the sections you prefer, then choose your appropriate schedule'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
         EmptyContainer(),
         Text(translateEng('You can save schedules and set them back again'), style: TextStyle(color: Main.appTheme.subtitleTextColor)),
@@ -649,7 +657,10 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                               Main.faculty = newValue!;
                               Main.department = University.getFacultyDeps(Main.faculty).keys.elementAt(0);
                               Main.isFacChange = true;
-                              Main.restart();
+                              Main.writeSettings();
+                              Main.writeSchedules();
+                              Main.writeFavCourses();
+                              Restart.restartApp().then((value) { ; });
                             },
                               child: Text(translateEng("RESTART")),
                             ),
@@ -1542,7 +1553,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
   void listenDynamicLinks() async {
     // print("Started listening to deep links!");
-    FlutterBranchSdk.disableTracking(true);
+    print("Received a deep link!");
+    FlutterBranchSdk.disableTracking(false);
     streamSubscription = FlutterBranchSdk.initSession().listen((data) async {
 
       // print('listenDynamicLinks - DeepLink Data: $data');
@@ -1556,7 +1568,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         // print('Faculty: ${data['faculty']}');
 
         String str;
-        str = data['schedule_name'] + "\n" + data['faculty'];
+        String schedName = data['schedule_name'] ?? "Copied Schedule";
+        str = schedName + "\n" + data['university'] + "\n" + data['faculty'];
         //
         for (int i = 0 ; i < int.parse(data['number_of_courses']) ; i++) {
           str = str + "\n" + data['course_${i+1}'];
@@ -1577,10 +1590,13 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
     });
   }
 
-  String fac = "", scheduleName = "";
-  void confirmScheduleAddtion(String scheduleName, List<String> courses, String faculty) {
+  String fac = "", uni = "", scheduleName = "";
 
-    fac = faculty;this.scheduleName = scheduleName;
+  void confirmScheduleAddtion(String scheduleName, List<String> courses, String uni, String faculty) {
+
+    fac = faculty;
+    this.uni = uni;
+    this.scheduleName = scheduleName;
     List<Course> courses_ = [];
     courses.forEach((course) { courses_.add(Course(subject: Subject.fromStringWithCourseCode(course), note: "")); });
 
@@ -1593,15 +1609,16 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
   void showSnackBar() {
 
-    if (fac.isEmpty) {
+    if (fac.isEmpty && this.uni.isEmpty) {
       return;
     }
 
-    String faculty = fac;
+    String faculty = fac, uni = this.uni;
     fac = "";
-    if (faculty == Main.faculty) {
+    this.uni = "";
+    if (faculty == Main.faculty && uni == Main.uni) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(scheduleName + " has been added to the "),
+        content: Text("The schedule " + scheduleName + " has been added"),
         action: SnackBarAction(
           label: 'Set Active',
           onPressed: () {
@@ -1611,19 +1628,29 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           },
         ),
       ));
-    } else { // If the faculty is different, warn the user, choose b/w CONTINUE or CANCEL
+    } else { // If the faculty or uni is different, warn the user, choose b/w CONTINUE or CANCEL
       setState(() {
         showDialog(context: context, builder: (context) {
           return AlertDialog(
-            title: Text(translateEng("Adding Schedule")),
-            content: Center(
-              child: Text(
-                  "The faculty of the received schedule is $faculty, but your faculty is ${Main.faculty},\nDo you want to add the schedule?",
-                  style: const TextStyle(fontSize: 18)),
+            backgroundColor: Main.appTheme.scaffoldBackgroundColor,
+            title: Text(translateEng("Adding Schedule"), style: TextStyle(color: Main.appTheme.titleTextColor)),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Center(
+                  child: Text(
+                      Main.uni != uni ? "The university from the link is $uni, but the university chosen is ${Main.uni}, \nDo you want to add the schedule?" :
+                      "The faculty of the received schedule is $faculty, but your faculty is ${Main.faculty},\nDo you want to add the schedule?",
+                      style: TextStyle(fontSize: 18, color: Main.appTheme.titleTextColor)),
+                )
+              ],
             ),
             actions: [
               TextButton(onPressed: () {
-                Navigator.pop(context);
+                setState(() {
+                  Navigator.pop(context);
+                  Main.currentScheduleIndex = Main.schedules.length - 1;
+                });
               },
                 child: Text(translateEng("CONTINUE")),
               ),
@@ -1646,6 +1673,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
       ..addCustomMetadata('schedule_name', Main.schedules[shceduleIndex].scheduleName)
       //..addCustomMetadata('schedule_courses', Subject.convertToListWithClassCodes(Main.schedules[Main.currentScheduleIndex].scheduleCourses))
       ..addCustomMetadata('number_of_courses', Main.schedules[shceduleIndex].scheduleCourses.length)
+      ..addCustomMetadata('university', Main.uni)
       ..addCustomMetadata('faculty', Main.faculty);
     for (int i = 0 ; i < Main.schedules[shceduleIndex].scheduleCourses.length ; i++) {
       metadata.addCustomMetadata("course_${i+1}", Main.schedules[shceduleIndex].scheduleCourses[i].subject.courseCode + "|"
@@ -1662,7 +1690,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         title: 'Schedule Share',
         contentDescription: 'Schedule Share using Deep Links',
         contentMetadata: metadata,
-        keywords: ['Atilim University', 'Schedule', 'Timetable'],
+        keywords: ['${Main.uni} University', 'Schedule', 'Timetable'],
         publiclyIndex: true,
         locallyIndex: true,
         expirationDateInMilliSec: DateTime.now().add(const Duration(days: 30)).millisecondsSinceEpoch);

@@ -631,7 +631,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
                     icon: const Icon(CupertinoIcons.link),
                     label: Text(translateEng("Share Schedule by Link")),
                     onPressed: () async {
-                      FlutterBranchSdk.disableTracking(true);
+                      FlutterBranchSdk.disableTracking(false);
                       HomeState.currentState!.initDeepLinkData(scheduleIndex);
                       BranchResponse? response = await HomeState.currentState!.generateLink();
 
