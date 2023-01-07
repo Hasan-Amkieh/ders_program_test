@@ -77,7 +77,7 @@ class BilkentClassifier extends Classifier {
 
                   });
 
-                  // If one of the periods is on the same day and the bgnHr diff. is 1 and the classroom is the same
+                  // If one of the periods is on the same day and the (bgnHr + hrs) diff. with bgnHr of the other period is 0 and the classroom is the same
                   // then combine them into one period, otherwise leave them unchanged:
 
                   for (int pIndex1 = 0 ; pIndex1 < day.length ; pIndex1++) {
@@ -86,7 +86,7 @@ class BilkentClassifier extends Classifier {
                         for (int pIndex2_ = 0 ; pIndex2_ < day[pIndex2].length ; pIndex2_++) {
                           if (pIndex1 != pIndex2) {
                             if (day[pIndex1][pIndex1_] == day[pIndex2][pIndex2_]) { // if the day is the same
-                              if ((beginningHr[pIndex1][pIndex1_] - beginningHr[pIndex2][pIndex2_]).abs() == 1 &&
+                              if (((beginningHr[pIndex1][pIndex1_] + hrs[pIndex1]) - beginningHr[pIndex2][pIndex2_]).abs() == 0 &&
                                   classrooms[pIndex1][pIndex1_] == classrooms[pIndex2][pIndex2_]) {
 
                                 hrs[pIndex1] = hrs[pIndex1] + 1;

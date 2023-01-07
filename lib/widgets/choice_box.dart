@@ -41,6 +41,9 @@ class ChoiceBoxState extends State<ChoiceBox> {
     double width = (window.physicalSize / window.devicePixelRatio).width;
     double height = (window.physicalSize / window.devicePixelRatio).height;
 
+    double choiceBoxWidth = width * (Platform.isWindows ? 0.2 : 0.43),
+        choiceBoxHeight = width * (Platform.isWindows ? 0.2 : 0.5);
+
     return Visibility(
       visible: widget.isVisible,
       maintainAnimation: true,
@@ -77,10 +80,11 @@ class ChoiceBoxState extends State<ChoiceBox> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Visibility(visible: Platform.isWindows, child: widget.icon),
                           SizedBox(width: width * 0.01),
-                          widget.mainText
+                          SizedBox(width: choiceBoxWidth * 0.5, child: Expanded(child: widget.mainText)),
                         ],
                       ),
                       Visibility(
