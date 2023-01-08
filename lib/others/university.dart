@@ -127,6 +127,25 @@ class University {
 
   }
 
+  static bool areExamsSupported() {
+
+    switch(Main.uni) {
+
+      case "Atilim":
+        return true;
+
+      case "Bilkent":
+        return false;
+
+      default:
+        print("[ERROR] The university entered is not supported!");
+        print(StackTrace.current);
+        return false;
+
+    }
+
+  }
+
   static List<String> getFaculties() {
 
     switch (Main.uni) {

@@ -11,16 +11,16 @@ import 'package:oktoast/oktoast.dart';
 import '../others/subject.dart';
 import '../widgets/timetable_canvas.dart';
 
-class ExmaPage extends StatefulWidget {
+class ExamsPage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return ExmaPageState();
+    return ExamsPageState();
   }
 
 }
 
-class ExmaPageState extends State<ExmaPage> {
+class ExamsPageState extends State<ExamsPage> {
 
   @override
   Widget build(BuildContext context) {

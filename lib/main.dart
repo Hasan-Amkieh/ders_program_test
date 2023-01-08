@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show Platform;
 
+import 'package:Atsched/pages/exams_page.dart';
 import 'package:Atsched/pages/schedule_notification_page.dart';
 import 'package:intl/intl.dart';
 
@@ -895,6 +896,7 @@ Future main() async {
         "/home/personalinfo" : (context) => PersonalInfo(),
         "/home/scheduler" : (context) => SchedulerPage(),
         "/home/scheduler/schedulerresult" : (context) => SchedulerResultPage(),
+        "/home/examspage" : (context) => ExamsPage(),
       },
     ),
   ));

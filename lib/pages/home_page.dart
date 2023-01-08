@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:flutter/services.dart';
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 // import 'package:flutter_branch_sdk/flutter_branch_sdk.dart'; // Deep Links:
 import 'package:flutter_window_close/flutter_window_close.dart';
 import 'package:lottie/lottie.dart';
@@ -382,13 +383,13 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
     Widget? servicesPage;
     if (pageIndex == 1) {
 
-      List<Icon> icons = [
+      List<Widget> icons = [
         Icon(Icons.edit, color: Main.appTheme.titleIconColor),
         Icon(Icons.search, color: Main.appTheme.titleIconColor),
         Icon(Icons.play_lesson, color: Main.appTheme.titleIconColor),
         Icon(CupertinoIcons.calendar_badge_plus, color: Main.appTheme.titleIconColor),
         Icon(Icons.star, color: Main.appTheme.titleIconColor),
-        Icon(CupertinoIcons.calendar_today, color: Main.appTheme.titleIconColor)
+        Icon(CupertinoIcons.calendar_today, color: Main.appTheme.titleIconColor),
       ];
 
       List<Text> topics = [
@@ -417,6 +418,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         Main.favCourses.length,
         Main.schedules.length,
       ];
+
+      double iconSize = const Icon(Icons.info_outline, color: Colors.blue).size ?? ((window.physicalSize / window.devicePixelRatio).width) * 0.025;
 
       List<Null Function()> onTaps = [
             () {
@@ -484,6 +487,18 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         },
       ];
 
+      if (University.areExamsSupported()) {
+        icons.add(SvgPicture.asset("lib/icons/exam_icon.svg", height: iconSize * 0.85, color: Main.appTheme.titleIconColor));
+        topics.add(Text(translateEng('Upcoming Exams'), style: TextStyle(color: Main.appTheme.titleTextColor)));
+        descrips.add(Text(translateEng('Find all the exams of your schedule'), style: TextStyle(color: Main.appTheme.subtitleTextColor)));
+        counts.add(-1);
+        onTaps.add(() {
+          Navigator.pushNamed(context, "/home/examspage").then((value) {
+            setState(() {});
+          });
+        });
+      }
+
       List<Widget> children = [];
       List<Widget> widgets_ = [];
 
@@ -491,7 +506,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         widgets_ = [];
         for (int j = 0 ; j < (Platform.isWindows ? 4 : 2) ; j++, i++) { // take 4/2 widgets and fill them into the row
           if (i >= icons.length) {
-            while (widgets_.length < 4) {
+            while (widgets_.length < 4) { // Empty Choice Box to fill in the empty spaces
               widgets_.add(ChoiceBox(icon: icons[icons.length-1], mainText: topics[icons.length-1],
                   description: descrips[icons.length-1], number: counts[icons.length-1], onTap: onTaps[icons.length-1], isVisible: false));
             }

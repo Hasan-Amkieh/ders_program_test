@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 class ChoiceBox extends StatefulWidget {
 
-  Icon icon;
+  Widget icon;
   Widget mainText;
   Widget description;
   int number;
@@ -39,10 +39,10 @@ class ChoiceBoxState extends State<ChoiceBox> {
   Widget build(BuildContext context) {
 
     double width = (window.physicalSize / window.devicePixelRatio).width;
-    double height = (window.physicalSize / window.devicePixelRatio).height;
+    // double height = (window.physicalSize / window.devicePixelRatio).height;
 
-    double choiceBoxWidth = width * (Platform.isWindows ? 0.2 : 0.43),
-        choiceBoxHeight = width * (Platform.isWindows ? 0.2 : 0.5);
+    double choiceBoxWidth = width * (Platform.isWindows ? 0.2 : 0.43);
+    // double choiceBoxHeight = width * (Platform.isWindows ? 0.2 : 0.5);
 
     return Visibility(
       visible: widget.isVisible,
@@ -84,7 +84,13 @@ class ChoiceBoxState extends State<ChoiceBox> {
                         children: [
                           Visibility(visible: Platform.isWindows, child: widget.icon),
                           SizedBox(width: width * 0.01),
-                          SizedBox(width: choiceBoxWidth * 0.5, child: Expanded(child: widget.mainText)),
+                          SizedBox(
+                              width: choiceBoxWidth * 0.5,
+                              child: Flex(direction: Axis.horizontal,
+                              children: [
+                                Expanded(child: widget.mainText),
+                              ],
+                          )),
                         ],
                       ),
                       Visibility(
