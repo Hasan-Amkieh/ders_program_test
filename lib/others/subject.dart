@@ -506,3 +506,14 @@ class Classroom {
 
 }
 
+class Exam {
+
+  String subject;
+  DateTime date;
+  String time;
+  String classrooms;
+
+  Exam({required this.subject, required this.date, required this.time, required this.classrooms});
+
+}
+

@@ -123,6 +123,8 @@ class Main {
 
   static List<Course> favCourses = [];
 
+  static List<Exam> exams = [];
+
   static int currentScheduleIndex = 0;
   static List<Schedule> schedules = [];
 

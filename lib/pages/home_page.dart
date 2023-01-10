@@ -491,7 +491,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         icons.add(SvgPicture.asset("lib/icons/exam_icon.svg", height: iconSize * 0.85, color: Main.appTheme.titleIconColor));
         topics.add(Text(translateEng('Upcoming Exams'), style: TextStyle(color: Main.appTheme.titleTextColor)));
         descrips.add(Text(translateEng('Find all the exams of your schedule'), style: TextStyle(color: Main.appTheme.subtitleTextColor)));
-        counts.add(-1);
+        counts.add(Main.exams.length);
         onTaps.add(() {
           Navigator.pushNamed(context, "/home/examspage").then((value) {
             setState(() {});
