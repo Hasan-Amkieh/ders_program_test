@@ -1,5 +1,5 @@
 
-import 'dart:async';
+import 'dart:convert';
 import 'dart:io' show HttpClient, Platform;
 import 'dart:isolate';
 
@@ -8,7 +8,7 @@ import 'package:dio/dio.dart';
 
 import 'package:Atsched/scrapers/scraper.dart';
 import 'package:Atsched/wp_computer.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import '../main.dart';
 import '../others/subject.dart';
@@ -16,6 +16,16 @@ import '../others/university.dart';
 import '../pages/loading_update_page.dart';
 
 class AtilimScraperComputer extends Scraper {
+
+  static doesContainMonth(String str) {
+    const l = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    for (String s in l) {
+      if (str.contains(s)) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   String timetableData = "";
 
@@ -245,6 +255,141 @@ class AtilimScraperComputer extends Scraper {
       }  {
         // debugPrint('evaluateJavaScript error: $e\n');
       }
+    }
+
+    // Do the exams:
+
+    String htmlPage = "";
+    String sem = Main.semesterName.toLowerCase();
+    sem = sem.substring(0, (sem.contains("fall") ? (sem.indexOf("fall") + 4) : (sem.indexOf("spring") + 6)) + 1);
+    print("sem name is $sem");
+    // TODO: delete later:
+    sem = "2022-2023 Fall".toLowerCase();
+    try {
+
+      var request = await HttpClient().getUrl(Uri.parse('https://www.atilim.edu.tr/en/dersprogrami#content_tab_tab_0_1_0_1_1_2'));
+      var response = await request.close();
+
+      if (response.statusCode == 200) {
+        await for (var contents in response.transform(const Utf8Decoder())) {
+          htmlPage += contents.toLowerCase();
+        }
+      }
+    } catch (e) {
+      print("ERROR: $e");
+    }
+
+    htmlPage = htmlPage.replaceAll("&nbsp;", " ");
+    // print(htmlPage);
+
+    List<String> examLinks = [];
+    int pos = 0;
+    String str;
+    while (pos != -1) {
+      pos = htmlPage.indexOf(sem, pos + 50);
+      print("index found at : $pos");
+      if (pos == -1) {
+        break;
+      }
+      if (htmlPage.substring(pos, htmlPage.indexOf('<', pos)).contains("exam schedule")) { // an exam link was found:
+        str = htmlPage.substring(pos, htmlPage.indexOf("</table>", pos)); // this string may contain multiple exam links:
+        int pos_ = str.indexOf("https://dersprogramiyukle");
+        while (pos_ != -1) {
+
+          examLinks.add(str.substring(pos_, str.indexOf('"', pos_)));
+
+          pos_ = str.indexOf("https://dersprogramiyukle", pos_ + 30);
+        }
+        // then find the second table:
+        pos = htmlPage.indexOf("</table>", pos) + 10;
+        str = htmlPage.substring(pos, htmlPage.indexOf("</table>", pos)); // this string may contain multiple exam links:
+        pos_ = str.indexOf("https://dersprogramiyukle");
+        while (pos_ != -1) {
+
+          examLinks.add(str.substring(pos_, str.indexOf('"', pos_)));
+
+          pos_ = str.indexOf("https://dersprogramiyukle", pos_ + 30);
+        }
+      }
+    }
+
+    // print("Found examlinks: ${examLinks}");
+
+    // Then extract all the exams from each link:
+    bool s = true;
+    examLinks.forEach((element) async {
+      try {
+        var request = await HttpClient().getUrl(Uri.parse(element + "/index_files/sheet001.htm")); // This page uses frames, but your browser doesn't support them
+        var response = await request.close();
+        htmlPage = "";
+
+        if (response.statusCode == 200) {
+          await for (var contents in response.transform(const Utf8Decoder())) {
+            htmlPage += contents;
+          }
+        }
+      } catch(e) {
+        print("ERROR: $e");
+      }
+
+      try {
+        if (s) {
+          s = false;
+          print("Received content: $htmlPage");
+        }
+
+        htmlPage = htmlPage.substring(htmlPage.toLowerCase().indexOf("course code"));
+        List<String> cols;
+        String subject, classrooms, date, time;
+        htmlPage.split("<tr ").forEach((row) {
+
+          cols = row.split("</td>");
+          subject = "";
+          classrooms = "";
+          date = "";
+          time = "";
+          int indicator = 0;
+          if (!cols[0].toLowerCase().contains("course code") && !cols[1].toLowerCase().contains("course code")) {
+            for (int i = 0 ; i < cols.length; i++, indicator++) {
+              if (cols[i].contains("&nbsp;") || doesContainMonth(cols[i])) { // if an empty cell or the date column (always contains a month) is found, then skip it
+                indicator--;
+                continue;
+              }
+              switch (indicator) {
+                case 0:
+                  subject = cols[i].substring(cols[i].lastIndexOf(">") + 1);
+                  break;
+                case 1:
+                  classrooms = cols[i].substring(cols[i].lastIndexOf(">") + 1);
+                  break;
+                case 2:
+                  date = cols[i].substring(cols[i].lastIndexOf(">") + 1);
+                  break;
+                case 3:
+                  time = cols[i].substring(cols[i].lastIndexOf(">") + 1);
+                  break;
+              }
+            }
+            print("$subject $classrooms $date $time");
+            print("splitting $date");
+            List<String> data = date.split('.');
+            if (data[2].length == 2) { // sometimes it is 23, where it should be 2023
+              data[2] = "20" + date[2];
+            }
+            print("splitted $data");
+            Main.exams.add(Exam(subject: subject, time: time, date: DateTime(int.parse(data[2]), int.parse(data[1]), int.parse(data[0])), classrooms: classrooms));
+          }
+        });
+
+      } catch (e, s) {
+        print("$e\n$s");
+      }
+    });
+
+    if (Platform.isWindows) {
+      WPComputerState.state = 5;
+    } else {
+      WPPhoneState.state = 5;
     }
 
   }

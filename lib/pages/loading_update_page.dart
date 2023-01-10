@@ -15,6 +15,7 @@ translateEng("CONNECTING TO THE SERVER"), // 1
   translateEng("RETRIEVING DATA"), // 2
   translateEng("CLASSIFYING DATA"), // 3
   translateEng("STORING INFO"), // 4
+  translateEng("Finalizing"), // 5
 ];
 
 class LoadingUpdate extends StatefulWidget {
@@ -74,7 +75,7 @@ class LoadingUpdateState extends State<LoadingUpdate> {
 
     }
 
-    if ((Platform.isWindows ? WPComputerState.state : WPPhoneState.state) != 4) {
+    if ((Platform.isWindows ? WPComputerState.state : WPPhoneState.state) != 5) {
       Future.delayed(const Duration(milliseconds: 300), () => checkState());
     } else {
       endLoading();

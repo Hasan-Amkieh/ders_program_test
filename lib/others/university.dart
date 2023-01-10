@@ -309,7 +309,7 @@ class University {
       case "Atilim":
 
         // Before, the links need to be received from the uni website:
-      // print("update: ${Main.forceUpdate} / internet: ${Main.isInternetOn}"); Main.forceUpdate
+        // print("update: ${Main.forceUpdate} / internet: ${Main.isInternetOn}"); Main.forceUpdate
         if (Main.forceUpdate && Main.isInternetOn &&
             (Main.semesterName.isEmpty || Main.artsNSciencesLink.isEmpty ||
                 /* law is deleted*/ Main.fineArtsLink.isEmpty || Main.businessLink.isEmpty
