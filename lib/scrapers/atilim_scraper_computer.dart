@@ -8,7 +8,6 @@ import 'package:dio/dio.dart';
 
 import 'package:Atsched/scrapers/scraper.dart';
 import 'package:Atsched/wp_computer.dart';
-import 'package:flutter/material.dart';
 
 import '../main.dart';
 import '../others/subject.dart';
@@ -262,10 +261,7 @@ class AtilimScraperComputer extends Scraper {
     String htmlPage = "";
     String sem = Main.semesterName.toLowerCase();
     sem = sem.substring(0, (sem.contains("fall") ? (sem.indexOf("fall") + 4) : (sem.indexOf("spring") + 6)) + 1);
-    print("sem name is $sem");
-    // TODO: delete later:
-    sem = "2022-2023 Fall".toLowerCase();
-    // TODO:
+    // print("sem name is $sem");
     try {
 
       var request = await HttpClient().getUrl(Uri.parse('https://www.atilim.edu.tr/en/dersprogrami#content_tab_tab_0_1_0_1_1_2'));
@@ -281,7 +277,6 @@ class AtilimScraperComputer extends Scraper {
     }
 
     htmlPage = htmlPage.replaceAll("&nbsp;", " ");
-    // print(htmlPage);
 
     List<String> examLinks = [];
     int pos = 0;
@@ -317,7 +312,6 @@ class AtilimScraperComputer extends Scraper {
     // print("Found examlinks: ${examLinks}");
 
     // Then extract all the exams from each link:
-    bool s = true;
     examLinks.forEach((element) async {
       try {
         var request = await HttpClient().getUrl(Uri.parse(element + "/index_files/sheet001.htm")); // This page uses frames, but your browser doesn't support them
@@ -334,10 +328,6 @@ class AtilimScraperComputer extends Scraper {
       }
 
       try {
-        if (s) {
-          s = false;
-          // print("Received content: $htmlPage");
-        }
 
         htmlPage = htmlPage.substring(htmlPage.toLowerCase().indexOf("course code"));
         List<String> cols;
@@ -375,7 +365,7 @@ class AtilimScraperComputer extends Scraper {
                     break;
                 }
               }
-              // print("$subject $classrooms $date $time");
+              print("$subject $classrooms $date $time");
               List<String> data = date.split('.');
               // print("$date became $data");
               if (data.length == 3 && subject.length < 50) {
@@ -384,16 +374,19 @@ class AtilimScraperComputer extends Scraper {
                 }
                 var date_ = DateTime(int.parse(data[2]), int.parse(data[1]), int.parse(data[0]));
                 if (subject.isNotEmpty && data.isNotEmpty && true /*DateTime.now().isBefore(date_)*/) {
-                  Main.exams.add(Exam(
-                      subject: subject.replaceAll("\n", ""),
-                      time: time.replaceAll("\n", ""),
-                      date: date_,
-                      classrooms: classrooms.replaceAll("\n", "")
-                  ));
+                  // For some reason, many exams are being repeated, so check if it exists first or not:
+                  if (!doesExamExist(subject.replaceAll("\n", ""), date_, time.replaceAll("\n", ""))) {
+                    Main.exams.add(Exam(
+                        subject: subject.replaceAll("\n", ""),
+                        time: time.replaceAll("\n", ""),
+                        date: date_,
+                        classrooms: classrooms.replaceAll("\n", "")
+                    ));
+                  }
                 }
               }
             }
-          } catch(e, s) {
+          } catch(e/*, s*/) {
             // print("$e\n$s");
           }
 
@@ -409,6 +402,18 @@ class AtilimScraperComputer extends Scraper {
     } else {
       WPPhoneState.state = 5;
     }
+
+  }
+
+  bool doesExamExist(sub, date, time) {
+
+    for (Exam e in Main.exams) {
+      if (e.subject == sub && e.date.toString() == date.toString() && time == e.time) {
+        return true;
+      }
+    }
+
+    return false;
 
   }
 
