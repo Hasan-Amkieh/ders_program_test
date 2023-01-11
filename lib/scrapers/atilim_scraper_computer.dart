@@ -61,7 +61,7 @@ class AtilimScraperComputer extends Scraper {
       // transforms and prints the response
       if (response.statusCode == 200) {
         timetableData = response.data.toString();
-        print("The new length of the timetable is : ${timetableData.length}");
+        // print("The new length of the timetable is : ${timetableData.length}");
       }
       _dio.close();
 
@@ -80,7 +80,7 @@ class AtilimScraperComputer extends Scraper {
         if (timetableData.length > 1000) { // then it is a success
           // print("The timetable has been received!\nSuccess!!!");
           if (timetableData.isNotEmpty) { // ROOT:
-            print("Pre classification");
+            // print("Pre classification");
             if (Platform.isWindows) {
               WPComputerState.state = 3;
             } else {
@@ -265,6 +265,7 @@ class AtilimScraperComputer extends Scraper {
     print("sem name is $sem");
     // TODO: delete later:
     sem = "2022-2023 Fall".toLowerCase();
+    // TODO:
     try {
 
       var request = await HttpClient().getUrl(Uri.parse('https://www.atilim.edu.tr/en/dersprogrami#content_tab_tab_0_1_0_1_1_2'));
@@ -287,7 +288,7 @@ class AtilimScraperComputer extends Scraper {
     String str;
     while (pos != -1) {
       pos = htmlPage.indexOf(sem, pos + 50);
-      print("index found at : $pos");
+      // print("index found at : $pos");
       if (pos == -1) {
         break;
       }
@@ -335,7 +336,7 @@ class AtilimScraperComputer extends Scraper {
       try {
         if (s) {
           s = false;
-          print("Received content: $htmlPage");
+          // print("Received content: $htmlPage");
         }
 
         htmlPage = htmlPage.substring(htmlPage.toLowerCase().indexOf("course code"));
@@ -343,42 +344,59 @@ class AtilimScraperComputer extends Scraper {
         String subject, classrooms, date, time;
         htmlPage.split("<tr ").forEach((row) {
 
-          cols = row.split("</td>");
-          subject = "";
-          classrooms = "";
-          date = "";
-          time = "";
-          int indicator = 0;
-          if (!cols[0].toLowerCase().contains("course code") && !cols[1].toLowerCase().contains("course code")) {
-            for (int i = 0 ; i < cols.length; i++, indicator++) {
-              if (cols[i].contains("&nbsp;") || doesContainMonth(cols[i])) { // if an empty cell or the date column (always contains a month) is found, then skip it
-                indicator--;
-                continue;
+          try {
+            cols = row.split("</td>");
+            subject = "";
+            classrooms = "";
+            date = "";
+            time = "";
+            int indicator = 0;
+            if (!cols[0].toLowerCase().contains("course code") &&
+                !cols[1].toLowerCase().contains("course code") &&
+                !cols[0].contains(sem.split(" ").toList()[0]) &&
+                !cols[1].contains(sem.split(" ").toList()[0])) {
+              for (int i = 0 ; i < cols.length; i++, indicator++) {
+                if (cols[i].contains("&nbsp;") || doesContainMonth(cols[i])) { // if an empty cell or the date column (always contains a month) is found, then skip it
+                  indicator--;
+                  continue;
+                }
+                switch (indicator) {
+                  case 0:
+                    subject = cols[i].substring(cols[i].lastIndexOf(">") + 1);
+                    break;
+                  case 1:
+                    classrooms = cols[i].substring(cols[i].lastIndexOf(">") + 1);
+                    break;
+                  case 2:
+                    date = cols[i].substring(cols[i].lastIndexOf(">") + 1);
+                    break;
+                  case 3:
+                    time = cols[i].substring(cols[i].lastIndexOf(">") + 1);
+                    break;
+                }
               }
-              switch (indicator) {
-                case 0:
-                  subject = cols[i].substring(cols[i].lastIndexOf(">") + 1);
-                  break;
-                case 1:
-                  classrooms = cols[i].substring(cols[i].lastIndexOf(">") + 1);
-                  break;
-                case 2:
-                  date = cols[i].substring(cols[i].lastIndexOf(">") + 1);
-                  break;
-                case 3:
-                  time = cols[i].substring(cols[i].lastIndexOf(">") + 1);
-                  break;
+              // print("$subject $classrooms $date $time");
+              List<String> data = date.split('.');
+              // print("$date became $data");
+              if (data.length == 3 && subject.length < 50) {
+                if (data[2].length == 2) { // sometimes it is 23, where it should be 2023
+                  data[2] = "20" + data[2];
+                }
+                var date_ = DateTime(int.parse(data[2]), int.parse(data[1]), int.parse(data[0]));
+                if (subject.isNotEmpty && data.isNotEmpty && true /*DateTime.now().isBefore(date_)*/) {
+                  Main.exams.add(Exam(
+                      subject: subject.replaceAll("\n", ""),
+                      time: time.replaceAll("\n", ""),
+                      date: date_,
+                      classrooms: classrooms.replaceAll("\n", "")
+                  ));
+                }
               }
             }
-            print("$subject $classrooms $date $time");
-            print("splitting $date");
-            List<String> data = date.split('.');
-            if (data[2].length == 2) { // sometimes it is 23, where it should be 2023
-              data[2] = "20" + date[2];
-            }
-            print("splitted $data");
-            Main.exams.add(Exam(subject: subject, time: time, date: DateTime(int.parse(data[2]), int.parse(data[1]), int.parse(data[0])), classrooms: classrooms));
+          } catch(e, s) {
+            // print("$e\n$s");
           }
+
         });
 
       } catch (e, s) {
