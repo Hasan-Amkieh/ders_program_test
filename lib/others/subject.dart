@@ -515,5 +515,20 @@ class Exam {
 
   Exam({required this.subject, required this.date, required this.time, required this.classrooms});
 
+  @override
+  String toString() {
+
+    return "$subject|$classrooms|${date.microsecondsSinceEpoch}|$time";
+
+  }
+
+  static Exam fromString(String str) {
+
+    var v = str.split("|");
+
+    return Exam(subject: v[0], classrooms: v[1], date: DateTime.fromMicrosecondsSinceEpoch(int.parse(v[2])), time: v[3]);
+
+  }
+
 }
 

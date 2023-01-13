@@ -159,6 +159,50 @@ class Main {
     writeSchedules();
     writeFacultyCourses();
     writeFavCourses();
+    writeExams();
+
+  }
+
+  static void writeExams() async {
+
+    try { // this will check if we can write the new data before deleting the old data
+      if (Main.isFacDataFilled) {
+        File file = File(Main.appDocDir + filePrefix + "Atsched" + filePrefix + "exams.txt");
+        if (file.existsSync()) {
+          file.deleteSync();
+        }
+
+        file = File(Main.appDocDir + filePrefix + "Atsched" + filePrefix + "exams.txt");
+        String toWrite = "";
+
+        for (int i = 0 ; i < Main.exams.length ; i++) {
+          toWrite = toWrite + Main.exams[i].toString() + "\n";
+        }
+        //print("Writing the subjects: $toWrite");
+        file.writeAsStringSync(toWrite);
+      }
+    } catch (e, s) {
+      print("$e\n$s");
+    }
+
+  }
+
+  static void readExams() async {
+
+    File file = File(Main.appDocDir + filePrefix + "Atsched" + filePrefix + "exams.txt");
+
+    if (file.existsSync()) {
+
+      // print("The faculty courses exists!");
+
+      List<String> lines = file.readAsStringSync().split("\n");
+
+      lines.forEach((exam) { Main.exams.add(Exam.fromString(exam)); });
+
+    } else {
+      // print("The faculty courses DID NOT exist!");
+      Main.forceUpdate = true;
+    }
 
   }
 
@@ -360,7 +404,7 @@ class Main {
   static void writeFacultyCourses() {
 
     try { // this will check if we can write the new data before deleting the old data
-      if (Main.facultyData != null) {
+      if (Main.isFacDataFilled) {
         File file = File(Main.appDocDir + filePrefix + "Atsched" + filePrefix + "faculty_courses.txt");
         if (file.existsSync()) {
           file.deleteSync();
@@ -773,6 +817,7 @@ Future main() async {
   Main.readFacultyCourses(); // read the faculty courses everytime, if there is an update it will be used to detect the changes inside-
   // thew old courses and update the classrooms or the time of the class accordingly...
   Main.readFavCourses();
+  Main.readExams();
 
   if (Main.schedules.isEmpty) {
     Main.schedules.add(Schedule(scheduleName: translateEng("Default Schedule"), scheduleCourses: []));

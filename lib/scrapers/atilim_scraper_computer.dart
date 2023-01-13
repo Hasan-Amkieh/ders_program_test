@@ -374,7 +374,7 @@ class AtilimScraperComputer extends Scraper {
                   data[2] = "20" + data[2];
                 }
                 var date_ = DateTime(int.parse(data[2]), int.parse(data[1]), int.parse(data[0]));
-                if (subject.isNotEmpty && data.isNotEmpty && true /*DateTime.now().isBefore(date_)*/) {
+                if (subject.isNotEmpty && data.isNotEmpty && DateTime.now().isBefore(date_)) {
                   // For some reason, many exams are being repeated, so check if it exists first or not:
                   if (!doesExamExist(subject.replaceAll("\n", ""), date_, time.replaceAll("\n", ""))) {
                     Main.exams.add(Exam(
