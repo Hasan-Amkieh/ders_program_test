@@ -1,4 +1,5 @@
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show HttpClient, Platform;
 import 'dart:isolate';
@@ -397,11 +398,7 @@ class AtilimScraperComputer extends Scraper {
       }
     });
 
-    if (Platform.isWindows) {
-      WPComputerState.state = 5;
-    } else {
-      WPPhoneState.state = 5;
-    }
+    checkState();
 
   }
 
@@ -414,6 +411,25 @@ class AtilimScraperComputer extends Scraper {
     }
 
     return false;
+
+  }
+
+  void checkState() {
+
+    if (Platform.isWindows && WPComputerState.state != 4) {
+      Timer(const Duration(milliseconds: 100), checkState);
+      return;
+    }
+    if (!Platform.isWindows && WPPhoneState.state != 4) {
+      Timer(const Duration(milliseconds: 100), checkState);
+      return;
+    }
+
+    if (Platform.isWindows) {
+      WPComputerState.state = 5;
+    } else {
+      WPPhoneState.state = 5;
+    }
 
   }
 
