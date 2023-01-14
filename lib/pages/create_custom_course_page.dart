@@ -11,7 +11,6 @@ import 'package:oktoast/oktoast.dart';
 
 import '../main.dart';
 import '../others/university.dart';
-import '../widgets/counterbutton.dart';
 import '../widgets/timetable_canvas.dart';
 
 class CustomCoursePage extends StatefulWidget {
@@ -31,32 +30,13 @@ class CustomCoursePage extends StatefulWidget {
   List<bool> editingDep = [];
   List<List<String>> periodData = [["", ""]]; // Each list inside will have 2 strings, teacher names and classrooms accordingly
   String depData = "";
-  List<String> days = ["Monday"], bgnHour = ["9:30"];
-  List<int> hours = [1];
+  List<String> days = ["Monday"];
+  List<int> hours = [1], bgnHour = [9];
   String dep = "";
-
-  static const Map<String, int> bgnHrToMaxHr = {
-    "9:30" : 10,
-    "10:30" : 9,
-    "11:30" : 8,
-    "12:30" : 7,
-    "13:30" : 6,
-    "14:30" : 5,
-    "15:30" : 4,
-    "16:30" : 3,
-    "17:30" : 2,
-    "18:30" : 1,
-  };
 
   @override
   State<StatefulWidget> createState() {
     return CustomCoursePageState();
-  }
-
-  int getMaxHr(String bgnHour) {
-
-    return bgnHrToMaxHr[bgnHour] ?? 1;
-
   }
 
 }
@@ -123,7 +103,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
           // print("teachers: $teachersList / classrooms $classroomsList");
 
           widget.days.add(dayToString(widget.subject.days[i][j]));
-          widget.bgnHour.add(University.addMinsToBgnPeriod(widget.subject.bgnPeriods[i][j]));
+          widget.bgnHour.add(widget.subject.bgnPeriods[i][j]);
           widget.hours.add(widget.subject.hours[i]);
 
           periodIndex++;
@@ -317,7 +297,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                         widget.subject.teacherCodes.add([]);
                         widget.subject.classrooms.add([]);
                         widget.days.add("Monday");
-                        widget.bgnHour.add("9:30");
+                        widget.bgnHour.add(9);
                         widget.hours.add(1);
 
                         widget.showTeacherField.add(false);
@@ -358,7 +338,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
         listDays.add([7]);
       }
 
-      listBgnHrs.add([int.parse(widget.bgnHour[i].substring(0, widget.bgnHour[i].indexOf(":")))]);
+      listBgnHrs.add([widget.bgnHour[i]]);
 
     }
 
@@ -450,15 +430,15 @@ class CustomCoursePageState extends State<CustomCoursePage> {
           break;
       }
 
-      endHour = (widget.hours[i]+int.parse(widget.bgnHour[i].toString().substring(0, widget.bgnHour[i].toString().indexOf(":")))).toString();
+      endHour = (widget.hours[i]+widget.bgnHour[i]).toString();
 
       var hoursController = TextEditingController(text: widget.hours[i].toString());
       hoursController.addListener(() {
-        if (!Main.isNumeric(hoursController.text)) {
+        if (!Main.isNumeric(hoursController.text) || widget.hours[i] < 13) {
           setState(() {
             hoursController.text = widget.hours[i].toString();
             showToast(
-              translateEng("Only numbers are allowed"),
+              translateEng("Only numbers are allowed and max. 12"),
               duration: const Duration(milliseconds: 1500),
               position: ToastPosition.bottom,
               backgroundColor: Colors.red.withOpacity(0.8),
@@ -533,29 +513,35 @@ class CustomCoursePageState extends State<CustomCoursePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(translateEng("Beginning Hour"), style: Main.appTheme.headerStyle),
-                    DropdownButton<String>(
-                      dropdownColor: Main.appTheme.scaffoldBackgroundColor,
-                        value: widget.bgnHour[i],
-                        onChanged: (newValue) {
-                          setState(() {
-                            if (widget.getMaxHr(newValue!) < widget.hours[i]) {
-                              widget.hours[i] = widget.getMaxHr(newValue);
-                            }
-                            widget.bgnHour[i] = newValue;
-                          });
-                        },
-                        items: [
-                          DropdownMenuItem<String>(value: "9:30", child: Text("9:30", style: Main.appTheme.headerStyle)),
-                          DropdownMenuItem<String>(value: "10:30", child: Text("10:30", style: Main.appTheme.headerStyle)),
-                          DropdownMenuItem<String>(value: "11:30", child: Text("11:30", style: Main.appTheme.headerStyle)),
-                          DropdownMenuItem<String>(value: "12:30", child: Text("12:30", style: Main.appTheme.headerStyle)),
-                          DropdownMenuItem<String>(value: "13:30", child: Text("13:30", style: Main.appTheme.headerStyle)),
-                          DropdownMenuItem<String>(value: "14:30", child: Text("14:30", style: Main.appTheme.headerStyle)),
-                          DropdownMenuItem<String>(value: "15:30", child: Text("15:30", style: Main.appTheme.headerStyle)),
-                          DropdownMenuItem<String>(value: "16:30", child: Text("16:30", style: Main.appTheme.headerStyle)),
-                          DropdownMenuItem<String>(value: "17:30", child: Text("17:30", style: Main.appTheme.headerStyle)),
-                          DropdownMenuItem<String>(value: "18:30", child: Text("18:30", style: Main.appTheme.headerStyle)),
-                        ]),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        TextButton(
+                          child: Icon(Icons.remove),
+                          onPressed: () {
+                            setState(() {
+                              if (widget.bgnHour[i] != 1) {
+                                widget.bgnHour[i] = widget.bgnHour[i] - 1;
+                              }
+                            });
+                          },
+                        ),
+                        Text(
+                            widget.bgnHour[i].toString() + " : " + University.getBgnMinutes().toString(),
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Main.appTheme.titleTextColor)
+                        ),
+                        TextButton(
+                          child: Icon(Icons.add),
+                          onPressed: () {
+                            setState(() {
+                              if (widget.bgnHour[i] != 23) {
+                                widget.bgnHour[i] = widget.bgnHour[i] + 1;
+                              }
+                            });
+                          },
+                        ),
+                      ],
+                    ),
                   ],
                 ),
                 Row(

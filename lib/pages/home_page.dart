@@ -15,6 +15,7 @@ import 'dart:ui';
 import 'package:flutter/services.dart';
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 // import 'package:flutter_branch_sdk/flutter_branch_sdk.dart'; // Deep Links:
 import 'package:flutter_window_close/flutter_window_close.dart';
 import 'package:lottie/lottie.dart';
@@ -269,6 +270,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
   @override
   Widget build(BuildContext context) {
 
+    double iconSize = const Icon(Icons.info_outline, color: Colors.blue).size ?? ((window.physicalSize / window.devicePixelRatio).width) * 0.025;
+
     if (Platform.isWindows && !isCloseFuncSet) {
       isCloseFuncSet = true;
       FlutterWindowClose.setWindowShouldCloseHandler(() async {
@@ -421,8 +424,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         Main.schedules.length,
       ];
 
-      double iconSize = const Icon(Icons.info_outline, color: Colors.blue).size ?? ((window.physicalSize / window.devicePixelRatio).width) * 0.025;
-
       List<Null Function()> onTaps = [
             () {
           Navigator.pushNamed(context, "/home/editcourses").then((value) { // bcs the count numbers might have changed, thus refresh
@@ -550,6 +551,22 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           day = "${days < 0 ? (days * -1) : days} days ago";
         }
       }
+
+      var themeWidget = Lottie.asset(
+        "lib/icons/theme_mode_toggle_button.json",
+        animate: false,
+        repeat: false,
+        onLoaded: (_) {
+          setState(() {
+            if (Main.theme == ThemeMode.dark) {
+              toggleButtonController.animateTo(0.5, duration: const Duration(seconds: 1));
+            }
+          });
+        },
+        controller: toggleButtonController,
+        width: IconTheme.of(context).size! * 3.5,
+        height: IconTheme.of(context).size! * 3.5,
+      );
 
       settingsPage = ListView(
         padding: EdgeInsets.all(width * 0.02),
@@ -792,23 +809,58 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              Row(
+                // mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(translateEng("Subjects Alternation Notifications"), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                  IconButton(
+                    icon: const Icon(Icons.info, color: Colors.blue),
+                    splashRadius: iconSize * 0.75,
+                    onPressed: () { // TODO: A dialog will show up containing the info of the occurance of the notifications
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              backgroundColor: Main.appTheme.scaffoldBackgroundColor,
+                                title: Text('Everytime the app gets updated, the subjects are checked for any changes that happened inside your schedules', style: TextStyle(color: Main.appTheme.titleTextColor)),
+                                actions: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(true);
+                                    },
+                                    child: const Text('GOT IT'),
+                                  ),
+                                ]
+                            );
+                          });
+                    },
+                  ),
+                ],
+              ),
+              FlutterSwitch(
+                width: iconSize * 1.5,
+                height: iconSize * 0.8,
+                activeText: "",
+                inactiveText: "",
+                toggleSize: 0.015 * width,
+                value: Main.showSubsNotifications,
+                borderRadius: 30.0,
+                padding: 8.0,
+                showOnOff: true,
+                onToggle: (val) {
+                  setState(() {
+                    Main.showSubsNotifications = val;
+                  });
+                },
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
               Text(translateEng("Theme"), style: TextStyle(color: Main.appTheme.titleTextColor)),
               TextButton(
-                  child: Lottie.asset(
-                      "lib/icons/theme_mode_toggle_button.json",
-                      animate: false,
-                      repeat: false,
-                      onLoaded: (_) {
-                        setState(() {
-                          if (Main.theme == ThemeMode.dark) {
-                            toggleButtonController.animateTo(0.5, duration: const Duration(seconds: 1));
-                          }
-                        });
-                      },
-                      controller: toggleButtonController,
-                      width: IconTheme.of(context).size! * 3.5,
-                      height: IconTheme.of(context).size! * 3.5,
-                  ),
+                  child: themeWidget,
                   style: ButtonStyle(
                     padding: MaterialStateProperty.all(EdgeInsets.zero),
                     overlayColor: MaterialStateProperty.all(Colors.transparent),

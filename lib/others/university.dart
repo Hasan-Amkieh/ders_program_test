@@ -210,12 +210,6 @@ class University {
 
   }
 
-  static String addMinsToBgnPeriod(int hr) {
-
-    return hr.toString() + ":" + getBgnMinutes().toString();
-
-  }
-
   static stringToBgnPeriod(String str) {
 
     return int.parse(str.substring(0, str.indexOf(":")));

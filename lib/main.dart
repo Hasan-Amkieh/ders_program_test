@@ -84,6 +84,8 @@ class Main {
     "Bilkent"
   ];
 
+  static bool showSubsNotifications = true;
+
   static late Classifier classifier;
   static late Scraper scraper;
 
@@ -219,6 +221,8 @@ class Main {
     toWrite = toWrite + "language:"+language.toString()+"\n";
     toWrite = toWrite + "hour_update:"+hourUpdate.toString()+"\n";
     toWrite = toWrite + "schedule_index:"+currentScheduleIndex.toString()+"\n";
+    toWrite = toWrite + "showSubsNotifications:"+showSubsNotifications.toString()+"\n";
+
     toWrite = toWrite + "is_attempted_before:"+isAttemptedBefore.toString()+"\n";
     toWrite = toWrite + "is_there_newer_version:"+isThereNewerVersion.toString()+"\n";
     toWrite = toWrite + "is_fac_change:"+isFacChange.toString()+"\n";
@@ -247,6 +251,8 @@ class Main {
         language = content.substring(content.indexOf("language:") + 9, content.indexOf("\n", content.indexOf("language:") + 9));
         hourUpdate = int.parse(content.substring(content.indexOf("hour_update:") + 12, content.indexOf("\n", content.indexOf("hour_update:") + 12)));
         currentScheduleIndex = int.parse(content.substring(content.indexOf("schedule_index:") + 15, content.indexOf("\n", content.indexOf("schedule_index:") + 15)));
+        showSubsNotifications = (content.substring(content.indexOf("showSubsNotifications:") + 22, content.indexOf("\n", content.indexOf("showSubsNotifications:") + 22)) == "true" ? true : false);
+
         isAttemptedBefore = content.substring(content.indexOf("is_attempted_before:") + 20, content.indexOf("\n", content.indexOf("is_attempted_before:") + 20)) == "true" ? true : false;
         isThereNewerVersion = content.substring(content.indexOf("is_there_newer_version:") + 23, content.indexOf("\n", content.indexOf("is_there_newer_version:") + 23)) == "true" ? true : false;
         isFacChange = content.substring(content.indexOf("is_fac_change:") + 14, content.indexOf("\n", content.indexOf("is_fac_change:") + 14)) == "true" ? true : false;
