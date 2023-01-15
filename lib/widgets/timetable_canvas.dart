@@ -60,11 +60,23 @@ class TimetableCanvas extends CustomPainter {
         }
 
         if (endHr < (beginningPeriods[i][j] + hours[i])) {
-          print("The bgn hour has been changed into $bgnHr");
-          print("The end hour has been changed into ${beginningPeriods[i][j] + hours[i]}");
+          // print("The bgn hour has been changed into $bgnHr");
+          // print("The end hour has been changed into ${beginningPeriods[i][j] + hours[i]}");
           endHr = beginningPeriods[i][j] + hours[i];
         }
 
+      }
+
+    }
+
+    // The same but for wanted period if
+    if (isForClassrooms && wantedPeriod.day != -1) {
+
+      if (bgnHr > wantedPeriod.bgnPeriod) { // first convert the hours
+        bgnHr = wantedPeriod.bgnPeriod;
+      }
+      if (endHr < (wantedPeriod.bgnPeriod + wantedPeriod.hours)) {
+        endHr = wantedPeriod.bgnPeriod + wantedPeriod.hours;
       }
 
     }
@@ -73,7 +85,7 @@ class TimetableCanvas extends CustomPainter {
     for (int i = bgnHr ; i <= endHr ; i++) { // equivalent to bgnHour:1:endHour in MATLAB
       neededHrs.add(i);
     }
-    print("$neededHrs");
+    // print("$neededHrs");
 
 
     List<List<int>> reservedPeriods = [];

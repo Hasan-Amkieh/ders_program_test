@@ -216,6 +216,7 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
                             setState(() {
                               bgnHr = value!.hour.toString() + ":" + University.getBgnMinutes().toString();
                               endHr = value.minute.toString() + ":" + University.getEndMinutes().toString();
+                              search(query);
                             });
                           });
 
@@ -267,7 +268,7 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
     if (day == "Any" || bgnHr == "Any" || endHr == "Any") {
       period = PeriodData.EMPTY;
     } else {
-      period = PeriodData(day: stringToDay(day), bgnPeriod: University.stringToBgnPeriod(bgnHr), hours: University.stringToBgnPeriod(endHr) - University.stringToBgnPeriod(bgnHr));
+      period = PeriodData(day: stringToDay(day), bgnPeriod: University.stringToBgnPeriod(bgnHr) + 1 /*This converts it into the system of Atsched*/, hours: University.stringToBgnPeriod(endHr) - University.stringToBgnPeriod(bgnHr));
     }
 
     return ListTile(
