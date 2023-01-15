@@ -131,13 +131,13 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                   }
                   if (Main.newCoursesChanges[k][1]) { // if the classrooms have changed:
                     var change = Change(courseCode: Main.schedules[i].scheduleCourses[j].subject.courseCode, typeOfChange: "classroom",
-                        oldData: Main.newCourses[k].classrooms.toString(),
-                        newData: Main.schedules[i].scheduleCourses[j].subject.classrooms.toString(),
+                        oldData: Main.schedules[i].scheduleCourses[j].subject.classrooms.toString(),
+                        newData: Main.newCourses[k].classrooms.toString(),
                         time: DateTime.now());
                     Main.schedules[i].changes.add(change);
                     InAppNotifications.show(
                         title: '${change.courseCode} Classroom has changed',
-                        ending: Icon(
+                        ending: const Icon(
                           Icons.arrow_right_alt,
                           color: Colors.red,
                         ),
@@ -221,8 +221,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
             leading: Image.asset("lib/icons/atsched.PNG"),
             description:
             translateEng('To watch a demonstrative video about Atsched, click me!'),
-            onTap: () async { // TOdO: Change it into a video link on youtube
-              const url = 'https://github.com/Hasan-Amkieh/ders_program_test';
+            onTap: () async {
+              const url = 'https://www.youtube.com/watch?v=LldHI16tvtY';
               if (await canLaunchUrl(Uri.parse(url))) {
                 await launchUrl(Uri.parse(url));
               } else {
@@ -326,22 +326,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
     double iconSize = const Icon(Icons.info_outline, color: Colors.blue).size ?? ((window.physicalSize / window.devicePixelRatio).width) * 0.025;
 
-    InAppNotifications.show(
-        title: 'Welcome to Atsched!',
-        duration: const Duration(seconds: 5),
-        leading: const Icon(Icons.subject, color: Colors.blue, size: 50) /*Image.asset("lib/icons/atsched.PNG")*/,
-        description:
-        'To watch a dedmonstrative video about Atsched, click me!',
-        onTap: () async { // TOdO: Change it into a video link on youtube
-          const url = 'https://github.com/Hasan-Amkieh/ders_program_test';
-          if (await canLaunchUrl(Uri.parse(url))) {
-            await launchUrl(Uri.parse(url));
-          } else {
-            throw 'Could not launch $url';
-          }
-        }
-    );
-
     if (Platform.isWindows && !isCloseFuncSet) {
       isCloseFuncSet = true;
       FlutterWindowClose.setWindowShouldCloseHandler(() async {
@@ -383,8 +367,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                               Main.department = University.getFacultyDeps(Main.faculty).keys.elementAt(0);
                               Main.isFacChange = true;
                               Main.writeSettings();
-                              await Main.writeSchedules();
                               Main.writeFavCourses();
+                              await Main.writeSchedules(); // Note: This should be called the last
                               Navigator.of(context).pop(true);
                             },
                             child: const Text('Yes')),
@@ -762,8 +746,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                               Main.department = University.getFacultyDeps(Main.faculty).keys.elementAt(0);
                               Main.isFacChange = true;
                               Main.writeSettings();
-                              await Main.writeSchedules();
                               Main.writeFavCourses();
+                              await Main.writeSchedules(); // Note: This should be called the last
                               Restart.restartApp().then((value) { ; });
                             },
                               child: Text(translateEng("RESTART")),

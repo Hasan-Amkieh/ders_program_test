@@ -87,10 +87,11 @@ class Subject { // represents a class
 
   }
 
-  static List extractPeriodInfo(List<String> info) {
+  static List extractPeriodInfo(List<String> info) { // only for time change, but not for classrooms change:
 
     List<int> hours_ = [];
     List<List<int>> days_ = [], bgnPeriods_ = [];
+    print("info is $info");
 
     List<int> tempList = [];
     var list = info[0].replaceAll(" ", "").split('],[');
@@ -438,8 +439,13 @@ class Change {
   Change({required this.courseCode, required this.typeOfChange, required this.oldData, required this.newData, required this.time});
 
   List<String> formatData() {
-    List<String> newData = this.newData.split(" | "),
-        oldData = this.oldData.split(" | ");
+
+    if (typeOfChange == "classroom") {
+      return [this.oldData.toString(), this.newData.toString()];
+    }
+
+    List<String> newData = this.newData.split("|"),
+        oldData = this.oldData.split("|");
     List<List<int>> daysNew = [],
         bgnPeriodsNew = [],
         daysOld = [],

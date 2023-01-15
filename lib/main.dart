@@ -158,10 +158,10 @@ class Main {
   static void save() async {
 
     writeSettings();
-    await writeSchedules();
     writeFacultyCourses();
     writeFavCourses();
     writeExams();
+    await writeSchedules(); // NOTE: always keep writing the schedules as the last function of writing data in the memory
 
   }
 
@@ -391,8 +391,18 @@ class Main {
           notations.forEach((element) {
             if (element.trim().isNotEmpty) {
               List<String> content = element.split("|");
-              changes.add(Change(courseCode: content.elementAt(0), typeOfChange: content.elementAt(1),
-                  oldData: content.elementAt(2), newData: content.elementAt(3), time: DateTime.fromMicrosecondsSinceEpoch(int.parse(content.elementAt(4)))));
+              Change change;
+              if (content[1] == "time") { // time change:
+                print("content: $content");
+                change = Change(courseCode: content.elementAt(0), typeOfChange: content.elementAt(1),
+                    oldData: content.elementAt(2) + "|" + content.elementAt(3) + "|" + content.elementAt(4),
+                    newData: content.elementAt(5) + "|" + content.elementAt(6) + "|" + content.elementAt(7),
+                    time: DateTime.fromMicrosecondsSinceEpoch(int.parse(content.elementAt(8))));
+              } else { // classroom change:
+                change = Change(courseCode: content.elementAt(0), typeOfChange: content.elementAt(1),
+                    oldData: content.elementAt(2), newData: content.elementAt(3), time: DateTime.fromMicrosecondsSinceEpoch(int.parse(content.elementAt(4))));
+              }
+              changes.add(change);
             }
           });
 
