@@ -14,8 +14,9 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:flutter/services.dart';
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
+import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
+// import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_switch/flutter_switch.dart';
 // import 'package:flutter_branch_sdk/flutter_branch_sdk.dart'; // Deep Links:
 import 'package:flutter_window_close/flutter_window_close.dart';
 import 'package:lottie/lottie.dart';
@@ -99,20 +100,53 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                 if (Main.newCourses[k].courseCode == Main.schedules[i].scheduleCourses[j].subject.courseCode) { // if the subjects are the same:
                   if (Main.newCoursesChanges[k][0]) { // if the time has changed:
 
-                    Main.schedules[i].changes.add(Change(courseCode: Main.schedules[i].scheduleCourses[j].subject.courseCode, typeOfChange: "time",
+                    var change = Change(courseCode: Main.schedules[i].scheduleCourses[j].subject.courseCode, typeOfChange: "time",
                         oldData: Main.schedules[i].scheduleCourses[j].subject.days.toString() + " | " + Main.schedules[i].scheduleCourses[j].subject.bgnPeriods.toString() + " | " + Main.schedules[i].scheduleCourses[j].subject.hours.toString(),
                         newData: Main.newCourses[k].days.toString() + " | " + Main.newCourses[k].bgnPeriods.toString() + " | " + Main.newCourses[k].hours.toString(),
-                        time: DateTime.now()));
+                        time: DateTime.now());
+                    var r = change.formatData();
+                    Main.schedules[i].changes.add(change);
+
+                    InAppNotifications.show(
+                        title: '${change.courseCode} time has changed',
+                        leading: const Icon(
+                          Icons.access_time,
+                          color: Colors.green,
+                          size: 50,
+                        ),
+                        ending: const Icon(
+                          Icons.arrow_right_alt,
+                          color: Colors.blue,
+                        ),
+                        description:
+                        'Changed from ${r[0]} into ${r[1]}',
+                        onTap: () {
+                          // Do whatever you need!
+                        }
+                    );
 
                     Main.schedules[i].scheduleCourses[j].subject.days = Main.newCourses[k].days;
                     Main.schedules[i].scheduleCourses[j].subject.bgnPeriods = Main.newCourses[k].bgnPeriods;
                     Main.schedules[i].scheduleCourses[j].subject.hours = Main.newCourses[k].hours;
                   }
                   if (Main.newCoursesChanges[k][1]) { // if the classrooms have changed:
-                    Main.schedules[i].changes.add(Change(courseCode: Main.schedules[i].scheduleCourses[j].subject.courseCode, typeOfChange: "classroom",
+                    var change = Change(courseCode: Main.schedules[i].scheduleCourses[j].subject.courseCode, typeOfChange: "classroom",
                         oldData: Main.newCourses[k].classrooms.toString(),
                         newData: Main.schedules[i].scheduleCourses[j].subject.classrooms.toString(),
-                        time: DateTime.now()));
+                        time: DateTime.now());
+                    Main.schedules[i].changes.add(change);
+                    InAppNotifications.show(
+                        title: '${change.courseCode} Classroom has changed',
+                        ending: Icon(
+                          Icons.arrow_right_alt,
+                          color: Colors.red,
+                        ),
+                        description:
+                        'Changed from ${change.oldData} into ${change.newData}',
+                        onTap: () {
+                          // Do whatever you need!
+                        }
+                    );
                     Main.schedules[i].scheduleCourses[j].subject.classrooms = Main.newCourses[k].classrooms;
                   }
                 }
@@ -177,6 +211,26 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         ));
       });
       Main.isFacChange = false;
+    }
+
+    if (Main.firstTime) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        InAppNotifications.show(
+            title: 'Welcome to Atsched!',
+            duration: const Duration(seconds: 5),
+            leading: Image.asset("lib/icons/atsched.PNG"),
+            description:
+            translateEng('To watch a demonstrative video about Atsched, click me!'),
+            onTap: () async { // TOdO: Change it into a video link on youtube
+              const url = 'https://github.com/Hasan-Amkieh/ders_program_test';
+              if (await canLaunchUrl(Uri.parse(url))) {
+                await launchUrl(Uri.parse(url));
+              } else {
+                throw 'Could not launch $url';
+              }
+            }
+        );
+      });
     }
 
     // Deep Links:
@@ -272,6 +326,22 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
     double iconSize = const Icon(Icons.info_outline, color: Colors.blue).size ?? ((window.physicalSize / window.devicePixelRatio).width) * 0.025;
 
+    InAppNotifications.show(
+        title: 'Welcome to Atsched!',
+        duration: const Duration(seconds: 5),
+        leading: const Icon(Icons.subject, color: Colors.blue, size: 50) /*Image.asset("lib/icons/atsched.PNG")*/,
+        description:
+        'To watch a dedmonstrative video about Atsched, click me!',
+        onTap: () async { // TOdO: Change it into a video link on youtube
+          const url = 'https://github.com/Hasan-Amkieh/ders_program_test';
+          if (await canLaunchUrl(Uri.parse(url))) {
+            await launchUrl(Uri.parse(url));
+          } else {
+            throw 'Could not launch $url';
+          }
+        }
+    );
+
     if (Platform.isWindows && !isCloseFuncSet) {
       isCloseFuncSet = true;
       FlutterWindowClose.setWindowShouldCloseHandler(() async {
@@ -307,13 +377,13 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                       title: const Text('Do you want to change the faculty?\nNext time you open Atsched the faculty will change'),
                       actions: [
                         ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               Main.forceUpdate = true;
                               Main.faculty = Main.newFaculty;
                               Main.department = University.getFacultyDeps(Main.faculty).keys.elementAt(0);
                               Main.isFacChange = true;
                               Main.writeSettings();
-                              Main.writeSchedules();
+                              await Main.writeSchedules();
                               Main.writeFavCourses();
                               Navigator.of(context).pop(true);
                             },
@@ -686,13 +756,13 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                           backgroundColor: Main.appTheme.scaffoldBackgroundColor,
                           title: Text(translateEng("Restarting the application"), style: TextStyle(color: Main.appTheme.titleTextColor)),
                           actions: [
-                            TextButton(onPressed: () {
+                            TextButton(onPressed: () async {
                               Main.forceUpdate = true;
                               Main.faculty = newValue!;
                               Main.department = University.getFacultyDeps(Main.faculty).keys.elementAt(0);
                               Main.isFacChange = true;
                               Main.writeSettings();
-                              Main.writeSchedules();
+                              await Main.writeSchedules();
                               Main.writeFavCourses();
                               Restart.restartApp().then((value) { ; });
                             },
@@ -803,55 +873,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                     label: "${(Main.days.toInt())} days",
                   ),
                 ],
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                // mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(translateEng("Subjects Alternation Notifications"), style: TextStyle(color: Main.appTheme.titleTextColor)),
-                  IconButton(
-                    icon: const Icon(Icons.info, color: Colors.blue),
-                    splashRadius: iconSize * 0.75,
-                    onPressed: () { // TODO: A dialog will show up containing the info of the occurance of the notifications
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              backgroundColor: Main.appTheme.scaffoldBackgroundColor,
-                                title: Text('Everytime the app gets updated, the subjects are checked for any changes that happened inside your schedules', style: TextStyle(color: Main.appTheme.titleTextColor)),
-                                actions: [
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop(true);
-                                    },
-                                    child: const Text('GOT IT'),
-                                  ),
-                                ]
-                            );
-                          });
-                    },
-                  ),
-                ],
-              ),
-              FlutterSwitch(
-                width: iconSize * 1.5,
-                height: iconSize * 0.8,
-                activeText: "",
-                inactiveText: "",
-                toggleSize: 0.015 * width,
-                value: Main.showSubsNotifications,
-                borderRadius: 30.0,
-                padding: 8.0,
-                showOnOff: true,
-                onToggle: (val) {
-                  setState(() {
-                    Main.showSubsNotifications = val;
-                  });
-                },
               ),
             ],
           ),

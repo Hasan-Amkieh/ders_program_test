@@ -6,6 +6,8 @@ import 'dart:io' show Platform;
 
 import 'package:Atsched/pages/exams_page.dart';
 import 'package:Atsched/pages/schedule_notification_page.dart';
+import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
+// import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:intl/intl.dart';
 
 import 'package:Atsched/classifiers/atilim_classifier.dart';
@@ -84,8 +86,6 @@ class Main {
     "Bilkent"
   ];
 
-  static bool showSubsNotifications = true;
-
   static late Classifier classifier;
   static late Scraper scraper;
 
@@ -158,7 +158,7 @@ class Main {
   static void save() async {
 
     writeSettings();
-    writeSchedules();
+    await writeSchedules();
     writeFacultyCourses();
     writeFavCourses();
     writeExams();
@@ -199,7 +199,11 @@ class Main {
 
       List<String> lines = file.readAsStringSync().split("\n");
 
-      lines.forEach((exam) { Main.exams.add(Exam.fromString(exam)); });
+      lines.forEach((exam) {
+        if (exam.split("|").length == 4) {
+          Main.exams.add(Exam.fromString(exam));
+        }
+      });
 
     } else {
       // print("The faculty courses DID NOT exist!");
@@ -221,7 +225,6 @@ class Main {
     toWrite = toWrite + "language:"+language.toString()+"\n";
     toWrite = toWrite + "hour_update:"+hourUpdate.toString()+"\n";
     toWrite = toWrite + "schedule_index:"+currentScheduleIndex.toString()+"\n";
-    toWrite = toWrite + "showSubsNotifications:"+showSubsNotifications.toString()+"\n";
 
     toWrite = toWrite + "is_attempted_before:"+isAttemptedBefore.toString()+"\n";
     toWrite = toWrite + "is_there_newer_version:"+isThereNewerVersion.toString()+"\n";
@@ -251,7 +254,6 @@ class Main {
         language = content.substring(content.indexOf("language:") + 9, content.indexOf("\n", content.indexOf("language:") + 9));
         hourUpdate = int.parse(content.substring(content.indexOf("hour_update:") + 12, content.indexOf("\n", content.indexOf("hour_update:") + 12)));
         currentScheduleIndex = int.parse(content.substring(content.indexOf("schedule_index:") + 15, content.indexOf("\n", content.indexOf("schedule_index:") + 15)));
-        showSubsNotifications = (content.substring(content.indexOf("showSubsNotifications:") + 22, content.indexOf("\n", content.indexOf("showSubsNotifications:") + 22)) == "true" ? true : false);
 
         isAttemptedBefore = content.substring(content.indexOf("is_attempted_before:") + 20, content.indexOf("\n", content.indexOf("is_attempted_before:") + 20)) == "true" ? true : false;
         isThereNewerVersion = content.substring(content.indexOf("is_there_newer_version:") + 23, content.indexOf("\n", content.indexOf("is_there_newer_version:") + 23)) == "true" ? true : false;
@@ -285,15 +287,19 @@ class Main {
 
   }
 
-  static void writeSchedules() {
+  static Future<void> writeSchedules() async {
 
     // first delete all the schedules, then write all the schedules again:
 
     deleteSchedules();
 
     for (int i = 0 ; i < schedules.length ; i++) {
+      print("Writing schedule ${Main.schedules[i].scheduleName}");
 
-      File file = File(Main.appDocDir + filePrefix + "Atsched" + filePrefix + "schedule_${Main.schedules[i].scheduleName}.txt");
+      File file_ = File(Main.appDocDir + filePrefix + "Atsched" + filePrefix + "schedule_${Main.schedules[i].scheduleName}.txt");
+      await file_.create();
+      var file = await file_.open(mode: FileMode.writeOnly);
+
       String toWrite = "";
 
       for (int j = 0 ; j < schedules[i].scheduleCourses.length ; j++) { // notes:
@@ -330,7 +336,9 @@ class Main {
 
       // print("The schedule ${Main.schedules[i].scheduleName} is written with the content of: \n\n$toWrite\n\n\n");
 
-      file.writeAsStringSync(toWrite);
+      await file.writeString(toWrite);
+      await file.flush();
+      await file.close();
 
     }
 
@@ -551,6 +559,10 @@ class Main {
 
         for (int periodI = 0 ; periodI < subjects[subI].days.length ; periodI++) {
 
+          if (subjects[subI].classrooms.length <= periodI) { // TODO: there is a change
+
+            continue;
+          }
           for (int classroomI = 0 ; classroomI < subjects[subI].classrooms[periodI].length ; classroomI++) {
 
             // print("${subjects[subI].days[periodI].length} ${subjects[subI].classrooms[periodI].length}");
@@ -923,6 +935,7 @@ Future main() async {
 
   runApp(OKToast(
     child: MaterialApp(
+      builder: InAppNotifications.init(),
       debugShowCheckedModeBanner: false,
       initialRoute: Main.firstTime ? "/choosesettings" :
       (!goToUpdatePage ?

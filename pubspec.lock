@@ -153,6 +153,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.1.1"
+  flutter_inapp_notifications:
+    dependency: "direct main"
+    description:
+      name: flutter_inapp_notifications
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.3"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -181,13 +188,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.6"
-  flutter_switch:
-    dependency: "direct main"
-    description:
-      name: flutter_switch
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.2"
   flutter_test:
     dependency: "direct dev"
     description: flutter

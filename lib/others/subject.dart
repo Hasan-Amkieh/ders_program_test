@@ -1,6 +1,7 @@
 
 import 'package:Atsched/language/teacherdictionary.dart';
 
+import '../language/dictionary.dart';
 import '../main.dart';
 
 class FacultySemester {
@@ -120,7 +121,7 @@ class Subject { // represents a class
     if (info[2].trim().isNotEmpty) {
       list = info[2].split(',');
       for (int i = 0; i < list.length; i++) {
-        hours_.add(int.parse(list[i]));
+        hours_.add(int.parse(list[i].replaceAll("[", "").replaceAll("]", "")));
       }
     }
 
@@ -435,6 +436,46 @@ class Change {
   DateTime time;
 
   Change({required this.courseCode, required this.typeOfChange, required this.oldData, required this.newData, required this.time});
+
+  List<String> formatData() {
+    List<String> newData = this.newData.split(" | "),
+        oldData = this.oldData.split(" | ");
+    List<List<int>> daysNew = [],
+        bgnPeriodsNew = [],
+        daysOld = [],
+        bgnPeriodsOld = [];
+    List<int> hrsNew = [],
+        hrsOld = [];
+
+    var result = Subject.extractPeriodInfo(newData);
+    daysNew = result[0];
+    bgnPeriodsNew = result[1];
+    hrsNew = result[2];
+
+    result = Subject.extractPeriodInfo(oldData);
+    daysOld = result[0];
+    bgnPeriodsOld = result[1];
+    hrsOld = result[2];
+
+    String newData_ = "",
+        oldData_ = "";
+    for (int i = 0; i < daysNew.length; i++) {
+      for (int j = 0; j < daysNew[i].length; j++) {
+        newData_ += dayToStringShort(daysNew[i][j]) + " " +
+            bgnPeriodsNew[i][j].toString() + ":30 - " +
+            (bgnPeriodsNew[i][j] + hrsNew[i]).toString() + ":20 , ";
+      }
+    }
+    for (int i = 0; i < daysOld.length; i++) {
+      for (int j = 0; j < daysOld[i].length; j++) {
+        oldData_ += dayToStringShort(daysOld[i][j]) + " " +
+            bgnPeriodsOld[i][j].toString() + ":30 - " +
+            (bgnPeriodsOld[i][j] + hrsOld[i]).toString() + ":20 , ";
+      }
+    }
+    return [oldData_, newData_]; // Just like matlab
+  }
+
 
 }
 

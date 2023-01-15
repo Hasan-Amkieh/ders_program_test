@@ -60,10 +60,9 @@ dependencies:
   # cannot be upgraded, as the newer versions depend on flutter test of a newer version that collides with atsched
   worker_manager: 4.4.6
   dio: ^4.0.6
-  #flutter_local_notifications: ^13.0.0 # Might delete it or keep
+  flutter_inapp_notifications: ^0.0.3 # inapp notificaatinos is more than enough
   badges: ^2.0.3
   flutter_svg: ^1.1.6
-  flutter_switch: ^0.3.2
 
 msix_config:
   display_name: Atsched

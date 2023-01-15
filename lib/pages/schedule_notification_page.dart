@@ -37,31 +37,8 @@ class ScheduleNotificationPageState extends State {
           itemBuilder: (context, index) {
             var time = Main.schedules[SavedSchedulePageState.schedIndex].changes[index].time;
 
-            List<String> newData = Main.schedules[SavedSchedulePageState.schedIndex].changes[index].newData.split(" | "), oldData = Main.schedules[SavedSchedulePageState.schedIndex].changes[index].oldData.split(" | ");
-            List<List<int>> daysNew = [], bgnPeriodsNew = [], daysOld = [], bgnPeriodsOld = [];
-            List<int> hrsNew = [], hrsOld = [];
-
-            var result = Subject.extractPeriodInfo(newData);
-            daysNew = result[0];
-            bgnPeriodsNew = result[1];
-            hrsNew = result[2];
-
-            result = Subject.extractPeriodInfo(oldData);
-            daysOld = result[0];
-            bgnPeriodsOld = result[1];
-            hrsOld = result[2];
-
-            String newData_ = "", oldData_ = "";
-            for (int i = 0 ; i < daysNew.length ; i++) {
-              for (int j = 0 ; j < daysNew[i].length ; j++) {
-                newData_ += dayToStringShort(daysNew[i][j]) + " " + bgnPeriodsNew[i][j].toString() + ":30 - " + (bgnPeriodsNew[i][j] + hrsNew[i]).toString() + ":20 , ";
-              }
-            }
-            for (int i = 0 ; i < daysOld.length ; i++) {
-              for (int j = 0 ; j < daysOld[i].length ; j++) {
-                oldData_ += dayToStringShort(daysOld[i][j]) + " " + bgnPeriodsOld[i][j].toString() + ":30 - " + (bgnPeriodsOld[i][j] + hrsOld[i]).toString() + ":20 , ";
-              }
-            }
+            var r = Main.schedules[SavedSchedulePageState.schedIndex].changes[index].formatData();
+            String oldData_ = r[0], newData_ = r[1];
 
             return Container(
               margin: const EdgeInsets.fromLTRB(10, 10, 0, 0),
@@ -86,22 +63,20 @@ class ScheduleNotificationPageState extends State {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            child: RichText(
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                              text: TextSpan(
-                                text: "The ${Main.schedules[SavedSchedulePageState.schedIndex].changes[index].typeOfChange} has changed from $oldData_ into $newData_ inside the course ${Main.schedules[SavedSchedulePageState.schedIndex].changes[index].courseCode}",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Main.appTheme.titleTextColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          RichText(
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            text: TextSpan(
+                              text: "The ${Main.schedules[SavedSchedulePageState.schedIndex].changes[index].typeOfChange} has changed from $oldData_ into $newData_ inside the course ${Main.schedules[SavedSchedulePageState.schedIndex].changes[index].courseCode}",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Main.appTheme.titleTextColor,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
                           Container(
-                            margin: EdgeInsets.only(top: 5),
+                            margin: const EdgeInsets.only(top: 5),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
