@@ -5,22 +5,23 @@ import 'package:Atsched/others/university.dart';
 import 'package:Atsched/widgets/emptycontainer.dart';
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:oktoast/oktoast.dart';
 
 import '../language/dictionary.dart';
 import '../main.dart';
 import '../others/subject.dart';
 import '../widgets/timetable_canvas.dart';
 
-class EmptyCoursesPage extends StatefulWidget {
+class EmptyClassroomsPage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return EmptyCoursesState();
+    return EmptyClassroomsPageState();
   }
 
 }
 
-class EmptyCoursesState extends State<EmptyCoursesPage> {
+class EmptyClassroomsPageState extends State<EmptyClassroomsPage> {
 
   String query = "";
   List<Classroom> classrooms_ = []; // to be changed according to the terms of the search
@@ -213,10 +214,21 @@ class EmptyCoursesState extends State<EmptyCoursesPage> {
                               );
                             },
                           ).then((value) {
-                            setState(() {
-                              bgnHr = value!.hour.toString() + ":" + University.getBgnMinutes().toString();
-                              endHr = value.minute.toString() + ":" + University.getEndMinutes().toString();
-                              search(query);
+                            setState(() { //
+                              if (value!.hour < value.minute) {
+                                bgnHr = value!.hour.toString() + ":" + University.getBgnMinutes().toString();
+                                endHr = value.minute.toString() + ":" + University.getEndMinutes().toString();
+                                search(query);
+                              } else {
+                                showToast(
+                                  translateEng("The start hour has to be greater than the finish hour"),
+                                  duration: const Duration(milliseconds: 1500),
+                                  position: ToastPosition.bottom,
+                                  backgroundColor: Colors.red.withOpacity(0.8),
+                                  radius: 100.0,
+                                  textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
+                                );
+                              }
                             });
                           });
 

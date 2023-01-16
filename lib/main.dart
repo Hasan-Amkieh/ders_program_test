@@ -13,7 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:Atsched/classifiers/atilim_classifier.dart';
 import 'package:Atsched/others/university.dart';
 import 'package:Atsched/pages/choose_settings_page.dart';
-import 'package:Atsched/pages/empty_courses_page.dart';
+import 'package:Atsched/pages/empty_classrooms_page.dart';
 import 'package:Atsched/pages/windows_webview_unsupported_page.dart';
 import 'package:Atsched/scrapers/atilim_scraper_computer.dart';
 import 'package:Atsched/scrapers/bilkent_scraper_computer.dart';
@@ -199,11 +199,12 @@ class Main {
 
       List<String> lines = file.readAsStringSync().split("\n");
 
-      lines.forEach((exam) {
-        if (exam.split("|").length == 4) {
+      for (String exam in lines) {
+        List<String> v = exam.split("|");
+        if (v.length == 4 && DateTime.now().isBefore(DateTime.fromMicrosecondsSinceEpoch(int.parse(v[2])))) {
           Main.exams.add(Exam.fromString(exam));
         }
-      });
+      }
 
     } else {
       // print("The faculty courses DID NOT exist!");
@@ -393,7 +394,7 @@ class Main {
               List<String> content = element.split("|");
               Change change;
               if (content[1] == "time") { // time change:
-                print("content: $content");
+                // print("content: $content");
                 change = Change(courseCode: content.elementAt(0), typeOfChange: content.elementAt(1),
                     oldData: content.elementAt(2) + "|" + content.elementAt(3) + "|" + content.elementAt(4),
                     newData: content.elementAt(5) + "|" + content.elementAt(6) + "|" + content.elementAt(7),
@@ -960,8 +961,8 @@ Future main() async {
         "/webviewunsupported" : (context) => WebviewUnsupported(),
         "/webpage": (context) => Platform.isWindows ? WPComputer() : WPPhone(),
         "/update": (context) => UpdatePage(),
-        "/home/searchcourses": (contetx) => const SearchPage(),
-        "/home/emptyclassrooms": (contetx) => EmptyCoursesPage(),
+        "/home/searchcourses": (context) => const SearchPage(),
+        "/home/emptyclassrooms": (context) => EmptyClassroomsPage(),
         "/home/favcourses": (context) => FavCourses(),
         "/home/editcourses": (context) => EditCoursePage(),
         "/home/editcourses/addcourses": (context) => AddCoursesPage(),
