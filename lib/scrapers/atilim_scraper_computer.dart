@@ -315,7 +315,7 @@ class AtilimScraperComputer extends Scraper {
     // Then extract all the exams from each link:
     examLinks.forEach((element) async {
       try {
-        var request = await HttpClient().getUrl(Uri.parse(element + "/index_files/sheet001.htm")); // This page uses frames, but your browser doesn't support them
+        var request = await (HttpClient()..connectionTimeout = const Duration(seconds: 5)).getUrl(Uri.parse(element + "/index_files/sheet001.htm")); // This page uses frames, but your browser doesn't support them
         var response = await request.close();
         htmlPage = "";
 

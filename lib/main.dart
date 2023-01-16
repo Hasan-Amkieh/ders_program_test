@@ -65,7 +65,7 @@ keytool -list -v -keystore "%USERPROFILE%\.android\debug.keystore" -alias androi
 
 class Main {
 
-  static const String atschedVersionForWindows = "1.3.0.0";
+  static const String atschedVersionForWindows = "1.4.0.0";
 
   static NewVersion newVersion = NewVersion(
       //iOSId: 'com.google.Vespa',
@@ -895,7 +895,7 @@ Future main() async {
     //Main.isInternetOn
 
     if (Main.isInternetOn) {
-      var request = await HttpClient().getUrl(Uri.parse('https://apps.microsoft.com/store/detail/atsched/9NQ6G0L7FTG2?hl=en-us&gl=us'));
+      var request = await (HttpClient()..connectionTimeout = const Duration(seconds: 2)).getUrl(Uri.parse('https://apps.microsoft.com/store/detail/atsched/9NQ6G0L7FTG2?hl=en-us&gl=us'));
       // sends the request
       var response = await request.close();
 

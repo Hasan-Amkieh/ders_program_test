@@ -25,7 +25,7 @@ class BilkentScraperComputer extends Scraper {
     try {
 
       // print("Getting the new links: ");
-      var request = await HttpClient().getUrl(Uri.parse('https://raw.githubusercontent.com/furkankose/bilkent-scheduler/data/public/data/semesters.json'));
+      var request = await (HttpClient()..connectionTimeout = const Duration(seconds: 5)).getUrl(Uri.parse('https://raw.githubusercontent.com/furkankose/bilkent-scheduler/data/public/data/semesters.json'));
       // sends the request
       var response = await request.close();
 
@@ -74,7 +74,7 @@ class BilkentScraperComputer extends Scraper {
 
       // print("Getting the new links: ${'https://raw.githubusercontent.com/furkankose/bilkent-scheduler/data/public/data/offerings/' +
       //     University.variables['code'].toString() + '.json'}");
-      var request = await HttpClient().getUrl(Uri.parse('https://raw.githubusercontent.com/furkankose/bilkent-scheduler/data/public/data/offerings/' +
+      var request = await (HttpClient()..connectionTimeout = const Duration(seconds: 5)).getUrl(Uri.parse('https://raw.githubusercontent.com/furkankose/bilkent-scheduler/data/public/data/offerings/' +
           University.variables['code'].toString() + '.json'));
       // sends the request
       var response = await request.close();
