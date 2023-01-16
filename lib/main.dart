@@ -95,7 +95,7 @@ class Main {
 
   // NOTE: Default values are inside the function readSettings:
   static bool forceUpdate = false;
-  static int hourUpdate = 48; // if the time has passed for these hours since the last update, then make an update
+  static int hourUpdate = 96; // if the time has passed for these hours since the last update, then make an update
   static String faculty = "Engineering";
   static String department = "AE";
   static String language = "English"; // currently, there is only
@@ -161,7 +161,7 @@ class Main {
     writeFacultyCourses();
     writeFavCourses();
     writeExams();
-    await writeSchedules(); // NOTE: always keep writing the schedules as the last function of writing data in the memory
+    Platform.isWindows ? await writeSchedules() : writeSchedulesPhone(); // NOTE: always keep writing the schedules as the last function of writing data in the memory
 
   }
 
@@ -271,7 +271,72 @@ class Main {
 
   }
 
+  static void writeSchedulesPhone() {
+
+    // first delete all the schedules, then write all the schedules again:
+
+    Directory dir = Directory(Main.appDocDir);
+
+    // List directory contents, recursing into sub-directories,
+    // but not following symbolic links.
+    List<FileSystemEntity> files = dir.listSync();
+
+    for (int i = 0 ; i < files.length ; i++) {
+
+      if (files[i].toString().contains("schedule_")) {
+        files[i].deleteSync();
+      }
+
+    }
+
+    for (int i = 0 ; i < schedules.length ; i++) {
+
+      File file = File(Main.appDocDir + filePrefix + "Atsched" + filePrefix + "schedule_${Main.schedules[i].scheduleName}.txt");
+      String toWrite = ""; // from here
+
+      for (int j = 0 ; j < schedules[i].scheduleCourses.length ; j++) { // notes:
+
+        toWrite = toWrite + schedules[i].scheduleCourses[j].note;
+
+        if ((j + 1) < schedules[i].scheduleCourses.length) { // if it is not the last,
+          toWrite = toWrite + "\n/ /\n";
+        }
+
+      }
+
+      toWrite = toWrite + "////\n";
+
+      for (int j = 0 ; j < schedules[i].scheduleCourses.length ; j++) { // courses:
+
+        toWrite = toWrite + schedules[i].scheduleCourses[j].subject.courseCode + "|" + schedules[i].scheduleCourses[j].subject.toString() + "\n";
+
+      }
+
+      toWrite = toWrite + "////\n";
+
+      String oldData = "", newData = "";
+      for (int j = 0 ; j < schedules[i].changes.length ; j++) { // notations (changes):
+
+        oldData = schedules[i].changes[j].oldData;
+        newData = schedules[i].changes[j].newData;
+
+        toWrite = toWrite + schedules[i].changes[j].courseCode + "|" +
+            schedules[i].changes[j].typeOfChange + "|" + oldData + "|" +
+            newData + "|" + schedules[i].changes[j].time.microsecondsSinceEpoch.toString() + "\n";
+
+      }
+
+      // print("The schedule ${Main.schedules[i].scheduleName} is written with the content of: \n\n$toWrite\n\n\n");
+
+      file.writeAsStringSync(toWrite);
+
+    }
+
+  }
+
   static void deleteSchedules() async {
+
+    print("Deleting Schedules: ");
 
     Directory dir = Directory(Main.appDocDir + Main.filePrefix + "Atsched");
     List<FileSystemEntity> files = await (dir.list()).toList();
@@ -335,7 +400,7 @@ class Main {
 
       }
 
-      // print("The schedule ${Main.schedules[i].scheduleName} is written with the content of: \n\n$toWrite\n\n\n");
+      print("The schedule ${Main.schedules[i].scheduleName} is written with the content of: \n\n$toWrite\n\n\n");
 
       await file.writeString(toWrite);
       await file.flush();

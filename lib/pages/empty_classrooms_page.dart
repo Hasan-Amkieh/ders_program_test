@@ -135,7 +135,7 @@ class EmptyClassroomsPageState extends State<EmptyClassroomsPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   SizedBox(
-                    width: width * 0.25,
+                    width: width * (Platform.isWindows ? 0.25 : 0.5),
                     child: TextFormField(
                       controller: txtController,
                       style: TextStyle(color: Main.appTheme.titleTextColor),
@@ -150,13 +150,12 @@ class EmptyClassroomsPageState extends State<EmptyClassroomsPage> {
                       onChanged: search,
                     ),
                   ),
-                  Row(
+                  Platform.isWindows ? Row(
                     children: [
-                      Platform.isWindows ?
                       Row(children: [Text(translateEng("Classrooms Found: ") + classrooms_.length.toString(), style: TextStyle(color: Main.appTheme.titleTextColor)),
                         SizedBox(
                           width: width * 0.03,
-                        ) ],) : EmptyContainer(),
+                        ) ],),
                       Visibility(
                         visible: day == "Any",
                         child: const Icon(Icons.warning, color: Colors.red),
@@ -194,6 +193,86 @@ class EmptyClassroomsPageState extends State<EmptyClassroomsPage> {
                         child: Text(
                           (bgnHr == "Any" || endHr == "Any") ? translateEng("Choose Period") : (bgnHr + " - " + endHr),
                           style: TextStyle(color: (bgnHr == "Any" || endHr == "Any") ? Colors.red : Colors.blue)),
+                        onPressed: () {
+                          showTimePicker(
+                            hourLabelText: translateEng("Start Hour"),
+                            minuteLabelText: translateEng("End Hour"),
+                            helpText: translateEng("Choose Period"),
+                            context: context,
+                            initialTime: (bgnHr == "Any" || endHr == "Any") ?
+                            TimeOfDay(hour: TimeOfDay.now().hour, minute: TimeOfDay.now().hour + 1) :
+                            TimeOfDay(hour: int.parse(bgnHr.substring(0, bgnHr.indexOf(":"))), minute: int.parse(endHr.substring(0, endHr.indexOf(":")))),
+                            initialEntryMode: TimePickerEntryMode.input,
+                            builder: (context, child) {
+                              return Theme(
+                                data: ThemeData.dark(),
+                                child: MediaQuery(
+                                  data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), // it is not working, idk why
+                                  child: (child! as TimePickerDialog),
+                                ),
+                              );
+                            },
+                          ).then((value) {
+                            setState(() { //
+                              if (value!.hour < value.minute) {
+                                bgnHr = value.hour.toString() + ":" + University.getBgnMinutes().toString();
+                                endHr = value.minute.toString() + ":" + University.getEndMinutes().toString();
+                                search(query);
+                              } else {
+                                showToast(
+                                  translateEng("The start hour has to be greater than the finish hour"),
+                                  duration: const Duration(milliseconds: 1500),
+                                  position: ToastPosition.bottom,
+                                  backgroundColor: Colors.red.withOpacity(0.8),
+                                  radius: 100.0,
+                                  textStyle: const TextStyle(fontSize: 12.0, color: Colors.white),
+                                );
+                              }
+                            });
+                          });
+
+                        },
+                      ),
+                    ],
+                  ) : Column(
+                    children: [
+                      Visibility(
+                        visible: day == "Any",
+                        child: const Icon(Icons.warning, color: Colors.red),
+                      ),
+                      day == "Any" ? SizedBox(
+                        width: width * 0.01,
+                      ) : EmptyContainer(),
+                      DropdownButton<String>(
+                        dropdownColor: Main.appTheme.scaffoldBackgroundColor,
+                        value: day,
+                        items: days.map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem(
+                            value: value, child: Text(translateEng(value),
+                            style: value == day ? TextStyle(color: day == "Any" ? Colors.red : Main.appTheme.titleTextColor,
+                                fontWeight: day == "Any" ? FontWeight.bold : FontWeight.normal) :
+                            TextStyle(color: Main.appTheme.titleTextColor),
+                          ),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            day = newValue!;
+                            search(query);
+                          });
+                        },
+                      ),
+                      SizedBox(
+                        width: width * 0.02,
+                      ),
+                      (bgnHr == "Any" || endHr == "Any") ? const Icon(Icons.warning, color: Colors.red) : EmptyContainer(),
+                      (bgnHr == "Any" || endHr == "Any") ? SizedBox(
+                        width: width * 0.005,
+                      ) : EmptyContainer(),
+                      TextButton(
+                        child: Text(
+                            (bgnHr == "Any" || endHr == "Any") ? translateEng("Choose Period") : (bgnHr + " - " + endHr),
+                            style: TextStyle(color: (bgnHr == "Any" || endHr == "Any") ? Colors.red : Colors.blue)),
                         onPressed: () {
                           showTimePicker(
                             hourLabelText: translateEng("Start Hour"),

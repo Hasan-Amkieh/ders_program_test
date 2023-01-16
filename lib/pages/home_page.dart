@@ -368,7 +368,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                               Main.isFacChange = true;
                               Main.writeSettings();
                               Main.writeFavCourses();
-                              await Main.writeSchedules(); // Note: This should be called the last
+                              Platform.isWindows ? await Main.writeSchedules() : Main.writeSchedulesPhone(); // Note: This should be called the last
                               Navigator.of(context).pop(true);
                             },
                             child: const Text('Yes')),
@@ -545,7 +545,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
       ];
 
       if (University.areExamsSupported()) {
-        icons.add(SvgPicture.asset("lib/icons/exam_icon.svg", height: iconSize * 0.85, color: Colors.white));
+        icons.add(SvgPicture.asset("lib/icons/exam_icon.svg", height: iconSize * (Platform.isWindows ? 0.85 : 2.5), color: Colors.white));
         topics.add(Text(translateEng('Upcoming Exams'), style: TextStyle(color: Colors.white)));
         descrips.add(Text(translateEng('Find all the exams of your schedule'), style: TextStyle(color: Main.appTheme.subtitleTextColor)));
         counts.add(Main.exams.length);
@@ -563,7 +563,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
         widgets_ = [];
         for (int j = 0 ; j < (Platform.isWindows ? 4 : 2) ; j++, i++) { // take 4/2 widgets and fill them into the row
           if (i >= icons.length) {
-            while (widgets_.length < 4) { // Empty Choice Box to fill in the empty spaces
+            while (widgets_.length < (Platform.isWindows ? 4 : 2)) { // Empty Choice Box to fill in the empty spaces
               widgets_.add(ChoiceBox(icon: icons[icons.length-1], mainText: topics[icons.length-1],
                   description: descrips[icons.length-1], number: counts[icons.length-1], onTap: onTaps[icons.length-1], isVisible: false));
             }
@@ -747,7 +747,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                               Main.isFacChange = true;
                               Main.writeSettings();
                               Main.writeFavCourses();
-                              await Main.writeSchedules(); // Note: This should be called the last
+                              Platform.isWindows ? await Main.writeSchedules() : Main.writeSchedulesPhone(); // Note: This should be called the last
                               Restart.restartApp().then((value) { ; });
                             },
                               child: Text(translateEng("RESTART")),
