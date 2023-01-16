@@ -51,12 +51,14 @@ class ChoiceBoxState extends State<ChoiceBox> {
       maintainSize: true,
       child: TextButton(
         style:
-          ButtonStyle(overlayColor: MaterialStateProperty.all(Colors.red.withOpacity(0))),
+          ButtonStyle(
+              overlayColor: MaterialStateProperty.all(Colors.red.withOpacity(0)),
+          ),
         onPressed: null,
         child: Material(
-          color: Main.appTheme.scaffoldBackgroundColor.withBlue(Main.appTheme.scaffoldBackgroundColor.blue + (isHovered ? 16 : 8))
+          color: Main.theme == ThemeMode.dark ? (Main.appTheme.scaffoldBackgroundColor.withBlue(Main.appTheme.scaffoldBackgroundColor.blue + (isHovered ? 16 : 8))
               .withRed(Main.appTheme.scaffoldBackgroundColor.red + (isHovered ? 16 : 8))
-              .withGreen(Main.appTheme.scaffoldBackgroundColor.green + (isHovered ? 16 : 8)),
+              .withGreen(Main.appTheme.scaffoldBackgroundColor.green + (isHovered ? 16 : 8))) : Colors.grey.shade700,
           borderRadius: BorderRadius.circular(width * 0.05),
           child: InkWell(
             onTap: () {
@@ -95,7 +97,7 @@ class ChoiceBoxState extends State<ChoiceBox> {
                       ),
                       Visibility(
                         visible: widget.number != -1,
-                        child: Text(widget.number.toString(), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                        child: Text(widget.number.toString(), style: const TextStyle(color: Colors.white)),
                       ),
                     ],
                   ),

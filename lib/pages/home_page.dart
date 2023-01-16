@@ -443,21 +443,21 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
     if (pageIndex == 1) {
 
       List<Widget> icons = [
-        Icon(Icons.edit, color: Main.appTheme.titleIconColor),
-        Icon(Icons.search, color: Main.appTheme.titleIconColor),
-        Icon(Icons.play_lesson, color: Main.appTheme.titleIconColor),
-        Icon(CupertinoIcons.calendar_badge_plus, color: Main.appTheme.titleIconColor),
-        Icon(Icons.star, color: Main.appTheme.titleIconColor),
-        Icon(CupertinoIcons.calendar_today, color: Main.appTheme.titleIconColor),
+        const Icon(Icons.edit, color: Colors.white),
+        const Icon(Icons.search, color: Colors.white),
+        const Icon(Icons.play_lesson, color: Colors.white),
+        const Icon(CupertinoIcons.calendar_badge_plus, color: Colors.white),
+        const Icon(Icons.star, color: Colors.white),
+        const Icon(CupertinoIcons.calendar_today, color: Colors.white),
       ];
 
       List<Text> topics = [
-        Text(translateEng('Edit Courses'), style: TextStyle(color: Main.appTheme.titleTextColor)),
-        Text(translateEng('Courses Search'), style: TextStyle(color: Main.appTheme.titleTextColor)),
-        Text(translateEng('Empty Classrooms'), style: TextStyle(color: Main.appTheme.titleTextColor)),
-        Text(translateEng('Scheduler'), style: TextStyle(color: Main.appTheme.titleTextColor)),
-        Text(translateEng('Favourite Courses'), style: TextStyle(color: Main.appTheme.titleTextColor)),
-        Text(translateEng('Saved Schedules'), style: TextStyle(color: Main.appTheme.titleTextColor)),
+        Text(translateEng('Edit Courses'), style: const TextStyle(color: Colors.white)),
+        Text(translateEng('Courses Search'), style: const TextStyle(color: Colors.white)),
+        Text(translateEng('Empty Classrooms'), style: const TextStyle(color: Colors.white)),
+        Text(translateEng('Scheduler'), style: const TextStyle(color: Colors.white)),
+        Text(translateEng('Favourite Courses'), style: const TextStyle(color: Colors.white)),
+        Text(translateEng('Saved Schedules'), style: const TextStyle(color: Colors.white)),
       ];
 
       List<Widget> descrips = [
@@ -545,8 +545,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
       ];
 
       if (University.areExamsSupported()) {
-        icons.add(SvgPicture.asset("lib/icons/exam_icon.svg", height: iconSize * 0.85, color: Main.appTheme.titleIconColor));
-        topics.add(Text(translateEng('Upcoming Exams'), style: TextStyle(color: Main.appTheme.titleTextColor)));
+        icons.add(SvgPicture.asset("lib/icons/exam_icon.svg", height: iconSize * 0.85, color: Colors.white));
+        topics.add(Text(translateEng('Upcoming Exams'), style: TextStyle(color: Colors.white)));
         descrips.add(Text(translateEng('Find all the exams of your schedule'), style: TextStyle(color: Main.appTheme.subtitleTextColor)));
         counts.add(Main.exams.length);
         onTaps.add(() {
@@ -839,7 +839,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(child: Text(translateEng("Update Timeout (hours)"), style: TextStyle(color: Main.appTheme.titleTextColor))),
+              Expanded(child: Text(translateEng("Update Timeout (days)"), style: TextStyle(color: Main.appTheme.titleTextColor))),
               Row(
                 children: [
                   Slider(

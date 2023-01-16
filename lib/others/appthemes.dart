@@ -44,7 +44,7 @@ class AppTheme {
 
   Color titleTextColor = Main.theme == ThemeMode.light ? Colors.black : Colors.white;
 
-  Color subtitleTextColor = Main.theme == ThemeMode.light ? Colors.grey.shade600 : Colors.grey.shade400;
+  Color subtitleTextColor = Colors.grey.shade400;
 
   TextStyle headerSchedulePageTextStyle = const TextStyle(color: Colors.white, fontWeight: FontWeight.bold);
 

@@ -302,7 +302,7 @@ class EditCoursePageState extends State<EditCoursePage> {
                           tooltip: translateEng("Notes"),
                           icon: const Icon(CupertinoIcons.chat_bubble_text_fill, color: Colors.blue), onPressed: () {
                           showAdaptiveActionSheet(
-                            bottomSheetColor: Main.appTheme.headerBackgroundColor,
+                            bottomSheetColor: Main.appTheme.scaffoldBackgroundColor,
                             context: context,
                             title: Column(
                               children: [
@@ -382,7 +382,7 @@ class EditCoursePageState extends State<EditCoursePage> {
                       departments.trim();
 
                       showAdaptiveActionSheet(
-                        bottomSheetColor: Main.appTheme.headerBackgroundColor,
+                        bottomSheetColor: Main.appTheme.scaffoldBackgroundColor,
                         context: context,
                         title: Column(
                           children: [
