@@ -13,6 +13,10 @@ Atsched is a scheduling application made for every university student in the wor
 - Supports faculty/departments separation (not all universities provides it)
 - Atsched is only available for Windows (Microsoft Store) and Android (Google Play)
 
+| Attempt | #1    | #2    |
+| :---:   | :---: | :---: |
+| Seconds | 301   | 283   |
+
 [Demonstrative Video](https://www.youtube.com/watch?v=LldHI16tvtY)
 
 ## Support
