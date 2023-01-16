@@ -13,9 +13,13 @@ Atsched is a scheduling application made for every university student in the wor
 - Supports faculty/departments separation (not all universities provides it)
 - Atsched is only available for Windows (Microsoft Store) and Android (Google Play)
 
-| Attempt | #1    | #2    |
-| :---:   | :---: | :---: |
-| Seconds | 301   | 283   |
+|        | Atilim | Bilkent|
+| :----: | :----: | :----: | 
+| Exams  | ![checked](https://user-images.githubusercontent.com/46199105/212768267-fde7d996-35a2-41aa-b083-de2352bc972f.png) | ![remove](https://user-images.githubusercontent.com/46199105/212768351-59f21b61-1422-4b4f-bfa7-f8de66bec6d4.png) |
+| :----: | :----: | :----: | 
+| Faculties| ![checked](https://user-images.githubusercontent.com/46199105/212768267-fde7d996-35a2-41aa-b083-de2352bc972f.png) | ![remove](https://user-images.githubusercontent.com/46199105/212768351-59f21b61-1422-4b4f-bfa7-f8de66bec6d4.png) |
+| :----: | :----: | :----: |
+| Departments| ![checked](https://user-images.githubusercontent.com/46199105/212768267-fde7d996-35a2-41aa-b083-de2352bc972f.png) | ![remove](https://user-images.githubusercontent.com/46199105/212768351-59f21b61-1422-4b4f-bfa7-f8de66bec6d4.png) |
 
 [Demonstrative Video](https://www.youtube.com/watch?v=LldHI16tvtY)
 
