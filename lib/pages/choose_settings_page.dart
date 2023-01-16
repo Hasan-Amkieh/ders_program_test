@@ -92,7 +92,7 @@ class ChooseSettingsState extends State<ChooseSettingsPage> with SingleTickerPro
                         controller.animateTo(0.0).then((value) { // first let the picture disappear, then show the new pic and let it fade in!
                           setState(() {
                             Main.uni = newValue!;
-                            print("The uni has been changed into ${Main.uni}");
+                            // print("The uni has been changed into ${Main.uni}");
                             controller.animateTo(1.0);
                           });
                         });

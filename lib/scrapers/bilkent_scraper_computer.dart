@@ -17,7 +17,7 @@ class BilkentScraperComputer extends Scraper {
   @override
   getTimetableData() async {
 
-    print("Calling Bilkent Scraper!!!");
+    // print("Calling Bilkent Scraper!!!");
 
     // 1. Determine the semester name in Main
     // Only the latest semester is required
@@ -58,7 +58,7 @@ class BilkentScraperComputer extends Scraper {
       print("ERROR: $e");
     }
 
-    print("The semester name is ${Main.semesterName} and the code ${University.variables["code"]}");
+    // print("The semester name is ${Main.semesterName} and the code ${University.variables["code"]}");
 
     if (Platform.isWindows) {
       WPComputerState.state = 2;
@@ -98,7 +98,7 @@ class BilkentScraperComputer extends Scraper {
 
     // print("Received the contents: $timetableData of length ${timetableData.length}");
 
-    print("Content length is ${timetableStr.length}");
+    // print("Content length is ${timetableStr.length}");
 
     Map timetableData = const JsonDecoder().convert(timetableStr); // Map<String, Map<String (subject without secs.), (properties) Map<"Props, like name and sections", dynamic>>>
     // the first str represents the Faculty, like "ADA", architectural drawing

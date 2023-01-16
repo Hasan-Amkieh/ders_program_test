@@ -457,7 +457,7 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
           }
 
           if (endHour < (crs.subject.bgnPeriods[i][j] + crs.subject.hours[i])) {
-            print("The end hour has been changed into ${crs.subject.bgnPeriods[i][j] + crs.subject.hours[i]}");
+            // print("The end hour has been changed into ${crs.subject.bgnPeriods[i][j] + crs.subject.hours[i]}");
             endHour = crs.subject.bgnPeriods[i][j] + crs.subject.hours[i];
           }
 

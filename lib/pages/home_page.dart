@@ -1220,7 +1220,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           }
 
           if (endHour < (crs.subject.bgnPeriods[i][j] + crs.subject.hours[i])) {
-            print("The end hour has been changed into ${crs.subject.bgnPeriods[i][j] + crs.subject.hours[i]}");
+            // print("The end hour has been changed into ${crs.subject.bgnPeriods[i][j] + crs.subject.hours[i]}");
             endHour = crs.subject.bgnPeriods[i][j] + crs.subject.hours[i];
           }
 
@@ -1627,7 +1627,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
 
   void listenDynamicLinks() async {
     // print("Started listening to deep links!");
-    print("Received a deep link!");
+    // print("Received a deep link!");
     FlutterBranchSdk.disableTracking(false);
     streamSubscription = FlutterBranchSdk.initSession().listen((data) async {
 
@@ -1649,7 +1649,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           str = str + "\n" + data['course_${i+1}'];
         }
 
-        print("Writing the following string to the file: $str");
+        // print("Writing the following string to the file: $str");
         await file.writeAsString(str, mode: FileMode.write, flush: true);
 
         if (HomeState.currentState != null) {

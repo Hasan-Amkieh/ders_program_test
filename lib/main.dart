@@ -249,7 +249,11 @@ class Main {
 
         forceUpdate = content.substring(content.indexOf("force_update:") + 13, content.indexOf("\n", content.indexOf("force_update:") + 13)) == "true" ? true : false;
         theme = (content.substring(content.indexOf("is_dark:") + 8, content.indexOf("\n", content.indexOf("is_dark:") + 8)) == "true" ? true : false) ? ThemeMode.dark : ThemeMode.light;
-        uni = content.substring(content.indexOf("uni:") + 4, content.indexOf("\n", content.indexOf("uni:") + 4));
+        if (content.contains("uni:")) {
+          uni = content.substring(content.indexOf("uni:") + 4, content.indexOf("\n", content.indexOf("uni:") + 4));
+        } else {
+          uni = "Atilim";
+        }
         faculty = content.substring(content.indexOf("faculty:") + 8, content.indexOf("\n", content.indexOf("faculty:") + 8));
         department = content.substring(content.indexOf("department:") + 11, content.indexOf("\n", content.indexOf("department:") + 11));
         language = content.substring(content.indexOf("language:") + 9, content.indexOf("\n", content.indexOf("language:") + 9));
@@ -336,7 +340,7 @@ class Main {
 
   static void deleteSchedules() async {
 
-    print("Deleting Schedules: ");
+    // print("Deleting Schedules: ");
 
     Directory dir = Directory(Main.appDocDir + Main.filePrefix + "Atsched");
     List<FileSystemEntity> files = await (dir.list()).toList();
@@ -360,7 +364,7 @@ class Main {
     deleteSchedules();
 
     for (int i = 0 ; i < schedules.length ; i++) {
-      print("Writing schedule ${Main.schedules[i].scheduleName}");
+      // print("Writing schedule ${Main.schedules[i].scheduleName}");
 
       File file_ = File(Main.appDocDir + filePrefix + "Atsched" + filePrefix + "schedule_${Main.schedules[i].scheduleName}.txt");
       await file_.create();
@@ -400,7 +404,7 @@ class Main {
 
       }
 
-      print("The schedule ${Main.schedules[i].scheduleName} is written with the content of: \n\n$toWrite\n\n\n");
+      // print("The schedule ${Main.schedules[i].scheduleName} is written with the content of: \n\n$toWrite\n\n\n");
 
       await file.writeString(toWrite);
       await file.flush();
@@ -608,13 +612,13 @@ class Main {
     switch(Main.uni) {
 
       case "Atilim":
-        print("Atilim classifier is set!");
+        // print("Atilim classifier is set!");
         Main.classifier = AtilimClassifier.instance;
         // Main.scraper = Platform.isWindows ? AtilimScraperComputer.instance : AtilimScraperPhone.instance;
         Main.scraper = AtilimScraperComputer.instance;
         break;
       case "Bilkent":
-        print("Bilkent classifier is set!");
+        // print("Bilkent classifier is set!");
         Main.classifier = BilkentClassifier.instance;
         Main.scraper = Platform.isWindows ? BilkentScraperComputer.instance : BilkentScraperPhone.instance;
         break;
@@ -819,7 +823,7 @@ class Main {
         mins = 60 - DateTime.now().minute + 20;
       }
 
-      print("Classrooms count to be refreshed after $mins minutes!");
+      // print("Classrooms count to be refreshed after $mins minutes!");
       Timer(Duration(minutes: mins), scheduleClassroomsCounter);
 
     });

@@ -420,7 +420,9 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
 
   Future saveScreenshot(Uint8List bytes) async {
 
-    await [Permission.storage].request().then((value_) {print("Permission response: $value_");});
+    await [Permission.storage].request().then((value_) {
+      // print("Permission response: $value_");
+    });
 
     final time = DateTime.now().toIso8601String().replaceAll('.', '-').replaceAll(':', '-');
     final name = 'screenshot_of_${Main.schedules[Main.currentScheduleIndex].scheduleName}_$time';

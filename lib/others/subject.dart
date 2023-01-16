@@ -91,7 +91,7 @@ class Subject { // represents a class
 
     List<int> hours_ = [];
     List<List<int>> days_ = [], bgnPeriods_ = [];
-    print("info is $info");
+    // print("info is $info");
 
     List<int> tempList = [];
     var list = info[0].replaceAll(" ", "").split('],[');

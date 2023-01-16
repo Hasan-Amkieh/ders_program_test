@@ -69,9 +69,7 @@ class SchedulerPageState extends State<SchedulerPage> {
         for (Subject sub in Main.facultyData.subjects) {
           //print("Checking if ${sub.classCode} has sections or not!");
           if (sub.getCourseCodeWithoutSectionNumber() == element.courseCode && sub.getCourseCodeWithoutSectionNumber() != sub.courseCode) {
-            if (sub.getCourseCodeWithoutSectionNumber().contains("CE490")) {
-              print("CE490 filter");
-            }// if sub has sections:
+            // if sub has sections:
             // print("${sub.classCode} has a section of ${sub.getSection()}!");
             if (sub.getSection() > maxSection) {
               maxSection = sub.getSection();
@@ -515,7 +513,7 @@ class SchedulerPageState extends State<SchedulerPage> {
       }
     }
 
-    print(secToSubject);
+    // print(secToSubject);
 
     // print("Sections are " + secToSubject.toString());
 
@@ -559,7 +557,7 @@ class SchedulerPageState extends State<SchedulerPage> {
 
       //print("The length of shown vars is : ${areSectionsShown[subIndex].value.length}");
       if (!areSectionsShown[subIndex].value.containsKey(sec)) {
-        print("STOP HERE of index $subIndex of ${areSectionsShown[subIndex]}");
+        // print("STOP HERE of index $subIndex of ${areSectionsShown[subIndex]}");
         continue;
       }
 
@@ -574,7 +572,7 @@ class SchedulerPageState extends State<SchedulerPage> {
         ));
       });
 
-      print("Adding the section $sec");
+      // print("Adding the section $sec");
       actions.add(
         Container(
           margin: EdgeInsets.fromLTRB(0, 0, 0, height * 0.03),

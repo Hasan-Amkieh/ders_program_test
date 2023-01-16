@@ -30,7 +30,7 @@ class TextFieldWidgetState extends State<TextFieldWidget> {
   @override
   void initState() {
     controller.text = widget.text;
-    print("Setting the controller text to ${widget.text}");
+    // print("Setting the controller text to ${widget.text}");
     super.initState();
   }
 

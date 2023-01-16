@@ -366,7 +366,7 @@ class AtilimScraperComputer extends Scraper {
                     break;
                 }
               }
-              print("$subject $classrooms $date $time");
+              // print("$subject $classrooms $date $time");
               List<String> data = date.split('.');
               // print("$date became $data");
               if (data.length == 3 && subject.length < 50) {
