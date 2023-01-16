@@ -2,7 +2,6 @@ import "dart:io" show Platform;
 import 'dart:ui';
 
 import 'package:Atsched/language/dictionary.dart';
-import 'package:Atsched/widgets/searchwidget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Atsched/main.dart';
@@ -62,7 +61,7 @@ class ExamsPageState extends State<ExamsPage> {
             ),
             TextButton.icon(
               icon: const Icon(Icons.search),
-              label: const Text("Search"),
+              label: Text(translateEng("Search")),
               onPressed: () {
                 showDialog(context: context, builder: (context) => AlertDialog(
                   backgroundColor: Main.appTheme.scaffoldBackgroundColor,

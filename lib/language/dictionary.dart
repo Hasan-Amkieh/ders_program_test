@@ -85,7 +85,7 @@ Map<String, String> engToTurk = {
   "Search for courses using its name, classroom number, teacher or department" : "Adını, sınıf numarasını, öğretmenini veya bölümünü kullanarak dersleri arayın",
   "You can save schedules and set them back again" : "Programları kaydedebilir ve tekrar ayarlayabilirsiniz",
   "School's Schedules" : "Okulun Programları",
-  "Update Timeout (hours)" : "Güncelleme Zaman Aşımı (saat)",
+  "Update Timeout (days)" : "Güncelleme Zaman Aşımı (gün)",
   "Theme" : "Tema",
   "Donate" : "Bağış yap",
   "Light  " : "Hafif  ",
@@ -175,6 +175,7 @@ Map<String, String> engToTurk = {
   "Search" : "Arama",
   " or " : " yoksa ",
   "Add Course" : "Ders Ekle",
+  "Add course" : "Ders ekle",
   "create schedule" : "takvim oluştur",
   "Creating Schedule" : "Takvim Oluşturuyor",
   "Name" : "Ad",
@@ -210,6 +211,14 @@ Map<String, String> engToTurk = {
   "There is a newer version of this application,\nplease update the application first!" : "Bu uygulamanın daha yeni bir sürümü var,\nlütfen önce uygulamayı güncelleyin!",
   "Name the Schedule" : "Programı Adlandır",
   "Please choose a section" : "Lütfen bir şube seçin",
+  "Find empty classrooms inside the university" : "Üniversite içindeki boş sınıfları bulun",
+  "Find all the exams of your schedule" : "Programınızın tüm sınavlarını bulun",
+  "Upcoming Exams" : "yaklaşan sınavlar",
+  "No upcoming exams" : "Yaklaşan sınav yok",
+  "SEARCH" : "ARAMA",
+  "Search for  " : "Göre ara  ",
+  "Classrooms Found: " : "bulunan sınıflar: ",
+  "Empty Classrooms" : "Boş Sınıflar",
 };
 
 String translateEng(String eng) {

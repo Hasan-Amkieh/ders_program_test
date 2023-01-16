@@ -153,7 +153,7 @@ class EmptyClassroomsPageState extends State<EmptyClassroomsPage> {
                   Row(
                     children: [
                       Platform.isWindows ?
-                      Row(children: [Text(translateEng("Classrooms Found:  ${classrooms_.length}"), style: TextStyle(color: Main.appTheme.titleTextColor)),
+                      Row(children: [Text(translateEng("Classrooms Found: ") + classrooms_.length.toString(), style: TextStyle(color: Main.appTheme.titleTextColor)),
                         SizedBox(
                           width: width * 0.03,
                         ) ],) : EmptyContainer(),
