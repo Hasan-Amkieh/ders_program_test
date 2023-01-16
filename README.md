@@ -15,11 +15,11 @@ Atsched is a scheduling application made for every university student in the wor
 
 |        | Atilim | Bilkent|
 | --- | --- | --- |
-| Exams  | ![checked](https://user-images.githubusercontent.com/46199105/212768267-fde7d996-35a2-41aa-b083-de2352bc972f.png) | <img src="https://user-images.githubusercontent.com/46199105/212768351-59f21b61-1422-4b4f-bfa7-f8de66bec6d4.png" width="48" height="48"> |
+| Exams  | <img src="https://user-images.githubusercontent.com/46199105/212768267-fde7d996-35a2-41aa-b083-de2352bc972f.png" width="24" height="24"> | <img src="https://user-images.githubusercontent.com/46199105/212768351-59f21b61-1422-4b4f-bfa7-f8de66bec6d4.png" width="24" height="24"> |
 | --- | --- | --- |
-| Faculties| ![checked](https://user-images.githubusercontent.com/46199105/212768267-fde7d996-35a2-41aa-b083-de2352bc972f.png) | ![remove](https://user-images.githubusercontent.com/46199105/212768351-59f21b61-1422-4b4f-bfa7-f8de66bec6d4.png) |
+| Faculties| <img src="https://user-images.githubusercontent.com/46199105/212768267-fde7d996-35a2-41aa-b083-de2352bc972f.png" width="24" height="24"> | <img src="https://user-images.githubusercontent.com/46199105/212768351-59f21b61-1422-4b4f-bfa7-f8de66bec6d4.png" width="24" height="24"> |
 | --- | --- | --- |
-| Departments| ![checked](https://user-images.githubusercontent.com/46199105/212768267-fde7d996-35a2-41aa-b083-de2352bc972f.png) | ![remove](https://user-images.githubusercontent.com/46199105/212768351-59f21b61-1422-4b4f-bfa7-f8de66bec6d4.png) |
+| Departments| <img src="https://user-images.githubusercontent.com/46199105/212768267-fde7d996-35a2-41aa-b083-de2352bc972f.png" width="24" height="24"> | <img src="https://user-images.githubusercontent.com/46199105/212768351-59f21b61-1422-4b4f-bfa7-f8de66bec6d4.png" width="24" height="24"> |
 
 [Demonstrative Video](https://www.youtube.com/watch?v=LldHI16tvtY)
 
