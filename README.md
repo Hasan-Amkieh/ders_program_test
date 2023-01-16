@@ -5,6 +5,7 @@ Atsched is a scheduling application made for every university student in the wor
 ## Download
 
 [Android](https://play.google.com/store/apps/details?id=amkieh.hasan.atsched&hl=en&gl=US)
+
 [Windows](https://apps.microsoft.com/store/detail/atsched/9NQ6G0L7FTG2)
  
 # Features
