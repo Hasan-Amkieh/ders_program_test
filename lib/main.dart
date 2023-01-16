@@ -895,38 +895,42 @@ Future main() async {
     //Main.isInternetOn
 
     if (Main.isInternetOn) {
-      var request = await (HttpClient()..connectionTimeout = const Duration(seconds: 2)).getUrl(Uri.parse('https://apps.microsoft.com/store/detail/atsched/9NQ6G0L7FTG2?hl=en-us&gl=us'));
-      // sends the request
-      var response = await request.close();
+      try {
+        var request = await (HttpClient()..connectionTimeout = const Duration(seconds: 3)).getUrl(Uri.parse('https://apps.microsoft.com/store/detail/atsched/9NQ6G0L7FTG2?hl=en-us&gl=us'));
+        // sends the request
+        var response = await request.close();
 
-      // transforms and prints the response
-      await for (var contents in response.transform(const Utf8Decoder())) {
-        int pos;
-        String version;
+        // transforms and prints the response
+        await for (var contents in response.transform(const Utf8Decoder())) {
+          int pos;
+          String version;
 
-        if (Main.semesterName.isEmpty) {
-          // Sample: "Latest Version: 1.3.0.0////"
-          pos = contents.indexOf('Latest Version: '); // first search for
-          if (pos != -1) {
+          if (Main.semesterName.isEmpty) {
+            // Sample: "Latest Version: 1.3.0.0////"
+            pos = contents.indexOf('Latest Version: '); // first search for
+            if (pos != -1) {
 
-            version = contents.substring(pos + 16, contents.indexOf('////', pos + 16));
-            if (version.isNotEmpty) {
-              List<String> vNew = version.trim().split('.');
-              List<String> vOld = Main.atschedVersionForWindows.split('.');
-              //print("The new version: $vNew\n\nThe old version: $vOld");
-              if (int.parse(vNew[0]) > int.parse(vOld[0]) ||
-                  int.parse(vNew[1]) > int.parse(vOld[1]) ||
-                  int.parse(vNew[2]) > int.parse(vOld[2]) ||
-                  int.parse(vNew[3]) > int.parse(vOld[3])) {
-                Main.isThereNewerVersion = true;
-                goToUpdatePage = true;
-                break;
+              version = contents.substring(pos + 16, contents.indexOf('////', pos + 16));
+              if (version.isNotEmpty) {
+                List<String> vNew = version.trim().split('.');
+                List<String> vOld = Main.atschedVersionForWindows.split('.');
+                //print("The new version: $vNew\n\nThe old version: $vOld");
+                if (int.parse(vNew[0]) > int.parse(vOld[0]) ||
+                    int.parse(vNew[1]) > int.parse(vOld[1]) ||
+                    int.parse(vNew[2]) > int.parse(vOld[2]) ||
+                    int.parse(vNew[3]) > int.parse(vOld[3])) {
+                  Main.isThereNewerVersion = true;
+                  goToUpdatePage = true;
+                  break;
+                }
               }
+
             }
-
           }
-        }
 
+        }
+      } catch(e) {
+        print("Could not open the microsoft page of Atsched!\n$e");
       }
     }
 

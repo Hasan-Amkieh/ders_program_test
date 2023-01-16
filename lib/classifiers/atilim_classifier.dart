@@ -1,3 +1,4 @@
+// NOTE: This is the code meant for version 1.4.0 of Atsched, it extracted the info correctly for the semester "2022-2023 FALL"
 
 import 'dart:isolate';
 
@@ -57,8 +58,6 @@ class AtilimClassifier extends Classifier {
 
             }
 
-            // TODO: Instead of searching of all the file, cut the string part that you need and use it instead of using the whole file (better performance)
-
             //print("Resolving all ids with subjectid!");
                 { // for each subjectId, we have this:
               List<String> lessonIds; // lessonId is used to find the time for the class
@@ -88,13 +87,16 @@ class AtilimClassifier extends Classifier {
 
                   teacherCodesIds.add([]);
                   classroomsIds.add([]);
-                  lastFound = continueAfter = timetableStr.indexOf('subjectid: ${subjectId.value}', continueAfter)
-                      + 'subjectid: ${subjectId.value}'.length;
-                  if (continueAfter - 'subjectid: ${subjectId.value}'.length == -1) {
+                  lastFound = continueAfter = timetableStr.indexOf('subjectid: ${subjectId.value},', continueAfter)
+                      + 'subjectid: ${subjectId.value},'.length;
+                  if (continueAfter - 'subjectid: ${subjectId.value},'.length == -1) {
                     break;
                   }
 
                   i = timetableStr.lastIndexOf('{id: ', lastFound) + 5;
+                  // if (subjectId.key.contains("MATH151- 01-")) {
+                  //   print("adding lessonId ${timetableStr.substring(i, timetableStr.indexOf(',', i))} to the course MATH151- 01-");
+                  // }
                   lessonIds.add(timetableStr.substring(i, timetableStr.indexOf(',', i)));
 
                   lastFound = timetableStr.indexOf('teacherids: [', lastFound) + 13;
@@ -168,7 +170,6 @@ class AtilimClassifier extends Classifier {
                 int listIndex = 0;
                 int classroomsIndex = 0;
                 lessonIds.forEach((lessonId) {
-
                   searchStart_ = searchStart;
                   day.add([]);
                   beginningHr.add([]);
@@ -213,10 +214,6 @@ class AtilimClassifier extends Classifier {
 
                 });
 
-                // This will only enhance the performance of the engineering loading page,
-                // TODO: apply the rest for the other faculties:
-                // AE 1 is only for the first semester...
-                //searchStart = faculty == "Engineering" ? (timetableStr.indexOf('"name":"AE 1 ","short":"AE 1 ","teacherid":""') - 57) : 0;
                 searchStart = 0;
 
                 // departments (classIds):
@@ -230,8 +227,6 @@ class AtilimClassifier extends Classifier {
                   }
                 });
 
-                // TODO: This only works for eng and civ aviation facs, make it for all the facs too:
-                //searchStart = timetableStr.indexOf('"id":"teachers","name":"Öğretim Elemanları","item_name":"Öğretim Elemanı"');
                 searchStart = 0;
 
                 // teacherCodes:
@@ -301,12 +296,12 @@ class AtilimClassifier extends Classifier {
 
                 // print("${names[subjectIndex]} has the hrs $hrs");
 
-                // TODO: TEST:
-                if (subjectId.key.contains("MATH151")) {
-                  print("Changing ${subjectId.key}");
-                  hrs[hrs.length - 1] = hrs[hrs.length - 1] + 1;
-                  classrooms[classrooms.length - 1][0] = "B2000";
-                }
+                // TEST:
+                // if (subjectId.key.contains("MATH151")) {
+                //   print("Changing ${subjectId.key}");
+                //   hrs[hrs.length - 1] = hrs[hrs.length - 1] + 1;
+                //   classrooms[classrooms.length - 1][0] = "B2000";
+                // }
                 // TEST;
 
                 subjects.add(Subject(customName: names[subjectIndex], hours: hrs, bgnPeriods: beginningHr, courseCode: subjectId.key,

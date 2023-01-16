@@ -41,10 +41,14 @@ class University {
     switch (Main.uni) {
 
       case "Atilim":
-        var request = await (HttpClient()..connectionTimeout = const Duration(seconds: 5)).getUrl(Uri.parse('https://www.atilim.edu.tr/get-lesson-ects/' + sub.getCourseCodeWithoutSectionNumber().replaceAll(" ", "")));
-        var response = await request.close();
-        await for (var contents in response.transform(const Utf8Decoder())) {
-          return contents;
+        try {
+          var request = await (HttpClient()..connectionTimeout = const Duration(seconds: 5)).getUrl(Uri.parse('https://www.atilim.edu.tr/get-lesson-ects/' + sub.getCourseCodeWithoutSectionNumber().replaceAll(" ", "")));
+          var response = await request.close();
+          await for (var contents in response.transform(const Utf8Decoder())) {
+            return contents;
+          }
+        } catch(e) {
+          print("ERROR: $e");
         }
 
         break;
