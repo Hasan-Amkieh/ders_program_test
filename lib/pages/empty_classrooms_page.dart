@@ -216,7 +216,7 @@ class EmptyClassroomsPageState extends State<EmptyClassroomsPage> {
                           ).then((value) {
                             setState(() { //
                               if (value!.hour < value.minute) {
-                                bgnHr = value!.hour.toString() + ":" + University.getBgnMinutes().toString();
+                                bgnHr = value.hour.toString() + ":" + University.getBgnMinutes().toString();
                                 endHr = value.minute.toString() + ":" + University.getEndMinutes().toString();
                                 search(query);
                               } else {

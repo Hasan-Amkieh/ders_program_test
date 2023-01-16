@@ -54,8 +54,6 @@ class University {
         return ('https://stars.bilkent.edu.tr/syllabus/view/' +
             str.substring(0, str.indexOf(RegExp("[1-9]"))) + "/" + str.substring(str.indexOf(RegExp("[1-9]"))) + "/");
 
-        break;
-
     }
 
     return "";
@@ -312,7 +310,7 @@ class University {
           try {
 
             // print("Getting the new links: ");
-            var request = await HttpClient().getUrl(Uri.parse('https://www.atilim.edu.tr/en/dersprogrami'));
+            var request = await (HttpClient()..connectionTimeout = const Duration(seconds: 5)).getUrl(Uri.parse('https://www.atilim.edu.tr/en/dersprogrami'));
             // sends the request
             var response = await request.close();
 
@@ -399,6 +397,9 @@ class University {
                   }
                 }
               }
+            } else {
+              Main.forceUpdate = false;
+              return "";
             }
 
             // print("found the following links: "
@@ -408,6 +409,7 @@ class University {
           } catch (e) {
             Main.forceUpdate = false;
             print("ERROR: $e");
+            return "";
           }
 
         }

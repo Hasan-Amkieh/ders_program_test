@@ -45,7 +45,8 @@ class WPPhoneState extends State<WPPhone> {
       case "Atilim":
         facLink = await University.getFacultyLink(Main.department);
 
-        var request = await HttpClient().getUrl(Uri.parse('https://www.atilim.edu.tr/en/dersprogrami'));
+        var request = await (HttpClient()..connectionTimeout = const Duration(seconds: 5))
+            .getUrl(Uri.parse('https://www.atilim.edu.tr/en/dersprogrami'));
         // sends the request
         var response = await request.close();
 

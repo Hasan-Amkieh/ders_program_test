@@ -265,7 +265,7 @@ class AtilimScraperComputer extends Scraper {
     // print("sem name is $sem");
     try {
 
-      var request = await HttpClient().getUrl(Uri.parse('https://www.atilim.edu.tr/en/dersprogrami#content_tab_tab_0_1_0_1_1_2'));
+      var request = await (HttpClient()..connectionTimeout = const Duration(seconds: 5)).getUrl(Uri.parse('https://www.atilim.edu.tr/en/dersprogrami#content_tab_tab_0_1_0_1_1_2'));
       var response = await request.close();
 
       if (response.statusCode == 200) {
