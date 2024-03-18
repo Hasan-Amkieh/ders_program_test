@@ -47,7 +47,7 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
     // finding all the possible schedules:
     chosenSections = [];
     findPossibleSchedule(0);
-    //print("All the schedules are: \n\n");
+    print("All the schedules are: \n\n");
     //widget.schedules.forEach((element) { print("${element.scheduleName} of courses: "); element.scheduleCourses.forEach((element) {print("${element.subject.classCode}");}); });
 
     // print("If not results were found, please fix the following collisions:");
@@ -234,7 +234,8 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.05 : 0.1)),
         child: AppBar(
-            backgroundColor: Main.appTheme.headerBackgroundColor,
+          backgroundColor: Main.appTheme.headerBackgroundColor,
+          iconTheme: IconThemeData(color: Colors.white),
         ),
       ),
       body: Column(
@@ -560,7 +561,7 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
     //widget.schedules[scheduleIndex].scheduleCourses.forEach((element) {print(element.subject.toString());});
     // First find all the collisions:
     List<CollisionData> collisions = findCourseCollisionsWithIndex(scheduleIndex);
-    //print("All the collisions are: ");
+    print("All the collisions are: ");
     //collisions.forEach((col) { print("\nCOLLISION:"); col.subjects.forEach((element) {print(element.classCode);}); });
 
     int colorIndex = -1;
@@ -577,7 +578,6 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
             Subject sub;
             for( ; atIndex < col.subjects.length ; atIndex++ ) {
               sub = col.subjects[atIndex];
-              //print("${sub.classCode} N ${course.subject.classCode}");
               if (sub.isEqual(course.subject) && course.subject.days[i][j] == col.subjectsData[atIndex].day &&
                   course.subject.bgnPeriods[i][j] == col.subjectsData[atIndex].bgnPeriod && !col.isDrawn[atIndex]) {
                 // print("Drawing the collisioned course: ${course.subject.classCode}");
@@ -588,7 +588,7 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
                 colSize = col.subjects.length;
                 continue;
               } else {
-                // print("NOT Drawing the collisioned course bcs the period is different: ${course.subject.classCode}");
+                //print("NOT Drawing the collisioned course bcs the period is different: ${course.subject.classCode}");
               }
               if (isCol) {
                 continue;
@@ -599,7 +599,6 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
               return;
             }
           });
-          //print("index of ${course.subject.classCode} is $drawingIndex N $colSize");
 
           String classroomStr = i < course.subject.classrooms.length ? deleteRepitions(course.subject.classrooms[i]).toString().replaceAll(RegExp("[\\[.*?\\]]"), "") : "";
           if (classroomStr.isEmpty) {
@@ -613,7 +612,6 @@ class SchedulerResultPageState extends State<SchedulerResultPage> {
               }
             }
           }
-          //print("Of period $i of subject ${course.subject.classCode} has classrooms $classroomStr");
 
           coursesList.add(
             Positioned(child: TextButton(

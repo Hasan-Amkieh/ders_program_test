@@ -104,7 +104,10 @@ class AddCoursesPageState extends State<AddCoursesPage> {
     return Scaffold(
       appBar: PreferredSize(
           preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.05 : 0.1)),
-          child: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor)
+          child: AppBar(
+              backgroundColor: Main.appTheme.headerBackgroundColor,
+              iconTheme: IconThemeData(color: Colors.white),
+          )
       ),
       backgroundColor: Main.appTheme.scaffoldBackgroundColor,
       body: SafeArea(
@@ -181,7 +184,7 @@ class AddCoursesPageState extends State<AddCoursesPage> {
     int subIndexForCrs = -1;
     int subIndexForAddedCrs = -1;
 
-    //print("current schedule is: ${Main.schedules[Main.currentScheduleIndex].scheduleCourses}");
+    print("current schedule is: ${Main.schedules[Main.currentScheduleIndex].scheduleCourses}");
     if (!isForScheduler) {
       for (Course crs in Main.schedules[Main.currentScheduleIndex].scheduleCourses) {
         if (crs.subject.courseCode == subject.courseCode) {

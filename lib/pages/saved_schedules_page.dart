@@ -9,7 +9,6 @@ import 'package:Atsched/language/dictionary.dart';
 import 'package:Atsched/others/subject.dart';
 import 'package:Atsched/pages/home_page.dart';
 import 'package:Atsched/widgets/timetable_canvas.dart';
-import 'package:badges/badges.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
@@ -56,7 +55,10 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
       backgroundColor: Main.appTheme.scaffoldBackgroundColor,
       appBar: PreferredSize(
           preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.05 : 0.1)),
-          child: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor)),
+          child: AppBar(
+            backgroundColor: Main.appTheme.headerBackgroundColor,
+            iconTheme: IconThemeData(color: Colors.white),
+          )),
       body: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -92,7 +94,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
         beginningPeriods.addAll(schedule.scheduleCourses[i].subject.bgnPeriods);
         hours.addAll(schedule.scheduleCourses[i].subject.hours);
 
-        //print("Hours: ${schedule.scheduleCourses[i].subject.hours}");
+        print("Hours: ${schedule.scheduleCourses[i].subject.hours}");
         for (int j = 0 ; j < schedule.scheduleCourses[i].subject.days.length ; j++) {
           totalHours += schedule.scheduleCourses[i].subject.hours[j] * schedule.scheduleCourses[i].subject.days[j].length;
         }
@@ -117,7 +119,7 @@ class SavedSchedulePageState extends State<SavedSchedulePage> {
               children: [
                 IconButton(
                   icon: Main.schedules[Main.currentScheduleIndex].changes.isNotEmpty ? Badge(
-                      badgeContent: Text(Main.schedules[Main.currentScheduleIndex].changes.length.toString()),
+                      label: Text(Main.schedules[Main.currentScheduleIndex].changes.length.toString()),
                       child: Icon(Icons.track_changes, color: Main.schedules[scheduleIndex].changes.isEmpty ? Colors.grey.shade700 : Colors.red.shade700)
                   ) : Icon(Icons.track_changes, color: Main.schedules[scheduleIndex].changes.isEmpty ? Colors.grey.shade700 : Colors.red.shade700),
                   onPressed: () {

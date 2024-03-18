@@ -1,0 +1,11 @@
+force_update:false
+is_dark:true
+uni:Atilim
+faculty:Engineering
+department:AE
+language:English
+hour_update:96
+schedule_index:0
+is_attempted_before:true
+is_there_newer_version:false
+is_fac_change:false

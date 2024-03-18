@@ -501,7 +501,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           }
         },
             () {
-          if (Main.isFacDataFilled) {
+          if (Main.isFacDataFilled) { // EmptyClassroomsPage
             Navigator.pushNamed(context, "/home/emptyclassrooms").then((value) {
               setState(() {});
             });
@@ -646,7 +646,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
                     Main.language = newValue!;
                   });
                 },
-              )
+              ), // TODO: DELETE THIS SHIT:
+              TextButton(onPressed: () {Main.save();}, child: Text("manual save")),
             ],
           ),
           SizedBox(
@@ -887,7 +888,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin, Widgets
           Row(
             children: [
               Text(
-                translateEng("Current Version") + ": " + (Platform.isWindows ? Main.atschedVersionForWindows : Main.packageInfo.version),
+                translateEng("Current Version") + ": " + Main.atschedVersionForWindows,
                 style: TextStyle(color: Main.appTheme.titleTextColor, fontSize: 14),
               ),
             ],

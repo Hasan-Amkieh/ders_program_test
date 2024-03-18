@@ -21,7 +21,7 @@ class BilkentClassifier extends Classifier {
 
             Map timetableData = msg[1];
 
-            //print("Starting classification:\n");
+            print("Starting classification:\n");
             sPort.send(["setDoNotRestart"]); // doNotRestart = true;
 
             //FacultySemester facultyData = FacultySemester(facName: Main.faculty, lastUpdate: DateTime.now());

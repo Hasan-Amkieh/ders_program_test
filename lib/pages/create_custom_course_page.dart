@@ -133,7 +133,10 @@ class CustomCoursePageState extends State<CustomCoursePage> {
       backgroundColor: Main.appTheme.scaffoldBackgroundColor,
       appBar: PreferredSize(
           preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.05 : 0.1)),
-          child: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor)),
+          child: AppBar(
+            backgroundColor: Main.appTheme.headerBackgroundColor,
+            iconTheme: IconThemeData(color: Colors.white),
+          )),
       floatingActionButton: Visibility(
         visible: checkIfReadyToConfirm(),
         child: FloatingActionButton(
@@ -173,7 +176,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
             }
 
             // For test:
-            //print("days: ${widget.subject.days} / bgnHours: ${widget.subject.bgnPeriods} / hours: ${widget.subject.hours}");
+            print("days: ${widget.subject.days} / bgnHours: ${widget.subject.bgnPeriods} / hours: ${widget.subject.hours}");
 
             // Refinement process:  loop through each list and if it is empty remove it!
             // for (int i = 0 ; i < widget.subject.classrooms.length ; i++) {
@@ -190,7 +193,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
             // }
 
             if (Main.isEditingCourse) {
-              //print("Teachers: ${widget.subject.teacherCodes}");
+              print("Teachers: ${widget.subject.teacherCodes}");
               widget.subject.hours.clear();
               widget.subject.hours.addAll(widget.hours);
               Main.courseToEdit = widget.subject;
@@ -734,7 +737,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
         break;
       }
     }
-    //print("Editing mode $isEditing with index $teacherInd");
+    print("Editing mode $isEditing with index $teacherInd");
 
     bts.addAll([
       Visibility(
@@ -851,7 +854,7 @@ class CustomCoursePageState extends State<CustomCoursePage> {
         break;
       }
     }
-    //print("Editing mode $isEditing with index $depInd");
+    print("Editing mode $isEditing with index $depInd");
 
     // print("PUTTING ${isEditing ? widget.subject.departments[depInd]
     //     : widget.depData} of bool $isEditing");

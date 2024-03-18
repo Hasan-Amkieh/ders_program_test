@@ -419,21 +419,27 @@ class University {
         }
 
         {
-          if (getFacultyDeps("Engineering").keys.contains(depName)) {
-            return Main.engineeringLink;
-          } else if (getFacultyDeps("Civil Aviation").keys.contains(depName)) {
-            return Main.civilAviationLink;
-          } else if (getFacultyDeps("Health Sciences").keys.contains(depName)) {
-            return Main.healthSciencesLink;
-          } else if (getFacultyDeps("Arts and Sciences").keys.contains(depName)) {
-            return Main.artsNSciencesLink;
-          } else if (getFacultyDeps("Fine Arts").keys.contains(depName)) {
-            return Main.fineArtsLink;
-          } else if (getFacultyDeps("Law").keys.contains(depName)) {
-            return Main.lawLink;
-          } else if (getFacultyDeps("Business").keys.contains(depName)) {
-            return Main.businessLink;
-          }
+          // TODO: Fix this shit:
+          // if (getFacultyDeps("Engineering").keys.contains(depName)) {
+          //   return Main.engineeringLink;
+          // } else if (getFacultyDeps("Civil Aviation").keys.contains(depName)) {
+          //   return Main.civilAviationLink;
+          // } else if (getFacultyDeps("Health Sciences").keys.contains(depName)) {
+          //   return Main.healthSciencesLink;
+          // } else if (getFacultyDeps("Arts and Sciences").keys.contains(depName)) {
+          //   return Main.artsNSciencesLink;
+          // } else if (getFacultyDeps("Fine Arts").keys.contains(depName)) {
+          //   return Main.fineArtsLink;
+          // } else if (getFacultyDeps("Law").keys.contains(depName)) {
+          //   return Main.lawLink;
+          // } else if (getFacultyDeps("Business").keys.contains(depName)) {
+          //   return Main.businessLink;
+          // }
+          Main.semesterName = "2023-2024 Fall Semester Course Schedules";
+          Main.facultyData = FacultySemester(facName: "Engineering", lastUpdate: DateTime.now(), semesterName: Main.semesterName);
+          Main.faculty = "Engineering";
+          Main.engineeringLink = "https://atilimengr.edupage.org/timetable/view.php?num=29&class=*133";
+          return Main.engineeringLink;
         }
         break;
       // case "Bilkent": // Bilkent does not need to have faculties nor departments,

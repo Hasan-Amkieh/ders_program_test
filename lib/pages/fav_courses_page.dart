@@ -31,7 +31,10 @@ class FavCoursesState extends State<FavCourses> {
       backgroundColor: Main.appTheme.scaffoldBackgroundColor,
       appBar: PreferredSize(
           preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.05 : 0.1)),
-          child: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor)
+          child: AppBar(
+            backgroundColor: Main.appTheme.headerBackgroundColor,
+            iconTheme: IconThemeData(color: Colors.white),
+          )
       ),
       body: SafeArea(
         child: Main.favCourses.isEmpty ? Center(child: Text(translateEng("Nothing to show"), style: TextStyle(color: Main.appTheme.titleTextColor), textAlign: TextAlign.center,))

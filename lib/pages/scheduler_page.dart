@@ -67,7 +67,6 @@ class SchedulerPageState extends State<SchedulerPage> {
         int maxSection = 0;
         //Map<int, Subject> secToSubject = {};
         for (Subject sub in Main.facultyData.subjects) {
-          //print("Checking if ${sub.classCode} has sections or not!");
           if (sub.getCourseCodeWithoutSectionNumber() == element.courseCode && sub.getCourseCodeWithoutSectionNumber() != sub.courseCode) {
             // if sub has sections:
             // print("${sub.classCode} has a section of ${sub.getSection()}!");
@@ -84,7 +83,6 @@ class SchedulerPageState extends State<SchedulerPage> {
               }
             }
             if (!isFound) {
-              //print("*** adding ${sub.getClassCodeWithoutSectionNumber()} ***");
               subjectsSections.add(MapEntry(sub.getCourseCodeWithoutSectionNumber(), []));
               areSectionsShown.add(MapEntry(sub.getCourseCodeWithoutSectionNumber(), <int, bool>{}));
               // The var secIndex has to be reset bcs now there is a new element!
@@ -128,7 +126,10 @@ class SchedulerPageState extends State<SchedulerPage> {
       backgroundColor: Main.appTheme.scaffoldBackgroundColor,
       appBar: PreferredSize(
           preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.05 : 0.1)),
-          child: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor)
+          child: AppBar(
+            backgroundColor: Main.appTheme.headerBackgroundColor,
+            iconTheme: IconThemeData(color: Colors.white),
+          )
       ),
       body: SafeArea(
         child: Container(
@@ -273,10 +274,10 @@ class SchedulerPageState extends State<SchedulerPage> {
 
       List<MapEntry<int, bool>> sections = [];
 
-      //print("SubjectSections var: ${subjectsSections[secIndex]} of index $secIndex");
+      print("SubjectSections var: ${subjectsSections[secIndex]} of index $secIndex");
 
       for (MapEntry<int, Subject> element in subjectsSections[secIndex].value) {
-        //print("Checking ${areSectionsShown[secIndex]}");
+        print("Checking ${areSectionsShown[secIndex]}");
         if (areSectionsShown[secIndex].value.containsKey(element.key)) {
           sections.add(MapEntry(element.key, areSectionsShown[secIndex].value[element.key] as bool));
         }
@@ -296,15 +297,15 @@ class SchedulerPageState extends State<SchedulerPage> {
         sectionsStr = translateEng("All");
       } else if (sections.length - numOfFalse > 1) {
         sectionsStr = "";
-        //print("Sections var: $sections");
+        print("Sections var: $sections");
         for (int secNum = 0 ; secNum < sections.length ; secNum++) {
           if (sections[secNum].value) {
             sectionsStr += "," + sections[secNum].key.toString();
           }
         }
-        //print("SectionStr before : $sectionsStr");
+        print("SectionStr before : $sectionsStr");
         sectionsStr = sectionsStr.substring(1, sectionsStr.length); // remove the last comma
-        //print("SectionStr after : $sectionsStr");
+        print("SectionStr after : $sectionsStr");
       } else { // otherwise it is only one section:
         for (int secNum = 0 ; secNum < sections.length ; secNum++) {
           if (sections[secNum].value) {
@@ -351,7 +352,7 @@ class SchedulerPageState extends State<SchedulerPage> {
                   ind_++;
                 }
                 for (int ind = 0 ; ind < subjectsSections[secIndex].value.length ; ind++) {
-                  //print("Checking ${areSectionsShown[secIndex]}");
+                  print("Checking ${areSectionsShown[secIndex]}");
                   if (areSectionsShown[secIndex].value.containsKey(subjectsSections[secIndex].value[ind].key)) {
                     areSectionsShown[secIndex].value[subjectsSections[secIndex].value[ind].key] = true;
                   }
@@ -555,7 +556,7 @@ class SchedulerPageState extends State<SchedulerPage> {
         }
       }
 
-      //print("The length of shown vars is : ${areSectionsShown[subIndex].value.length}");
+      print("The length of shown vars is : ${areSectionsShown[subIndex].value.length}");
       if (!areSectionsShown[subIndex].value.containsKey(sec)) {
         // print("STOP HERE of index $subIndex of ${areSectionsShown[subIndex]}");
         continue;

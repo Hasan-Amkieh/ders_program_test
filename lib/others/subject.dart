@@ -365,7 +365,7 @@ class Subject { // represents a class
     // return int.parse(courseCode.substring(courseCode.indexOf('(') + 1));
 
     if (courseCode.contains('(')) { // MATH151(1) / MATH151-01 / MATH151- 01
-      //print("Found the sec number : ${int.parse(courseCode.substring(courseCode.indexOf('(') + 1, courseCode.indexOf(')')))}");
+      print("Found the sec number : ${int.parse(courseCode.substring(courseCode.indexOf('(') + 1, courseCode.indexOf(')')))}");
       return int.parse(courseCode.substring(courseCode.indexOf('(') + 1, courseCode.indexOf(')')));
     } else if (courseCode.contains('-')) {
       String str = courseCode.substring(courseCode.indexOf('-') + 1).trim();
@@ -376,7 +376,7 @@ class Subject { // represents a class
       if (str.contains("-")) {
         str = str.substring(0, str.indexOf("-"));
       }
-      //print("RETURNING section ${int.parse(str)} for subject ${courseCode}");
+      print("RETURNING section ${int.parse(str)} for subject ${courseCode}");
       // print("Trying to parse $str into a section number");
       if (str.isEmpty) {
         return 0;

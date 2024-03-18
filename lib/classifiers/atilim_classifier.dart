@@ -25,7 +25,7 @@ class AtilimClassifier extends Classifier {
             // print("Timetable data received!");
             String timetableStr = msg[1];
 
-            //print("Starting classification:\n");
+            print("Starting classification:\n");
             sPort.send(["setDoNotRestart"]); // doNotRestart = true;
 
             //FacultySemester facultyData = FacultySemester(facName: Main.faculty, lastUpdate: DateTime.now());
@@ -58,7 +58,7 @@ class AtilimClassifier extends Classifier {
 
             }
 
-            //print("Resolving all ids with subjectid!");
+            print("Resolving all ids with subjectid!");
                 { // for each subjectId, we have this:
               List<String> lessonIds; // lessonId is used to find the time for the class
               List<String> classIds, classes;
@@ -246,8 +246,8 @@ class AtilimClassifier extends Classifier {
                     periodIndex++;
                   }
                 });
-                //print("$teacherCodesIds");
-                //print("$teacherCodes");
+                print("$teacherCodesIds");
+                print("$teacherCodes");
 
                 // classrooms:
                 searchStart = timetableStr.indexOf('id: buildings, name: Binalar, item_name: Bina, icon'); // the icon file could change which could break the whole thing!

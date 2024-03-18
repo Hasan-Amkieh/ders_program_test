@@ -125,7 +125,10 @@ class EmptyClassroomsPageState extends State<EmptyClassroomsPage> {
       backgroundColor: Main.appTheme.scaffoldBackgroundColor,
       appBar: PreferredSize(
           preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.05 : 0.1)),
-          child: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor)),
+          child: AppBar(
+            backgroundColor: Main.appTheme.headerBackgroundColor,
+            iconTheme: IconThemeData(color: Colors.white),
+          )),
       body: SafeArea(
         child: Container(
           padding: EdgeInsets.all((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * 0.03),

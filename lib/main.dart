@@ -40,8 +40,8 @@ import 'package:flutter/material.dart';
 import 'package:Atsched/wp_phone.dart';
 import 'package:Atsched/pages/home_page.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 // import 'package:permission_handler/permission_handler.dart';
 import 'package:restart_app/restart_app.dart';
 import 'package:new_version/new_version.dart';
@@ -72,8 +72,6 @@ class Main {
       androidId: 'amkieh.hasan.atsched',
   );
   static late VersionStatus? versionStatus;
-
-  static late PackageInfo packageInfo;
 
   static String appDocDir = "";
 
@@ -180,7 +178,7 @@ class Main {
         for (int i = 0 ; i < Main.exams.length ; i++) {
           toWrite = toWrite + Main.exams[i].toString() + "\n";
         }
-        //print("Writing the subjects: $toWrite");
+        print("Writing the subjects: $toWrite");
         file.writeAsStringSync(toWrite);
       }
     } catch (e, s) {
@@ -195,7 +193,7 @@ class Main {
 
     if (file.existsSync()) {
 
-      // print("The faculty courses exists!");
+      print("The faculty courses exists!");
 
       List<String> lines = file.readAsStringSync().split("\n");
 
@@ -207,7 +205,7 @@ class Main {
       }
 
     } else {
-      // print("The faculty courses DID NOT exist!");
+      print("The faculty courses DID NOT exist!");
       Main.forceUpdate = true;
     }
 
@@ -233,7 +231,7 @@ class Main {
 
     file.writeAsStringSync(toWrite, mode: FileMode.write);
 
-    //print("Settings were saved!");
+    print("Settings were saved!");
 
   }
 
@@ -245,7 +243,7 @@ class Main {
 
       content = file.readAsStringSync();
       if (content.isNotEmpty) {
-        // print("Settings were found with the content of: $content");
+        print("Settings were found with the content of: $content");
 
         forceUpdate = content.substring(content.indexOf("force_update:") + 13, content.indexOf("\n", content.indexOf("force_update:") + 13)) == "true" ? true : false;
         theme = (content.substring(content.indexOf("is_dark:") + 8, content.indexOf("\n", content.indexOf("is_dark:") + 8)) == "true" ? true : false) ? ThemeMode.dark : ThemeMode.light;
@@ -330,7 +328,7 @@ class Main {
 
       }
 
-      // print("The schedule ${Main.schedules[i].scheduleName} is written with the content of: \n\n$toWrite\n\n\n");
+      print("The schedule ${Main.schedules[i].scheduleName} is written with the content of: \n\n$toWrite\n\n\n");
 
       file.writeAsStringSync(toWrite);
 
@@ -340,16 +338,16 @@ class Main {
 
   static void deleteSchedules() async {
 
-    // print("Deleting Schedules: ");
+    print("Deleting Schedules: ");
 
     Directory dir = Directory(Main.appDocDir + Main.filePrefix + "Atsched");
     List<FileSystemEntity> files = await (dir.list()).toList();
-    // print("Deleting scheds of dir ${files}");
+    print("Deleting scheds of dir ${files}");
 
     for (int i = 0 ; i < files.length ; i++) {
 
       if (files[i].toString().contains("schedule_")) {
-        // print("Deleting schedule: ${files[i].toString()}");
+        print("Deleting schedule: ${files[i].toString()}");
         await files[i].delete();
       }
 
@@ -364,7 +362,7 @@ class Main {
     deleteSchedules();
 
     for (int i = 0 ; i < schedules.length ; i++) {
-      // print("Writing schedule ${Main.schedules[i].scheduleName}");
+      print("Writing schedule ${Main.schedules[i].scheduleName}");
 
       File file_ = File(Main.appDocDir + filePrefix + "Atsched" + filePrefix + "schedule_${Main.schedules[i].scheduleName}.txt");
       await file_.create();
@@ -404,7 +402,7 @@ class Main {
 
       }
 
-      // print("The schedule ${Main.schedules[i].scheduleName} is written with the content of: \n\n$toWrite\n\n\n");
+      print("The schedule ${Main.schedules[i].scheduleName} is written with the content of: \n\n$toWrite\n\n\n");
 
       await file.writeString(toWrite);
       await file.flush();
@@ -422,16 +420,15 @@ class Main {
     // but not following symbolic links.
     List<FileSystemEntity> files = dir.listSync();
 
-    //print("All the files are: $files");
+    print("All the files are: $files");
 
     for (int i = 0 ; i < files.length ; i++) {
 
       if (files[i].toString().contains("schedule_")) {
 
-        // print("Opening file: ${files[i].toString()}");
+        print("Opening file: ${files[i].toString()}");
         File file = File(files[i].path);
         if (file.existsSync()) {
-          // print("The file EXISTED!!!!");
 
           String content = file.readAsStringSync();
           if (content.replaceAll("////\n", "").isEmpty) {
@@ -439,10 +436,10 @@ class Main {
             continue;
           }
 
-          //print("File content is: $content");
+          print("File content is: $content");
 
           String scheduleName = files[i].toString().substring(files[i].toString().indexOf("schedule_") + 9).replaceAll(".txt", "").replaceAll("'", "");
-          // print("The schedule name is $scheduleName");
+          print("The schedule name is $scheduleName");
 
           List<String> notes = content.split("////\n").elementAt(0).split('\n/ /\n');
           // the notes and the courses are seperated by "////\n" but each note is seperatoed by "\n/ /\n"
@@ -457,13 +454,13 @@ class Main {
           List<String> notations = content.split("////\n").elementAt(2).split("\n");
           List<Change> changes = [];
 
-          // print("Found notations: $notations");
+          print("Found notations: $notations");
           notations.forEach((element) {
             if (element.trim().isNotEmpty) {
               List<String> content = element.split("|");
               Change change;
               if (content[1] == "time") { // time change:
-                // print("content: $content");
+                print("content: $content");
                 change = Change(courseCode: content.elementAt(0), typeOfChange: content.elementAt(1),
                     oldData: content.elementAt(2) + "|" + content.elementAt(3) + "|" + content.elementAt(4),
                     newData: content.elementAt(5) + "|" + content.elementAt(6) + "|" + content.elementAt(7),
@@ -476,7 +473,7 @@ class Main {
             }
           });
 
-          //courses_.forEach((element) {print(element.subject.toString());});
+          courses_.forEach((element) {print(element.subject.toString());});
           Main.schedules.add(Schedule(scheduleName: scheduleName, scheduleCourses: courses_, changes: changes));
 
         }
@@ -513,7 +510,7 @@ class Main {
         for (int i = 0 ; i < Main.facultyData.subjects.length ; i++) {
           toWrite = toWrite + Main.facultyData.subjects[i].courseCode + "|" + Main.facultyData.subjects[i].toString() + "\n";
         }
-        //print("Writing the subjects: $toWrite");
+        print("Writing the subjects: $toWrite");
         file.writeAsStringSync(toWrite);
       }
     } catch (e) {
@@ -528,13 +525,13 @@ class Main {
 
     if (file.existsSync()) {
 
-      // print("The faculty courses exists!");
+      print("The faculty courses exists!");
 
       List<String> lines = file.readAsStringSync().split("\n");
       String facultyName = lines[0];
       if (facultyName != Main.faculty) {
         Main.forceUpdate = true;
-        // print("The faculties are different, updating!");
+        print("The faculties are different, updating!");
         return;
       }
       lines.removeAt(0);
@@ -542,9 +539,9 @@ class Main {
       lines.removeAt(0);
 
       DateTime lastUpdated = DateTime.fromMicrosecondsSinceEpoch(int.parse(lines[0]));
-      // print("Time difference is ${DateTime.now().difference(lastUpdated).inHours}, updating!");
+      print("Time difference is ${DateTime.now().difference(lastUpdated).inHours}, updating!");
       if (DateTime.now().difference(lastUpdated).inHours >= Main.hourUpdate) {
-        // print("Time difference is ${DateTime.now().difference(lastUpdated).inHours}, updating!");
+        print("Time difference is ${DateTime.now().difference(lastUpdated).inHours}, updating!");
         Main.forceUpdate = true;
         return;
       }
@@ -556,7 +553,7 @@ class Main {
       lines.forEach((course) { Main.facultyData.subjects.add(Subject.fromStringWithCourseCode(course)); });
 
     } else {
-      // print("The faculty courses DID NOT exist!");
+      print("The faculty courses DID NOT exist!");
       Main.forceUpdate = true;
     }
 
@@ -612,13 +609,11 @@ class Main {
     switch(Main.uni) {
 
       case "Atilim":
-        // print("Atilim classifier is set!");
         Main.classifier = AtilimClassifier.instance;
         // Main.scraper = Platform.isWindows ? AtilimScraperComputer.instance : AtilimScraperPhone.instance;
         Main.scraper = AtilimScraperComputer.instance;
         break;
       case "Bilkent":
-        // print("Bilkent classifier is set!");
         Main.classifier = BilkentClassifier.instance;
         Main.scraper = Platform.isWindows ? BilkentScraperComputer.instance : BilkentScraperPhone.instance;
         break;
@@ -645,7 +640,7 @@ class Main {
           }
           for (int classroomI = 0 ; classroomI < subjects[subI].classrooms[periodI].length ; classroomI++) {
 
-            // print("${subjects[subI].days[periodI].length} ${subjects[subI].classrooms[periodI].length}");
+            print("${subjects[subI].days[periodI].length} ${subjects[subI].classrooms[periodI].length}");
 
             isClassroomFound = false;
             isPeriodFound = false;
@@ -823,7 +818,7 @@ class Main {
         mins = 60 - DateTime.now().minute + 20;
       }
 
-      // print("Classrooms count to be refreshed after $mins minutes!");
+      print("Classrooms count to be refreshed after $mins minutes!");
       Timer(Duration(minutes: mins), scheduleClassroomsCounter);
 
     });
@@ -834,7 +829,7 @@ class Main {
     if(s == null) {
       return false;
     }
-    return double.parse(s, (e) => 0.0) != 0.0;
+    return double.parse(s) != 0.0;
   }
 
 }
@@ -842,18 +837,18 @@ class Main {
 Future main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
-  Main.appDocDir = (await getApplicationDocumentsDirectory()).path;
+  Main.appDocDir = "assets";
   if (!Platform.isWindows) {
-    // await [Permission.storage].request().then((value_) {
-    //   if (!value_.toString().contains(".granted")) {
-    //     Main.restart();
-    //   } else {
-    //     //print("The premission of storage was granted!");
-    //   }
-    // });
+    await [Permission.storage].request().then((value_) {
+      if (!value_.toString().contains(".granted")) {
+        Main.restart();
+      } else {
+        print("The permission of storage was granted!");
+      }
+    });
   }
 
-  // print("Elapsed time: ${DateTime.now().microsecondsSinceEpoch}");
+  print("Elapsed time: ${DateTime.now().microsecondsSinceEpoch}");
 
   { // for storing the files into that directory:
     Directory dir = Directory(Main.appDocDir + Main.filePrefix + "Atsched");
@@ -930,12 +925,10 @@ Future main() async {
   await NoInternetPageState.checkInternet();
 
   bool forceToHomePage = false;
-  //print("LAST TIME UPDATED IS ${Main.isFacDataFilled && !Main.isInternetOn && Main.facultyData.lastUpdate.difference(DateTime.now()).inDays <= 7}");
+  print("LAST TIME UPDATED IS ${Main.isFacDataFilled && !Main.isInternetOn && Main.facultyData.lastUpdate.difference(DateTime.now()).inDays <= 7}");
   if (Main.isFacDataFilled && !Main.isInternetOn && Main.facultyData.lastUpdate.difference(DateTime.now()).inDays <= 7) {
     forceToHomePage = true;
   }
-
-  Main.packageInfo = await PackageInfo.fromPlatform();
 
   bool goToUpdatePage = false;
   bool isThereErr = false;
@@ -961,8 +954,6 @@ Future main() async {
     }
   } else {
 
-    //Main.isInternetOn
-
     if (Main.isInternetOn) {
       try {
         var request = await (HttpClient()..connectionTimeout = const Duration(seconds: 3)).getUrl(Uri.parse('https://apps.microsoft.com/store/detail/atsched/9NQ6G0L7FTG2?hl=en-us&gl=us'));
@@ -975,7 +966,6 @@ Future main() async {
           String version;
 
           if (Main.semesterName.isEmpty) {
-            // Sample: "Latest Version: 1.3.0.0////"
             pos = contents.indexOf('Latest Version: '); // first search for
             if (pos != -1) {
 
@@ -983,7 +973,7 @@ Future main() async {
               if (version.isNotEmpty) {
                 List<String> vNew = version.trim().split('.');
                 List<String> vOld = Main.atschedVersionForWindows.split('.');
-                //print("The new version: $vNew\n\nThe old version: $vOld");
+                print("The new version: $vNew\n\nThe old version: $vOld");
                 if (int.parse(vNew[0]) > int.parse(vOld[0]) ||
                     int.parse(vNew[1]) > int.parse(vOld[1]) ||
                     int.parse(vNew[2]) > int.parse(vOld[2]) ||
@@ -1003,8 +993,8 @@ Future main() async {
       }
     }
 
-    // print("found the following links: "
-    //     "${Main.artsNSciencesLink}\n${Main.fineArtsLink}\n${Main.businessLink}\n${Main.engineeringLink}\n${Main.civilAviationLink}\n${Main.healthSciencesLink}\n${Main.lawLink}");
+    print("found the following links: "
+         "${Main.artsNSciencesLink}\n${Main.fineArtsLink}\n${Main.businessLink}\n${Main.engineeringLink}\n${Main.civilAviationLink}\n${Main.healthSciencesLink}\n${Main.lawLink}");
   }
 
   if (Main.forceUpdate) { // if no link was found, then Atsched will just open up, but it will not update:

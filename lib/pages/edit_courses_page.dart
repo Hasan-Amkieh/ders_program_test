@@ -76,7 +76,10 @@ class EditCoursePageState extends State<EditCoursePage> {
       backgroundColor: Main.appTheme.scaffoldBackgroundColor,
       appBar: PreferredSize(
           preferredSize: Size.fromHeight((MediaQuery.of(context).orientation == Orientation.portrait ? width : height) * (Platform.isWindows ? 0.05 : 0.1)),
-          child: AppBar(backgroundColor: Main.appTheme.headerBackgroundColor)),
+          child: AppBar(
+            backgroundColor: Main.appTheme.headerBackgroundColor,
+            iconTheme: IconThemeData(color: Colors.white),
+          )),
       body: SafeArea(
           child: Container(
             padding: EdgeInsets.all(width * 0.01),
@@ -282,7 +285,7 @@ class EditCoursePageState extends State<EditCoursePage> {
               itemCount: Main.schedules[Main.currentScheduleIndex].scheduleCourses.length, itemBuilder: (context, index) {
                 TextEditingController notesController = TextEditingController(text: Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).note);
                 Subject subject = Main.schedules[Main.currentScheduleIndex].scheduleCourses.elementAt(index).subject;
-                //print("Building the subject of teachers ${subject.teacherCodes}");
+                print("Building the subject of teachers ${subject.teacherCodes}");
                 return AnimatedContainer(
                   margin: EdgeInsets.symmetric(vertical: (Platform.isWindows ? 0.005 : 0.01) * width),
                   duration: duration,

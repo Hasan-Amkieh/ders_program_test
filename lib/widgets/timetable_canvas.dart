@@ -173,7 +173,7 @@ class TimetableCanvas extends CustomPainter {
     double dx, dy;
     Rect rect;
 
-    //print("days: $days / bgnperiods: $beginningPeriods / hours: $hours");
+    print("days: $days / bgnperiods: $beginningPeriods / hours: $hours");
     // Expressing the time and date of the course by drawing boxes:
     bool isCol = false;
     for (int i = 0 ; i < days.length ; i++) {
