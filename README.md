@@ -1,6 +1,6 @@
 # Atsched
 
-Atsched is a scheduling application made for every university student in the world
+Atsched is a scheduling application made for every university student in the world. A small demo can be found here: https://www.youtube.com/watch?v=EfM8tdEUbUc
 
 ## Download
 
